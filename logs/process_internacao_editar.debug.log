@@ -1,3 +1,44 @@
 [2026-02-16 12:30:02] START id_int=642 type=edit_negociacao select_gestao=s evento_adverso_ges=s id_gestao=8
 [2026-02-16 12:30:03] GESTAO update ok id_int=642 id_gestao=8 evento=s
 [2026-02-16 12:30:03] COMMIT ok id_int=642
+[2026-04-10 22:25:58] START id_int=673 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-10 22:25:58] GESTAO skip id_int=673 select_gestao=n evento=n
+[2026-04-10 22:25:58] PRORROG input id_int=673 rows=2
+[2026-04-10 22:25:58] PRORROG create ok id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-10 22:25:58] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-10 22:25:58] PRORROG create ok id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-10 22:25:58] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-10 22:25:58] COMMIT ok id_int=673
+[2026-04-10 22:28:09] START id_int=673 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-10 22:28:09] GESTAO skip id_int=673 select_gestao=n evento=n
+[2026-04-10 22:28:09] PRORROG input id_int=673 rows=2
+[2026-04-10 22:28:09] PRORROG update ok id_int=673 id_pror=200
+[2026-04-10 22:28:09] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-10 22:28:09] PRORROG update ok id_int=673 id_pror=201
+[2026-04-10 22:28:09] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-10 22:28:09] COMMIT ok id_int=673
+[2026-04-10 23:47:43] START id_int=673 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-10 23:47:43] GESTAO skip id_int=673 select_gestao=n evento=n
+[2026-04-10 23:47:43] PRORROG input id_int=673 rows=2
+[2026-04-10 23:47:43] PRORROG update ok id_int=673 id_pror=200
+[2026-04-10 23:47:43] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-10 23:47:43] PRORROG update ok id_int=673 id_pror=201
+[2026-04-10 23:47:43] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-10 23:47:43] COMMIT ok id_int=673
+[2026-04-11 00:52:01] START id_int=673 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-11 00:52:01] GESTAO skip id_int=673 select_gestao=n evento=n
+[2026-04-11 00:52:01] PRORROG input id_int=673 rows=2
+[2026-04-11 00:52:01] PRORROG update ok id_int=673 id_pror=200
+[2026-04-11 00:52:01] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-11 00:52:01] PRORROG update ok id_int=673 id_pror=201
+[2026-04-11 00:52:01] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-11 00:52:01] COMMIT ok id_int=673
+[2026-04-11 00:55:37] START id_int=673 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-11 00:55:37] GESTAO skip id_int=673 select_gestao=n evento=n
+[2026-04-11 00:55:37] NEGOC fallback post rows=1 id_int=673
+[2026-04-11 00:55:38] PRORROG input id_int=673 rows=2
+[2026-04-11 00:55:38] PRORROG update ok id_int=673 id_pror=200
+[2026-04-11 00:55:38] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-02 fim=2026-04-04
+[2026-04-11 00:55:38] PRORROG update ok id_int=673 id_pror=201
+[2026-04-11 00:55:38] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
+[2026-04-11 00:55:38] COMMIT ok id_int=673

@@ -244,6 +244,7 @@ body.bi-theme,
   display: flex;
   gap: 10px;
   align-items: end;
+  flex-wrap: wrap;
   flex: 0 0 auto !important;
 }
 
@@ -272,15 +273,16 @@ body.bi-theme,
 
 .bi-panel.bi-filters.bi-filters-wrap .bi-actions {
   justify-self: end;
+  max-width: 100%;
 }
 
 .bi-panel.bi-filters.bi-filters-compact {
-  grid-template-columns: repeat(7, minmax(140px, 1fr));
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
 }
 
 @media (max-width: 1400px) {
   .bi-panel.bi-filters.bi-filters-compact {
-    grid-template-columns: repeat(6, minmax(140px, 1fr));
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
   }
 }
 

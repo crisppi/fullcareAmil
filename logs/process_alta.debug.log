@@ -1,0 +1,8 @@
+[2026-04-10 17:52:20] payload {"id_internacao":672,"data_alta_alt":"2026-04-07","hora_alta_alt":"14:52","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-10 17:52:20] alta.create.ok {"id_internacao":672}
+[2026-04-10 17:52:20] internacao.updateAlta.ok {"id_internacao":672,"internado_int":"n"}
+[2026-04-10 17:52:20] transaction.commit {"id_internacao":672}
+[2026-04-10 22:26:35] payload {"id_internacao":673,"data_alta_alt":"2026-04-05","hora_alta_alt":"19:26","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-10 22:26:35] alta.create.ok {"id_internacao":673}
+[2026-04-10 22:26:35] internacao.updateAlta.ok {"id_internacao":673,"internado_int":"n"}
+[2026-04-10 22:26:35] transaction.commit {"id_internacao":673}
