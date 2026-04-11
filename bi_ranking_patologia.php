@@ -26,13 +26,13 @@ function fmtFloat($value, int $dec = 1): string
     return number_format((float)$value, $dec, ',', '.');
 }
 
-function shortLabel(string $value, int $limit = 16): string
+function shortLabel(string $value, int $limit = 18): string
 {
     $clean = trim($value);
-    if (strlen($clean) <= $limit) {
+    if (mb_strlen($clean, 'UTF-8') <= $limit) {
         return $clean;
     }
-    return substr($clean, 0, $limit - 3) . '...';
+    return mb_substr($clean, 0, $limit - 3, 'UTF-8') . '...';
 }
 
 function topMetric(array $rows, string $metric, int $limit = 10): array
@@ -43,9 +43,10 @@ function topMetric(array $rows, string $metric, int $limit = 10): array
     });
     $slice = array_slice($sorted, 0, $limit);
     $labels = array_map(fn($r) => shortLabel((string)($r['label'] ?? 'Sem informacoes')), $slice);
-    $values = array_map(fn($r) => (float)($r[$metric] ?? 0), $slice);
+    $values = array_map(fn($r) => round((float)($r[$metric] ?? 0), 2), $slice);
     return [$labels, $values];
 }
+
 $internado = trim((string)(filter_input(INPUT_GET, 'internado') ?? ''));
 $hospitalId = filter_input(INPUT_GET, 'hospital_id', FILTER_VALIDATE_INT) ?: null;
 $mesInput = filter_input(INPUT_GET, 'mes', FILTER_VALIDATE_INT);
@@ -77,39 +78,28 @@ if ($hospitalId) {
     $params[':hospital_id'] = $hospitalId;
 }
 
-$labelExpr = "COALESCE(NULLIF(i.grupo_patologia_int,''), p.patologia_pat, 'Sem informacoes')";
-$costExpr = "COALESCE(NULLIF(ca.valor_final_capeante,0), ca.valor_apresentado_capeante, 0)";
-
 $sql = "
     SELECT
-        label,
-        SUM(custo) AS sinistro,
-        SUM(diarias) AS total_diarias,
-        COUNT(DISTINCT id_internacao) AS internacoes,
-        ROUND(AVG(diarias), 1) AS mp,
-        SUM(CASE WHEN is_uti = 1 THEN 1 ELSE 0 END) AS internacoes_uti,
-        ROUND(AVG(CASE WHEN is_uti = 1 THEN diarias END), 1) AS mp_uti
-    FROM (
-        SELECT
-            i.id_internacao,
-            {$labelExpr} AS label,
-            {$costExpr} AS custo,
-            GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1) AS diarias,
-            CASE WHEN ut.fk_internacao_uti IS NULL THEN 0 ELSE 1 END AS is_uti
-        FROM tb_internacao i
-        LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
-        LEFT JOIN tb_capeante ca ON ca.fk_int_capeante = i.id_internacao
-        LEFT JOIN (SELECT DISTINCT fk_internacao_uti FROM tb_uti) ut ON ut.fk_internacao_uti = i.id_internacao
-        LEFT JOIN (
-            SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt
-            FROM tb_alta
-            GROUP BY fk_id_int_alt
-        ) al ON al.fk_id_int_alt = i.id_internacao
-        WHERE {$where}
-    ) t
+        COALESCE(NULLIF(i.grupo_patologia_int,''), p.patologia_pat, 'Sem informacoes') AS label,
+        COUNT(DISTINCT i.id_internacao) AS internacoes,
+        SUM(GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1)) AS total_diarias,
+        SUM(COALESCE(ca.valor_final, 0)) AS custo_total
+    FROM tb_internacao i
+    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
+    LEFT JOIN (
+        SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt
+        FROM tb_alta
+        GROUP BY fk_id_int_alt
+    ) al ON al.fk_id_int_alt = i.id_internacao
+    LEFT JOIN (
+        SELECT fk_int_capeante, SUM(COALESCE(valor_final_capeante, valor_apresentado_capeante, 0)) AS valor_final
+        FROM tb_capeante
+        GROUP BY fk_int_capeante
+    ) ca ON ca.fk_int_capeante = i.id_internacao
+    WHERE {$where}
     GROUP BY label
-    ORDER BY sinistro DESC
-    LIMIT 12
+    ORDER BY custo_total DESC
+    LIMIT 30
 ";
 $stmt = $conn->prepare($sql);
 foreach ($params as $key => $value) {
@@ -118,29 +108,28 @@ foreach ($params as $key => $value) {
 $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-$totalSinistro = 0.0;
-foreach ($rows as $row) {
-    $totalSinistro += (float)($row['sinistro'] ?? 0);
+foreach ($rows as &$row) {
+    $internacoesRow = (int)($row['internacoes'] ?? 0);
+    $diariasRow = (float)($row['total_diarias'] ?? 0);
+    $row['mp'] = $internacoesRow > 0 ? $diariasRow / $internacoesRow : 0;
 }
+unset($row);
 
-[$sinistroLabels, $sinistroVals] = topMetric($rows, 'sinistro');
-[$diariasLabels, $diariasVals] = topMetric($rows, 'total_diarias');
-[$internacoesLabels, $internacoesVals] = topMetric($rows, 'internacoes');
-[$mpLabels, $mpVals] = topMetric($rows, 'mp');
-[$internacoesUtiLabels, $internacoesUtiVals] = topMetric($rows, 'internacoes_uti');
-[$mpUtiLabels, $mpUtiVals] = topMetric($rows, 'mp_uti');
+[$labelsInternacoes, $valsInternacoes] = topMetric($rows, 'internacoes');
+[$labelsMp, $valsMp] = topMetric($rows, 'mp');
+[$labelsCusto, $valsCusto] = topMetric($rows, 'custo_total');
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260111">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411e">
 <script src="diversos/CoolAdmin-master/vendor/chartjs/Chart.bundle.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260111"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411e"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Ranking Patologia</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Sinistro, diarias e MP por patologia.</div>
+            <h1 class="bi-title">Top Patologia</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Internações, MP e custo por patologia.</div>
         </div>
         <div class="bi-header-actions">
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
@@ -150,13 +139,13 @@ foreach ($rows as $row) {
     </div>
 
     <form method="get">
-        <div class="bi-panel bi-filters bi-filters-wrap">
+        <div class="bi-panel bi-filters bi-filters-wrap bi-filters-compact">
             <div class="bi-filter">
                 <label>Internados</label>
                 <select name="internado">
                     <option value="" <?= $internado === '' ? 'selected' : '' ?>>Todos</option>
                     <option value="s" <?= $internado === 's' ? 'selected' : '' ?>>Sim</option>
-                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Nao</option>
+                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Não</option>
                 </select>
             </div>
             <div class="bi-filter">
@@ -171,7 +160,7 @@ foreach ($rows as $row) {
                 </select>
             </div>
             <div class="bi-filter">
-                <label>Mes</label>
+                <label>Mês</label>
                 <select name="mes">
                     <option value="">Todos</option>
                     <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -191,40 +180,33 @@ foreach ($rows as $row) {
                 </select>
             </div>
             <div class="bi-actions">
-                <button class="bi-btn" type="submit">Aplicar filtros</button>
+                <button class="bi-btn" type="submit">Aplicar</button>
+                <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>bi/tops-patologia">Limpar</a>
             </div>
         </div>
     </form>
 
     <div class="bi-panel">
-        <h3>Ranking</h3>
+        <h3>Resumo</h3>
         <table class="bi-table">
             <thead>
                 <tr>
                     <th>Patologia</th>
-                    <th>Sinistro</th>
-                    <th>Total diarias</th>
-                    <th>Internacoes</th>
+                    <th>Internações</th>
                     <th>MP</th>
-                    <th>Internacoes UTI</th>
-                    <th>MP UTI</th>
+                    <th>Custo</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$rows): ?>
-                    <tr>
-                        <td colspan="7" class="bi-empty">Sem dados com os filtros atuais.</td>
-                    </tr>
+                    <tr><td colspan="4" class="bi-empty">Sem dados com os filtros atuais.</td></tr>
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
                             <td><?= e($row['label'] ?? 'Sem informacoes') ?></td>
-                            <td><?= fmtMoney((float)($row['sinistro'] ?? 0)) ?></td>
-                            <td><?= fmtInt((int)($row['total_diarias'] ?? 0)) ?></td>
-                            <td><?= fmtInt((int)($row['internacoes'] ?? 0)) ?></td>
-                            <td><?= fmtFloat((float)($row['mp'] ?? 0), 1) ?></td>
-                            <td><?= fmtInt((int)($row['internacoes_uti'] ?? 0)) ?></td>
-                            <td><?= fmtFloat((float)($row['mp_uti'] ?? 0), 1) ?></td>
+                            <td><?= fmtInt($row['internacoes'] ?? 0) ?></td>
+                            <td><?= fmtFloat($row['mp'] ?? 0) ?></td>
+                            <td><?= fmtMoney($row['custo_total'] ?? 0) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -232,51 +214,30 @@ foreach ($rows as $row) {
         </table>
     </div>
 
-    <div class="bi-grid fixed-2">
+    <div class="bi-grid fixed-3">
         <div class="bi-panel">
-            <h3>Sinistro</h3>
-            <div class="bi-chart"><canvas id="chartSinistro"></canvas></div>
-        </div>
-        <div class="bi-panel">
-            <h3>Total de Diarias</h3>
-            <div class="bi-chart"><canvas id="chartDiarias"></canvas></div>
-        </div>
-        <div class="bi-panel">
-            <h3>Internacoes</h3>
-            <div class="bi-chart"><canvas id="chartInternacoes"></canvas></div>
+            <h3>Internações</h3>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartInternacoes"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>MP</h3>
-            <div class="bi-chart"><canvas id="chartMp"></canvas></div>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartMp"></canvas></div>
         </div>
         <div class="bi-panel">
-            <h3>Internacoes em UTI</h3>
-            <div class="bi-chart"><canvas id="chartInternacoesUti"></canvas></div>
-        </div>
-        <div class="bi-panel">
-            <h3>MP UTI</h3>
-            <div class="bi-chart"><canvas id="chartMpUti"></canvas></div>
+            <h3>Custo</h3>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartCusto"></canvas></div>
         </div>
     </div>
 </div>
 
 <script>
-const rpSinistroLabels = <?= json_encode($sinistroLabels) ?>;
-const rpSinistro = <?= json_encode($sinistroVals) ?>;
-const rpDiariasLabels = <?= json_encode($diariasLabels) ?>;
-const rpDiarias = <?= json_encode($diariasVals) ?>;
-const rpInternacoesLabels = <?= json_encode($internacoesLabels) ?>;
-const rpInternacoes = <?= json_encode($internacoesVals) ?>;
-const rpMpLabels = <?= json_encode($mpLabels) ?>;
-const rpMp = <?= json_encode($mpVals) ?>;
-const rpInternacoesUtiLabels = <?= json_encode($internacoesUtiLabels) ?>;
-const rpInternacoesUti = <?= json_encode($internacoesUtiVals) ?>;
-const rpMpUtiLabels = <?= json_encode($mpUtiLabels) ?>;
-const rpMpUti = <?= json_encode($mpUtiVals) ?>;
-
 function buildBarChart(canvasId, labels, values, tickFormatter) {
     const el = document.getElementById(canvasId);
     if (!el || !window.Chart) return;
+    const scales = window.biChartScales ? window.biChartScales() : undefined;
+    if (tickFormatter && scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
+        scales.yAxes[0].ticks.callback = tickFormatter;
+    }
     new Chart(el, {
         type: 'bar',
         data: {
@@ -289,13 +250,15 @@ function buildBarChart(canvasId, labels, values, tickFormatter) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: false },
-            scales: window.biChartScales ? window.biChartScales() : undefined,
+            scales: scales,
             tooltips: {
                 callbacks: {
-                    label: function(tooltipItem) {
+                    label: function (tooltipItem) {
                         const v = tooltipItem.yLabel || tooltipItem.value || 0;
-                        return tickFormatter ? tickFormatter(v) : v;
+                        return tickFormatter ? tickFormatter(v) : Number(v || 0).toLocaleString('pt-BR');
                     }
                 }
             }
@@ -303,12 +266,9 @@ function buildBarChart(canvasId, labels, values, tickFormatter) {
     });
 }
 
-buildBarChart('chartSinistro', rpSinistroLabels, rpSinistro, window.biMoneyTick);
-buildBarChart('chartDiarias', rpDiariasLabels, rpDiarias);
-buildBarChart('chartInternacoes', rpInternacoesLabels, rpInternacoes);
-buildBarChart('chartMp', rpMpLabels, rpMp);
-buildBarChart('chartInternacoesUti', rpInternacoesUtiLabels, rpInternacoesUti);
-buildBarChart('chartMpUti', rpMpUtiLabels, rpMpUti);
+buildBarChart('chartInternacoes', <?= json_encode($labelsInternacoes) ?>, <?= json_encode($valsInternacoes) ?>);
+buildBarChart('chartMp', <?= json_encode($labelsMp) ?>, <?= json_encode($valsMp) ?>);
+buildBarChart('chartCusto', <?= json_encode($labelsCusto) ?>, <?= json_encode($valsCusto) ?>, window.biMoneyTick);
 </script>
 
 <?php require_once("templates/footer.php"); ?>

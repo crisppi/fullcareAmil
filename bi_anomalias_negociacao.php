@@ -7,8 +7,23 @@ $internFilters = biRedeBuildWhere($filterValues, 'i.data_intern_int', 'i', true)
 $internWhere = $internFilters['where'];
 $internParams = $internFilters['params'];
 $internJoins = $internFilters['joins'];
+$savingExpr = "COALESCE(
+    NULLIF(ng.saving, 0),
+    CASE
+        WHEN ng.id_negociacao IS NULL THEN NULL
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE 'TROCA%' THEN
+            GREATEST(COALESCE(aco_de.valor_aco, 0) - COALESCE(aco_para.valor_aco, 0), 0) * COALESCE(NULLIF(ng.qtd, 0), 1)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) = 'ALTA TARDIA APTO' THEN
+            COALESCE(NULLIF(aco_para.valor_aco, 0), COALESCE(aco_de.valor_aco, 0)) * COALESCE(NULLIF(ng.qtd, 0), 1)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE '%1/2 DIARIA%' THEN
+            (COALESCE(aco_de.valor_aco, 0) / 2) * COALESCE(NULLIF(ng.qtd, 0), 1)
+        ELSE
+            COALESCE(aco_de.valor_aco, 0) * COALESCE(NULLIF(ng.qtd, 0), 1)
+    END,
+    0
+)";
 
-$summaryStmt = $conn->prepare("\n    SELECT\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM(COALESCE(ng.saving,0)) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    {$internJoins}\n    WHERE {$internWhere}\n");
+$summaryStmt = $conn->prepare("\n    SELECT\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM({$savingExpr}) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))\n    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))\n    {$internJoins}\n    WHERE {$internWhere}\n");
 biBindParams($summaryStmt, $internParams);
 $summaryStmt->execute();
 $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC) ?: [];
@@ -18,7 +33,7 @@ $negociacoes = (int)($summary['negociacoes'] ?? 0);
 $savingTotal = (float)($summary['saving_total'] ?? 0);
 $prorrogacoes = (int)($summary['prorrogacoes'] ?? 0);
 
-$rowsStmt = $conn->prepare("\n    SELECT\n        h.nome_hosp AS hospital,\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM(COALESCE(ng.saving,0)) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital\n    HAVING h.id_hospital IS NOT NULL\n    ORDER BY negociacoes DESC, saving_total DESC\n    LIMIT 10\n");
+$rowsStmt = $conn->prepare("\n    SELECT\n        h.nome_hosp AS hospital,\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM({$savingExpr}) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))\n    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital\n    HAVING h.id_hospital IS NOT NULL\n    ORDER BY negociacoes DESC, saving_total DESC\n    LIMIT 10\n");
 biBindParams($rowsStmt, $internParams);
 $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];

@@ -1223,7 +1223,7 @@ if (!empty($sessionIdUsuario)) {
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="./diversos/CoolAdmin-master/vendor/select2/select2.min.js"></script>
 <script src="./scripts/cadastro/general.js"></script>
-<script src="js/stepper.js"></script>
+<script src="<?= $BASE_URL ?>js/stepper.js?v=<?= rawurlencode(defined('APP_VERSION') ? APP_VERSION : '1') ?>"></script>
 <script src="js/show_internacao_visitas.js"></script>
 <script src="<?= $BASE_URL ?>js/contextual-assistant.js"></script>
 </script>

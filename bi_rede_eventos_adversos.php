@@ -73,7 +73,7 @@ $eventosMensal = array_values($eventosMensalMap);
 $taxaMensal = array_values($taxaMensalMap);
 ?>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
@@ -88,31 +88,43 @@ $taxaMensal = array_values($taxaMensalMap);
 
     <div class="bi-panel">
         <h3>Indicadores-chave</h3>
-        <div class="bi-kpis kpi-compact">
-            <div class="bi-kpi">
-                <small>Eventos adversos</small>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-exclamation-triangle"></i></span>
+                    <small>Taxa de eventos</small>
+                </div>
                 <strong><?= number_format($network['eventos_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-down"><i class="bi bi-activity"></i>Eventos por internação</span>
             </div>
-            <div class="bi-kpi">
-                <small>Internacoes com evento</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-clipboard2-heart"></i></span>
+                    <small>Internações com evento</small>
+                </div>
                 <strong><?= (int)$totals['eventos'] ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-list-check"></i>Casos sinalizados</span>
             </div>
-            <div class="bi-kpi">
-                <small>Total de internacoes</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-building"></i></span>
+                    <small>Total de internações</small>
+                </div>
                 <strong><?= (int)$totals['internacoes'] ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-hospital"></i>Base assistencial</span>
             </div>
         </div>
     </div>
 
     <div class="bi-panel">
         <h3>Eventos adversos por hospital</h3>
-        <div class="bi-chart">
+        <div class="bi-chart ie-chart-sm">
             <canvas id="chartEventos"></canvas>
         </div>
     </div>
     <div class="bi-panel">
         <h3>Número de eventos mensal e taxa (eventos/internações)</h3>
-        <div class="bi-chart">
+        <div class="bi-chart ie-chart-md">
             <canvas id="chartEventosMensal"></canvas>
         </div>
     </div>
@@ -162,6 +174,8 @@ function barChart(ctx, labels, data, color) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: false },
             scales: {
                 xAxes: [{ ticks: { fontColor: '#eaf6ff' }, gridLines: { color: 'rgba(255,255,255,0.1)' } }],
@@ -209,6 +223,8 @@ if (mensalLabels.length) {
             ]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: true, labels: { fontColor: '#eaf6ff' } },
             scales: {
                 xAxes: [{ ticks: { fontColor: '#eaf6ff' }, gridLines: { color: 'rgba(255,255,255,0.1)' } }],

@@ -39,47 +39,49 @@ function daysExclusive(int $startTs, int $endTs): int
 }
 function computeCoverageAndGaps(array $intervals, int $startTs, int $endTs): array
 {
-    if (!$intervals) {
-        return [0, daysExclusive($startTs, $endTs), [[date('d/m/Y', $startTs), date('d/m/Y', $endTs)]]];
+    $totalDays = daysExclusive($startTs, $endTs);
+    if ($totalDays <= 0) {
+        return [0, 0, []];
     }
+
+    if (!$intervals) {
+        return [0, $totalDays, [[date('d/m/Y', $startTs), date('d/m/Y', $endTs - 86400)]]];
+    }
+
     usort($intervals, fn($a, $b) => $a['s'] <=> $b['s']);
-    $coveredDays = 0;
-    $gaps = [];
-    $curS = $intervals[0]['s'];
-    $curE = $intervals[0]['e'];
-    foreach ($intervals as $idx => $it) {
-        if ($idx === 0) continue;
-        if ($it['s'] <= $curE) {
-            if ($it['e'] > $curE) $curE = $it['e'];
+    $merged = [];
+    foreach ($intervals as $it) {
+        if (empty($merged)) {
+            $merged[] = $it;
             continue;
         }
-        if ($curS > $startTs) {
-            $gapStart = $startTs;
-            $gapEnd = $curS;
-            if ($gapEnd > $gapStart) {
-                $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+        $lastIdx = count($merged) - 1;
+        if ($it['s'] <= $merged[$lastIdx]['e']) {
+            if ($it['e'] > $merged[$lastIdx]['e']) {
+                $merged[$lastIdx]['e'] = $it['e'];
             }
+            continue;
         }
-        $coveredDays += daysExclusive($curS, $curE);
-        $curS = $it['s'];
-        $curE = $it['e'];
+        $merged[] = $it;
     }
-    if ($curS > $startTs) {
-        $gapStart = $startTs;
-        $gapEnd = $curS;
-        if ($gapEnd > $gapStart) {
-            $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+
+    $coveredDays = 0;
+    $gaps = [];
+    $cursor = $startTs;
+    foreach ($merged as $range) {
+        if ($range['s'] > $cursor) {
+            $gaps[] = [date('d/m/Y', $cursor), date('d/m/Y', $range['s'] - 86400)];
         }
-    }
-    $coveredDays += daysExclusive($curS, $curE);
-    if ($curE < $endTs) {
-        $gapStart = $curE;
-        $gapEnd = $endTs;
-        if ($gapEnd > $gapStart) {
-            $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+        $coveredDays += daysExclusive($range['s'], $range['e']);
+        if ($range['e'] > $cursor) {
+            $cursor = $range['e'];
         }
     }
-    $totalDays = daysExclusive($startTs, $endTs);
+
+    if ($cursor < $endTs) {
+        $gaps[] = [date('d/m/Y', $cursor), date('d/m/Y', $endTs - 86400)];
+    }
+
     $missingDays = max(0, $totalDays - $coveredDays);
     return [$coveredDays, $missingDays, $gaps];
 }
@@ -100,11 +102,24 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
     $stmt->bindValue(':id', (int)$id_internacao, PDO::PARAM_INT);
     $stmt->execute();
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    if (!$rows) {
+        $stmt = $conn->prepare("
+            SELECT data_inicio_neg AS prorrog1_ini_pror, data_fim_neg AS prorrog1_fim_pror
+            FROM tb_negociacao
+            WHERE fk_id_int = :id
+              AND tipo_negociacao = 'PRORROGACAO_AUTOMATICA'
+            ORDER BY data_inicio_neg
+        ");
+        $stmt->bindValue(':id', (int)$id_internacao, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
     $intervals = [];
     foreach ($rows as $p) {
         $iniTs = dateToTs($p['prorrog1_ini_pror'] ?? null);
         if (!$iniTs) continue;
-        $fimTs = dateToTs($p['prorrog1_fim_pror'] ?? null) ?: $internEndTs;
+        $fimBaseTs = dateToTs($p['prorrog1_fim_pror'] ?? null) ?: ($internEndTs - 86400);
+        $fimTs = $fimBaseTs + 86400;
         if ($fimTs <= $internStartTs || $iniTs >= $internEndTs) continue;
         $iniTs = max($iniTs, $internStartTs);
         $fimTs = min($fimTs, $internEndTs);
@@ -199,6 +214,23 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
         border-radius: 999px;
         font-weight: 600;
         font-size: .75rem;
+    }
+
+    .alta-card .form-control,
+    .alta-card select.form-control {
+        min-height: 42px !important;
+        height: 42px !important;
+        padding: 8px 12px;
+        font-size: .9rem;
+        border-radius: 6px;
+        line-height: 24px;
+    }
+
+    .alta-card input[type="date"].form-control,
+    .alta-card input[type="time"].form-control,
+    .alta-card select.form-control {
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
     .alta-open-badge {
         background: #ffe3e3;
@@ -428,7 +460,7 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
 
             <div class="alta-actions">
                 <button id="cadastrar_alta" type="submit" class="btn btn-primary btn-submit-standard">
-                    <i style="font-size: 1rem;" name="type" value="edite" class="fa-solid fa-check edit-icon"></i>
+                    <i style="font-size: 1rem;" class="fas fa-check edit-icon"></i>
                     Alta
                 </button>
             </div>

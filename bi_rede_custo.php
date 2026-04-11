@@ -14,7 +14,7 @@ $chartLabels = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', $chartRows)
 $chartVals = array_map(fn($r) => round((float)($r['custo_final'] ?? 0), 0), $chartRows);
 ?>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
@@ -29,25 +29,37 @@ $chartVals = array_map(fn($r) => round((float)($r['custo_final'] ?? 0), 0), $cha
 
     <div class="bi-panel">
         <h3>Indicadores-chave</h3>
-        <div class="bi-kpis kpi-compact">
-            <div class="bi-kpi">
-                <small>Valor medio apresentado</small>
-                <strong><?= number_format($network['custo_apresentado'], 2, ',', '.') ?></strong>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-currency-dollar"></i></span>
+                    <small>Valor médio apresentado</small>
+                </div>
+                <strong>R$ <?= number_format($network['custo_apresentado'], 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-arrow-up-right"></i>Base da conta</span>
             </div>
-            <div class="bi-kpi">
-                <small>Valor medio final</small>
-                <strong><?= number_format($network['custo_final'], 2, ',', '.') ?></strong>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-wallet2"></i></span>
+                    <small>Valor médio final</small>
+                </div>
+                <strong>R$ <?= number_format($network['custo_final'], 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-cash-stack"></i>Valor autorizado</span>
             </div>
-            <div class="bi-kpi">
-                <small>Glosa media</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-percent"></i></span>
+                    <small>Glosa média</small>
+                </div>
                 <strong><?= number_format($network['glosa_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-down"><i class="bi bi-arrow-down-right"></i>Diferença apresentada x final</span>
             </div>
         </div>
     </div>
 
     <div class="bi-panel">
         <h3>Valor final por hospital</h3>
-        <div class="bi-chart">
+        <div class="bi-chart ie-chart-sm">
             <canvas id="chartCustoFinal"></canvas>
         </div>
     </div>
@@ -99,6 +111,8 @@ function barChart(ctx, labels, data, color, yTickCallback) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: false },
             scales: {
                 xAxes: [{ ticks: { fontColor: '#eaf6ff' }, gridLines: { color: 'rgba(255,255,255,0.1)' } }],

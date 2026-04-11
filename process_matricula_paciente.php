@@ -37,10 +37,23 @@ $pacienteDao = new pacienteDao($conn, $BASE_URL);
 
 $matricula = filter_input(INPUT_POST, "matricula");
 
-$result= $pacienteDao->validarMatriculaExistente($matricula);
+$result = $pacienteDao->validarMatriculaExistente($matricula);
+$exists = !empty($result);
 
-if(empty($result)){
-    echo 0;
-}else{
-    echo 1;
+if (!headers_sent()) {
+    header('Content-Type: application/json; charset=utf-8');
 }
+
+if (isset($__flowCtxAuto) && function_exists('flowLog')) {
+    flowLog($__flowCtxAuto, 'matricula.checked', 'INFO', [
+        'matricula' => (string) $matricula,
+        'exists' => $exists ? 1 : 0,
+        'matches' => is_array($result) ? count($result) : 0,
+    ]);
+}
+
+echo json_encode([
+    'success' => true,
+    'exists' => $exists,
+    'matches' => $result,
+], JSON_UNESCAPED_UNICODE);

@@ -409,6 +409,24 @@ if (class_exists('prorrogacaoDAO')) {
         $prorrogacoes = $prDAO->selectInternacaoProrrog((int)$id_internacao) ?: [];
     }
 }
+if (!$prorrogacoes && class_exists('negociacaoDAO')) {
+    $negFallbackStmt = $conn->prepare("
+        SELECT
+            0 AS id_prorrogacao,
+            troca_para AS acomod,
+            data_inicio_neg AS ini,
+            data_fim_neg AS fim,
+            qtd AS diarias,
+            'n' AS isolamento
+        FROM tb_negociacao
+        WHERE fk_id_int = :id
+          AND tipo_negociacao = 'PRORROGACAO_AUTOMATICA'
+        ORDER BY data_inicio_neg
+    ");
+    $negFallbackStmt->bindValue(':id', (int)$id_internacao, PDO::PARAM_INT);
+    $negFallbackStmt->execute();
+    $prorrogacoes = $negFallbackStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
 $pr_ini_raw = filter_input(INPUT_GET, 'pr_ini', FILTER_DEFAULT) ?: '';
 $pr_fim_raw = filter_input(INPUT_GET, 'pr_fim', FILTER_DEFAULT) ?: '';
 $pr_ini = ymd($pr_ini_raw);
@@ -510,6 +528,22 @@ if (class_exists('negociacaoDAO')) {
         $negociacoes = $negDAO->findByInternacao((int)$id_internacao) ?: [];
     }
 }
+if (!function_exists('negociacaoEhTrocaReal')) {
+    function negociacaoEhTrocaReal(array $n): bool
+    {
+        $tipo = (string)($n['tipo_negociacao'] ?? '');
+        if ($tipo !== 'PRORROGACAO_AUTOMATICA') {
+            return true;
+        }
+        $de = trim((string)after_dash($n['troca_de'] ?? ''));
+        $para = trim((string)after_dash($n['troca_para'] ?? ''));
+        if ($de === '' || $para === '') {
+            return false;
+        }
+        return mb_strtolower($de, 'UTF-8') !== mb_strtolower($para, 'UTF-8');
+    }
+}
+$negociacoes = array_values(array_filter($negociacoes, 'negociacaoEhTrocaReal'));
 $neg_ini_raw = filter_input(INPUT_GET, 'neg_ini', FILTER_DEFAULT) ?: '';
 $neg_fim_raw = filter_input(INPUT_GET, 'neg_fim', FILTER_DEFAULT) ?: '';
 $neg_ini = ymd($neg_ini_raw);

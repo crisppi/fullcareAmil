@@ -108,14 +108,14 @@ function labelsAndValues(array $rows): array
 [$labelsMp, $valuesMp] = labelsAndValues($rowsMp);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Dashboard Antecedente</h1>
         <div class="bi-header-actions">
@@ -192,22 +192,22 @@ function labelsAndValues(array $rows): array
     <div class="bi-grid fixed-2" style="margin-top:16px;">
         <div class="bi-panel">
             <h3>Custo por antecedente</h3>
-            <div class="bi-chart"><canvas id="chartCusto"></canvas></div>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartCusto"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>Internações por antecedente</h3>
-            <div class="bi-chart"><canvas id="chartIntern"></canvas></div>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartIntern"></canvas></div>
         </div>
     </div>
 
     <div class="bi-grid fixed-2" style="margin-top:16px;">
         <div class="bi-panel">
             <h3>MP por antecedente</h3>
-            <div class="bi-chart"><canvas id="chartMp"></canvas></div>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartMp"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>Diárias por antecedente</h3>
-            <div class="bi-chart"><canvas id="chartDiárias"></canvas></div>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartDiárias"></canvas></div>
         </div>
     </div>
 </div>

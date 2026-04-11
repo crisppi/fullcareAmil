@@ -228,11 +228,9 @@
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
 
                                             <li>
-                                                <a class="btn btn-default" style="font-size: .9rem;"
+                                                <a class="dropdown-item" style="font-size: .9rem;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/seguradoras/editar/' . (int) $id_seguradora, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                        name="type" value="edite"
-                                                        class="far fa-edit edit-icon"></i>Editar
+                                                    <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>
                                             </li>
                                             <!-- <a href="<?= $BASE_URL ?>show_paciente.php?id_paciente=<?= $id_paciente ?>"><i style="color:red; margin-left:10px" name="type" value="edite" class="d-inline-block bi bi-x-square-fill delete-icon"></i></a> -->

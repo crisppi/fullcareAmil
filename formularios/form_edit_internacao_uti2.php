@@ -2,7 +2,7 @@
  $u = $utiList[0] ?? [];
  ?>
 
-<div id="container-uti" style="margin:5px">
+<div id="container-uti" style="display:none; margin:5px">
     <!-- DADOS PARA FORMULÁRIO UTI -->
     <div class="form-group row">
 

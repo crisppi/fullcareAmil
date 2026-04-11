@@ -19,7 +19,7 @@ $chartLabels = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', $chartRows)
 $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1), $chartRows);
 ?>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
@@ -34,41 +34,48 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
 
     <div class="bi-panel">
         <h3>Indicadores-chave</h3>
-        <div class="bi-kpis">
-            <div class="bi-kpi">
-                <small>Custo medio apresentado</small>
-                <strong><?= number_format($network['custo_apresentado'], 2, ',', '.') ?></strong>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-currency-dollar"></i></span><small>Custo médio apresentado</small></div>
+                <strong>R$ <?= number_format($network['custo_apresentado'], 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-receipt"></i>Valor inicial</span>
             </div>
-            <div class="bi-kpi">
-                <small>Custo medio final</small>
-                <strong><?= number_format($network['custo_final'], 2, ',', '.') ?></strong>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-wallet2"></i></span><small>Custo médio final</small></div>
+                <strong>R$ <?= number_format($network['custo_final'], 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-check2-square"></i>Autorizado</span>
             </div>
-            <div class="bi-kpi">
-                <small>Glosa media</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-percent"></i></span><small>Glosa média</small></div>
                 <strong><?= number_format($network['glosa_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-down"><i class="bi bi-arrow-down-right"></i>Impacto financeiro</span>
             </div>
-            <div class="bi-kpi">
-                <small>Rejeicao capeante</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-slash-circle"></i></span><small>Rejeição capeante</small></div>
                 <strong><?= number_format($network['rejeicao_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-down"><i class="bi bi-x-octagon"></i>Contas paradas</span>
             </div>
-            <div class="bi-kpi">
-                <small>Permanencia media</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-clock-history"></i></span><small>Permanência média</small></div>
                 <strong><?= number_format($network['permanencia_media'], 1, ',', '.') ?> d</strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-hourglass-split"></i>Tempo assistencial</span>
             </div>
-            <div class="bi-kpi">
-                <small>Eventos adversos</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-exclamation-triangle"></i></span><small>Eventos adversos</small></div>
                 <strong><?= number_format($network['eventos_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-down"><i class="bi bi-activity"></i>Indicador de qualidade</span>
             </div>
-            <div class="bi-kpi">
-                <small>Readmissao 30d</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head"><span class="kpi-card-v2-icon"><i class="bi bi-arrow-repeat"></i></span><small>Readmissão 30d</small></div>
                 <strong><?= number_format($network['readm_rate'] * 100, 1, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-diagram-2"></i>Retorno em 30 dias</span>
             </div>
         </div>
     </div>
 
     <div class="bi-panel">
         <h3>Permanencia media por hospital</h3>
-        <div class="bi-chart">
+        <div class="bi-chart ie-chart-sm">
             <canvas id="chartPermanenciaRede"></canvas>
         </div>
     </div>
@@ -130,6 +137,8 @@ function barChart(ctx, labels, data, color, yTickCallback) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: { display: false },
             scales: {
                 xAxes: [{ ticks: { fontColor: '#eaf6ff' }, gridLines: { color: 'rgba(255,255,255,0.1)' } }],

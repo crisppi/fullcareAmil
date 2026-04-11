@@ -711,6 +711,15 @@ function myFunctionSelected() {
     }
 }
 
+function syncHospitalHiddenField() {
+    const select = document.getElementById("hospital_selected");
+    const inputHospital = document.getElementById("fk_hospital_int");
+    if (!select || !inputHospital) return "";
+    const id = select.value || "";
+    inputHospital.value = id;
+    return id;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const pacienteSelect = document.getElementById('fk_paciente_int');
     const hospitalSelect = document.getElementById('hospital_selected');
@@ -718,6 +727,23 @@ document.addEventListener('DOMContentLoaded', function() {
         patientInsightDisplay.setEnabled(!!(pacienteSelect && pacienteSelect.value));
     }
     syncHospitalInsightAvailability(!!(hospitalSelect && hospitalSelect.value));
+    syncHospitalHiddenField();
+
+    if (hospitalSelect) {
+        hospitalSelect.addEventListener('change', function() {
+            myFunctionSelected();
+            syncHospitalHiddenField();
+        });
+    }
+
+    if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.on === 'function') {
+        window.jQuery(function() {
+            window.jQuery('#hospital_selected').on('changed.bs.select', function() {
+                myFunctionSelected();
+                syncHospitalHiddenField();
+            });
+        });
+    }
 });
 
 // Estilo do select "relatório detalhado"
@@ -1269,6 +1295,7 @@ document.addEventListener("DOMContentLoaded", function() {
 // formulario ajax para envio form sem refresh
 $("#myForm").submit(function(event) {
     event.preventDefault(); // Impede o envio tradicional do formulário
+    syncHospitalHiddenField();
     let post_url = $(this).attr("action"); // Obtém a URL de ação do formulário
     let request_method = $(this).attr("method"); // Obtém o método do formulário (GET/POST)
     let form_data = new FormData(this); // Cria um objeto FormData com os dados do formulário
@@ -1360,6 +1387,21 @@ $("#myForm").submit(function(event) {
         }
     }
 
+    const showSubmitAlert = function(type, message, timeoutMs = 3000) {
+        const $alert = $('#alert');
+        if (!$alert.length) return;
+        $alert.stop(true, true);
+        $alert.removeClass("alert-success alert-danger")
+            .addClass(type === 'success' ? 'alert-success' : 'alert-danger')
+            .html(message)
+            .fadeIn();
+        if (timeoutMs > 0) {
+            setTimeout(function() {
+                $alert.fadeOut('Slow');
+            }, timeoutMs);
+        }
+    };
+
 
     $.ajax({
         url: post_url,
@@ -1370,57 +1412,37 @@ $("#myForm").submit(function(event) {
         success: function(result) {
             const resposta = String(result || '').trim();
             if (resposta === 'paciente_internado') {
-                $('#alert').removeClass("alert-success").addClass("alert-danger");
-                $('#alert').fadeIn().html(
-                    "Paciente possui internação ativa e precisa confirmar retroativa.");
-                setTimeout(function() {
-                    $('#alert').fadeOut('Slow');
-                }, 3000);
+                showSubmitAlert('error', "Paciente possui internação ativa e precisa confirmar retroativa.");
                 return;
             }
             if (resposta === 'retroativa_sem_alta') {
-                $('#alert').removeClass("alert-success").addClass("alert-danger");
-                $('#alert').fadeIn().html(
-                    "Para retroativa, marque 'Internado = Não' e informe a data/motivo da alta."
-                );
-                setTimeout(function() {
-                    $('#alert').fadeOut('Slow');
-                }, 3500);
+                showSubmitAlert('error', "Para retroativa, marque 'Internado = Não' e informe a data/motivo da alta.", 3500);
                 return;
             }
             if (resposta === 'senha_duplicada') {
-                $('#alert').removeClass("alert-success").addClass("alert-danger");
-                $('#alert').fadeIn().html("Esta senha já está cadastrada para outra internação.");
-                setTimeout(function() {
-                    $('#alert').fadeOut('Slow');
-                }, 3500);
+                showSubmitAlert('error', "Esta senha já está cadastrada para outra internação.", 3500);
+                return;
+            }
+            if (resposta === 'hospital_required') {
+                showSubmitAlert('error', "Selecione um hospital antes de cadastrar.", 3500);
                 return;
             }
 
             if (resposta === '0') {
-                $('#alert').removeClass("alert-success").addClass("alert-danger");
-                $('#alert').fadeIn().html("Paciente possui internação ativa");
-                setTimeout(function() {
-                    $('#alert').fadeOut('Slow');
-                }, 2000);
+                showSubmitAlert('error', "Paciente possui internação ativa", 2000);
                 return;
             }
 
             // Sucesso (resposta vazia ou texto padrão)
             {
-                // Increment the reg_int value
+                showSubmitAlert('success', "Cadastrado com sucesso", 3000);
+
                 const regIntInput = $("#RegInt");
-                const currentRegInt = parseInt(regIntInput.val());
-                const newRegInt = currentRegInt + 1;
-
-                regIntInput.val(newRegInt);
-
-                // . Success alert
-                $('#alert').removeClass("alert-danger").addClass("alert-success");
-                $('#alert').fadeIn().html("Cadastrado com sucesso");
-                setTimeout(function() {
-                    $('#alert').fadeOut('Slow');
-                }, 3000);
+                if (regIntInput.length) {
+                    const currentRegInt = parseInt(regIntInput.val(), 10);
+                    const newRegInt = Number.isFinite(currentRegInt) ? currentRegInt + 1 : 1;
+                    regIntInput.val(newRegInt);
+                }
 
                 // 2. Resetando os campos de input, select e textarea EXCETO os campos `hidden` e o select do hospital
                 document.querySelectorAll('input, select, textarea').forEach((element) => {
@@ -1549,6 +1571,11 @@ $("#myForm").submit(function(event) {
 
         error: function(xhr, status, error) {
             console.error("AJAX Error:", status, error);
+            const responseText = String(xhr?.responseText || '').trim();
+            const msg = responseText
+                ? "Falha ao cadastrar. " + responseText.slice(0, 180)
+                : "Falha ao cadastrar. Verifique os dados e tente novamente.";
+            showSubmitAlert('error', msg, 5000);
         }
     });
 });

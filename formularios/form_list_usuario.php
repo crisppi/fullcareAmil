@@ -282,26 +282,22 @@ if ($qtdIntItens > $limite) {
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="dropdown-item" style="font-size: .9rem;"
                                                 onclick="openModal('<?= $BASE_URL ?>show_usuario.php?id_usuario=<?= $id_usuario ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye"
+                                                    style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
                                         </li>
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="dropdown-item" style="font-size: .9rem;"
                                                 onclick="openModal('<?= $BASE_URL ?>edit_usuario.php?id_usuario=<?= $id_usuario ?>')"
                                                 data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                    name="type" value="edite"
-                                                    class="far fa-edit edit-icon"></i>Editar</button>
+                                                    class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar</button>
                                         </li>
                                         <li>
 
-                                            <button onclick="resetSenha('<?= $id_usuario ?>')" class="btn btn-default"
+                                            <button onclick="resetSenha('<?= $id_usuario ?>')" class="dropdown-item"
                                                 style="font-size: .9rem;"><i
-                                                    style="font-size: 1rem;margin-right:5px; color: purple;" name="type"
-                                                    value="edite"
-                                                    class="fa-solid fa-arrow-rotate-left edit-icon"></i>Resetar
+                                                    class="bi bi-arrow-clockwise" style="font-size:1rem;margin-right:8px;color:purple;"></i>Resetar
                                                 Senha</button>
                                         </li>
                                     </ul>

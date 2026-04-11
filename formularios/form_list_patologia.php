@@ -191,18 +191,16 @@ $query = $patologia->selectAllPatologia($where, $ordenar, $obLimite);
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="dropdown-item" style="font-size: .9rem;"
                                                 onclick="openModal('<?= $BASE_URL ?>show_patologia.php?id_patologia=<?= $id_patologia ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye"
+                                                    style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
                                         </li>
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="dropdown-item" style="font-size: .9rem;"
                                                 onclick="openModalPat('<?= $BASE_URL ?>edit_patologia.php?id_patologia=<?= $id_patologia ?>')"
                                                 data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                    name="type" value="edite"
-                                                    class="far fa-edit edit-icon"></i>Editar</button>
+                                                    class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar</button>
                                         </li>
                                         <!-- <li>
                                             <button class="btn btn-default" style="font-size: .9rem;"

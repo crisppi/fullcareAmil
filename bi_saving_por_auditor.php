@@ -19,6 +19,16 @@ $auditorId = filter_input(INPUT_GET, 'auditor_id', FILTER_VALIDATE_INT) ?: null;
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")->fetchAll(PDO::FETCH_ASSOC);
 $auditores = $conn->query("SELECT id_usuario, usuario_user FROM tb_user ORDER BY usuario_user")->fetchAll(PDO::FETCH_ASSOC);
 $auditorOptions = array_column($auditores, 'usuario_user', 'id_usuario');
+$savingExpr = "COALESCE(
+    NULLIF(ng.saving, 0),
+    CASE
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE 'TROCA%' THEN (COALESCE(aco_de.valor_aco, 0) - COALESCE(aco_para.valor_aco, 0)) * COALESCE(ng.qtd, 0)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) = 'ALTA TARDIA APTO' THEN COALESCE(NULLIF(aco_para.valor_aco, 0), COALESCE(aco_de.valor_aco, 0)) * COALESCE(NULLIF(ng.qtd, 0), 1)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE '%1/2 DIARIA%' THEN (COALESCE(aco_de.valor_aco, 0) / 2) * COALESCE(ng.qtd, 0)
+        ELSE COALESCE(aco_de.valor_aco, 0) * COALESCE(ng.qtd, 0)
+    END,
+    0
+)";
 
 if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $stmtAno = $conn->query("SELECT MAX(YEAR(data_inicio_neg)) AS ano FROM tb_negociacao WHERE data_inicio_neg IS NOT NULL AND data_inicio_neg <> '0000-00-00'");
@@ -43,11 +53,15 @@ if ($auditorId) {
 
 $sqlTotals = "
     SELECT
-        SUM(ng.saving) AS total_saving,
+        SUM({$savingExpr}) AS total_saving,
         COUNT(*) AS total_registros,
-        AVG(ng.saving) AS avg_saving
+        AVG({$savingExpr}) AS avg_saving
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$where}
 ";
 
@@ -66,11 +80,15 @@ $sqlAuditorResumo = "
     SELECT
         ng.fk_usuario_neg AS auditor_id,
         COALESCE(u.usuario_user, 'Sem auditor') AS auditor,
-        SUM(ng.saving) AS total_saving,
+        SUM({$savingExpr}) AS total_saving,
         COUNT(*) AS total_registros
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
     LEFT JOIN tb_user u ON u.id_usuario = ng.fk_usuario_neg
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$where}
     GROUP BY auditor_id, auditor
     ORDER BY total_saving DESC
@@ -114,9 +132,13 @@ $sqlMonthly = "
     SELECT
         MONTH(ng.data_inicio_neg) AS mes,
         ng.fk_usuario_neg AS auditor_id,
-        SUM(ng.saving) AS total_saving
+        SUM({$savingExpr}) AS total_saving
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$where}
     GROUP BY mes, auditor_id
     ORDER BY mes, auditor_id
@@ -182,16 +204,17 @@ foreach ($timelineAuditores as $auditor) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Audit Saving</h1>
         <div class="bi-header-actions">
             <span class="text-muted small">Filtro: <?= e($selectedAuditorLabel) ?> <?= e($hospitalId ? '| Hospital ID ' . $hospitalId : '') ?></span>
+            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>bi/negociacoes-detalhadas" title="Negociações Detalhadas">Negociações</a>
             <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>bi/saving" title="Dashboard Saving">Saving</a>
         </div>
     </div>
@@ -229,18 +252,30 @@ foreach ($timelineAuditores as $auditor) {
     </form>
 
     <div class="bi-panel">
-        <div class="bi-kpis">
-            <div class="bi-kpi">
-                <small>Total saving</small>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-piggy-bank"></i></span>
+                    <small>Total saving</small>
+                </div>
                 <strong>R$ <?= number_format($totalSaving, 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-cash-stack"></i>Resultado consolidado</span>
             </div>
-            <div class="bi-kpi">
-                <small>Quantidade de negociações</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-list-ol"></i></span>
+                    <small>Negociações</small>
+                </div>
                 <strong><?= $totalRegistros ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-file-earmark-bar-graph"></i>Itens no período</span>
             </div>
-            <div class="bi-kpi">
-                <small>Ticket médio</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-calculator"></i></span>
+                    <small>Ticket médio</small>
+                </div>
                 <strong>R$ <?= number_format($mediaSaving, 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-graph-up"></i>Média por negociação</span>
             </div>
         </div>
     </div>
@@ -283,7 +318,7 @@ foreach ($timelineAuditores as $auditor) {
 
     <div class="bi-panel">
         <h3>Evolução mensal <?= $auditorId ? 'de ' . e($selectedAuditorLabel) : 'do saving' ?></h3>
-        <div class="bi-chart" style="min-height:320px;">
+        <div class="bi-chart ie-chart-md">
             <canvas id="chartSavingTimeline"></canvas>
         </div>
     </div>

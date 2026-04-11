@@ -248,12 +248,12 @@ $title = $modo === 'glosa' ? 'Glosa por Auditor' : 'Contas Auditadas por Auditor
 $ieSlug = $modo === 'glosa' ? 'glosa-auditor' : 'contas-auditadas-auditor';
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260307">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260307"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page bi-auditor-page">
     <div class="bi-header">
         <h1 class="bi-title"><?= e($title) ?></h1>
         <div class="bi-header-actions">
@@ -285,9 +285,23 @@ $ieSlug = $modo === 'glosa' ? 'glosa-auditor' : 'contas-auditadas-auditor';
     </form>
 
     <div class="bi-panel">
-        <div class="bi-kpis kpi-compact">
-            <div class="bi-kpi"><small>Contas auditadas</small><strong><?= number_format($totalContas, 0, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Glosa total</small><strong>R$ <?= number_format($totalGlosa, 2, ',', '.') ?></strong></div>
+        <div class="bi-kpis kpi-auditor-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-clipboard2-check"></i></span>
+                    <small>Contas auditadas</small>
+                </div>
+                <strong><?= number_format($totalContas, 0, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-arrow-up-right"></i>Volume consolidado</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-cash-stack"></i></span>
+                    <small>Glosa total</small>
+                </div>
+                <strong>R$ <?= number_format($totalGlosa, 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-graph-up-arrow"></i>Período filtrado</span>
+            </div>
         </div>
     </div>
 
@@ -330,11 +344,11 @@ $ieSlug = $modo === 'glosa' ? 'glosa-auditor' : 'contas-auditadas-auditor';
 </div>
 
 <style>
-.ie-chart-main { height: 360px; }
-.ie-chart-monthly { height: 300px; }
+.ie-chart-main { height: 240px; }
+.ie-chart-monthly { height: 220px; }
 @media (max-width: 900px) {
-  .ie-chart-main { height: 320px; }
-  .ie-chart-monthly { height: 260px; }
+  .ie-chart-main { height: 220px; }
+  .ie-chart-monthly { height: 200px; }
 }
 </style>
 

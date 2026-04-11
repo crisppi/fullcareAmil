@@ -45,6 +45,29 @@ if (!function_exists('fullcare_is_gestor_seguradora')) {
 }
 
 if (!function_exists('fullcare_has_bi_access')) {
+    function fullcare_is_bi_allowed_user(): bool
+    {
+        $candidates = [
+            fullcare_norm_role($_SESSION['usuario_user'] ?? ''),
+            fullcare_norm_role($_SESSION['login_user'] ?? ''),
+            fullcare_norm_role($_SESSION['email_user'] ?? ''),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if ($candidate === '') {
+                continue;
+            }
+            if (
+                $candidate === 'robertocrisppi'
+                || strpos($candidate, 'robertocrisppi') !== false
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function fullcare_is_diretoria_bi(): bool
     {
         $cargo = fullcare_norm_role($_SESSION['cargo'] ?? '');
@@ -66,6 +89,9 @@ if (!function_exists('fullcare_has_bi_access')) {
 
         if ($idUsuario <= 0 || $ativo !== 's') {
             return false;
+        }
+        if (fullcare_is_bi_allowed_user()) {
+            return true;
         }
         if (!fullcare_is_gestor_seguradora() && !fullcare_is_diretoria_bi()) {
             return false;
@@ -116,7 +142,7 @@ if (!function_exists('fullcare_bi_deny_redirect')) {
         }
         $_SESSION['mensagem'] = 'Acesso ao BI permitido para gestor de seguradora e diretoria.';
         $_SESSION['mensagem_tipo'] = 'danger';
-        header('Location: dashboard', true, 303);
+        header('Location: menu_app.php', true, 303);
         exit;
     }
 }

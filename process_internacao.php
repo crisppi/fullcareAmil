@@ -85,6 +85,35 @@ if (!function_exists('limitInputLength')) {
     }
 }
 
+if (!function_exists('resolvePostedHospitalId')) {
+    function resolvePostedHospitalId(): ?int
+    {
+        $fkHospital = filter_input(INPUT_POST, "fk_hospital_int", FILTER_VALIDATE_INT);
+        if ($fkHospital !== false && $fkHospital !== null && $fkHospital > 0) {
+            return $fkHospital;
+        }
+
+        $fallbackHospital = filter_input(INPUT_POST, "hospital_selected", FILTER_VALIDATE_INT);
+        if ($fallbackHospital !== false && $fallbackHospital !== null && $fallbackHospital > 0) {
+            return $fallbackHospital;
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('resolveOptionalForeignKey')) {
+    function resolveOptionalForeignKey(string $fieldName): ?int
+    {
+        $value = filter_input(INPUT_POST, $fieldName, FILTER_VALIDATE_INT);
+        if ($value === false || $value === null || $value <= 0) {
+            return null;
+        }
+
+        return (int)$value;
+    }
+}
+
 if (!function_exists('internacaoCreateDebugLog')) {
     function internacaoCreateDebugLog(string $message): void
     {
@@ -212,16 +241,16 @@ if ($type === "create") {
     );
 
     // Receber os dados dos inputs
-    $fk_hospital_int = filter_input(INPUT_POST, "fk_hospital_int");
+    $fk_hospital_int = resolvePostedHospitalId();
     if (!$fk_hospital_int) {
         flowLog($flowCtx, 'create.validation', 'WARN', ['error' => 'hospital_required']);
         echo "hospital_required";
         exit;
     }
     $fk_paciente_int = filter_input(INPUT_POST, "fk_paciente_int");
-    $fk_patologia_int = filter_input(INPUT_POST, "fk_patologia_int") ?: 1;
-    $fk_cid_int = filter_input(INPUT_POST, "fk_cid_int") ?: 1;
-    $fk_patologia2 = filter_input(INPUT_POST, "fk_patologia2") ?: 1;
+    $fk_patologia_int = resolveOptionalForeignKey("fk_patologia_int");
+    $fk_cid_int = resolveOptionalForeignKey("fk_cid_int");
+    $fk_patologia2 = resolveOptionalForeignKey("fk_patologia2");
     $retroativa_confirmada = filter_input(INPUT_POST, "retroativa_confirmada");
     $isRetroativa = in_array(strtolower((string) $retroativa_confirmada), ['1', 'true', 's'], true);
 
@@ -907,16 +936,16 @@ if ($type === "create") {
 if ($type == "update") {
     flowLog($flowCtx, 'update.start', 'INFO');
     // Receber os dados dos inputs
-    $fk_hospital_int = filter_input(INPUT_POST, "fk_hospital_int");
+    $fk_hospital_int = resolvePostedHospitalId();
     if (!$fk_hospital_int) {
         flowLog($flowCtx, 'update.validation', 'WARN', ['error' => 'hospital_required']);
         echo "hospital_required";
         exit;
     }
     $fk_paciente_int = filter_input(INPUT_POST, "fk_paciente_int");
-    $fk_patologia_int = filter_input(INPUT_POST, "fk_patologia_int") ?: 1;
-    $fk_cid_int = filter_input(INPUT_POST, "fk_cid_int") ?: 1;
-    $fk_patologia2 = filter_input(INPUT_POST, "fk_patologia2") ?: 1;
+    $fk_patologia_int = resolveOptionalForeignKey("fk_patologia_int");
+    $fk_cid_int = resolveOptionalForeignKey("fk_cid_int");
+    $fk_patologia2 = resolveOptionalForeignKey("fk_patologia2");
     $internado_int = filter_input(INPUT_POST, "internado_int");
     $modo_internacao_int = filter_input(INPUT_POST, "modo_internacao_int");
     $tipo_admissao_int = filter_input(INPUT_POST, "tipo_admissao_int");

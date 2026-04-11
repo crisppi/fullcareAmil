@@ -386,9 +386,17 @@ class EstipulanteDAO implements EstipulanteDAOInterface
 
     public function selectAllestipulante($where = null, $order = null, $limit = null) // funcao filtrar apenas estipulantes que nao foram deletados
     {
-        //DADOS DA QUERY
-        $where = strlen($where) ? 'WHERE ' . $where : '';
-        $where = $where . ' AND deletado_est <> "s" '; // filtrar apenas os etipulantes que nao foram deletados
+        // DADOS DA QUERY
+        $condicoes = [];
+
+        if (strlen((string) $where)) {
+            $condicoes[] = $where;
+        }
+
+        // Filtra apenas estipulantes que nao foram deletados.
+        $condicoes[] = '(deletado_est <> "s" OR deletado_est IS NULL OR deletado_est = "")';
+
+        $where = 'WHERE ' . implode(' AND ', $condicoes);
 
         $order = strlen($order) ? 'ORDER BY ' . $order : '';
         $limit = strlen($limit) ? 'LIMIT ' . $limit : '';

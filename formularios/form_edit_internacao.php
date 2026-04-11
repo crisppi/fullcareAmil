@@ -13,6 +13,8 @@
 
     include_once("models/hospital.php");
     include_once("dao/hospitalDao.php");
+    include_once("models/acomodacao.php");
+    include_once("dao/acomodacaoDao.php");
 
     include_once("models/patologia.php");
     include_once("dao/patologiaDao.php");
@@ -248,6 +250,10 @@
     $int_detalhes = $detalhesDao->findById($intern['id_internacao']);
     $ctl_detalhes = $detalhesDao->findById($intern['id_internacao']);
     $int_hospital = $hospital_geral->findById($intern['fk_hospital_int']);
+    if (!isset($acomodacoesNegoc) || !is_array($acomodacoesNegoc) || !$acomodacoesNegoc) {
+        $acomodacaoDaoEdit = new acomodacaoDAO($conn, $BASE_URL);
+        $acomodacoesNegoc = $acomodacaoDaoEdit->findGeralByHospital((int)($intern['fk_hospital_int'] ?? 0));
+    }
     $tussInt = $tuss_int->findByIdIntern($intern['id_internacao'] ?? 0);
     $int_gestao = $gestao->findByIdInt($intern['id_internacao']);
 
@@ -305,13 +311,15 @@
             || trim((string)($row['saida'] ?? '')) !== ''
             || trim((string)($row['motivo_uti'] ?? '')) !== ''
             || trim((string)($row['internado_uti'] ?? '')) !== '';
-    }))) || (($intern['acomodacao_int'] ?? '') === 'UTI');
+    })));
     $hasProrrogReg = !empty(array_filter($prorList ?? [], static function ($row) {
         $row = (array)$row;
         return trim((string)($row['acomod'] ?? '')) !== ''
             || trim((string)($row['ini'] ?? '')) !== ''
             || trim((string)($row['fim'] ?? '')) !== '';
     }));
+    $activeEditSection = strtolower(trim((string)($_GET['section'] ?? '')));
+    $forceProrrogSection = ($activeEditSection === 'prorrog');
     $hasNegocReg = !empty(array_filter($negociacoesInt ?? [], static function ($row) {
         $row = (array)$row;
         return trim((string)($row['tipo_negociacao'] ?? '')) !== ''
@@ -319,6 +327,16 @@
             || trim((string)($row['troca_de'] ?? '')) !== ''
             || trim((string)($row['troca_para'] ?? '')) !== '';
     }));
+
+    if (!function_exists('savedIndicator')) {
+        function savedIndicator(bool $hasData, string $label): string
+        {
+            if (!$hasData) {
+                return '';
+            }
+            return '<span class="saved-dot" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '"></span>';
+        }
+    }
 
     ?>
 
@@ -403,6 +421,18 @@
         .assist-clear-btn:hover {
             background: rgba(94, 35, 99, 0.18);
             color: #4b1850;
+        }
+
+        .saved-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            margin-left: 6px;
+            border-radius: 999px;
+            background: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18);
+            vertical-align: middle;
+            cursor: help;
         }
 
         @media (max-width: 991.98px) {
@@ -802,51 +832,51 @@
                         </div>
                         <div class="tabelas-selects d-flex flex-wrap justify-content-between align-items-end">
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="relatorio-detalhado">Relatório detalhado</label>
+                                <label class="control-label" style="font-weight: bold;" for="relatorio-detalhado">Relatório detalhado<?= savedIndicator($hasDetalhesReg, 'Existem dados salvos em Relatório detalhado') ?></label>
                                 <select class="input-lg-fullcare form-control detail-select" id="relatorio-detalhado" name="relatorio-detalhado">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasDetalhesReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasDetalhesReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss</label>
+                                <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss<?= savedIndicator($hasTussReg, 'Existem dados salvos em Tuss') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_tuss" name="select_tuss">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasTussReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasTussReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação</label>
+                                <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação<?= savedIndicator($hasProrrogReg, 'Existem dados salvos em Prorrogação') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_prorrog" name="select_prorrog">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasProrrogReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasProrrogReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial</label>
+                                <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial<?= savedIndicator($hasGestaoReg, 'Existem dados salvos em Gestão Assistencial') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_gestao" name="select_gestao">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasGestaoReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasGestaoReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_uti">UTI</label>
+                                <label class="control-label" style="font-weight: bold;" for="select_uti">UTI<?= savedIndicator($hasUtiReg, 'Existem dados salvos em UTI') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_uti" name="select_uti">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasUtiReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasUtiReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações</label>
+                                <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações<?= savedIndicator($hasNegocReg, 'Existem dados salvos em Negociações') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
                                     <option value="">Selecione</option>
-                                    <option value="s" <?= $hasNegocReg ? 'selected' : '' ?>>Sim</option>
-                                    <option value="n" <?= !$hasNegocReg ? 'selected' : '' ?>>Não</option>
+                                    <option value="s">Sim</option>
+                                    <option value="n" selected>Não</option>
                                 </select>
                             </div>
                         </div>
@@ -1252,22 +1282,7 @@
             setupToggle('select_negoc', 'container-negoc');
             setupDetalhesToggle();
 
-            (function() {
-                var selectUti = document.getElementById('select_uti');
-                var acomEl = document.getElementById('acomodacao_int');
-                var containerUti = document.getElementById('container-uti');
-                if (!containerUti) return;
-
-                function aplicarUti() {
-                    var viaSelect = selectUti && selectUti.value === 's';
-                    var viaAcomod = acomEl && acomEl.value === 'UTI';
-                    containerUti.style.display = (viaSelect || viaAcomod) ? 'block' : 'none';
-                }
-
-                aplicarUti();
-                if (selectUti) selectUti.addEventListener('change', aplicarUti);
-                if (acomEl) acomEl.addEventListener('change', aplicarUti);
-            })();
+            setupToggle('select_uti', 'container-uti');
         });
     </script>
     <script>
@@ -1304,15 +1319,6 @@
     <script src="js/select_internacao.js"></script>
 
     <script>
-        // mostrar div de uti caso alterar acaomodacao int para UTI
-        document.getElementById("acomodacao_int").addEventListener("change", function() {
-            var divUti = document.querySelector("#container-uti");
-            if (this.value === "UTI") {
-                divUti.style.display = "block";
-            } else {
-                divUti.style.display = "none";
-            }
-        });
         let pacienteStatus = null; // Variável global para armazenar o status do paciente
 
         function teste() {
@@ -1387,6 +1393,8 @@
 
     <script>
         $(document).ready(function() {
+            const currentHospitalId = <?= (int)($intern['fk_hospital_int'] ?? 0) ?>;
+
             // Evento de mudança para o hospital selecionado
             $('#hospital_selected').on('change', function() {
 
@@ -1434,20 +1442,67 @@
 
             // Função para popular os selects "troca_de" e "troca_para" com as acomodações recebidas
             function populateSelects(acomodacoes) {
+                function normalizeAcomod(v) {
+                    const raw = (v || '').toString().trim();
+                    if (!raw) return '';
+                    const parts = raw.split('-');
+                    return (parts.length > 1 ? parts.slice(1).join('-') : raw).trim().toLowerCase();
+                }
+
+                window.fcNegValMap = window.fcNegValMap || {};
+
                 let options = '<option value="">Selecione a Acomodação</option>';
                 acomodacoes.forEach(ac => {
-                    options +=
-                        `<option value="${ac.id_acomodacao}-${ac.acomodacao_aco}" data-valor="${ac.valor_aco}">${ac.acomodacao_aco}</option>`;
+                    const value = `${ac.id_acomodacao}-${ac.acomodacao_aco}`;
+                    const label = `${ac.acomodacao_aco || ''}`;
+                    const valor = `${ac.valor_aco || 0}`;
+                    options += `<option value="${value}" data-valor="${valor}">${label}</option>`;
+
+                    const norm = normalizeAcomod(label);
+                    const valorNum = parseFloat(String(ac.valor_aco || '0').replace(',', '.')) || 0;
+                    if (norm.indexOf('uti') !== -1) window.fcNegValMap['UTI'] = valorNum;
+                    if (norm.indexOf('apto') !== -1 || norm.indexOf('apart') !== -1 || norm.indexOf('enferm') !== -1) {
+                        window.fcNegValMap['Apto'] = valorNum;
+                    }
+                    if (norm.indexOf('semi') !== -1) {
+                        window.fcNegValMap['Semi'] = valorNum;
+                    }
                 });
 
-                // Atualiza os selects com as novas opções
-                $('select[name="troca_de"]').html(options);
-                $('select[name="troca_para"]').html(options);
+                $('select[name="troca_de"], select[name="troca_para"]').each(function() {
+                    const $select = $(this);
+                    const currentRaw = ($select.val() || $select.data('current') || '').toString().trim();
+                    const currentNorm = normalizeAcomod(currentRaw);
 
-                // Limpa os campos relacionados
-                $('input[name="saving"]').val('');
-                $('input[name="qtd"]').val('');
-                $('input[name="saving_show"]').val('').css('color', '');
+                    $select.html(options);
+
+                    if (currentNorm) {
+                        const $match = $select.find('option').filter(function() {
+                            const optionValue = ($(this).val() || '').toString().trim();
+                            const optionText = ($(this).text() || '').toString().trim();
+                            return normalizeAcomod(optionValue) === currentNorm
+                                || normalizeAcomod(optionText) === currentNorm;
+                        }).first();
+
+                        if ($match.length) {
+                            $select.val($match.val());
+                        }
+                    }
+                });
+
+                document.querySelectorAll('#negotiationFieldsContainer select[name="tipo_negociacao"]').forEach(function(sel) {
+                    if (window.fcFillNegotiationRowCore) {
+                        window.fcFillNegotiationRowCore(sel);
+                    }
+                });
+
+                if (typeof window.refreshNegotiationRows === 'function') {
+                    window.refreshNegotiationRows(false);
+                }
+            }
+
+            if (currentHospitalId > 0) {
+                fetchAcomodacoes(currentHospitalId);
             }
 
             // Função para calcular savings ao alterar os selects ou a quantidade

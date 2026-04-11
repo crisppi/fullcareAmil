@@ -789,13 +789,8 @@ if (typeof jQuery !== 'undefined') {
                   FROM tb_internacao ac
              LEFT JOIN tb_hospital AS ho ON ac.fk_hospital_int = ho.id_hospital
              LEFT JOIN tb_hospitalUser AS hos ON hos.fk_hospital_user = ho.id_hospital
-             LEFT JOIN tb_user AS se ON se.id_usuario = hos.fk_usuario_hosp
-             LEFT JOIN tb_uti AS ut ON ac.id_internacao = ut.fk_internacao_uti
              LEFT JOIN tb_paciente AS pa ON ac.fk_paciente_int = pa.id_paciente
              LEFT JOIN tb_seguradora AS s ON pa.fk_seguradora_pac = s.id_seguradora
-             LEFT JOIN tb_visita AS vi ON ac.id_internacao = vi.fk_internacao_vis
-             LEFT JOIN tb_capeante AS ca ON ac.id_internacao = ca.fk_int_capeante
-             LEFT JOIN tb_intern_antec AS an ON ac.id_internacao = fk_internacao_ant_int
                 {$whereCount}
             ";
             $stmtCount = $conn->prepare($sqlCount);

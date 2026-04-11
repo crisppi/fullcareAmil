@@ -210,12 +210,12 @@ $topLabels = array_map(fn($r) => (string)($r['hospital'] ?? 'Sem hospital'), $to
 $topValues = array_map(fn($r) => (float)($r['valor'] ?? 0), $topHospitais);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Contas Auditadas por Hospital</h1>
         <div class="bi-header-actions">
@@ -251,37 +251,49 @@ $topValues = array_map(fn($r) => (float)($r['valor'] ?? 0), $topHospitais);
         </div>
     </form>
 
-    <div class="bi-kpis" style="margin-top:16px;">
-        <div class="bi-kpi kpi-amber">
-            <small>Total de contas (período)</small>
+    <div class="bi-kpis kpi-dashboard-v2" style="margin-top:16px;">
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-journal-check"></i></span>
+                <small>Total de contas</small>
+            </div>
             <strong><?= number_format($totalContasPeriodo, 0, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-up"><i class="bi bi-arrow-up-right"></i>Período filtrado</span>
         </div>
-        <div class="bi-kpi kpi-cyan">
-            <small>Contas auditadas (período)</small>
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-clipboard2-pulse"></i></span>
+                <small>Contas auditadas</small>
+            </div>
             <strong><?= number_format($totalContasAuditadasPeriodo, 0, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-up"><i class="bi bi-check2-circle"></i>Volume auditado</span>
         </div>
-        <div class="bi-kpi kpi-berry">
-            <small>Taxa de contas auditadas</small>
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-percent"></i></span>
+                <small>Taxa auditada</small>
+            </div>
             <strong><?= number_format($taxaAuditadaPeriodo, 1, ',', '.') ?>%</strong>
+            <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-bar-chart-line"></i>Cobertura do período</span>
         </div>
     </div>
 
     <div class="bi-grid fixed-2" style="margin-top:16px;">
         <div class="bi-panel">
             <h3 class="text-center" style="margin-bottom:12px;">Apresentado x Pós-auditoria</h3>
-            <div class="bi-chart"><canvas id="chartValores"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartValores"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3 class="text-center" style="margin-bottom:12px;">Variação por seguradora (apresentado)</h3>
-            <div class="bi-chart"><canvas id="chartSeguradora"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartSeguradora"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3 class="text-center" style="margin-bottom:12px;">Evolução mensal de contas auditadas</h3>
-            <div class="bi-chart"><canvas id="chartContasAuditadas"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartContasAuditadas"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3 class="text-center" style="margin-bottom:12px;">Top 10 hospitais por valor apresentado</h3>
-            <div class="bi-chart"><canvas id="chartTopContas"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartTopContas"></canvas></div>
         </div>
     </div>
 </div>
@@ -316,6 +328,8 @@ function groupedBar(ctx, labels, dataA, dataB) {
             ]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: window.biLegendWhite ? window.biLegendWhite : undefined,
             scales: scales,
             tooltips: {
@@ -354,6 +368,8 @@ function multiLine(ctx, labels, series) {
         type: 'line',
         data: { labels, datasets },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: window.biLegendWhite ? window.biLegendWhite : undefined,
             scales: scales,
             tooltips: {
@@ -384,6 +400,8 @@ function horizontalBar(ctx, labels, data) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: window.biLegendWhite ? window.biLegendWhite : undefined,
             scales: scales,
             tooltips: {
@@ -433,6 +451,8 @@ function mixedAuditChart(ctx, labels, totalData, auditedData) {
             ]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: window.biLegendWhite ? window.biLegendWhite : undefined,
             scales: {
                 xAxes: [{

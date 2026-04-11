@@ -181,6 +181,21 @@ try {
                 $prorrogacoesByInternacao[$fk][] = $row;
             }
         }
+
+        $stmtNegPr = $conn->prepare("
+            SELECT fk_id_int AS fk_internacao_pror, data_inicio_neg AS prorrog1_ini_pror, data_fim_neg AS prorrog1_fim_pror
+            FROM tb_negociacao
+            WHERE fk_id_int IN ({$placeholders})
+              AND tipo_negociacao = 'PRORROGACAO_AUTOMATICA'
+            ORDER BY fk_id_int, data_inicio_neg
+        ");
+        $stmtNegPr->execute($ids);
+        while ($row = $stmtNegPr->fetch(PDO::FETCH_ASSOC)) {
+            $fk = (int)($row['fk_internacao_pror'] ?? 0);
+            if ($fk > 0 && empty($prorrogacoesByInternacao[$fk])) {
+                $prorrogacoesByInternacao[$fk][] = $row;
+            }
+        }
     }
 
     // formata datas
@@ -206,7 +221,8 @@ try {
                 if (!$iniTs) {
                     continue;
                 }
-                $fimTs = hubDateToTs($p['prorrog1_fim_pror'] ?? null) ?: $endTs;
+                $fimBaseTs = hubDateToTs($p['prorrog1_fim_pror'] ?? null) ?: ($endTs - 86400);
+                $fimTs = $fimBaseTs + 86400;
                 if ($fimTs <= $startTs || $iniTs >= $endTs) {
                     continue;
                 }
@@ -234,7 +250,7 @@ try {
             'unidade' => trim($r['nome_hosp'] ?? ''),
             'medico' => '', // TODO: incluir no SELECT se precisar
             'status' => $temAlta ? 'Alta' : ((isset($r['internado_int']) && $r['internado_int'] === 's') ? 'Internado' : 'Alta'),
-            'prorrogacoes' => (int)($r['prorrogacoes'] ?? 0),
+            'prorrogacoes' => count($prorrogacoesByInternacao[$idInternacao] ?? []),
             'prorrogacoes_pendentes' => $prorrogPendentes,
             'prorrogacoes_pendentes_label' => $prorrogPendentesLabel,
             'visitas' => (int)($r['visitas_total'] ?? 0),

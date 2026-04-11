@@ -64,6 +64,26 @@ function getSeguradoraNomeById(PDO $conn, ?int $seguradoraId): ?string
     }
 }
 
+function resolveUsuarioHomeUrl(string $baseUrl, ?string $cargo, $nivel): string
+{
+    $nivel = (int)$nivel;
+    $cargo = mb_strtolower(trim((string)$cargo), 'UTF-8');
+    $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $cargo);
+    $cargo = $ascii !== false ? $ascii : $cargo;
+    $cargo = preg_replace('/[^a-z]/', '', $cargo);
+
+    $isDiretoria = in_array($cargo, ['diretoria', 'diretor', 'administrador', 'admin', 'board'], true)
+        || strpos($cargo, 'diretor') !== false
+        || strpos($cargo, 'diretoria') !== false
+        || $nivel === -1;
+
+    if ($nivel === -1) {
+        return $baseUrl . 'list_internacao_cap_fin.php';
+    }
+
+    return $isDiretoria ? $baseUrl . 'dashboard' : $baseUrl . 'menu_app.php';
+}
+
 function storeUsuarioImage(array $file, string $targetDir, int $maxBytes = 2097152): ?string
 {
     $error = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
@@ -418,6 +438,6 @@ if ($type === "update-senha") {
 
     $usuarioDao->update($usuarioData);
 
-    header("Location: " . $BASE_URL . "dashboard");
+    header("Location: " . resolveUsuarioHomeUrl($BASE_URL, $usuarioData->cargo_user ?? '', $usuarioData->nivel_user ?? 0));
     exit;
 }

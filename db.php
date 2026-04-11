@@ -144,10 +144,13 @@ if (!function_exists('db_legacy_profiles')) {
 // Carrega .env local sem sobrescrever variaveis ja exportadas no ambiente.
 db_load_env_file(__DIR__ . '/.env');
 
+$dbStrictMode = in_array(strtolower((string)(db_env_value('DB_STRICT_MODE') ?? '')), ['1', 'true', 'on', 'yes'], true);
+
 $fonte_conexao = '';
 $profiles = [];
 
-foreach (['', '_2', '_3'] as $suffix) {
+$profileSuffixes = $dbStrictMode ? [''] : ['', '_2', '_3'];
+foreach ($profileSuffixes as $suffix) {
     $host = db_env_value('DB_HOST' . $suffix);
     $name = db_env_value('DB_NAME' . $suffix);
     $user = db_env_value('DB_USER' . $suffix);
@@ -195,6 +198,13 @@ foreach ($profiles as $profile) {
 }
 
 if (!$conn) {
+    if ($dbStrictMode) {
+        error_log('[DB] Modo estrito ativo: sem fallback para profiles legados.');
+        error_log('[DB] Falha em todos os profiles: ' . implode(' | ', $errors));
+        header("Location: sem_conexao.html");
+        exit("Falha na conexao com banco.");
+    }
+
     // Segunda chance: se veio de .env e falhou, tenta perfis legados.
     $hasLegacyTried = false;
     foreach ($profiles as $p) {

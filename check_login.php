@@ -6,6 +6,42 @@ require_once(__DIR__ . '/app/schemaEnsurer.php');
 
 ensure_user_login_security_columns($conn);
 
+if (!function_exists('fullcare_post_login_target')) {
+    function fullcare_post_login_target(string $baseUrl, array $user): string
+    {
+        $nivel = (int)($user['nivel_user'] ?? 0);
+        $cargo = trim((string)($user['cargo_user'] ?? ''));
+        $cargo = mb_strtolower($cargo, 'UTF-8');
+        $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $cargo);
+        $cargo = $ascii !== false ? $ascii : $cargo;
+        $cargo = preg_replace('/[^a-z]/', '', $cargo);
+
+        $isDiretoria = in_array($cargo, ['diretoria', 'diretor', 'administrador', 'admin', 'board'], true)
+            || strpos($cargo, 'diretor') !== false
+            || strpos($cargo, 'diretoria') !== false
+            || $nivel === -1;
+
+        if ($nivel === -1) {
+            return $baseUrl . 'list_internacao_cap_fin.php';
+        }
+
+        return $isDiretoria
+            ? $baseUrl . 'dashboard'
+            : $baseUrl . 'menu_app.php';
+    }
+}
+
+if (!function_exists('fullcare_normalize_login_identifier')) {
+    function fullcare_normalize_login_identifier(string $value): string
+    {
+        $value = trim(mb_strtolower($value, 'UTF-8'));
+        $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+        $value = $ascii !== false ? $ascii : $value;
+
+        return preg_replace('/[^a-z0-9]/', '', $value);
+    }
+}
+
 $redirectLogin = $BASE_URL . 'index.php';
 $maxTentativasLogin = 6;
 $lockMinutes = 15;
@@ -61,7 +97,7 @@ try {
             login_last_fail_at"
         : "";
 
-    $stmt = $conn->prepare("
+    $userSelect = "
         SELECT
             id_usuario,
             usuario_user,
@@ -75,12 +111,41 @@ try {
             fk_seguradora_user
             {$securitySelect}
         FROM tb_user
-        WHERE email_user = :email
+    ";
+
+    $loginIdentifier = mb_strtolower($email_login, 'UTF-8');
+
+    $stmt = $conn->prepare($userSelect . "
+        WHERE LOWER(TRIM(email_user)) = :email_identifier
+           OR LOWER(TRIM(email02_user)) = :email2_identifier
+           OR LOWER(TRIM(login_user)) = :login_identifier
+           OR LOWER(TRIM(usuario_user)) = :user_identifier
         LIMIT 1
     ");
-    $stmt->bindValue(':email', $email_login, PDO::PARAM_STR);
+    $stmt->bindValue(':email_identifier', $loginIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':email2_identifier', $loginIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':login_identifier', $loginIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':user_identifier', $loginIdentifier, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+    if (!is_array($user) && strpos($loginIdentifier, '@') !== false) {
+        $alias = fullcare_normalize_login_identifier((string)strtok($loginIdentifier, '@'));
+
+        if ($alias !== '') {
+            $stmtAlias = $conn->prepare($userSelect . "
+                WHERE REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(TRIM(usuario_user)), ' ', ''), '.', ''), '-', ''), '_', ''), '''', '') = :alias
+                LIMIT 2
+            ");
+            $stmtAlias->bindValue(':alias', $alias, PDO::PARAM_STR);
+            $stmtAlias->execute();
+            $aliasMatches = $stmtAlias->fetchAll(PDO::FETCH_ASSOC);
+
+            if (count($aliasMatches) === 1) {
+                $user = $aliasMatches[0];
+            }
+        }
+    }
 } catch (Throwable $e) {
     error_log('[LOGIN] ' . $e->getMessage());
     $failLogin('Não foi possível realizar o login agora. Tente novamente.');
@@ -213,8 +278,9 @@ if (function_exists('flowLogStart') && function_exists('flowLog')) {
         'nivel' => (int)($_SESSION['nivel'] ?? 0),
         'cargo' => (string)($_SESSION['cargo'] ?? ''),
     ]);
+    $target = fullcare_post_login_target($BASE_URL, $user);
     flowLog($loginCtx, 'login.success', 'INFO', [
-        'target' => ((int)($_SESSION['nivel'] ?? 0) === -1) ? 'list_internacao_cap_fin.php' : 'dashboard',
+        'target' => str_replace($BASE_URL, '', $target),
     ]);
 }
 
@@ -223,10 +289,5 @@ if (($user['senha_default_user'] ?? 'n') === 's') {
     exit;
 }
 
-if ((int)$_SESSION['nivel'] === -1) {
-    header('Location: ' . $BASE_URL . 'list_internacao_cap_fin.php');
-    exit;
-}
-
-header('Location: ' . $BASE_URL . 'dashboard');
+header('Location: ' . fullcare_post_login_target($BASE_URL, $user));
 exit;

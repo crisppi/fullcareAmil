@@ -270,6 +270,10 @@ function processNegociacoesEntries(
         if (!is_array($row)) continue;
         $tipo = strOrNull($row['tipo_negociacao'] ?? null);
         if (!$tipo) continue;
+        $auditorId = toIntOrNull($row['fk_usuario_neg'] ?? null) ?? $fkUsuarioNeg;
+        if (($auditorId === null || $auditorId <= 0) && !empty($_SESSION['id_usuario'])) {
+            $auditorId = (int)$_SESSION['id_usuario'];
+        }
         $negociacao = new negociacao();
         $negociacao->fk_id_int = $fkInternacao;
         $negociacao->fk_visita_neg = $visitaId;
@@ -280,7 +284,7 @@ function processNegociacoesEntries(
         $negociacao->troca_para = strOrNull($row['troca_para'] ?? null);
         $negociacao->qtd = toIntOrNull($row['qtd'] ?? null);
         $negociacao->saving = toFloatOrNull($row['saving'] ?? null);
-        $negociacao->fk_usuario_neg = toIntOrNull($row['fk_usuario_neg'] ?? $fkUsuarioNeg);
+        $negociacao->fk_usuario_neg = $auditorId;
         $negociacaoDao->create($negociacao);
     }
 }

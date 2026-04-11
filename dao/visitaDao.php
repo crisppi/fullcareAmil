@@ -11,6 +11,7 @@ class visitaDAO
     private string $url;
     public Message $message;
     private bool $lancamentoColumnEnsured = false;
+    private bool $faturadoColumnEnsured = false;
     private bool $faturamentoColumnEnsured = false;
     private bool $timerColumnEnsured = false;
     private bool $logTableEnsured = false;
@@ -24,6 +25,7 @@ class visitaDAO
         $this->url     = $url;
         $this->message = new Message($url);
         $this->ensureLancamentoColumn();
+        $this->ensureFaturadoColumn();
         $this->ensureDataFaturamentoColumn();
         $this->ensureTimerColumn();
         $this->ensureLogTable();
@@ -130,15 +132,74 @@ class visitaDAO
             ");
             $exists = (int)$stmt->fetchColumn() > 0;
             if (!$exists) {
-                $this->conn->exec("
-                    ALTER TABLE " . self::TABLE . "
-                    ADD COLUMN data_faturamento_vis DATE NULL AFTER faturado_vis
+                $stmtAfter = $this->conn->query(" 
+                    SELECT COUNT(*)
+                      FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME   = '" . self::TABLE . "'
+                       AND COLUMN_NAME  = 'faturado_vis'
                 ");
+                $hasFaturado = (int)$stmtAfter->fetchColumn() > 0;
+
+                if ($hasFaturado) {
+                    $this->conn->exec(" 
+                        ALTER TABLE " . self::TABLE . "
+                        ADD COLUMN data_faturamento_vis DATE NULL AFTER faturado_vis
+                    ");
+                } else {
+                    $this->conn->exec(" 
+                        ALTER TABLE " . self::TABLE . "
+                        ADD COLUMN data_faturamento_vis DATE NULL
+                    ");
+                }
             }
         } catch (Throwable $e) {
             error_log('Falha ao garantir coluna data_faturamento_vis: ' . $e->getMessage());
         } finally {
             $this->faturamentoColumnEnsured = true;
+        }
+    }
+
+    private function ensureFaturadoColumn(): void
+    {
+        if ($this->faturadoColumnEnsured) {
+            return;
+        }
+        try {
+            $stmt = $this->conn->query(" 
+                SELECT COUNT(*)
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME   = '" . self::TABLE . "'
+                   AND COLUMN_NAME  = 'faturado_vis'
+            ");
+            $exists = (int)$stmt->fetchColumn() > 0;
+            if (!$exists) {
+                $stmtAfter = $this->conn->query(" 
+                    SELECT COUNT(*)
+                      FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME   = '" . self::TABLE . "'
+                       AND COLUMN_NAME  = 'data_lancamento_vis'
+                ");
+                $hasLancamento = (int)$stmtAfter->fetchColumn() > 0;
+
+                if ($hasLancamento) {
+                    $this->conn->exec(" 
+                        ALTER TABLE " . self::TABLE . "
+                        ADD COLUMN faturado_vis VARCHAR(5) NULL DEFAULT 'n' AFTER data_lancamento_vis
+                    ");
+                } else {
+                    $this->conn->exec(" 
+                        ALTER TABLE " . self::TABLE . "
+                        ADD COLUMN faturado_vis VARCHAR(5) NULL DEFAULT 'n'
+                    ");
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('Falha ao garantir coluna faturado_vis: ' . $e->getMessage());
+        } finally {
+            $this->faturadoColumnEnsured = true;
         }
     }
 

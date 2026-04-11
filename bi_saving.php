@@ -18,6 +18,16 @@ $hospitalId = filter_input(INPUT_GET, 'hospital_id', FILTER_VALIDATE_INT) ?: nul
 
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
     ->fetchAll(PDO::FETCH_ASSOC);
+$savingExpr = "COALESCE(
+    NULLIF(ng.saving, 0),
+    CASE
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE 'TROCA%' THEN (COALESCE(aco_de.valor_aco, 0) - COALESCE(aco_para.valor_aco, 0)) * COALESCE(ng.qtd, 0)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) = 'ALTA TARDIA APTO' THEN COALESCE(NULLIF(aco_para.valor_aco, 0), COALESCE(aco_de.valor_aco, 0)) * COALESCE(NULLIF(ng.qtd, 0), 1)
+        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE '%1/2 DIARIA%' THEN (COALESCE(aco_de.valor_aco, 0) / 2) * COALESCE(ng.qtd, 0)
+        ELSE COALESCE(aco_de.valor_aco, 0) * COALESCE(ng.qtd, 0)
+    END,
+    0
+)";
 
 if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $stmtAno = $conn->query("SELECT MAX(YEAR(data_inicio_neg)) AS ano FROM tb_negociacao WHERE data_inicio_neg IS NOT NULL AND data_inicio_neg <> '0000-00-00'");
@@ -45,10 +55,14 @@ if ($mes > 0) {
 
 $sqlTot = "
     SELECT
-        SUM(ng.saving) AS total_saving,
+        SUM({$savingExpr}) AS total_saving,
         COUNT(*) AS total_registros
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$whereTot}
 ";
 $stmt = $conn->prepare($sqlTot);
@@ -63,11 +77,15 @@ $totalRegistros = (int)($tot['total_registros'] ?? 0);
 $sqlHosp = "
     SELECT
         COALESCE(h.nome_hosp, 'Sem hospital') AS hospital,
-        SUM(ng.saving) AS total_saving,
+        SUM({$savingExpr}) AS total_saving,
         COUNT(*) AS total_registros
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
     LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$whereTot}
     GROUP BY h.id_hospital, h.nome_hosp
     ORDER BY total_saving DESC
@@ -83,9 +101,13 @@ $hospRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 $sqlMensal = "
     SELECT
         MONTH(ng.data_inicio_neg) AS mes,
-        SUM(ng.saving) AS total_saving
+        SUM({$savingExpr}) AS total_saving
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
+    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
+        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$whereBase}
     GROUP BY mes
     ORDER BY mes
@@ -113,12 +135,12 @@ $savingHosp = array_map(fn($r) => (float)$r['total_saving'], $hospRows);
 $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260307">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260307"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Saving por Hospital</h1>
         <div class="bi-header-actions">
@@ -158,29 +180,37 @@ $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
     </form>
 
     <div class="bi-panel">
-        <div class="bi-kpis">
-            <div class="bi-kpi">
-                <small>Total saving</small>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-piggy-bank"></i></span>
+                    <small>Total saving</small>
+                </div>
                 <strong>R$ <?= number_format($totalSaving, 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-cash-stack"></i>Resultado negociado</span>
             </div>
-            <div class="bi-kpi">
-                <small>Quantidade de negociações</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-list-ol"></i></span>
+                    <small>Negociações</small>
+                </div>
                 <strong><?= $totalRegistros ?></strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-file-earmark-bar-graph"></i>Itens no período</span>
             </div>
         </div>
     </div>
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Saving por hospital (R$)</h3>
-        <div class="bi-chart"><canvas id="chartSavingHospital"></canvas></div>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartSavingHospital"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Quantidade de negociações por hospital</h3>
-        <div class="bi-chart"><canvas id="chartQtdeHospital"></canvas></div>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartQtdeHospital"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Evolução mensal do saving (ano completo)</h3>
-        <div class="bi-chart"><canvas id="chartSavingEvolucao"></canvas></div>
+        <div class="bi-chart ie-chart-md"><canvas id="chartSavingEvolucao"></canvas></div>
     </div>
 </div>
 

@@ -93,6 +93,125 @@ if (!function_exists('ensure_internacao_forecast_columns')) {
     }
 }
 
+if (!function_exists('ensure_internacao_core_columns')) {
+    function ensure_internacao_core_columns(PDO $conn): void
+    {
+        static $checked = false;
+        if ($checked) return;
+        $checked = true;
+
+        try {
+            $stmt = $conn->query(" 
+                SELECT COUNT(*)
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_internacao'
+                   AND COLUMN_NAME = 'fk_cid_int'
+            ");
+            $hasFkCid = (int)$stmt->fetchColumn() > 0;
+            if ($hasFkCid) {
+                return;
+            }
+
+            $stmtPos = $conn->query(" 
+                SELECT COUNT(*)
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_internacao'
+                   AND COLUMN_NAME = 'fk_patologia_int'
+            ");
+            $hasFkPatologia = (int)$stmtPos->fetchColumn() > 0;
+
+            if ($hasFkPatologia) {
+                $conn->exec(" 
+                    ALTER TABLE tb_internacao
+                    ADD COLUMN fk_cid_int INT NULL DEFAULT NULL AFTER fk_patologia_int
+                ");
+            } else {
+                $conn->exec(" 
+                    ALTER TABLE tb_internacao
+                    ADD COLUMN fk_cid_int INT NULL DEFAULT NULL
+                ");
+            }
+        } catch (Throwable $e) {
+            error_log('[SCHEMA][internacao:fk_cid_int] ' . $e->getMessage());
+        }
+    }
+}
+
+if (!function_exists('ensure_visita_faturamento_columns')) {
+    function ensure_visita_faturamento_columns(PDO $conn): void
+    {
+        static $checked = false;
+        if ($checked) return;
+        $checked = true;
+
+        try {
+            $stmtFat = $conn->query(" 
+                SELECT COUNT(*)
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_visita'
+                   AND COLUMN_NAME = 'faturado_vis'
+            ");
+            $hasFaturado = (int)$stmtFat->fetchColumn() > 0;
+            if (!$hasFaturado) {
+                $stmtAfter = $conn->query(" 
+                    SELECT COUNT(*)
+                      FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'tb_visita'
+                       AND COLUMN_NAME = 'data_lancamento_vis'
+                ");
+                $hasLancamento = (int)$stmtAfter->fetchColumn() > 0;
+                if ($hasLancamento) {
+                    $conn->exec(" 
+                        ALTER TABLE tb_visita
+                        ADD COLUMN faturado_vis VARCHAR(5) NULL DEFAULT 'n' AFTER data_lancamento_vis
+                    ");
+                } else {
+                    $conn->exec(" 
+                        ALTER TABLE tb_visita
+                        ADD COLUMN faturado_vis VARCHAR(5) NULL DEFAULT 'n'
+                    ");
+                }
+            }
+
+            $stmtDataFat = $conn->query(" 
+                SELECT COUNT(*)
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_visita'
+                   AND COLUMN_NAME = 'data_faturamento_vis'
+            ");
+            $hasDataFaturamento = (int)$stmtDataFat->fetchColumn() > 0;
+            if (!$hasDataFaturamento) {
+                $stmtAfterFat = $conn->query(" 
+                    SELECT COUNT(*)
+                      FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'tb_visita'
+                       AND COLUMN_NAME = 'faturado_vis'
+                ");
+                $hasFaturadoNow = (int)$stmtAfterFat->fetchColumn() > 0;
+                if ($hasFaturadoNow) {
+                    $conn->exec(" 
+                        ALTER TABLE tb_visita
+                        ADD COLUMN data_faturamento_vis DATE NULL AFTER faturado_vis
+                    ");
+                } else {
+                    $conn->exec(" 
+                        ALTER TABLE tb_visita
+                        ADD COLUMN data_faturamento_vis DATE NULL
+                    ");
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('[SCHEMA][visita:faturamento] ' . $e->getMessage());
+        }
+    }
+}
+
 if (!function_exists('ensure_schema_version_table')) {
     function ensure_schema_version_table(PDO $conn): void
     {
@@ -151,14 +270,14 @@ if (!function_exists('ensure_password_reset_table')) {
                 CREATE TABLE tb_user_password_reset (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     user_id INT NOT NULL,
-                    email VARCHAR(255) NOT NULL,
+                    email VARCHAR(191) NOT NULL,
                     token_hash CHAR(64) NOT NULL,
                     code_hash CHAR(64) NOT NULL,
                     expires_at DATETIME NOT NULL,
                     used_at DATETIME NULL DEFAULT NULL,
                     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     request_ip VARCHAR(64) NULL DEFAULT NULL,
-                    user_agent VARCHAR(255) NULL DEFAULT NULL,
+                    user_agent VARCHAR(191) NULL DEFAULT NULL,
                     UNIQUE KEY uq_token_hash (token_hash),
                     KEY idx_user_id (user_id),
                     KEY idx_email (email),

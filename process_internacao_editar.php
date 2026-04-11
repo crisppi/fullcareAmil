@@ -38,6 +38,8 @@ require_once 'models/uti.php';
 require_once 'dao/utiDao.php';
 require_once 'models/negociacao.php';
 require_once 'dao/negociacaoDao.php';
+require_once 'models/acomodacao.php';
+require_once 'dao/acomodacaoDao.php';
 require_once 'models/prorrogacao.php';
 require_once 'dao/prorrogacaoDao.php';
 require_once 'models/tuss.php';
@@ -52,6 +54,19 @@ if (!function_exists('decodeArray')) {
         if (!is_string($raw) || trim($raw) === '') return [];
         $arr = json_decode($raw, true);
         return is_array($arr) ? $arr : [];
+    }
+}
+if (!function_exists('postArrayValues')) {
+    function postArrayValues(string $key): array
+    {
+        $val = $_POST[$key] ?? [];
+        if (is_array($val)) {
+            return $val;
+        }
+        if ($val === null || $val === '') {
+            return [];
+        }
+        return [$val];
     }
 }
 function limpa(?string $t, int $lim = 5000): string
@@ -94,6 +109,50 @@ if (!function_exists('internacaoEditarDebugLog')) {
     {
         $line = '[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL;
         @file_put_contents(__DIR__ . '/logs/process_internacao_editar.debug.log', $line, FILE_APPEND);
+    }
+}
+if (!function_exists('normalizeAcomodacaoNegociacao')) {
+    function normalizeAcomodacaoNegociacao(?string $value): string
+    {
+        $value = trim((string)$value);
+        if ($value === '') {
+            return '';
+        }
+        if (strpos($value, '-') !== false) {
+            [, $value] = array_pad(explode('-', $value, 2), 2, '');
+        }
+        return mb_strtolower(trim($value), 'UTF-8');
+    }
+}
+if (!function_exists('calcNegotiationSavingValue')) {
+    function calcNegotiationSavingValue(PDO $conn, int $hospitalId, ?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd): float
+    {
+        static $cache = [];
+        if ($hospitalId <= 0 || $qtd <= 0) {
+            return 0.0;
+        }
+        if (!isset($cache[$hospitalId])) {
+            $stmt = $conn->prepare("SELECT acomodacao_aco, valor_aco FROM tb_acomodacao WHERE fk_hospital = :id");
+            $stmt->bindValue(':id', $hospitalId, PDO::PARAM_INT);
+            $stmt->execute();
+            $map = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
+                $map[normalizeAcomodacaoNegociacao($row['acomodacao_aco'] ?? '')] = (float)($row['valor_aco'] ?? 0);
+            }
+            $cache[$hospitalId] = $map;
+        }
+        $map = $cache[$hospitalId];
+        $de = (float)($map[normalizeAcomodacaoNegociacao($trocaDe)] ?? 0);
+        $para = (float)($map[normalizeAcomodacaoNegociacao($trocaPara)] ?? 0);
+        $tipoNorm = mb_strtoupper(trim((string)$tipo), 'UTF-8');
+
+        if (strpos($tipoNorm, 'TROCA') === 0) {
+            return ($de - $para) * $qtd;
+        }
+        if (strpos($tipoNorm, '1/2 DIARIA') !== false) {
+            return ($de / 2) * $qtd;
+        }
+        return $de * $qtd;
     }
 }
 
@@ -357,6 +416,48 @@ try {
         $existingIds = array_map(fn(array $r) => (int) $r['id_negociacao'], $existing);
 
         $negArray    = decodeArray($_POST['negociacoes_json'] ?? null);  // sempre array
+        if (!$negArray) {
+            $ids = postArrayValues('neg_id');
+            $tipos = postArrayValues('tipo_negociacao');
+            $inicios = postArrayValues('data_inicio_neg');
+            $fins = postArrayValues('data_fim_neg');
+            $trocasDe = postArrayValues('troca_de');
+            $trocasPara = postArrayValues('troca_para');
+            $qtds = postArrayValues('qtd');
+            $savings = postArrayValues('saving');
+            $rows = max(
+                count($ids),
+                count($tipos),
+                count($inicios),
+                count($fins),
+                count($trocasDe),
+                count($trocasPara),
+                count($qtds),
+                count($savings)
+            );
+            for ($i = 0; $i < $rows; $i++) {
+                $tipoLinha = trim((string)($tipos[$i] ?? ''));
+                $deLinha = trim((string)($trocasDe[$i] ?? ''));
+                $paraLinha = trim((string)($trocasPara[$i] ?? ''));
+                $qtdLinha = (int)($qtds[$i] ?? 0);
+                if ($tipoLinha === '' && $deLinha === '' && $paraLinha === '' && $qtdLinha <= 0) {
+                    continue;
+                }
+                $negArray[] = [
+                    'id' => (int)($ids[$i] ?? 0),
+                    'tipo_negociacao' => $tipoLinha,
+                    'data_inicio_neg' => $inicios[$i] ?? null,
+                    'data_fim_neg' => $fins[$i] ?? null,
+                    'troca_de' => $deLinha,
+                    'troca_para' => $paraLinha,
+                    'qtd' => $qtdLinha,
+                    'saving' => (float)($savings[$i] ?? 0),
+                ];
+            }
+            internacaoEditarDebugLog('NEGOC fallback post rows=' . count($negArray) . ' id_int=' . (int)$idInt);
+        } else {
+            internacaoEditarDebugLog('NEGOC json rows=' . count($negArray) . ' id_int=' . (int)$idInt);
+        }
 
         $postedIds = [];
         foreach ($negArray as $n) {
@@ -377,7 +478,14 @@ try {
             $neg->troca_de        = $nData['troca_de']        ?? '';
             $neg->troca_para      = $nData['troca_para']      ?? '';
             $neg->qtd             = (int)($nData['qtd']       ?? 0);
-            $neg->saving          = (float)($nData['saving']  ?? 0);
+            $neg->saving          = calcNegotiationSavingValue(
+                $conn,
+                (int)($currentIntern->fk_hospital_int ?? 0),
+                $nData['tipo_negociacao'] ?? '',
+                $nData['troca_de'] ?? '',
+                $nData['troca_para'] ?? '',
+                (int)($nData['qtd'] ?? 0)
+            );
             $neg->data_inicio_neg = $nData['data_inicio_neg'] ?? null;
             $neg->data_fim_neg    = $nData['data_fim_neg']    ?? null;
             $neg->tipo_negociacao = $nData['tipo_negociacao'] ?? '';
@@ -396,6 +504,7 @@ try {
         $existingIds = array_map(fn($r) => (int) $r['id_prorrogacao'], $existing);
 
         $prArray     = decodeArray($_POST['prorrogacoes_json'] ?? null); // sempre array
+        internacaoEditarDebugLog('PRORROG input id_int=' . (int)$idInt . ' rows=' . count($prArray));
 
         $postedIds = [];
         foreach ($prArray as $p) {
@@ -413,6 +522,8 @@ try {
             if (!empty($p['id_prorrogacao'])) $pr->id_prorrogacao = (int) $p['id_prorrogacao'];
 
             $pr->fk_internacao_pror  = $idInt;
+            $pr->fk_usuario_pror     = (int)($_SESSION['id_usuario'] ?? 0) ?: null;
+            $pr->fk_visita_pror      = !empty($p['fk_visita_pror']) ? (int)$p['fk_visita_pror'] : null;
             $pr->acomod1_pror        = $p['acomod']     ?? '';
             $pr->isol_1_pror         = $p['isolamento'] ?? 'n';
             $pr->prorrog1_ini_pror   = $p['ini']        ?: null;
@@ -421,8 +532,10 @@ try {
 
             if (!empty($pr->id_prorrogacao)) {
                 $prorrogDao->update($pr);
+                internacaoEditarDebugLog('PRORROG update ok id_int=' . (int)$idInt . ' id_pror=' . (int)$pr->id_prorrogacao);
             } else {
                 $prorrogDao->create($pr);
+                internacaoEditarDebugLog('PRORROG create ok id_int=' . (int)$idInt . ' ini=' . (string)$pr->prorrog1_ini_pror . ' fim=' . (string)$pr->prorrog1_fim_pror);
             }
 
             $dataIni = $p['ini'] ?? null;
@@ -430,12 +543,34 @@ try {
             $acomod = $p['acomod'] ?? '';
             $diarias = (int)($p['diarias'] ?? 0);
             if (!empty($dataIni) && !empty($dataFim) && !empty($acomod) && $diarias > 0) {
+                $acomodSolicitada = $p['acomod_solicitada'] ?? $acomod;
+                $trocaDeNorm = normalizeAcomodacaoNegociacao($acomodSolicitada);
+                $trocaParaNorm = normalizeAcomodacaoNegociacao($acomod);
+
+                if ($trocaDeNorm === $trocaParaNorm) {
+                    foreach ($negDao->findByInternacao($idInt) as $negExist) {
+                        $tipoExist = (string)($negExist['tipo_negociacao'] ?? '');
+                        if ($tipoExist !== 'PRORROGACAO_AUTOMATICA') {
+                            continue;
+                        }
+                        $iniExist = (string)($negExist['data_inicio_neg'] ?? '');
+                        $fimExist = (string)($negExist['data_fim_neg'] ?? '');
+                        $deExist = normalizeAcomodacaoNegociacao($negExist['troca_de'] ?? '');
+                        $paraExist = normalizeAcomodacaoNegociacao($negExist['troca_para'] ?? '');
+                        if ($iniExist === (string)$dataIni && $fimExist === (string)$dataFim && $deExist === $paraExist) {
+                            $negDao->destroy((int)($negExist['id_negociacao'] ?? 0));
+                        }
+                    }
+                    internacaoEditarDebugLog('PRORROG skip neg_auto sem troca id_int=' . (int)$idInt . ' ini=' . (string)$dataIni . ' fim=' . (string)$dataFim);
+                    continue;
+                }
+
                 $negAuto = new negociacao();
                 $negAuto->fk_id_int = $idInt;
                 $negAuto->tipo_negociacao = 'PRORROGACAO_AUTOMATICA';
                 $negAuto->data_inicio_neg = $dataIni;
                 $negAuto->data_fim_neg = $dataFim;
-                $negAuto->troca_de = $p['acomod_solicitada'] ?? $acomod;
+                $negAuto->troca_de = $acomodSolicitada;
                 $negAuto->troca_para = $acomod;
                 $negAuto->qtd = $diarias;
                 $negAuto->saving = (float)($p['saving_estimado'] ?? 0);

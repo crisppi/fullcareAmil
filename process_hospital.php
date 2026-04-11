@@ -52,6 +52,36 @@ function postArray(string $key): array
     return is_array($values) ? $values : [];
 }
 
+function ensureHospitalUserLink(PDO $conn, int $hospitalId, int $userId): void
+{
+    if ($hospitalId <= 0 || $userId <= 0) {
+        return;
+    }
+
+    $stmtCheck = $conn->prepare("
+        SELECT id_hospitalUser
+          FROM tb_hospitalUser
+         WHERE fk_hospital_user = :hospital
+           AND fk_usuario_hosp = :user
+         LIMIT 1
+    ");
+    $stmtCheck->bindValue(':hospital', $hospitalId, PDO::PARAM_INT);
+    $stmtCheck->bindValue(':user', $userId, PDO::PARAM_INT);
+    $stmtCheck->execute();
+
+    if ($stmtCheck->fetchColumn()) {
+        return;
+    }
+
+    $stmtInsert = $conn->prepare("
+        INSERT INTO tb_hospitalUser (fk_usuario_hosp, fk_hospital_user)
+        VALUES (:user, :hospital)
+    ");
+    $stmtInsert->bindValue(':user', $userId, PDO::PARAM_INT);
+    $stmtInsert->bindValue(':hospital', $hospitalId, PDO::PARAM_INT);
+    $stmtInsert->execute();
+}
+
 function insertHospitalRelatedRows(PDO $conn, int $idHospital, array $enderecos, array $telefones, array $contatos): void
 {
     if ($idHospital <= 0) {
@@ -166,7 +196,7 @@ if ($type === "create") {
 
     $numero_hosp = filter_input(INPUT_POST, "numero_hosp");
     $bairro_hosp = filter_input(INPUT_POST, "bairro_hosp");
-    $fk_usuario_hosp = filter_input(INPUT_POST, "fk_usuario_hosp");
+    $fk_usuario_hosp = filter_input(INPUT_POST, "fk_usuario_hosp", FILTER_VALIDATE_INT);
     $usuario_create_hosp = filter_input(INPUT_POST, "usuario_create_hosp");
     $data_create_hosp = filter_input(INPUT_POST, "data_create_hosp");
     $longitude_hosp = filter_input(INPUT_POST, "longitude_hosp");
@@ -195,9 +225,13 @@ if ($type === "create") {
         $hospital->telefone02_hosp = $telefone02_hosp;
         $hospital->numero_hosp = $numero_hosp;
         $hospital->bairro_hosp = $bairro_hosp;
-        $hospital->fk_usuario_hosp = $fk_usuario_hosp;
-        $hospital->usuario_create_hosp = $usuario_create_hosp;
-        $hospital->data_create_hosp = $data_create_hosp;
+        $creatorUserId = (int) ($fk_usuario_hosp ?: ($_SESSION['id_usuario'] ?? 0));
+        $creatorUserLabel = trim((string) ($usuario_create_hosp ?: ($_SESSION['usuario_user'] ?? $_SESSION['email_user'] ?? '')));
+        $creatorDate = trim((string) ($data_create_hosp ?: date('Y-m-d H:i:s')));
+
+        $hospital->fk_usuario_hosp = $creatorUserId > 0 ? $creatorUserId : null;
+        $hospital->usuario_create_hosp = $creatorUserLabel;
+        $hospital->data_create_hosp = $creatorDate;
         $hospital->longitude_hosp = $longitude_hosp;
         $hospital->latitude_hosp = $latitude_hosp;
         $hospital->coordenador_medico_hosp = $coordenador_medico_hosp;
@@ -208,6 +242,7 @@ if ($type === "create") {
         $hospitalDao->create($hospital);
 
         $id_hospital_novo = (int) $conn->lastInsertId();
+        ensureHospitalUserLink($conn, $id_hospital_novo, $creatorUserId);
 
         $enderecos = [];
         $endTipo = postArray("end_tipo");
@@ -342,9 +377,9 @@ if ($type === "create") {
                     $stmtAco->bindValue(':acomodacao_aco', $nomeAco);
                     $stmtAco->bindValue(':fk_hospital', $id_hospital_novo, PDO::PARAM_INT);
                     $stmtAco->bindValue(':valor_aco', $valorAco);
-                    $stmtAco->bindValue(':fk_usuario_acomodacao', (int) ($fk_usuario_hosp ?: ($_SESSION['id_usuario'] ?? 0)), PDO::PARAM_INT);
-                    $stmtAco->bindValue(':usuario_create_acomodacao', (string) ($usuario_create_hosp ?: ($_SESSION['email_user'] ?? '')));
-                    $stmtAco->bindValue(':data_create_acomodacao', (string) ($data_create_hosp ?: date('Y-m-d H:i:s')));
+                    $stmtAco->bindValue(':fk_usuario_acomodacao', $creatorUserId, PDO::PARAM_INT);
+                    $stmtAco->bindValue(':usuario_create_acomodacao', $creatorUserLabel);
+                    $stmtAco->bindValue(':data_create_acomodacao', $creatorDate);
                     $stmtAco->bindValue(':data_contrato_aco', $dataContrato);
                     $stmtAco->execute();
                 }

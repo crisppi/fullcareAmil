@@ -24,16 +24,20 @@ class patologiaDAO implements patologiaDAOInterface
     {
         $patologia = new patologia();
 
-        $patologia->id_patologia = $data["id_patologia"];
-        $patologia->patologia_pat = $data["patologia_pat"];
-        $patologia->dias_pato = $data["dias_pato"];
-        $patologia->fk_usuario_pat = $data["fk_usuario_pat"];
-        $patologia->usuario_create_pat = $data["usuario_create_pat"];
-        $patologia->data_create_pat = $data["data_create_pat"];
-        $patologia->fk_usuario_pat = $data["fk_usuario_pat"];
-        $patologia->fk_cid_10_pat = $data["fk_cid_10_pat"];
-        $patologia->cat = $data["cat"];
-        $patologia->descricao = $data["descricao"];
+        if (!is_array($data) || !$data) {
+            return $patologia;
+        }
+
+        $patologia->id_patologia = $data["id_patologia"] ?? null;
+        $patologia->patologia_pat = $data["patologia_pat"] ?? null;
+        $patologia->dias_pato = $data["dias_pato"] ?? null;
+        $patologia->fk_usuario_pat = $data["fk_usuario_pat"] ?? null;
+        $patologia->usuario_create_pat = $data["usuario_create_pat"] ?? null;
+        $patologia->data_create_pat = $data["data_create_pat"] ?? null;
+        $patologia->fk_usuario_pat = $data["fk_usuario_pat"] ?? null;
+        $patologia->fk_cid_10_pat = $data["fk_cid_10_pat"] ?? null;
+        $patologia->cat = $data["cat"] ?? null;
+        $patologia->descricao = $data["descricao"] ?? null;
 
         return $patologia;
     }
@@ -110,7 +114,9 @@ class patologiaDAO implements patologiaDAOInterface
         $stmt->execute();
 
         $data = $stmt->fetch();
-        //var_dump($data);
+        if (!$data) {
+            return new patologia();
+        }
         $patologia = $this->buildpatologia($data);
 
         return $patologia;

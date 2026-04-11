@@ -160,12 +160,12 @@ $deltaCusto = $ytdCur['custo'] - $ytdPrev['custo'];
 $title = $modo === 'percentual' ? '% de Internacao UTI' : 'Custo por UTI';
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260307">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260307"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title"><?= e($title) ?></h1>
         <div class="bi-header-actions">
@@ -188,17 +188,45 @@ $title = $modo === 'percentual' ? '% de Internacao UTI' : 'Custo por UTI';
     </form>
 
     <div class="bi-panel">
-        <div class="bi-kpis kpi-compact">
-            <div class="bi-kpi"><small>Internacoes UTI</small><strong><?= number_format($internacoesUti, 0, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>% Internacao UTI</small><strong><?= number_format($percUti, 2, ',', '.') ?>%</strong></div>
-            <div class="bi-kpi"><small>Custo UTI</small><strong>R$ <?= number_format($custoUti, 2, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Share custo UTI</small><strong><?= number_format($shareCustoUti, 2, ',', '.') ?>%</strong></div>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
+                    <small>Internações UTI</small>
+                </div>
+                <strong><?= number_format($internacoesUti, 0, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-arrow-up-right"></i>Casos com UTI</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-percent"></i></span>
+                    <small>% Internação UTI</small>
+                </div>
+                <strong><?= number_format($percUti, 2, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-bar-chart-line"></i>Share assistencial</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-cash-coin"></i></span>
+                    <small>Custo UTI</small>
+                </div>
+                <strong>R$ <?= number_format($custoUti, 2, ',', '.') ?></strong>
+                <span class="kpi-trend kpi-trend-up"><i class="bi bi-currency-dollar"></i>Total acumulado</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-pie-chart"></i></span>
+                    <small>Share custo UTI</small>
+                </div>
+                <strong><?= number_format($shareCustoUti, 2, ',', '.') ?>%</strong>
+                <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-diagram-3"></i>Peso no custo total</span>
+            </div>
         </div>
     </div>
 
     <div class="bi-panel">
         <h3>Evolução mensal</h3>
-        <div class="bi-chart"><canvas id="chartUtiMain"></canvas></div>
+        <div class="bi-chart ie-chart-md"><canvas id="chartUtiMain"></canvas></div>
     </div>
 
     <div class="bi-panel">

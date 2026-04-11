@@ -85,8 +85,7 @@ if (!function_exists('fullcare_enforce_inteligencia_access')) {
         }
         $_SESSION['mensagem'] = 'Acesso à Inteligência Operacional permitido somente para diretoria.';
         $_SESSION['mensagem_tipo'] = 'danger';
-        header('Location: dashboard', true, 303);
+        header('Location: menu_app.php', true, 303);
         exit;
     }
 }
-

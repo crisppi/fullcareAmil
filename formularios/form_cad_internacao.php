@@ -29,6 +29,7 @@
     // ...
     $id_paciente_get = filter_input(INPUT_GET, 'id_paciente', FILTER_VALIDATE_INT) ?: 0;
     // ...
+    $pacientePrefill = null;
 
     /* === UsuarioDAO: usar somente findMedicosEnfermeiros() === */
     include_once("dao/usuarioDao.php");
@@ -348,8 +349,12 @@
                                         $matriculaPac = trim((string) ($paciente["matricula_pac"] ?? ""));
                                         $pacienteLabel = $paciente["nome_pac"];
                                         $careData = $patientCareProgramMap[$pacienteId] ?? ['programas' => [], 'condicoes' => ''];
+                                        if ($id_paciente_get > 0 && $pacienteId === $id_paciente_get) {
+                                            $pacientePrefill = $paciente;
+                                        }
                                         ?>
                                         <option value="<?= $pacienteId ?>"
+                                            <?= $id_paciente_get > 0 && $pacienteId === $id_paciente_get ? 'selected' : '' ?>
                                             data-matricula="<?= htmlspecialchars($matriculaPac) ?>"
                                             data-care-programs="<?= htmlspecialchars(json_encode(array_values($careData['programas']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) ?>"
                                             data-care-condicoes="<?= htmlspecialchars((string) $careData['condicoes']) ?>"
@@ -357,6 +362,25 @@
                                             <?= htmlspecialchars($pacienteLabel) ?>
                                         </option>
                                     <?php endforeach; ?>
+                                    <?php
+                                    if ($id_paciente_get > 0 && !$pacientePrefill) {
+                                        $pacientePrefillData = $pacienteDao->findById($id_paciente_get);
+                                        if (is_array($pacientePrefillData) && !empty($pacientePrefillData[0])) {
+                                            $pacientePrefill = $pacientePrefillData[0];
+                                            $careData = $patientCareProgramMap[$id_paciente_get] ?? ['programas' => [], 'condicoes' => ''];
+                                            ?>
+                                            <option value="<?= (int)$id_paciente_get ?>"
+                                                selected
+                                                data-matricula="<?= htmlspecialchars(trim((string)($pacientePrefill['matricula_pac'] ?? ''))) ?>"
+                                                data-care-programs="<?= htmlspecialchars(json_encode(array_values($careData['programas']), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) ?>"
+                                                data-care-condicoes="<?= htmlspecialchars((string)$careData['condicoes']) ?>"
+                                                data-tokens="<?= htmlspecialchars(trim((string)($pacientePrefill['nome_pac'] ?? ''))) ?>">
+                                                <?= htmlspecialchars((string)($pacientePrefill['nome_pac'] ?? ('Paciente #' . $id_paciente_get))) ?>
+                                            </option>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </select>
                                 <div style="display:flex;justify-content:space-between;align-items:center;">
                                     <a style="font-size:.8em;margin-left:7px;color:blue;"
@@ -399,7 +423,8 @@
                             <div class="form-group essential-medium" style="flex:1.2 1 180px;min-width:160px;">
                                 <label class="control-label" for="matricula_paciente_display">Matrícula</label>
                                 <input type="text" class="form-control input-lg-fullcare" id="matricula_paciente_display"
-                                    placeholder="Digite para pesquisar por matrícula" list="matricula_list">
+                                    placeholder="Digite para pesquisar por matrícula" list="matricula_list"
+                                    value="<?= htmlspecialchars(trim((string)($pacientePrefill['matricula_pac'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
                                 <datalist id="matricula_list">
                                     <?php foreach ($pacientes as $paciente): ?>
                                         <?php $matriculaPac = trim((string) ($paciente["matricula_pac"] ?? "")); ?>
@@ -920,7 +945,7 @@
             </div>
 
             <button type="submit" class="btn btn-success btn-lg fixed-submit btn-submit-standard">
-                <i class="fa-solid fa-check edit-icon" style="font-size:1rem;margin-right:8px;"></i>
+                <i class="fas fa-save edit-icon" style="font-size:1rem;margin-right:8px;"></i>
                 Cadastrar
             </button>
 
@@ -984,6 +1009,9 @@
 
     <script>
         window.hospitalUsuariosMap = <?= json_encode($hospitalUsuariosMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+        window.formInternacaoConfig = Object.assign({}, window.formInternacaoConfig || {}, {
+            prefillPacienteId: <?= $id_paciente_get > 0 ? (int)$id_paciente_get : 'null' ?>
+        });
     </script>
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js"></script>
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>

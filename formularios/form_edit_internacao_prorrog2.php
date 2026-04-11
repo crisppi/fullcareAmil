@@ -35,47 +35,49 @@ function daysExclusive(int $startTs, int $endTs): int
 }
 function computeCoverageAndGaps(array $intervals, int $startTs, int $endTs): array
 {
-    if (!$intervals) {
-        return [0, daysExclusive($startTs, $endTs), [[date('d/m/Y', $startTs), date('d/m/Y', $endTs)]]];
+    $totalDays = daysExclusive($startTs, $endTs);
+    if ($totalDays <= 0) {
+        return [0, 0, []];
     }
+
+    if (!$intervals) {
+        return [0, $totalDays, [[date('d/m/Y', $startTs), date('d/m/Y', $endTs - 86400)]]];
+    }
+
     usort($intervals, fn($a, $b) => $a['s'] <=> $b['s']);
-    $coveredDays = 0;
-    $gaps = [];
-    $curS = $intervals[0]['s'];
-    $curE = $intervals[0]['e'];
-    foreach ($intervals as $idx => $it) {
-        if ($idx === 0) continue;
-        if ($it['s'] <= $curE) {
-            if ($it['e'] > $curE) $curE = $it['e'];
+    $merged = [];
+    foreach ($intervals as $it) {
+        if (empty($merged)) {
+            $merged[] = $it;
             continue;
         }
-        if ($curS > $startTs) {
-            $gapStart = $startTs;
-            $gapEnd = $curS;
-            if ($gapEnd > $gapStart) {
-                $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+        $lastIdx = count($merged) - 1;
+        if ($it['s'] <= $merged[$lastIdx]['e']) {
+            if ($it['e'] > $merged[$lastIdx]['e']) {
+                $merged[$lastIdx]['e'] = $it['e'];
             }
+            continue;
         }
-        $coveredDays += daysExclusive($curS, $curE);
-        $curS = $it['s'];
-        $curE = $it['e'];
+        $merged[] = $it;
     }
-    if ($curS > $startTs) {
-        $gapStart = $startTs;
-        $gapEnd = $curS;
-        if ($gapEnd > $gapStart) {
-            $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+
+    $coveredDays = 0;
+    $gaps = [];
+    $cursor = $startTs;
+    foreach ($merged as $range) {
+        if ($range['s'] > $cursor) {
+            $gaps[] = [date('d/m/Y', $cursor), date('d/m/Y', $range['s'] - 86400)];
         }
-    }
-    $coveredDays += daysExclusive($curS, $curE);
-    if ($curE < $endTs) {
-        $gapStart = $curE;
-        $gapEnd = $endTs;
-        if ($gapEnd > $gapStart) {
-            $gaps[] = [date('d/m/Y', $gapStart), date('d/m/Y', $gapEnd)];
+        $coveredDays += daysExclusive($range['s'], $range['e']);
+        if ($range['e'] > $cursor) {
+            $cursor = $range['e'];
         }
     }
-    $totalDays = daysExclusive($startTs, $endTs);
+
+    if ($cursor < $endTs) {
+        $gaps[] = [date('d/m/Y', $cursor), date('d/m/Y', $endTs - 86400)];
+    }
+
     $missingDays = max(0, $totalDays - $coveredDays);
     return [$coveredDays, $missingDays, $gaps];
 }
@@ -115,7 +117,8 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
     foreach ($prorList as $p) {
         $iniTs = dateToTs($p['ini'] ?? null);
         if (!$iniTs) continue;
-        $fimTs = dateToTs($p['fim'] ?? null) ?: $internEndTs;
+        $fimBaseTs = dateToTs($p['fim'] ?? null) ?: ($internEndTs - 86400);
+        $fimTs = $fimBaseTs + 86400;
         if ($fimTs <= $internStartTs || $iniTs >= $internEndTs) continue;
         $iniTs = max($iniTs, $internStartTs);
         $fimTs = min($fimTs, $internEndTs);
@@ -310,7 +313,7 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
     <input type="hidden" name="type" value="edit_prorrogacao">
     <input type="hidden" id="fk_internacao_pror" name="fk_internacao_pror" value="<?= (int)$intern['id_internacao'] ?>">
     <input type="hidden" id="fk_usuario_pror" name="fk_usuario_pror" value="<?= (int)($_SESSION['id_usuario'] ?? 0) ?>">
-    <input type="hidden" name="select_prorrog" id="select_prorrog" value="s">
+    <input type="hidden" name="select_prorrog" id="select_prorrog_hidden" value="s">
 
     <!-- JSON oculto -->
     <input type="hidden" id="prorrogacoes_json" name="prorrogacoes_json">
@@ -318,6 +321,7 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
     <div id="prorContainer">
         <?php foreach ($prorList as $i => $p): $idx = (int)$i; ?>
         <div class="pror-row rounded p-3 mb-2">
+            <input type="hidden" name="pror[<?= $idx ?>][id_prorrogacao]" value="<?= (int)($p['id_prorrogacao'] ?? 0) ?>">
             <div class="form-grid">
                 <div class="form-group w-acom">
                     <label>Acomodação</label>
@@ -464,6 +468,7 @@ function syncJson() {
     $('#prorContainer .pror-row').each(function() {
         const $r = $(this);
         linhas.push({
+            id_prorrogacao: parseInt($r.find('[name$="[id_prorrogacao]"]').val() || '0', 10) || 0,
             acomod: $r.find('[name$="[acomod]"]').val() || '',
             ini: $r.find('[name$="[ini]"]').val() || '',
             fim: $r.find('[name$="[fim]"]').val() || '',

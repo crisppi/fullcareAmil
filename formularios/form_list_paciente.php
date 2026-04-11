@@ -411,35 +411,31 @@
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
 
                                             <li>
-                                                <a class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/editar/' . (int) $id_paciente, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                        name="type" value="edite"
-                                                        class="far fa-edit edit-icon"></i>Editar
+                                                    <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>
                                             </li>
                                             <li>
-                                                <button class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <button class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     onclick="openModal('<?= $BASE_URL ?>show_paciente_historico.php?id_paciente=<?= $id_paciente ?>')"
                                                     data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                        style="font-size: 1rem; margin-right:5px; color: rgb(67, 125, 525);"
-                                                        name="type" value="edite"
-                                                        class="fa-solid fa-clock edit-icon"></i>Historico</button>
+                                                        class="bi bi-clock-history" style="font-size:1rem;margin-right:8px;color:#6366f1;"></i>Histórico</button>
                                             </li>
                                             <li>
                                                 <a href="<?= $BASE_URL ?>hub_paciente/paciente<?= $id_paciente ?>"
-                                                    class="btn" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;">
-                                                    <i class="fa-solid fas fa-book-medical"
-                                                        style="font-size: 1rem; margin-right:5px; color: rgb(0, 123, 255);"></i>
+                                                    class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;">
+                                                    <i class="bi bi-journal-medical"
+                                                        style="font-size:1rem;margin-right:8px;color:#0ea5e9;"></i>
                                                     Hub Paciente
                                                 </a>
                                             </li>
 
                                             <li>
                                                 <a href="<?= $BASE_URL ?>internacoes/nova?id_paciente=<?= (int)$id_paciente ?>"
-                                                    class="btn" style="font-size:.9rem; font-weight: 400 !important; text-transform: none !important;">
-                                                    <i class="fa-solid fa-notes-medical"
-                                                        style="font-size:1rem;margin-right:5px;color:#007bff;"></i>
+                                                    class="dropdown-item" style="font-size:.9rem; font-weight: 400 !important; text-transform: none !important;">
+                                                    <i class="bi bi-clipboard2-pulse"
+                                                        style="font-size:1rem;margin-right:8px;color:#14b8a6;"></i>
                                                     Internação
                                                 </a>
 

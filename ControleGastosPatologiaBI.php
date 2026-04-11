@@ -95,14 +95,14 @@ $labels = array_map(fn($r) => $r['patologia'], $topRows);
 $values = array_map(fn($r) => round((float)($r['valor_final'] ?? 0), 2), $topRows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260111">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260111"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Sinistralidade por Patologia</h1>
         <div class="bi-header-actions">
@@ -178,7 +178,7 @@ $values = array_map(fn($r) => round((float)($r['valor_final'] ?? 0), 2), $topRow
 
     <div class="bi-panel">
         <h3>Top patologias (custo final)</h3>
-        <div class="bi-chart"><canvas id="chartPatologias"></canvas></div>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartPatologias"></canvas></div>
     </div>
 
     <div class="bi-panel">
@@ -239,6 +239,8 @@ $values = array_map(fn($r) => round((float)($r['valor_final'] ?? 0), 2), $topRow
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: {
                 display: false
             },

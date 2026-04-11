@@ -38,7 +38,17 @@ final class Gate
             return true;
         }
         $permDao = new PermissionDAO($conn, '');
-        return $permDao->userCan($idUser, $action);
+        $can = $permDao->userCan($idUser, $action);
+        if ($can) {
+            return true;
+        }
+
+        $actionNorm = self::normText($action);
+        if (in_array($actionNorm, ['discharge', 'daralta', 'alta'], true)) {
+            return $permDao->userCan($idUser, 'edit') || $permDao->userCan($idUser, 'create');
+        }
+
+        return false;
     }
 
     public static function enforceAction(PDO $conn, string $BASE_URL, string $action, string $message): void
@@ -53,6 +63,9 @@ final class Gate
     private static function detectAction(string $script): ?string
     {
         $f = strtolower(basename($script));
+
+        // Fluxos com permissão específica não devem cair como "create".
+        if ($f === 'process_alta.php') return 'discharge';
 
         // 1) DELETE por nome
         if (preg_match('/(excluir|deletar|remover|delete|destroy)/', $f)) return 'delete';
@@ -81,6 +94,9 @@ final class Gate
 
         $script = strtolower($_SERVER['SCRIPT_NAME'] ?? '');
         $scriptBase = strtolower(basename($script));
+        if ($scriptBase === 'process_alta.php') {
+            return;
+        }
         if (($scriptBase === 'process_usuario.php' && strtolower($_POST['type'] ?? '') === 'update-senha')
             || $scriptBase === 'process_recuperar_senha.php'
             || $scriptBase === 'process_redefinir_senha.php'
@@ -154,7 +170,7 @@ final class Gate
         // 1) Mapa manual (AJUSTE AQUI para seus nomes reais)
         $manualMap = [
             'internac' => 'internacoes/lista', // <— exemplo real seu; ajuste se for outro
-            'pacient'  => 'lista_pacientes.php',
+            'pacient'  => 'pacientes',
             'usuario'  => 'list_usuario.php',
             'tuss'     => 'lista_tuss.php',
             'visita'   => 'lista_visitas.php',
@@ -164,14 +180,29 @@ final class Gate
         $script = strtolower($script);
         $refUrl = parse_url($referer ?: '', PHP_URL_PATH) ?: '';
         $refBase = $refUrl ? basename($refUrl) : '';
-        $appBasePath = rtrim(dirname(parse_url($BASE_URL, PHP_URL_PATH) ?? '/'), '/'); // /FullConex
+        $appBasePath = rtrim((string)parse_url($BASE_URL, PHP_URL_PATH), '/'); // /FullCareAmil
         if ($appBasePath === '') $appBasePath = '/';
 
+        // 1.1) Se o referer já aponta para uma rota interna amigável, preserve-a.
+        if ($refUrl && $appBasePath !== '/' && str_starts_with($refUrl, $appBasePath . '/')) {
+            $relativeRef = trim(substr($refUrl, strlen($appBasePath)), '/');
+            if ($relativeRef !== '' && !preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|map)$/i', $relativeRef)) {
+                $toPath = $relativeRef;
+            }
+        } elseif ($refUrl && $appBasePath === '/') {
+            $relativeRef = trim($refUrl, '/');
+            if ($relativeRef !== '' && !preg_match('/\.(css|js|png|jpg|jpeg|gif|svg|ico|map)$/i', $relativeRef)) {
+                $toPath = $relativeRef;
+            }
+        }
+
         // 2) Se bater no mapa manual, use-o
-        foreach ($manualMap as $needle => $file) {
-            if (str_contains($script, $needle) || ($refBase && str_contains($refBase, $needle))) {
-                $toPath = $file;
-                break;
+        if (!$toPath) {
+            foreach ($manualMap as $needle => $file) {
+                if (str_contains($script, $needle) || ($refBase && str_contains($refBase, $needle))) {
+                    $toPath = $file;
+                    break;
+                }
             }
         }
 

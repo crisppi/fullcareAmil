@@ -212,32 +212,28 @@
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                             <li>
-                                                <a class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospital_acomodacoes.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i class="fa-solid fa-bed"
-                                                        style="font-size: 1rem;margin-right:5px; color: #5e2363;"></i>Acomodações
+                                                    <i class="bi bi-hospital" style="font-size:1rem;margin-right:8px;color:#5e2363;"></i>Acomodações
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospital_usuarios.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i class="fa-solid fa-users"
-                                                        style="font-size: 1rem;margin-right:5px; color: #5e2363;"></i>Usuários
+                                                    <i class="bi bi-people" style="font-size:1rem;margin-right:8px;color:#5e2363;"></i>Usuários
                                                 </a>
                                             </li>
                                             <li>
-                                                <button class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <button class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     onclick="openModal('<?= $BASE_URL ?>show_hospital.php?id_hospital=<?= $id_hospital ?>')"
                                                     data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                        class="fas fa-eye"
-                                                        style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                        class="bi bi-eye"
+                                                        style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
                                             </li>
                                             <li>
-                                                <a class="btn btn-default" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/editar/' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                        name="type" value="edite"
-                                                        class="far fa-edit edit-icon"></i>Editar
+                                                    <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>
                                             </li>
 

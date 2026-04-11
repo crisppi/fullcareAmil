@@ -87,7 +87,15 @@ class indicadoresDAO
             JOIN tb_paciente  p   ON i.fk_paciente_int  = p.id_paciente
             JOIN tb_hospital  hos ON i.fk_hospital_int  = hos.id_hospital
             JOIN tb_seguradora s   ON p.fk_seguradora_pac = s.id_seguradora
-        " . $this->where($where);
+            WHERE i.internado_int = 's'
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM tb_alta al
+                    WHERE al.fk_id_int_alt = i.id_internacao
+                      AND al.data_alta_alt IS NOT NULL
+                      AND al.data_alta_alt <> '0000-00-00'
+              )
+        " . $this->andWhere($where);
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -104,6 +112,13 @@ class indicadoresDAO
             SELECT COUNT(DISTINCT i.id_internacao) AS total
             FROM tb_internacao i
             WHERE i.internado_int = 's'
+              AND NOT EXISTS (
+                    SELECT 1
+                    FROM tb_alta al
+                    WHERE al.fk_id_int_alt = i.id_internacao
+                      AND al.data_alta_alt IS NOT NULL
+                      AND al.data_alta_alt <> '0000-00-00'
+              )
               AND DATEDIFF(CURRENT_DATE(), i.data_intern_int) > :dias
         " . $this->andWhere($where);
 

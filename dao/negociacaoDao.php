@@ -121,6 +121,24 @@ class negociacaoDAO implements negociacaoDAOInterface
         return $this->columnCache[$key];
     }
 
+    private function resolveAuditorId($fkUsuarioNeg): ?int
+    {
+        if ($fkUsuarioNeg !== null && $fkUsuarioNeg !== '' && (int)$fkUsuarioNeg > 0) {
+            return (int)$fkUsuarioNeg;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            @session_start();
+        }
+
+        $sessionUserId = $_SESSION['id_usuario'] ?? null;
+        if ($sessionUserId !== null && $sessionUserId !== '' && (int)$sessionUserId > 0) {
+            return (int)$sessionUserId;
+        }
+
+        return null;
+    }
+
     public function buildNegociacao($data)
     {
         $negociacao = new Negociacao();
@@ -244,6 +262,8 @@ class negociacaoDAO implements negociacaoDAOInterface
 
     public function create(Negociacao $negociacao)
     {
+        $negociacao->fk_usuario_neg = $this->resolveAuditorId($negociacao->fk_usuario_neg ?? null);
+
         $fields = [
             'fk_id_int',
             'troca_de',
@@ -276,6 +296,8 @@ class negociacaoDAO implements negociacaoDAOInterface
 
     public function update(Negociacao $negociacao)
     {
+        $negociacao->fk_usuario_neg = $this->resolveAuditorId($negociacao->fk_usuario_neg ?? null);
+
         $sets = [
             'fk_id_int = :fk_id_int',
             'troca_de = :troca_de',

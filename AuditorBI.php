@@ -52,7 +52,7 @@ function fetchStats(PDO $conn, string $auditorExpr, string $where, array $params
     $sqlBaseIntern = "
         SELECT DISTINCT i.id_internacao,
             {$auditorExpr} AS auditor_nome,
-            GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1) AS diarias
+            GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int)) AS diarias
         FROM tb_visita v
         LEFT JOIN tb_user u ON u.id_usuario = v.fk_usuario_vis
         LEFT JOIN tb_user u_med ON u_med.id_usuario = CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
@@ -329,9 +329,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
 $ajaxEndpoint = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: ($_SERVER['PHP_SELF'] ?? 'AuditorBI.php'));
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260213b">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411e">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260411e"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-auditor-page">
@@ -345,52 +345,49 @@ $ajaxEndpoint = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) 
         </div>
     </div>
 
-    <div class="bi-layout">
-        <aside class="bi-sidebar bi-stack">
-            <form class="bi-filter-card" method="get">
-                <div class="bi-filter-card-header">Filtros</div>
-                <div class="bi-filter-card-body bi-stack">
-                    <div class="bi-filter">
-                        <label>Auditor</label>
-                        <select name="auditor">
-                            <option value="">Todos</option>
-                            <?php foreach ($auditores as $a): ?>
-                                <option value="<?= e($a) ?>" <?= $auditorNome === $a ? 'selected' : '' ?>>
-                                    <?= e($a) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="bi-filter">
-                        <label>Hospitais</label>
-                        <select name="hospital_id">
-                            <option value="">Todos</option>
-                            <?php foreach ($hospitais as $h): ?>
-                                <option value="<?= (int)$h['id_hospital'] ?>" <?= $hospitalId == $h['id_hospital'] ? 'selected' : '' ?>>
-                                    <?= e($h['nome_hosp']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="bi-filter">
-                        <label>Mes</label>
-                        <select name="mes">
-                            <option value="">Todos</option>
-                            <?php for ($m = 1; $m <= 12; $m++): ?>
-                                <option value="<?= $m ?>" <?= $mes == $m ? 'selected' : '' ?>><?= $m ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-                    <div class="bi-filter">
-                        <label>Ano</label>
-                        <input type="number" name="ano" value="<?= e($ano) ?>" min="2000" max="2100">
-                    </div>
-                    <button class="bi-filter-btn" type="submit">Aplicar</button>
-                </div>
-            </form>
-        </aside>
+    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact js-bi-filter-form" method="get">
+        <div class="bi-filter">
+            <label>Auditor</label>
+            <select name="auditor">
+                <option value="">Todos</option>
+                <?php foreach ($auditores as $a): ?>
+                    <option value="<?= e($a) ?>" <?= $auditorNome === $a ? 'selected' : '' ?>>
+                        <?= e($a) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="bi-filter">
+            <label>Hospitais</label>
+            <select name="hospital_id">
+                <option value="">Todos</option>
+                <?php foreach ($hospitais as $h): ?>
+                    <option value="<?= (int)$h['id_hospital'] ?>" <?= $hospitalId == $h['id_hospital'] ? 'selected' : '' ?>>
+                        <?= e($h['nome_hosp']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="bi-filter">
+            <label>Mês</label>
+            <select name="mes">
+                <option value="">Todos</option>
+                <?php for ($m = 1; $m <= 12; $m++): ?>
+                    <option value="<?= $m ?>" <?= $mes == $m ? 'selected' : '' ?>><?= $m ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+        <div class="bi-filter">
+            <label>Ano</label>
+            <input type="number" name="ano" value="<?= e($ano) ?>" min="2000" max="2100">
+        </div>
+        <div class="bi-actions">
+            <button class="bi-btn" type="submit">Aplicar</button>
+            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>bi/auditor">Limpar</a>
+        </div>
+    </form>
 
-        <section class="bi-main bi-stack">
+    <section class="bi-stack">
             <div class="bi-kpis kpi-auditor-v2">
                 <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
                     <div class="kpi-card-v2-head">
@@ -462,8 +459,7 @@ $ajaxEndpoint = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) 
                     <div class="bi-chart"><canvas id="chartAuditorVisitas"></canvas></div>
                 </div>
             </div>
-        </section>
-    </div>
+    </section>
 </div>
 
 <script>
@@ -606,7 +602,7 @@ async function fetchBiData(form) {
   window.history.replaceState({}, '', newUrl);
 }
 
-const filterForm = document.querySelector('.bi-filter-card');
+const filterForm = document.querySelector('.js-bi-filter-form');
 if (filterForm) {
   filterForm.addEventListener('submit', async (ev) => {
     ev.preventDefault();

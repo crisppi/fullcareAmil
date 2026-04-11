@@ -10,6 +10,8 @@ include_once("models/message.php");
 
 include_once("models/hospital.php");
 include_once("dao/hospitalDao.php");
+include_once("models/acomodacao.php");
+include_once("dao/acomodacaoDao.php");
 
 include_once("models/patologia.php");
 include_once("dao/patologiaDao.php");
@@ -114,6 +116,8 @@ if (empty($int_detalhes)) {
 }
 
 $int_hospital = $hospital_geral->findById($intern['fk_hospital_int']);
+$acomodacaoDao = new acomodacaoDAO($conn, $BASE_URL);
+$acomodacoesNegoc = $acomodacaoDao->findGeralByHospital((int)($intern['fk_hospital_int'] ?? 0));
 
 $int_tuss = $tuss_int->findByIdIntern($intern['id_internacao']);
 

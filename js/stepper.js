@@ -133,6 +133,8 @@ function validarMatriculaExistente() {
     var v = document.getElementById('matricula_pac').value.trim();
     var recem = document.getElementById('recem_nascido_pac');
     var numeroRNInput = document.getElementById('numero_recem_nascido_pac');
+    var feedbackMatricula = document.getElementById("validar_matricula");
+    var botaoFinalizar = document.getElementById("finalizar_etapa1");
     var isRN = recem && recem.value === 's';
 
     if (isRN) {
@@ -147,27 +149,37 @@ function validarMatriculaExistente() {
     var formData = new FormData();
     formData.append('matricula', v);
 
+    if (v.length === 0) {
+        if (feedbackMatricula) feedbackMatricula.style.display = 'none';
+        if (botaoFinalizar) botaoFinalizar.disabled = false;
+        return;
+    }
+
+    var baseUrl = (typeof buildBaseUrl === 'function' ? buildBaseUrl() : '/');
+    var checkUrl = String(baseUrl).replace(/\/?$/, '/') + 'process_matricula_paciente.php';
+
     if (v.length > 0) {
         $.ajax({
-            url: 'process_matricula_paciente.php',
+            url: checkUrl,
             type: 'POST',
+            dataType: 'json',
             processData: false,
             contentType: false,
             data: formData,
             success: function (response) {
-                if (response == 0) {
-                    document.getElementById("validar_matricula").style.display = 'none';
-                    // var elRN = document.getElementById("validar_matricula_rn");
-                    // if (elRN) elRN.style.display = 'none';
-                    document.getElementById("finalizar_etapa1").disabled = false;
+                var existe = !!(response && response.exists);
+
+                if (!existe) {
+                    if (feedbackMatricula) feedbackMatricula.style.display = 'none';
+                    if (botaoFinalizar) botaoFinalizar.disabled = false;
                 } else {
-                    document.getElementById("validar_matricula").style.display = 'block';
-                    // var elRN2 = document.getElementById("validar_matricula_rn");
-                    // if (elRN2) elRN2.style.display = 'block';
-                    document.getElementById("finalizar_etapa1").disabled = true;
+                    if (feedbackMatricula) feedbackMatricula.style.display = 'block';
+                    if (botaoFinalizar) botaoFinalizar.disabled = true;
                 }
             },
             error: function () {
+                if (feedbackMatricula) feedbackMatricula.style.display = 'none';
+                if (botaoFinalizar) botaoFinalizar.disabled = false;
             }
         });
     }

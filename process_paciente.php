@@ -141,6 +141,11 @@ if ($type === "create") {
     }
 
 
+    $ativo_pac = $ativo_pac ?: 's';
+    $usuario_create_pac = $usuario_create_pac ?: ($_SESSION['usuario_user'] ?? $_SESSION['email_user'] ?? '');
+    $data_create_pac = $data_create_pac ?: date('Y-m-d H:i:s');
+    $fk_usuario_pac = $fk_usuario_pac ?: ($_SESSION['id_usuario'] ?? null);
+
     $paciente = new Paciente();
     // Validação mínima de dados4
     if (3 < 4) {
@@ -229,8 +234,17 @@ if ($type === "create") {
         $paciente->matricula_titular_pac = $matricula_titular_pac ?: null;
         $paciente->numero_rn_pac = $numero_rn_pac;
 
-        $pacienteDao->create($paciente);
-        $novoId = (int)$conn->lastInsertId();
+        try {
+            $pacienteDao->create($paciente);
+            $novoId = (int)$conn->lastInsertId();
+        } catch (Throwable $e) {
+            error_log('[PACIENTE][CREATE][ERROR] ' . $e->getMessage());
+            $_SESSION['msg'] = 'Não foi possível cadastrar o paciente: ' . $e->getMessage();
+            $_SESSION['type'] = 'error';
+            header('Location: ' . $BASE_URL . 'pacientes/novo', true, 303);
+            exit;
+        }
+
         // Detecção de requisição feita dentro do modal global
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
             header('Content-Type: application/json; charset=utf-8');
@@ -243,10 +257,12 @@ if ($type === "create") {
             ]);
             exit;
         }
-        header("Location: " . $BASE_URL . "pacientes");
+        header("Location: " . $BASE_URL . "pacientes", true, 303);
+        exit;
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: nome_pac do paciente!", "error", "back");
+        exit;
     }
 
     // =================================================================
@@ -378,7 +394,8 @@ if ($type === "create") {
 
     $pacienteDao->update($pacienteData);
 
-    header("Location: " . $BASE_URL . "pacientes");
+    header("Location: " . $BASE_URL . "pacientes", true, 303);
+    exit;
 }
 
 if ($type === "delete") {
@@ -392,10 +409,12 @@ if ($type === "delete") {
 
         $pacienteDao->destroy($id_paciente);
 
-        header("Location: " . $BASE_URL . "pacientes");
+        header("Location: " . $BASE_URL . "pacientes", true, 303);
+        exit;
     } else {
 
         $message->setMessage("Informações inválidas!", "error", "index.php");
+        exit;
     }
 }
 
@@ -413,5 +432,6 @@ if ($type === "delUpdate") {
 
     $pacienteDao->deletarUpdate($pacienteData);
 
-    header("Location: " . $BASE_URL . "pacientes");
+    header("Location: " . $BASE_URL . "pacientes", true, 303);
+    exit;
 }

@@ -62,6 +62,8 @@ $navGroups = [
             ['label' => 'Auditor', 'href' => 'bi/auditor'],
             ['label' => 'Auditor Visitas', 'href' => 'bi/auditor-visitas'],
             ['label' => 'Auditoria Produtividade', 'href' => 'bi/auditoria-produtividade'],
+            ['label' => 'Análise Negociações', 'href' => 'bi/analise-negociacoes'],
+            ['label' => 'Negociações Detalhadas', 'href' => 'bi/negociacoes-detalhadas'],
             ['label' => 'Saving por Auditor', 'href' => 'bi/saving-por-auditor'],
             ['label' => 'Saving', 'href' => 'bi/saving'],
         ],
@@ -110,6 +112,15 @@ $navGroups = [
             ['label' => 'Hospitais', 'href' => 'bi/hospitais'],
             ['label' => 'Sinistro', 'href' => 'bi/sinistro-bi'],
             ['label' => 'Inteligencia Artificial', 'href' => 'bi/inteligencia'],
+        ],
+    ],
+    [
+        'title' => 'Tops',
+        'key' => 'tops',
+        'items' => [
+            ['label' => 'Top Hospitais', 'href' => 'bi/tops-hospitais'],
+            ['label' => 'Top Pacientes', 'href' => 'bi/tops-pacientes'],
+            ['label' => 'Top Patologia', 'href' => 'bi/tops-patologia'],
         ],
     ],
     [

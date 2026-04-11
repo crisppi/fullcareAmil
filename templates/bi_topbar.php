@@ -43,6 +43,8 @@ $biSections = [
         ['label' => 'Auditor', 'href' => 'bi/auditor', 'file' => 'AuditorBI.php'],
         ['label' => 'Auditor Visitas', 'href' => 'bi/auditor-visitas', 'file' => 'AuditorVisitasBI.php'],
         ['label' => 'Auditoria Produtividade', 'href' => 'bi/auditoria-produtividade', 'file' => 'AuditoriaProdutividadeBI.php'],
+        ['label' => 'Análise Negociações', 'href' => 'bi/analise-negociacoes', 'file' => 'bi_analise_negociacoes.php'],
+        ['label' => 'Negociações Detalhadas', 'href' => 'bi/negociacoes-detalhadas', 'file' => 'bi_negociacoes_detalhadas.php'],
         ['label' => 'Saving por Auditor', 'href' => 'bi/saving-por-auditor', 'file' => 'bi_saving_por_auditor.php'],
         ['label' => 'Saving', 'href' => 'bi/saving', 'file' => 'bi_saving.php'],
     ],
@@ -79,6 +81,11 @@ $biSections = [
         ['label' => 'Hospitais', 'href' => 'bi/hospitais', 'file' => 'bi_hospitais.php'],
         ['label' => 'Inteligência Artificial', 'href' => 'bi/inteligencia', 'file' => 'bi_inteligencia.php'],
         ['label' => 'Sinistro BI', 'href' => 'bi/sinistro-bi', 'file' => 'bi_sinistro.php'],
+    ],
+    'Tops' => [
+        ['label' => 'Hospitais', 'href' => 'bi/tops-hospitais', 'file' => 'bi_ranking_hospitais.php'],
+        ['label' => 'Pacientes', 'href' => 'bi/tops-pacientes', 'file' => 'bi_ranking_pacientes.php'],
+        ['label' => 'Patologia', 'href' => 'bi/tops-patologia', 'file' => 'bi_ranking_patologia.php'],
     ],
     'Faturamento' => [
         ['label' => 'Visitas', 'href' => 'bi/faturamento-visitas', 'file' => 'faturamento_visitas.php'],
@@ -185,424 +192,320 @@ if (!in_array($currentPage, $flatPages, true) && !$matchedByHref && !($ieSlug !=
 ?>
 
 <style>
-.bi-topbar {
-    position: sticky;
-    top: 40px;
-    z-index: 900;
-    background: #b9d2e4;
-    border-bottom: 1px solid #7aa4c4;
-    box-shadow: 0 8px 16px rgba(24, 46, 68, 0.08);
+:root {
+    --bi-sidebar-top: 92px;
+    --bi-sidebar-width: 308px;
+    --bi-sidebar-collapsed-width: 84px;
 }
 
-.bi-topbar::before {
+body.bi-theme {
+    transition: padding-left .22s ease;
+    padding-left: var(--bi-sidebar-width);
+}
+
+body.bi-theme.bi-nav-collapsed {
+    padding-left: var(--bi-sidebar-collapsed-width);
+}
+
+.bi-side-toggle {
+    position: fixed;
+    left: calc(var(--bi-sidebar-width) - 28px);
+    top: calc(var(--bi-sidebar-top) + 8px);
+    z-index: 1202;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(18, 47, 76, 0.96), rgba(28, 78, 118, 0.96));
+    color: #eff8ff;
+    box-shadow: 0 10px 26px rgba(8, 28, 45, 0.35);
+    transition: left .22s ease, transform .15s ease;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-side-toggle {
+    left: calc(var(--bi-sidebar-collapsed-width) - 28px);
+}
+
+.bi-side-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.bi-sidebar-shell {
+    position: fixed;
+    left: 0;
+    top: var(--bi-sidebar-top);
+    bottom: 0;
+    width: var(--bi-sidebar-width);
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    background:
+        radial-gradient(circle at top left, rgba(96, 200, 215, 0.18), transparent 38%),
+        linear-gradient(180deg, rgba(10, 42, 70, 0.98), rgba(9, 29, 48, 0.98));
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 16px 0 36px rgba(5, 20, 34, 0.28);
+    transition: width .22s ease, transform .22s ease;
+    overflow: hidden;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
+    width: var(--bi-sidebar-collapsed-width);
+}
+
+.bi-sidebar-shell::before {
     content: "";
     display: block;
     height: 6px;
-    background: linear-gradient(90deg, #2f6fa0, #3e7fb2, #2f6fa0);
+    background: linear-gradient(90deg, #2f6fa0, #58c7cf, #8f67db);
 }
 
-.bi-topbar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 10px 18px 6px;
+.bi-sidebar-head {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .bi-topbar-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #5e6e7c;
+    color: rgba(225, 241, 255, 0.62);
     font-weight: 700;
 }
 
 .bi-crumb {
-    color: #2d3a45;
+    margin-top: 8px;
+    color: #f1f8ff;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    line-height: 1.35;
 }
 
 .bi-crumb span {
-    color: #6f7f8c;
+    color: rgba(225, 241, 255, 0.44);
     font-weight: 600;
     margin: 0 6px;
 }
 
-.bi-topbar-select {
-    min-width: 220px;
-    border-radius: 10px;
-    padding: 6px 10px;
-    border: 1px solid rgba(54, 84, 111, 0.25);
-    font-size: 0.9rem;
-    color: #2f3b45;
-    background: rgba(255, 255, 255, 0.85);
-}
-
-.bi-section-tabs {
+.bi-sidebar-navlink {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    padding: 6px 18px 4px;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: auto;
-}
-
-.bi-nav-inline {
-    margin-left: auto;
-    margin-right: 16px;
-    align-self: center;
-    display: flex;
-    gap: 8px;
-}
-
-.bi-section-tab {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(120, 146, 168, 0.45);
-    color: #374552;
-    font-size: 0.82rem;
-    font-weight: 600;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    text-align: center;
-    line-height: 1.2;
-}
-
-.bi-section-tab:hover {
-    border-color: #3b6b95;
-    color: #2d4f6c;
-}
-
-.bi-section-tab.bi-section-tab-nav {
+    margin-top: 12px;
+    padding: 9px 12px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #5a79ff, #3c56d6);
-    border-color: rgba(77, 104, 228, 0.9);
+    border: 1px solid rgba(77, 104, 228, 0.9);
     color: #ffffff;
-    box-shadow: 0 6px 14px rgba(73, 99, 221, 0.25);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
-.bi-section-tab.bi-section-tab-nav:hover {
-    border-color: rgba(52, 82, 196, 0.95);
-    color: #ffffff;
-}
-
-.bi-section-tab.bi-section-tab-nav.is-active {
+.bi-sidebar-navlink.is-active {
     background: linear-gradient(135deg, #4b5fd6, #2c3fb6);
-    border-color: rgba(51, 69, 176, 0.95);
-    color: #ffffff;
-    box-shadow: 0 6px 14px rgba(45, 63, 170, 0.3);
 }
 
-.bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ffcc6b, #ff8a3d);
-    border-color: rgba(255, 170, 85, 0.9);
-    color: #2c1b0a;
-    box-shadow: 0 6px 14px rgba(255, 140, 64, 0.25);
+.bi-sidebar-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px 12px 18px;
 }
 
-.bi-section-tabs[data-section="resumo"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #a28bdd, #6b58b5);
-    border-color: rgba(140, 115, 205, 0.9);
-    color: #1b1330;
+.bi-sidebar-body::-webkit-scrollbar {
+    width: 8px;
 }
 
-.bi-section-tabs[data-section="clinico"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #52c0c4, #1f8b96);
-    border-color: rgba(45, 160, 170, 0.9);
-    color: #0b2a2e;
+.bi-sidebar-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
 }
 
-.bi-section-tabs[data-section="operacional"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ffb362, #d97825);
-    border-color: rgba(220, 125, 45, 0.9);
-    color: #2b1606;
-}
-
-.bi-section-tabs[data-section="rede"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #7eb5ff, #3c79d6);
-    border-color: rgba(85, 140, 210, 0.9);
-    color: #0d1f35;
-}
-
-.bi-section-tabs[data-section="financeiro"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ffd36e, #d7a13d);
-    border-color: rgba(210, 160, 70, 0.9);
-    color: #2c1b05;
-}
-
-.bi-section-tabs[data-section="gastos"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ff8fa3, #d94b6a);
-    border-color: rgba(215, 85, 115, 0.9);
-    color: #2a0c16;
-}
-
-.bi-section-tabs[data-section="anomalias"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ff7b7b, #c73838);
-    border-color: rgba(200, 70, 70, 0.9);
-    color: #2a0c0c;
-}
-
-.bi-section-tabs[data-section="conformidade"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #61d2c6, #2aa08f);
-    border-color: rgba(60, 170, 150, 0.9);
-    color: #0b2a26;
-}
-
-.bi-section-tabs[data-section="auditoria"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #63d5c0, #2fa38c);
-    border-color: rgba(60, 160, 140, 0.9);
-    color: #0f2a25;
-}
-
-.bi-section-tabs[data-section="risco"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ffd36e, #d69a3a);
-    border-color: rgba(215, 160, 70, 0.9);
-    color: #2c1b05;
-}
-
-.bi-section-tabs[data-section="prevencao"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #ff6b6b, #c43d3d);
-    border-color: rgba(190, 70, 70, 0.9);
-    color: #2a0c0c;
-}
-
-.bi-section-tabs[data-section="negociacao"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #72d2ff, #3b8fca);
-    border-color: rgba(85, 150, 210, 0.9);
-    color: #0c2133;
-}
-
-.bi-section-tabs[data-section="qualidade"] .bi-section-tab.is-active {
-    background: linear-gradient(135deg, #b897ff, #6f4bd6);
-    border-color: rgba(130, 100, 210, 0.9);
-    color: #1b1330;
-}
-
-.bi-chipbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 6px 18px 14px;
-    border-radius: 14px;
-    position: relative;
+.bi-sidebar-group {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
     overflow: hidden;
-    width: 100%;
-    box-sizing: border-box;
 }
 
-.bi-chipbar::after {
-    content: "";
+.bi-sidebar-group + .bi-sidebar-group {
+    margin-top: 10px;
+}
+
+.bi-sidebar-group summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    color: #edf7ff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background .15s ease;
+}
+
+.bi-sidebar-group summary::-webkit-details-marker {
     display: none;
 }
 
-.bi-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
+.bi-sidebar-group[open] summary,
+.bi-sidebar-group summary:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bi-sidebar-dot {
+    flex: 0 0 10px;
+    width: 10px;
+    height: 10px;
     border-radius: 999px;
-    border: 1px solid #cfe0ee;
-    color: #2e4b63;
-    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+}
+
+.bi-sidebar-group.is-active .bi-sidebar-dot {
+    background: #63d5c0;
+}
+
+.bi-sidebar-chevron {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: rgba(237, 247, 255, 0.54);
+    transition: transform .15s ease;
+}
+
+.bi-sidebar-group[open] .bi-sidebar-chevron {
+    transform: rotate(90deg);
+}
+
+.bi-sidebar-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 10px 10px;
+}
+
+.bi-sidebar-link {
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 10px 8px 14px;
+    border-radius: 12px;
+    color: rgba(238, 247, 255, 0.88);
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.85);
-    white-space: nowrap;
-    transition: all .15s ease;
+    font-size: 0.88rem;
+    line-height: 1.25;
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.04);
 }
 
-.bi-chip:hover {
-    border-color: #3b6b95;
-    color: #2d4f6c;
+.bi-sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
 }
 
-.bi-chip.is-active {
-    background: linear-gradient(135deg, #ffcc6b, #ff8a3d);
-    color: #2c1b0a;
-    border-color: rgba(255, 170, 85, 0.9);
-    box-shadow: 0 6px 14px rgba(255, 140, 64, 0.25);
-    transform: translateY(-1px);
-}
-
-.bi-chipbar[data-section="resumo"] {
-    background: linear-gradient(135deg, rgba(120, 95, 170, 0.25), rgba(90, 70, 140, 0.25));
-    border: 1px solid rgba(120, 95, 170, 0.35);
-}
-
-.bi-chipbar[data-section="clinico"] {
-    background: linear-gradient(135deg, rgba(30, 135, 140, 0.24), rgba(20, 110, 120, 0.24));
-    border: 1px solid rgba(30, 135, 140, 0.35);
-}
-
-.bi-chipbar[data-section="operacional"] {
-    background: linear-gradient(135deg, rgba(210, 130, 40, 0.22), rgba(185, 105, 30, 0.22));
-    border: 1px solid rgba(210, 130, 40, 0.35);
-}
-
-.bi-chipbar[data-section="rede"] {
-    background: linear-gradient(135deg, rgba(60, 120, 190, 0.22), rgba(45, 95, 160, 0.22));
-    border: 1px solid rgba(60, 120, 190, 0.35);
-}
-
-.bi-chipbar[data-section="financeiro"] {
-    background: linear-gradient(135deg, rgba(210, 175, 70, 0.25), rgba(175, 140, 45, 0.25));
-    border: 1px solid rgba(210, 175, 70, 0.35);
-}
-
-.bi-chipbar[data-section="gastos"] {
-    background: linear-gradient(135deg, rgba(214, 90, 120, 0.25), rgba(178, 60, 90, 0.25));
-    border: 1px solid rgba(214, 90, 120, 0.35);
-}
-
-.bi-chipbar[data-section="anomalias"] {
-    background: linear-gradient(135deg, rgba(210, 90, 90, 0.25), rgba(170, 60, 60, 0.25));
-    border: 1px solid rgba(210, 90, 90, 0.35);
-}
-
-.bi-chipbar[data-section="conformidade"] {
-    background: linear-gradient(135deg, rgba(90, 200, 185, 0.25), rgba(60, 150, 135, 0.25));
-    border: 1px solid rgba(90, 200, 185, 0.35);
-}
-
-.bi-chipbar[data-section="auditoria"] {
-    background: linear-gradient(135deg, rgba(95, 205, 190, 0.25), rgba(60, 160, 145, 0.25));
-    border: 1px solid rgba(95, 205, 190, 0.35);
-}
-
-.bi-chipbar[data-section="risco"] {
-    background: linear-gradient(135deg, rgba(230, 190, 90, 0.25), rgba(180, 140, 45, 0.25));
-    border: 1px solid rgba(230, 190, 90, 0.35);
-}
-
-.bi-chipbar[data-section="negociacao"] {
-    background: linear-gradient(135deg, rgba(95, 170, 220, 0.25), rgba(60, 120, 180, 0.25));
-    border: 1px solid rgba(95, 170, 220, 0.35);
-}
-
-.bi-chipbar[data-section="qualidade"] {
-    background: linear-gradient(135deg, rgba(150, 120, 220, 0.25), rgba(110, 80, 190, 0.25));
-    border: 1px solid rgba(150, 120, 220, 0.35);
-}
-
-.bi-chipbar[data-section="resumo"] .bi-chip,
-.bi-chipbar[data-section="clinico"] .bi-chip,
-.bi-chipbar[data-section="operacional"] .bi-chip,
-.bi-chipbar[data-section="rede"] .bi-chip,
-.bi-chipbar[data-section="financeiro"] .bi-chip,
-.bi-chipbar[data-section="gastos"] .bi-chip,
-.bi-chipbar[data-section="anomalias"] .bi-chip,
-.bi-chipbar[data-section="conformidade"] .bi-chip,
-.bi-chipbar[data-section="auditoria"] .bi-chip,
-.bi-chipbar[data-section="risco"] .bi-chip,
-.bi-chipbar[data-section="negociacao"] .bi-chip,
-.bi-chipbar[data-section="qualidade"] .bi-chip {
-    background: rgba(255, 255, 255, 0.9);
-}
-
-.bi-chipbar[data-section="resumo"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #a28bdd, #6b58b5);
-    border-color: rgba(140, 115, 205, 0.9);
-    color: #1b1330;
-}
-
-.bi-chipbar[data-section="clinico"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #52c0c4, #1f8b96);
-    border-color: rgba(45, 160, 170, 0.9);
-    color: #0b2a2e;
-}
-
-.bi-chipbar[data-section="operacional"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #ffb362, #d97825);
-    border-color: rgba(220, 125, 45, 0.9);
-    color: #2b1606;
-}
-
-.bi-chipbar[data-section="rede"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #7eb5ff, #3c79d6);
-    border-color: rgba(85, 140, 210, 0.9);
-    color: #0d1f35;
-}
-
-.bi-chipbar[data-section="financeiro"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #ffd36e, #d7a13d);
-    border-color: rgba(210, 160, 70, 0.9);
-    color: #2c1b05;
-}
-
-.bi-chipbar[data-section="gastos"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #ff8fa3, #d94b6a);
-    border-color: rgba(215, 85, 115, 0.9);
-    color: #2a0c16;
-}
-
-.bi-chipbar[data-section="anomalias"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #ff7b7b, #c73838);
-    border-color: rgba(200, 70, 70, 0.9);
-    color: #2a0c0c;
-}
-
-.bi-chipbar[data-section="conformidade"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #61d2c6, #2aa08f);
-    border-color: rgba(60, 170, 150, 0.9);
-    color: #0b2a26;
-}
-
-.bi-chipbar[data-section="auditoria"] .bi-chip.is-active {
+.bi-sidebar-link.is-active {
     background: linear-gradient(135deg, #63d5c0, #2fa38c);
     border-color: rgba(60, 160, 140, 0.9);
     color: #0f2a25;
+    box-shadow: 0 10px 20px rgba(23, 103, 94, 0.28);
 }
 
-.bi-chipbar[data-section="risco"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #ffd36e, #d69a3a);
-    border-color: rgba(215, 160, 70, 0.9);
-    color: #2c1b05;
+.bi-sidebar-foot {
+    padding: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(6, 20, 34, 0.42);
 }
 
-.bi-chipbar[data-section="negociacao"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #72d2ff, #3b8fca);
-    border-color: rgba(85, 150, 210, 0.9);
-    color: #0c2133;
+.bi-topbar-select {
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.9rem;
+    color: #f1f8ff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.bi-chipbar[data-section="qualidade"] .bi-chip.is-active {
-    background: linear-gradient(135deg, #b897ff, #6f4bd6);
-    border-color: rgba(130, 100, 210, 0.9);
-    color: #1b1330;
+.bi-topbar-select option,
+.bi-topbar-select optgroup {
+    color: #1f2d3a;
 }
 
-.bi-topbar-spacer {
-    height: 22px;
+body.bi-theme.bi-nav-collapsed .bi-crumb,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-navlink,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-links,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-foot,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-chevron,
+body.bi-theme.bi-nav-collapsed .bi-topbar-title span,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-group summary span {
+    opacity: 0;
+    pointer-events: none;
 }
 
-@media (max-width: 900px) {
-    .bi-topbar-inner {
-        flex-direction: column;
-        align-items: flex-start;
+body.bi-theme.bi-nav-collapsed .bi-sidebar-head {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-group {
+    border-radius: 14px;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-group summary {
+    justify-content: center;
+    padding: 14px 10px;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-dot {
+    width: 12px;
+    height: 12px;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-body {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.bi-mobile-backdrop {
+    display: none;
+}
+
+@media (max-width: 1100px) {
+    body.bi-theme,
+    body.bi-theme.bi-nav-collapsed {
+        padding-left: 0;
     }
 
-    .bi-topbar {
-        top: 36px;
-    }
-}
-
-@media (max-width: 600px) {
-    .bi-section-tabs,
-    .bi-chipbar {
-        padding: 6px 12px 10px;
+    .bi-side-toggle {
+        left: 14px !important;
+        top: calc(var(--bi-sidebar-top) + 8px);
     }
 
-    .bi-topbar-select {
-        width: 100%;
-        min-width: 0;
+    .bi-sidebar-shell {
+        transform: translateX(-100%);
+        width: min(320px, calc(100vw - 28px));
+    }
+
+    body.bi-theme.bi-nav-open .bi-sidebar-shell {
+        transform: translateX(0);
+    }
+
+    .bi-mobile-backdrop {
+        position: fixed;
+        inset: 0;
+        top: var(--bi-sidebar-top);
+        background: rgba(3, 16, 27, 0.46);
+        z-index: 1190;
+    }
+
+    body.bi-theme.bi-nav-open .bi-mobile-backdrop {
+        display: block;
     }
 }
 </style>
@@ -621,46 +524,73 @@ $sectionDisplay = [
     'Faturamento' => 'Faturamento',
     'Indicadores Essenciais' => 'Indicadores Essenciais',
 ];
-$sectionSlugMap = [
-    'Resumo' => 'resumo',
-    'Clínico' => 'clinico',
-    'Operacional' => 'operacional',
-    'Rede Hospitalar' => 'rede',
-    'Financeiro' => 'financeiro',
-    'Auditoria' => 'auditoria',
-    'Controle de Gastos' => 'gastos',
-    'Anomalias & Fraude' => 'anomalias',
-    'Conformidade & Auditoria' => 'conformidade',
-    'Segmentação de Risco' => 'risco',
-    'Risco & Prevenção' => 'prevencao',
-    'Negociação & Rede' => 'negociacao',
-    'Qualidade & Desfecho' => 'qualidade',
-    'Faturamento' => 'faturamento',
-    'Indicadores Essenciais' => 'essenciais',
-];
 $activeSection = $currentSection ?: array_key_first($biSections);
-$activeSectionSlug = $sectionSlugMap[$activeSection] ?? 'resumo';
- $activeItems = $biSections[$activeSection] ?? [];
 $navUrl = $BASE_URL . 'bi/navegacao';
 $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, '/') === 'bi/navegacao';
 ?>
 
-<div class="bi-topbar">
-    <div class="bi-topbar-inner">
-        <div class="d-flex flex-column gap-1">
-            <div class="bi-topbar-title">Navegação BI</div>
-            <div class="bi-crumb">
-                <?= htmlspecialchars($sectionDisplay[$activeSection] ?? $activeSection ?: 'Resumo', ENT_QUOTES, 'UTF-8') ?>
-                <span>/</span>
-                <?= htmlspecialchars($currentLabel ?: 'Painel', ENT_QUOTES, 'UTF-8') ?>
+<button type="button" class="bi-side-toggle" id="biSideToggle" aria-label="Alternar navegação BI">☰</button>
+<div class="bi-mobile-backdrop" id="biMobileBackdrop"></div>
+
+<aside class="bi-sidebar-shell" id="biSidebarShell">
+    <div class="bi-sidebar-head">
+        <div class="bi-topbar-title"><span>Navegação BI</span></div>
+        <div class="bi-crumb">
+            <?= htmlspecialchars($sectionDisplay[$activeSection] ?? $activeSection ?: 'Resumo', ENT_QUOTES, 'UTF-8') ?>
+            <span>/</span>
+            <?= htmlspecialchars($currentLabel ?: 'Painel', ENT_QUOTES, 'UTF-8') ?>
+        </div>
+        <a class="bi-sidebar-navlink <?= $navActive ? 'is-active' : '' ?>"
+            href="<?= htmlspecialchars($navUrl, ENT_QUOTES, 'UTF-8') ?>">
+            Navegação Geral
+        </a>
+    </div>
+
+    <div class="bi-sidebar-body">
+        <?php foreach ($biSections as $section => $items): ?>
+        <?php
+        $sectionName = $sectionDisplay[$section] ?? $section;
+        $isActiveSection = $section === $activeSection;
+        ?>
+        <details class="bi-sidebar-group <?= $isActiveSection ? 'is-active' : '' ?>" <?= $isActiveSection ? 'open' : '' ?>>
+            <summary>
+                <span class="bi-sidebar-dot"></span>
+                <span><?= htmlspecialchars($sectionName, ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="bi-sidebar-chevron">›</span>
+            </summary>
+            <div class="bi-sidebar-links">
+                <?php foreach ($items as $item): ?>
+                <?php $itemFile = $item['file'] ?? $item['href']; ?>
+                <?php $hrefPath = trim((string) ($item['href'] ?? ''), '/'); ?>
+                <?php
+                $isActiveChip = ($itemFile === $currentPage || $hrefPath === $currentPath);
+                if (!$isActiveChip && $currentSection === 'Indicadores Essenciais' && $ieSlug !== '') {
+                    $isActiveChip = (strpos($hrefPath, 'bi/indicadores-essenciais/' . $ieSlug) === 0);
+                    if (!$isActiveChip) {
+                        $q = (string)parse_url((string)$item['href'], PHP_URL_QUERY);
+                        $qp = [];
+                        if ($q !== '') {
+                            parse_str($q, $qp);
+                        }
+                        $itemSlug = trim((string)($qp['slug'] ?? ''));
+                        if ($itemSlug !== '' && $itemSlug === $ieSlug) {
+                            $isActiveChip = true;
+                        }
+                    }
+                }
+                ?>
+                <a class="bi-sidebar-link <?= $isActiveChip ? 'is-active' : '' ?>"
+                    href="<?= $BASE_URL . $item['href'] ?>"
+                    title="<?= htmlspecialchars($section . ' • ' . $item['label'], ENT_QUOTES, 'UTF-8') ?>">
+                    <?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?>
+                </a>
+                <?php endforeach; ?>
             </div>
-        </div>
-        <div class="bi-nav-inline">
-            <a class="bi-section-tab bi-section-tab-nav <?= $navActive ? 'is-active' : '' ?>"
-                href="<?= htmlspecialchars($navUrl, ENT_QUOTES, 'UTF-8') ?>">
-                Navegação
-            </a>
-        </div>
+        </details>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="bi-sidebar-foot">
         <select class="bi-topbar-select" onchange="if (this.value) window.location.href=this.value;">
             <option value="">Ir para relatório...</option>
             <?php foreach ($biSections as $section => $items): ?>
@@ -677,46 +607,41 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             <?php endforeach; ?>
         </select>
     </div>
-    <div class="bi-section-tabs" data-section="<?= htmlspecialchars($activeSectionSlug, ENT_QUOTES, 'UTF-8') ?>">
-        <?php foreach ($biSections as $section => $items): ?>
-        <?php
-        $sectionName = $sectionDisplay[$section] ?? $section;
-        $sectionUrl = $BASE_URL . ($items[0]['href'] ?? '');
-        $isActiveSection = $section === $activeSection;
-        ?>
-        <a class="bi-section-tab <?= $isActiveSection ? 'is-active' : '' ?>"
-            href="<?= htmlspecialchars($sectionUrl, ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($sectionName, ENT_QUOTES, 'UTF-8') ?>
-        </a>
-        <?php endforeach; ?>
-    </div>
-    <div class="bi-chipbar" data-section="<?= htmlspecialchars($activeSectionSlug, ENT_QUOTES, 'UTF-8') ?>">
-        <?php foreach ($activeItems as $item): ?>
-        <?php $itemFile = $item['file'] ?? $item['href']; ?>
-        <?php $hrefPath = trim((string) ($item['href'] ?? ''), '/'); ?>
-        <?php
-        $isActiveChip = ($itemFile === $currentPage || $hrefPath === $currentPath);
-        if (!$isActiveChip && $currentSection === 'Indicadores Essenciais' && $ieSlug !== '') {
-            $isActiveChip = (strpos($hrefPath, 'bi/indicadores-essenciais/' . $ieSlug) === 0);
-            if (!$isActiveChip) {
-                $q = (string)parse_url((string)$item['href'], PHP_URL_QUERY);
-                $qp = [];
-                if ($q !== '') {
-                    parse_str($q, $qp);
-                }
-                $itemSlug = trim((string)($qp['slug'] ?? ''));
-                if ($itemSlug !== '' && $itemSlug === $ieSlug) {
-                    $isActiveChip = true;
-                }
-            }
+</aside>
+
+<script>
+(function () {
+    const body = document.body;
+    const toggle = document.getElementById('biSideToggle');
+    const backdrop = document.getElementById('biMobileBackdrop');
+    const mobileMq = window.matchMedia('(max-width: 1100px)');
+    const storageKey = 'bi_sidebar_collapsed';
+
+    function syncInitialState() {
+        if (mobileMq.matches) {
+            body.classList.remove('bi-nav-collapsed');
+            return;
         }
-        ?>
-        <a class="bi-chip <?= $isActiveChip ? 'is-active' : '' ?>"
-            href="<?= $BASE_URL . $item['href'] ?>"
-            title="<?= htmlspecialchars($activeSection . ' • ' . $item['label'], ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?>
-        </a>
-        <?php endforeach; ?>
-    </div>
-</div>
-<div class="bi-topbar-spacer"></div>
+        const collapsed = window.localStorage.getItem(storageKey) === '1';
+        body.classList.toggle('bi-nav-collapsed', collapsed);
+    }
+
+    function toggleSidebar() {
+        if (mobileMq.matches) {
+            body.classList.toggle('bi-nav-open');
+            return;
+        }
+        const nextState = !body.classList.contains('bi-nav-collapsed');
+        body.classList.toggle('bi-nav-collapsed', nextState);
+        window.localStorage.setItem(storageKey, nextState ? '1' : '0');
+    }
+
+    syncInitialState();
+    toggle?.addEventListener('click', toggleSidebar);
+    backdrop?.addEventListener('click', () => body.classList.remove('bi-nav-open'));
+    mobileMq.addEventListener('change', () => {
+        body.classList.remove('bi-nav-open');
+        syncInitialState();
+    });
+})();
+</script>

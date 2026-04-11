@@ -16,14 +16,9 @@ $pesquisa_nome = filter_input(INPUT_GET, 'pesquisa_nome', FILTER_SANITIZE_SPECIA
 $buscaAtivo = filter_input(INPUT_GET, 'ativo_pac');
 $limite = filter_input(INPUT_GET, 'limite') ? filter_input(INPUT_GET, 'limite') : 10;
 $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar') : '';
-$estipulanteInicio = ' 1 ';
-
-
 $condicoes = [
     strlen($busca) ? 'nome_est LIKE "%' . $busca . '%"' : null,
     strlen($buscaAtivo) ? 'ativo_est = "' . $buscaAtivo . '"' : null,
-    strlen($estipulanteInicio) ? 'id_estipulante > ' . $estipulanteInicio . ' ' : NULL,
-
 ];
 $condicoes = array_filter($condicoes);
 
@@ -204,17 +199,15 @@ if ($qtdIntItens > $limite) {
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="dropdown-item" style="font-size: .9rem;"
                                                 onclick="openModal('<?= $BASE_URL ?>show_estipulante.php?id_estipulante=<?= $id_estipulante ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye"
+                                                    style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
                                         </li>
                                         <li>
-                                            <a class="btn btn-default" style="font-size: .9rem;"
+                                            <a class="dropdown-item" style="font-size: .9rem;"
                                                 href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/estipulantes/editar/' . (int) $id_estipulante, ENT_QUOTES, 'UTF-8') ?>">
-                                                <i style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                    name="type" value="edite"
-                                                    class="far fa-edit edit-icon"></i>Editar
+                                                <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                             </a>
                                         </li>
                                         <!-- <a href="<?= $BASE_URL ?>show_paciente.php?id_paciente=<?= $id_paciente ?>"><i style="color:red; margin-left:10px" name="type" value="edite" class="d-inline-block bi bi-x-square-fill delete-icon"></i></a> -->

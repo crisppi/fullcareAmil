@@ -1,4 +1,4 @@
-`<?php
+<?php
 
     require_once("./models/alta.php");
     require_once("./models/hospital.php");
