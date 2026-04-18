@@ -104,6 +104,57 @@ if (!function_exists('normalizeDateTimeInput')) {
     }
 }
 
+if (!function_exists('internacaoUserExists')) {
+    function internacaoUserExists(PDO $conn, ?int $userId): bool
+    {
+        if ($userId === null || $userId <= 0) {
+            return false;
+        }
+
+        static $cache = [];
+        if (array_key_exists($userId, $cache)) {
+            return $cache[$userId];
+        }
+
+        $stmt = $conn->prepare("SELECT 1 FROM tb_user WHERE id_usuario = :id LIMIT 1");
+        $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $cache[$userId] = (bool)$stmt->fetchColumn();
+    }
+}
+
+if (!function_exists('resolveInternacaoEditUserId')) {
+    function resolveInternacaoEditUserId(PDO $conn, ?int $postedUserId, ?int $currentUserId, ?int $sessionUserId): ?int
+    {
+        $candidates = [
+            'post' => $postedUserId,
+            'current' => $currentUserId,
+            'session' => $sessionUserId,
+        ];
+
+        foreach ($candidates as $source => $candidate) {
+            $candidate = ($candidate !== null && $candidate > 0) ? (int)$candidate : null;
+            if ($candidate !== null && internacaoUserExists($conn, $candidate)) {
+                if ($source !== 'post' && $postedUserId !== null && $postedUserId > 0 && $postedUserId !== $candidate) {
+                    internacaoEditarDebugLog(
+                        'FK_USUARIO fallback source=' . $source
+                        . ' posted=' . (int)$postedUserId
+                        . ' resolved=' . $candidate
+                    );
+                }
+                return $candidate;
+            }
+        }
+
+        if ($postedUserId !== null && $postedUserId > 0) {
+            internacaoEditarDebugLog('FK_USUARIO invalid posted=' . (int)$postedUserId . ' resolved=NULL');
+        }
+
+        return null;
+    }
+}
+
 if (!function_exists('internacaoEditarDebugLog')) {
     function internacaoEditarDebugLog(string $message): void
     {
@@ -256,9 +307,13 @@ try {
     $int->visita_auditor_prof_enf = filter_input(INPUT_POST, 'visita_auditor_prof_enf') ?? $int->visita_auditor_prof_enf;
 
     $fkUsuario = filter_input(INPUT_POST, 'fk_usuario_int', FILTER_VALIDATE_INT);
-    if ($fkUsuario !== null && $fkUsuario !== false) {
-        $int->fk_usuario_int = $fkUsuario;
-    }
+    $resolvedFkUsuario = resolveInternacaoEditUserId(
+        $conn,
+        ($fkUsuario !== false ? $fkUsuario : null),
+        isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
+        isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
+    );
+    $int->fk_usuario_int = $resolvedFkUsuario;
 
     $int->censo_int             = filter_input(INPUT_POST, 'censo_int')             ?? $int->censo_int;
     $int->origem_int            = filter_input(INPUT_POST, 'origem_int')            ?? $int->origem_int;
@@ -459,22 +514,51 @@ try {
             internacaoEditarDebugLog('NEGOC json rows=' . count($negArray) . ' id_int=' . (int)$idInt);
         }
 
+        $deleteIds = [];
+        $deleteArray = decodeArray($_POST['negociacoes_delete_ids'] ?? null);
+        foreach ($deleteArray as $deleteId) {
+            $deleteId = (int)$deleteId;
+            if ($deleteId > 0) {
+                $deleteIds[$deleteId] = $deleteId;
+            }
+        }
+        foreach ((array)($_POST['neg_delete_ids'] ?? []) as $deleteId) {
+            $deleteId = (int)$deleteId;
+            if ($deleteId > 0) {
+                $deleteIds[$deleteId] = $deleteId;
+            }
+        }
+
         $postedIds = [];
         foreach ($negArray as $n) {
             if (!empty($n['id'])) $postedIds[] = (int) $n['id'];
         }
 
-        $toDelete = array_diff($existingIds, $postedIds);
+        $toDelete = array_unique(array_merge(
+            array_diff($existingIds, $postedIds),
+            array_values($deleteIds)
+        ));
         foreach ($toDelete as $delId) {
             $negDao->destroy($delId);
             error_log("[NEGOCIAÇÃO] Deletada ID $delId");
         }
 
         foreach ($negArray as $nData) {
+            $negIdAtual = !empty($nData['id']) ? (int)$nData['id'] : 0;
+            if ($negIdAtual > 0 && isset($deleteIds[$negIdAtual])) {
+                continue;
+            }
+
             $neg = new negociacao();
-            if (!empty($nData['id'])) $neg->id_negociacao = (int) $nData['id'];
+            if ($negIdAtual > 0) $neg->id_negociacao = $negIdAtual;
 
             $neg->fk_id_int       = $idInt;
+            $neg->fk_usuario_neg  = resolveInternacaoEditUserId(
+                $conn,
+                isset($nData['fk_usuario_neg']) ? (int)$nData['fk_usuario_neg'] : null,
+                isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
+                isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
+            );
             $neg->troca_de        = $nData['troca_de']        ?? '';
             $neg->troca_para      = $nData['troca_para']      ?? '';
             $neg->qtd             = (int)($nData['qtd']       ?? 0);
@@ -522,7 +606,12 @@ try {
             if (!empty($p['id_prorrogacao'])) $pr->id_prorrogacao = (int) $p['id_prorrogacao'];
 
             $pr->fk_internacao_pror  = $idInt;
-            $pr->fk_usuario_pror     = (int)($_SESSION['id_usuario'] ?? 0) ?: null;
+            $pr->fk_usuario_pror     = resolveInternacaoEditUserId(
+                $conn,
+                isset($p['fk_usuario_pror']) ? (int)$p['fk_usuario_pror'] : null,
+                isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
+                isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
+            );
             $pr->fk_visita_pror      = !empty($p['fk_visita_pror']) ? (int)$p['fk_visita_pror'] : null;
             $pr->acomod1_pror        = $p['acomod']     ?? '';
             $pr->isol_1_pror         = $p['isolamento'] ?? 'n';
@@ -574,7 +663,12 @@ try {
                 $negAuto->troca_para = $acomod;
                 $negAuto->qtd = $diarias;
                 $negAuto->saving = (float)($p['saving_estimado'] ?? 0);
-                $negAuto->fk_usuario_neg = (int)($_SESSION['id_usuario'] ?? 0);
+                $negAuto->fk_usuario_neg = resolveInternacaoEditUserId(
+                    $conn,
+                    isset($p['fk_usuario_pror']) ? (int)$p['fk_usuario_pror'] : null,
+                    isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
+                    isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
+                );
                 if (!$negDao->existeNegociacao($negAuto)) {
                     $negDao->create($negAuto);
                 }

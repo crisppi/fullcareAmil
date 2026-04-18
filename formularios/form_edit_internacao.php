@@ -477,7 +477,8 @@
 
                 <p style="display:none" id="proximoId_int">0</p>
                 <input type="hidden" value="n" id="censo_int" name="censo_int">
-                <input type="hidden" value="<?= $_SESSION["id_usuario"] ?>" id="fk_usuario_int" name="fk_usuario_int">
+                <?php $responsavelInternacao = (int)($intern['fk_usuario_int'] ?? 0); ?>
+                <input type="hidden" value="<?= $responsavelInternacao > 0 ? $responsavelInternacao : (int)($_SESSION["id_usuario"] ?? 0) ?>" id="fk_usuario_int" name="fk_usuario_int">
                 <div class="form-group row align-items-end edit-top-row">
 
                     <!-- Hospital (Somente leitura) -->

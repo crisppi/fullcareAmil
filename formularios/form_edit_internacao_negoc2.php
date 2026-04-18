@@ -297,6 +297,50 @@ if (!function_exists('sel')) {
         padding: 4px 8px
     }
 
+    .negoc-row__actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 25px;
+    }
+
+    .btn-trash-negoc {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        border: 1px solid rgba(180, 35, 24, 0.18);
+        background: linear-gradient(180deg, #fff7f7 0%, #ffe9eb 100%);
+        color: #b42318;
+        font-size: 15px;
+        line-height: 1;
+        cursor: pointer;
+        transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .btn-trash-negoc:hover {
+        background: linear-gradient(180deg, #ffecef 0%, #ffd9de 100%);
+        color: #912018;
+        border-color: rgba(145, 32, 24, 0.28);
+        transform: translateY(-1px);
+    }
+
+    .neg-trash-check {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .neg-trash-check:checked + .btn-trash-negoc {
+        background: #dc3545;
+        color: #fff;
+        border-color: #dc3545;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.14);
+        transform: none;
+    }
+
     .titulo-abas {
         background: #0d6efd;
         padding: 6px 10px;
@@ -470,6 +514,7 @@ if (!function_exists('sel')) {
     <input type="hidden" id="fk_id_int" value="<?= h(getProp($intern, 'id_internacao')) ?>">
     <input type="hidden" id="fk_usuario_neg" value="<?= h($_SESSION['id_usuario'] ?? '') ?>">
     <input type="hidden" id="negociacoes_json" name="negociacoes_json">
+    <input type="hidden" id="negociacoes_delete_ids" name="negociacoes_delete_ids" value="[]">
 
 
     <div id="negotiationFieldsContainer" >
@@ -572,9 +617,26 @@ if (!function_exists('sel')) {
                         value="<?= $savingNeg !== '' ? 'R$ ' . number_format((float) $savingNeg, 2, ',', '.') : '' ?>">
                     <input type="hidden" name="saving" value="<?= h($savingNeg) ?>">
                 </div>
-                <div class="form-group col-md-1 mb-2" style="margin-top:25px;">
-                    <button type="button" class="btn btn-success btn-sm" onclick="addNegotiationField()">+</button>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removeNegotiationField(this)">−</button>
+                <div class="form-group col-md-1 mb-2">
+                    <div class="negoc-row__actions">
+                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="addNegotiationField()" title="Adicionar negociação">+</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="removeNegotiationField(this)" title="Remover negociação">−</button>
+                    <?php if (!empty($neg['id_negociacao'])): ?>
+                        <input
+                            type="checkbox"
+                            id="neg-delete-<?= h((string)($neg['id_negociacao'] ?? '')) ?>"
+                            name="neg_delete_ids[]"
+                            value="<?= h((string)($neg['id_negociacao'] ?? '')) ?>"
+                            class="neg-trash-check">
+                        <label
+                            for="neg-delete-<?= h((string)($neg['id_negociacao'] ?? '')) ?>"
+                            class="btn-trash-negoc"
+                            title="Marcar negociação para exclusão"
+                            aria-label="Marcar negociação para exclusão">
+                            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                        </label>
+                    <?php endif; ?>
+                    </div>
                 </div>
 
             </div>
@@ -586,6 +648,7 @@ if (!function_exists('sel')) {
 <script>
     window.__NEGOC_ACOMODACOES = <?= json_encode($acomodJsList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     window.__NEGOC_ACOMODACOES = Array.isArray(window.__NEGOC_ACOMODACOES) ? window.__NEGOC_ACOMODACOES : [];
+    window.__NEGOC_DELETE_IDS = Array.isArray(window.__NEGOC_DELETE_IDS) ? window.__NEGOC_DELETE_IDS : [];
     ['UTI', 'Semi', 'Apto'].forEach(function(label) {
         var exists = window.__NEGOC_ACOMODACOES.some(function(item) {
             return normalizeNegValue((item && item.acomodacao_aco) || '') === normalizeNegValue(label);
@@ -1012,6 +1075,7 @@ if (!function_exists('sel')) {
             }
         });
         $('#negociacoes_json').val(JSON.stringify(arr));
+        $('#negociacoes_delete_ids').val(JSON.stringify(window.__NEGOC_DELETE_IDS || []));
     }
 
     window.refreshNegotiationRows = function(forceDates = false) {
@@ -1074,7 +1138,7 @@ if (!function_exists('sel')) {
         debounce = setTimeout(genJSON, 200);
     });
 
-    function addNegotiationField() {
+    window.addNegotiationField = function() {
         const $new = $('.negociation-field-container').last().clone();
         $new.find('input,select').not('[type="hidden"]').val('');
         $new.find('[name="neg_id"]').val('');
@@ -1083,14 +1147,69 @@ if (!function_exists('sel')) {
         $new.find('[name="troca_de"], [name="troca_para"]').attr('data-current', '');
         $new.insertAfter($('.negociation-field-container').last());
         window.refreshNegotiationRows(false);
+    };
+
+    function clearNegotiationRow($row) {
+        $row.find('[name="neg_id"]').val('');
+        $row.find('[name="tipo_negociacao"]').val('');
+        $row.find('[name="data_inicio_neg"]').val('');
+        $row.find('[name="data_fim_neg"]').val('');
+        $row.find('[name="troca_de"]').val('').attr('data-current', '');
+        $row.find('[name="troca_para"]').val('').attr('data-current', '');
+        $row.find('[name="qtd"]').val('');
+        $row.find('[name="saving"]').val('');
+        $row.find('[name="saving_show"]').val('').css('color', '');
     }
 
-    function removeNegotiationField(btn) {
-        if ($('.negociation-field-container').length > 1) {
-            $(btn).closest('.negociation-field-container').remove();
-            genJSON();
+    window.removeNegotiationField = function(btn) {
+        const $row = $(btn).closest('.negociation-field-container');
+        const existingId = ($row.find('[name="neg_id"]').val() || '').toString().trim();
+        const hasContent = [
+            'tipo_negociacao',
+            'data_inicio_neg',
+            'data_fim_neg',
+            'troca_de',
+            'troca_para',
+            'qtd'
+        ].some(function(name) {
+            return (($row.find(`[name="${name}"]`).val() || '').toString().trim() !== '');
+        });
+
+        if ((existingId || hasContent) && !window.confirm('Deseja remover esta negociação? A exclusão será concluída ao clicar em Atualizar.')) {
+            return;
         }
-    }
+
+        if (existingId) {
+            const parsedId = parseInt(existingId, 10);
+            if (parsedId > 0) {
+                window.__NEGOC_DELETE_IDS = Array.isArray(window.__NEGOC_DELETE_IDS) ? window.__NEGOC_DELETE_IDS : [];
+                if (!window.__NEGOC_DELETE_IDS.includes(parsedId)) {
+                    window.__NEGOC_DELETE_IDS.push(parsedId);
+                }
+            }
+        }
+
+        if ($('.negociation-field-container').length > 1) {
+            $row.remove();
+        } else {
+            clearNegotiationRow($row);
+        }
+        genJSON();
+    };
+
+    $(document).on('click', '.btn-add-negoc', function(event) {
+        event.preventDefault();
+        window.addNegotiationField();
+    });
+
+    $(document).on('click', '.btn-del-negoc', function(event) {
+        event.preventDefault();
+        window.removeNegotiationField(this);
+    });
+
+    $(document).on('change', '.neg-trash-check', function() {
+        genJSON();
+    });
 
     $(function () {
         window.refreshNegotiationRows(false);

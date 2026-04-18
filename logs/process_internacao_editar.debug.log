@@ -42,3 +42,47 @@
 [2026-04-11 00:55:38] PRORROG update ok id_int=673 id_pror=201
 [2026-04-11 00:55:38] PRORROG skip neg_auto sem troca id_int=673 ini=2026-04-04 fim=2026-04-05
 [2026-04-11 00:55:38] COMMIT ok id_int=673
+[2026-04-18 00:21:21] START id_int=682 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 00:21:21] ERROR id_int=682 msg=SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`u650318666_fullcareamil`.`tb_internacao`, CONSTRAINT `fk_usuario_int` FOREIGN KEY (`fk_usuario_int`) REFERENCES `tb_user` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+[2026-04-18 00:56:10] START id_int=682 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 00:56:10] FK_USUARIO invalid posted=13 resolved=NULL
+[2026-04-18 00:56:10] GESTAO skip id_int=682 select_gestao=n evento=n
+[2026-04-18 00:56:10] NEGOC fallback post rows=1 id_int=682
+[2026-04-18 00:56:10] ERROR id_int=682 msg=SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`u650318666_fullcareamil`.`tb_negociacao`, CONSTRAINT `fk_usuario_neg` FOREIGN KEY (`fk_usuario_neg`) REFERENCES `tb_user` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION)
+[2026-04-18 01:01:01] START id_int=682 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:01:02] FK_USUARIO invalid posted=13 resolved=NULL
+[2026-04-18 01:01:02] GESTAO skip id_int=682 select_gestao=n evento=n
+[2026-04-18 01:01:02] NEGOC fallback post rows=1 id_int=682
+[2026-04-18 01:01:02] PRORROG input id_int=682 rows=1
+[2026-04-18 01:01:02] PRORROG create ok id_int=682 ini=2026-04-03 fim=
+[2026-04-18 01:01:02] COMMIT ok id_int=682
+[2026-04-18 01:43:45] START id_int=708 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:43:45] GESTAO skip id_int=708 select_gestao=n evento=n
+[2026-04-18 01:43:45] NEGOC fallback post rows=1 id_int=708
+[2026-04-18 01:43:45] PRORROG input id_int=708 rows=1
+[2026-04-18 01:43:45] PRORROG create ok id_int=708 ini=2026-04-14 fim=
+[2026-04-18 01:43:45] COMMIT ok id_int=708
+[2026-04-18 01:55:29] START id_int=708 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:55:29] GESTAO skip id_int=708 select_gestao=n evento=n
+[2026-04-18 01:55:29] NEGOC fallback post rows=1 id_int=708
+[2026-04-18 01:55:29] PRORROG input id_int=708 rows=1
+[2026-04-18 01:55:29] PRORROG update ok id_int=708 id_pror=209
+[2026-04-18 01:55:29] COMMIT ok id_int=708
+[2026-04-18 01:57:15] START id_int=708 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:57:15] GESTAO skip id_int=708 select_gestao=n evento=n
+[2026-04-18 01:57:15] NEGOC fallback post rows=1 id_int=708
+[2026-04-18 01:57:15] PRORROG input id_int=708 rows=1
+[2026-04-18 01:57:15] PRORROG update ok id_int=708 id_pror=209
+[2026-04-18 01:57:15] COMMIT ok id_int=708
+[2026-04-18 01:57:50] START id_int=708 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:57:50] GESTAO skip id_int=708 select_gestao=n evento=n
+[2026-04-18 01:57:50] NEGOC fallback post rows=1 id_int=708
+[2026-04-18 01:57:50] PRORROG input id_int=708 rows=1
+[2026-04-18 01:57:50] PRORROG update ok id_int=708 id_pror=209
+[2026-04-18 01:57:50] COMMIT ok id_int=708
+[2026-04-18 01:58:51] START id_int=708 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 01:58:51] GESTAO skip id_int=708 select_gestao=n evento=n
+[2026-04-18 01:58:51] NEGOC fallback post rows=1 id_int=708
+[2026-04-18 01:58:51] PRORROG input id_int=708 rows=1
+[2026-04-18 01:58:51] PRORROG update ok id_int=708 id_pror=209
+[2026-04-18 01:58:51] COMMIT ok id_int=708

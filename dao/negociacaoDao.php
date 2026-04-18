@@ -124,7 +124,13 @@ class negociacaoDAO implements negociacaoDAOInterface
     private function resolveAuditorId($fkUsuarioNeg): ?int
     {
         if ($fkUsuarioNeg !== null && $fkUsuarioNeg !== '' && (int)$fkUsuarioNeg > 0) {
-            return (int)$fkUsuarioNeg;
+            $candidate = (int)$fkUsuarioNeg;
+            $stmt = $this->conn->prepare("SELECT 1 FROM tb_user WHERE id_usuario = :id LIMIT 1");
+            $stmt->bindValue(':id', $candidate, PDO::PARAM_INT);
+            $stmt->execute();
+            if ((bool)$stmt->fetchColumn()) {
+                return $candidate;
+            }
         }
 
         if (session_status() === PHP_SESSION_NONE) {
@@ -133,7 +139,13 @@ class negociacaoDAO implements negociacaoDAOInterface
 
         $sessionUserId = $_SESSION['id_usuario'] ?? null;
         if ($sessionUserId !== null && $sessionUserId !== '' && (int)$sessionUserId > 0) {
-            return (int)$sessionUserId;
+            $candidate = (int)$sessionUserId;
+            $stmt = $this->conn->prepare("SELECT 1 FROM tb_user WHERE id_usuario = :id LIMIT 1");
+            $stmt->bindValue(':id', $candidate, PDO::PARAM_INT);
+            $stmt->execute();
+            if ((bool)$stmt->fetchColumn()) {
+                return $candidate;
+            }
         }
 
         return null;

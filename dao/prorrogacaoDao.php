@@ -45,6 +45,14 @@ class prorrogacaoDAO implements prorrogacaoDAOInterface
     }
     public function create(prorrogacao $prorrogacao)
     {
+        if (($prorrogacao->fk_usuario_pror ?? null) !== null && (int)$prorrogacao->fk_usuario_pror > 0) {
+            $stmtUser = $this->conn->prepare("SELECT 1 FROM tb_user WHERE id_usuario = :id LIMIT 1");
+            $stmtUser->bindValue(':id', (int)$prorrogacao->fk_usuario_pror, PDO::PARAM_INT);
+            $stmtUser->execute();
+            if (!(bool)$stmtUser->fetchColumn()) {
+                $prorrogacao->fk_usuario_pror = null;
+            }
+        }
 
         $stmt = $this->conn->prepare("INSERT INTO tb_prorrogacao (
             fk_internacao_pror,
@@ -176,6 +184,15 @@ class prorrogacaoDAO implements prorrogacaoDAOInterface
 
     public function update($prorrogacao)
     {
+        if (($prorrogacao->fk_usuario_pror ?? null) !== null && (int)$prorrogacao->fk_usuario_pror > 0) {
+            $stmtUser = $this->conn->prepare("SELECT 1 FROM tb_user WHERE id_usuario = :id LIMIT 1");
+            $stmtUser->bindValue(':id', (int)$prorrogacao->fk_usuario_pror, PDO::PARAM_INT);
+            $stmtUser->execute();
+            if (!(bool)$stmtUser->fetchColumn()) {
+                $prorrogacao->fk_usuario_pror = null;
+            }
+        }
+
         $stmt = $this->conn->prepare("UPDATE tb_prorrogacao SET
         fk_internacao_pror = :fk_internacao_pror,
         acomod1_pror = :acomod1_pror,

@@ -110,6 +110,100 @@ if (empty($_SESSION['csrf'])) {
 // ------------------ 5) DB primeiro -------------------------
 require_once __DIR__ . '/db.php';   // aqui dentro você cria $conn (PDO)
 
+if (!function_exists('fullcare_sync_session_user')) {
+    function fullcare_sync_session_user(PDO $conn): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return;
+        }
+
+        $sessionId = (int)($_SESSION['id_usuario'] ?? 0);
+        $sessionEmail = trim((string)($_SESSION['email_user'] ?? ''));
+        $sessionLogin = trim((string)($_SESSION['login_user'] ?? ''));
+        $sessionName = trim((string)($_SESSION['usuario_user'] ?? ''));
+
+        if ($sessionId <= 0 && $sessionEmail === '' && $sessionLogin === '' && $sessionName === '') {
+            return;
+        }
+
+        try {
+            $sqlBase = "
+                SELECT
+                    id_usuario,
+                    usuario_user,
+                    email_user,
+                    login_user,
+                    ativo_user,
+                    nivel_user,
+                    cargo_user,
+                    foto_usuario,
+                    fk_seguradora_user
+                FROM tb_user
+            ";
+
+            $user = null;
+
+            if ($sessionId > 0) {
+                $stmtById = $conn->prepare($sqlBase . " WHERE id_usuario = :id LIMIT 1");
+                $stmtById->bindValue(':id', $sessionId, PDO::PARAM_INT);
+                $stmtById->execute();
+                $user = $stmtById->fetch(PDO::FETCH_ASSOC) ?: null;
+            }
+
+            if (!is_array($user)) {
+                $lookup = $sessionEmail !== '' ? mb_strtolower($sessionEmail, 'UTF-8') : '';
+                $loginLookup = $sessionLogin !== '' ? mb_strtolower($sessionLogin, 'UTF-8') : $lookup;
+                $nameLookup = $sessionName !== '' ? mb_strtolower($sessionName, 'UTF-8') : '';
+
+                if ($lookup !== '' || $loginLookup !== '' || $nameLookup !== '') {
+                    $stmtByIdentity = $conn->prepare($sqlBase . "
+                        WHERE LOWER(TRIM(email_user)) = :email
+                           OR LOWER(TRIM(email02_user)) = :email2
+                           OR LOWER(TRIM(login_user)) = :login
+                           OR LOWER(TRIM(usuario_user)) = :uname
+                        LIMIT 1
+                    ");
+                    $stmtByIdentity->bindValue(':email', $lookup, PDO::PARAM_STR);
+                    $stmtByIdentity->bindValue(':email2', $lookup, PDO::PARAM_STR);
+                    $stmtByIdentity->bindValue(':login', $loginLookup, PDO::PARAM_STR);
+                    $stmtByIdentity->bindValue(':uname', $nameLookup, PDO::PARAM_STR);
+                    $stmtByIdentity->execute();
+                    $user = $stmtByIdentity->fetch(PDO::FETCH_ASSOC) ?: null;
+                }
+            }
+
+            if (!is_array($user)) {
+                return;
+            }
+
+            $resolvedId = (int)($user['id_usuario'] ?? 0);
+            if ($resolvedId <= 0) {
+                return;
+            }
+
+            $_SESSION['id_usuario'] = $resolvedId;
+            $_SESSION['usuario_user'] = (string)($user['usuario_user'] ?? ($_SESSION['usuario_user'] ?? ''));
+            $_SESSION['email_user'] = (string)($user['email_user'] ?? ($_SESSION['email_user'] ?? ''));
+            $_SESSION['login_user'] = (string)($user['login_user'] ?? ($_SESSION['login_user'] ?? $_SESSION['email_user'] ?? ''));
+            $_SESSION['ativo'] = (string)($user['ativo_user'] ?? ($_SESSION['ativo'] ?? ''));
+            $_SESSION['nivel'] = (int)($user['nivel_user'] ?? ($_SESSION['nivel'] ?? 99));
+            $_SESSION['cargo'] = (string)($user['cargo_user'] ?? ($_SESSION['cargo'] ?? ''));
+            $_SESSION['foto_usuario'] = (string)($user['foto_usuario'] ?? ($_SESSION['foto_usuario'] ?? ''));
+            $_SESSION['fk_seguradora_user'] = isset($user['fk_seguradora_user'])
+                ? (int)$user['fk_seguradora_user']
+                : ($_SESSION['fk_seguradora_user'] ?? null);
+
+            if ($sessionId > 0 && $sessionId !== $resolvedId) {
+                error_log('[SESSION][SYNC] id_usuario ajustado de ' . $sessionId . ' para ' . $resolvedId . ' com base no usuario atual do banco.');
+            }
+        } catch (Throwable $e) {
+            error_log('[SESSION][SYNC][ERROR] ' . $e->getMessage());
+        }
+    }
+}
+
+fullcare_sync_session_user($conn);
+
 // ------------------ 6) Guard (autorização) -----------------
 require_once __DIR__ . '/authz.php';
 

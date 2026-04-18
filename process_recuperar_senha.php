@@ -24,10 +24,25 @@ if (!defined("FLOW_LOGGER_AUTO_V1")) {
 
 require_once("globals.php");
 require_once("db.php");
-require_once("vendor/autoload.php");
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+$composerAutoload = __DIR__ . '/vendor/autoload.php';
+if (is_file($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
+if (!function_exists('fullcare_is_local_request')) {
+    function fullcare_is_local_request(): bool
+    {
+        $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? ''));
+        $serverName = strtolower((string)($_SERVER['SERVER_NAME'] ?? ''));
+        $remoteAddr = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+
+        return strpos($host, 'localhost') !== false
+            || strpos($host, '127.0.0.1') !== false
+            || strpos($serverName, 'localhost') !== false
+            || in_array($remoteAddr, ['127.0.0.1', '::1'], true);
+    }
+}
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -122,12 +137,37 @@ try {
     $smtpName = getenv('SMTP_NAME') ?: 'FullCare';
     $smtpPort = (int)(getenv('SMTP_PORT') ?: 465);
     $smtpSecure = getenv('SMTP_SECURE') ?: 'ssl';
+    $isLocalRequest = fullcare_is_local_request();
+
+    if ($isLocalRequest && ($smtpUser === '' || $smtpPass === '')) {
+        $debugPayload = [
+            'email' => $email,
+            'codigo' => $code,
+            'link' => $resetUrl,
+            'expira_em' => $expiresAt,
+        ];
+        $_SESSION['recuperacao_debug'] = $debugPayload;
+        @file_put_contents(
+            '/tmp/fullcare_recuperacao_local.log',
+            date('c') . ' ' . json_encode($debugPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+            FILE_APPEND
+        );
+
+        $_SESSION['recuperacao_msg'] = 'Modo local: código gerado sem envio por e-mail.';
+        $_SESSION['recuperacao_tipo'] = 'info';
+        header('Location: ' . app_url('esqueci_senha.php'), true, 303);
+        exit;
+    }
+
+    if (!class_exists(\PHPMailer\PHPMailer\PHPMailer::class)) {
+        throw new RuntimeException('Dependencias de e-mail nao instaladas. Execute composer install para habilitar a recuperacao por e-mail.');
+    }
 
     if ($smtpUser === '' || $smtpPass === '') {
         throw new RuntimeException('SMTP_USER/SMTP_PASS nao configurados.');
     }
 
-    $mail = new PHPMailer(true);
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
     $mail->CharSet = 'UTF-8';
     $mail->Encoding = 'base64';
     $mail->isSMTP();
@@ -174,7 +214,7 @@ try {
     $_SESSION['recuperacao_tipo'] = 'info';
     header('Location: ' . app_url('esqueci_senha.php'), true, 303);
     exit;
-} catch (Exception $e) {
+} catch (\PHPMailer\PHPMailer\Exception $e) {
     $err = '[RECUPERAR_SENHA][MAIL] ' . $e->getMessage();
     error_log($err);
     @file_put_contents('/tmp/recuperar_senha_mail.log', date('c') . ' ' . $err . PHP_EOL, FILE_APPEND);
@@ -186,7 +226,13 @@ try {
     $err = '[RECUPERAR_SENHA] ' . $e->getMessage();
     error_log($err);
     @file_put_contents('/tmp/recuperar_senha_mail.log', date('c') . ' ' . $err . PHP_EOL, FILE_APPEND);
-    $_SESSION['recuperacao_msg'] = 'Não foi possível enviar o e-mail agora. Tente novamente.';
+    if (stripos($e->getMessage(), 'composer install') !== false) {
+        $_SESSION['recuperacao_msg'] = 'Recuperação indisponível neste ambiente: faltam dependências do Composer (`vendor/autoload.php`). Rode `composer install`.';
+    } elseif (stripos($e->getMessage(), 'SMTP_USER/SMTP_PASS') !== false) {
+        $_SESSION['recuperacao_msg'] = 'Recuperação indisponível neste ambiente: SMTP não configurado. Preencha as variáveis em `.env`.';
+    } else {
+        $_SESSION['recuperacao_msg'] = 'Não foi possível enviar o e-mail agora. Tente novamente.';
+    }
     $_SESSION['recuperacao_tipo'] = 'error';
     header('Location: ' . app_url('esqueci_senha.php'), true, 303);
     exit;

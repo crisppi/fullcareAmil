@@ -755,6 +755,25 @@ const acomodacoes = <?php echo $jsonAcomodacoes; ?>;
 
 populateSelects(acomodacoes)
 
+function parseDateOnly(value) {
+    const raw = (value || '').toString().trim();
+    if (!raw) return null;
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const [y, m, d] = raw.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+        const [d, m, y] = raw.split('/').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    const normalized = raw.length >= 10 ? raw.slice(0, 10) : raw;
+    const fallback = new Date(normalized + 'T00:00:00');
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 // Função para calcular as diárias e validar as datas
 function calculateDiarias(container) {
     const dataAtual = new Date().toISOString().split("T")[0];
@@ -767,11 +786,17 @@ function calculateDiarias(container) {
     errorMessage.textContent = ""; // Limpa mensagens de erro
 
     if (dataInicial && dataFinal) {
-        const inicio = new Date(dataInicial);
-        const fim = new Date(dataFinal);
-        const internacao = new Date(dataInternacao);
+        const inicio = parseDateOnly(dataInicial);
+        const fim = parseDateOnly(dataFinal);
+        const internacao = parseDateOnly(dataInternacao);
+        const atual = parseDateOnly(dataAtual);
 
-        if (inicio < internacao) {
+        if (!inicio || !fim) {
+            diariasField.value = "";
+            return;
+        }
+
+        if (internacao && inicio < internacao) {
             errorMessage.textContent = "A data inicial não pode ser menor que a data de internação.";
             errorMessage.style.display = "block";
             diariasField.value = "";
@@ -785,7 +810,7 @@ function calculateDiarias(container) {
             return;
         }
 
-        if (fim > new Date(dataAtual)) {
+        if (atual && fim > atual) {
             errorMessage.textContent = "A data final não pode ser maior que a data atual.";
             errorMessage.style.display = "block";
             diariasField.value = "";

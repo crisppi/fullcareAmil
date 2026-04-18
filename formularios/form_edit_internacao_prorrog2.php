@@ -438,11 +438,33 @@ function diffDays(d1, d2) {
     return Math.ceil((new Date(d2) - new Date(d1)) / 86400000);
 }
 
+function parseDateOnly(value) {
+    const raw = (value || '').toString().trim();
+    if (!raw) return null;
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const [y, m, d] = raw.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+        const [d, m, y] = raw.split('/').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    const normalized = raw.length >= 10 ? raw.slice(0, 10) : raw;
+    const fallback = new Date(normalized + 'T00:00:00');
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 function getInternacaoDateForProrrog() {
     const internDateField = document.getElementById('data_intern_int');
     if (!internDateField || !internDateField.value) return null;
-    const internDate = new Date(internDateField.value + 'T00:00:00');
-    return Number.isNaN(internDate.getTime()) ? null : internDate;
+    const internDate = parseDateOnly(internDateField.value);
+    if (!(internDate instanceof Date) || Number.isNaN(internDate.getTime())) {
+        return null;
+    }
+    return internDate;
 }
 
 function setFirstProrrogationDate() {
@@ -491,8 +513,8 @@ function recalcRow($row, changedName) {
     }
 
     if (internDate && ini) {
-        const initialDate = new Date(ini + 'T00:00:00');
-        if (Number.isNaN(initialDate.getTime()) || initialDate < internDate) {
+        const initialDate = parseDateOnly(ini);
+        if (!(initialDate instanceof Date) || Number.isNaN(initialDate.getTime()) || initialDate < internDate) {
             openErrorDialog('A data inicial da prorrogação não pode ser menor que a data de internação.');
             $row.find('[name$="[ini]"]').val('').focus();
             $dia.val('');
@@ -501,14 +523,18 @@ function recalcRow($row, changedName) {
         }
     }
 
-    if (maxDate && ini && new Date(ini) > new Date(maxDate)) {
+    const iniDate = ini ? parseDateOnly(ini) : null;
+    const fimDate = fim ? parseDateOnly(fim) : null;
+    const maxAllowedDate = maxDate ? parseDateOnly(maxDate) : null;
+
+    if (maxAllowedDate && iniDate && iniDate > maxAllowedDate) {
         openErrorDialog('Não é permitido prorrogar após a data atual/alta.');
         $row.find('[name$="[ini]"]').val('');
         $dia.val('');
         syncJson();
         return;
     }
-    if (maxDate && fim && new Date(fim) > new Date(maxDate)) {
+    if (maxAllowedDate && fimDate && fimDate > maxAllowedDate) {
         openErrorDialog('Não é permitido prorrogar após a data atual/alta.');
         $row.find('[name$="[fim]"]').val('');
         $dia.val('');
@@ -516,7 +542,7 @@ function recalcRow($row, changedName) {
         return;
     }
 
-    if (ini && fim && new Date(fim) >= new Date(ini)) {
+    if (iniDate && fimDate && fimDate >= iniDate) {
         const dias = diffDays(ini, fim);
         if (dias > 15) {
             askOver15().then(ok => {
