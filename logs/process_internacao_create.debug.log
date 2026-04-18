@@ -170,3 +170,15 @@
 [2026-04-18 21:50:16] VISITA create ok id_int=745 id_visita=798
 [2026-04-18 21:50:16] GESTAO skip id_int=745 select= evento=n tipo=
 [2026-04-18 21:50:16] END ok id=745
+[2026-04-18 22:10:33] [gestaoDAO] create query cols=fk_internacao_ges,fk_visita_ges,alto_custo_ges,rel_alto_custo_ges,evento_adverso_ges,rel_evento_adverso_ges,tipo_evento_adverso_gest,evento_valor_negoc_ges,evento_sinalizado_ges,evento_discutido_ges,evento_negociado_ges,evento_prorrogar_ges,evento_fech_ges,opme_ges,rel_opme_ges,home_care_ges,rel_home_care_ges,desospitalizacao_ges,rel_desospitalizacao_ges,fk_user_ges,evento_retorno_qual_hosp_ges,evento_classificado_hospital_ges,evento_data_ges,evento_encerrar_ges,evento_impacto_financ_ges,evento_prolongou_internacao_ges,evento_concluido_ges,evento_classificacao_ges
+[2026-04-18 22:10:33] [gestaoDAO] create OK fk_internacao_ges=680
+[2026-04-18 22:58:33] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-18 22:58:33] CREATE internacao ok id=746
+[2026-04-18 22:58:33] VISITA create ok id_int=746 id_visita=810
+[2026-04-18 22:58:33] GESTAO skip id_int=746 select= evento=n tipo=
+[2026-04-18 22:58:33] NEGOC skip create id_int=746 reasons=auditor_invalido tipo=TROCA UTI/APTO troca_de=7-UTI troca_para=8-Apto qtd=1 saving=1309.84
+[2026-04-18 22:58:56] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-18 22:58:56] CREATE internacao ok id=747
+[2026-04-18 22:58:56] VISITA create ok id_int=747 id_visita=811
+[2026-04-18 22:58:56] GESTAO skip id_int=747 select= evento=n tipo=
+[2026-04-18 22:58:56] NEGOC skip create id_int=747 reasons=auditor_invalido tipo=TROCA UTI/APTO troca_de=7-UTI troca_para=8-Apto qtd=1 saving=1309.84

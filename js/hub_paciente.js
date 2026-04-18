@@ -228,7 +228,7 @@
           ${prorPend > 0 ? `<div class="text-danger small fw-semibold">Pendente${prorPendLabel ? ` (${esc(prorPendLabel)})` : ''}</div>` : ''}
         </td>
         <td class="text-center">
-          <button class="btn btn-sm btn-outline-primary" data-action="ver-int" data-id-int="${esc(iid)}">Ver</button>
+          <button class="btn btn-sm btn-outline-primary" data-action="ver-int" data-id-int="${esc(iid)}">Lançar</button>
           ${isAlta ? '' : `
             <button class="btn btn-sm btn-outline-secondary" data-action="editar-int" data-id-int="${esc(iid)}">Editar</button>
             <button class="btn btn-sm btn-outline-info" data-action="alta-int" data-id-int="${esc(iid)}">Alta</button>
@@ -262,7 +262,7 @@
     const table = document.getElementById('tblInternacoes');
     if (!table) return;
 
-    // Botão: Ver
+    // Botão: Lançar
     on(table, 'click', '[data-action="ver-int"]', (_e, btn) => {
       const id = btn.getAttribute('data-id-int');
       if (!id) return;

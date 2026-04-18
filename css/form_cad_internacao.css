@@ -43,12 +43,6 @@
             font-weight: 700;
         }
 
-        .detail-select option {
-            background-color: #fff !important;
-            color: #2d114c !important;
-            font-weight: 700;
-        }
-
         .is-invalid {
             border-color: #dc3545 !important;
         }
@@ -941,6 +935,16 @@
         .tabelas-selects .tabelas-col {
             flex: 1 1 240px;
             max-width: 270px;
+        }
+
+        .tabelas-adicionais-card .tabelas-selects .form-control,
+        .tabelas-adicionais-card .tabelas-selects .detail-select,
+        .tabelas-adicionais-card .tabelas-selects .select-purple {
+            min-height: 46px !important;
+            height: 46px !important;
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            line-height: 1.2 !important;
         }
 
         /* Padronização completa das tabelas adicionais (Internação) */

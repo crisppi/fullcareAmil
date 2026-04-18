@@ -63,6 +63,38 @@ function fullcareNormalizeNegotiationAcomodacao(?string $value): string
     return mb_strtolower(trim($value), 'UTF-8');
 }
 
+function fullcareResolveNegotiationAcomodacao(PDO $conn, int $internacaoId, ?string $value): string
+{
+    $value = trim((string)$value);
+    if ($value === '') {
+        return '';
+    }
+
+    if (!ctype_digit($value)) {
+        return $value;
+    }
+
+    static $cache = [];
+    $hospitalId = fullcareInternacaoHospitalId($conn, $internacaoId);
+    if ($hospitalId <= 0) {
+        return $value;
+    }
+
+    if (!isset($cache[$hospitalId])) {
+        $stmt = $conn->prepare("SELECT id_acomodacao, acomodacao_aco FROM tb_acomodacao WHERE fk_hospital = :id");
+        $stmt->bindValue(':id', $hospitalId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $map = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
+            $map[(string)($row['id_acomodacao'] ?? '')] = (string)($row['acomodacao_aco'] ?? '');
+        }
+        $cache[$hospitalId] = $map;
+    }
+
+    return trim((string)($cache[$hospitalId][$value] ?? $value));
+}
+
 function fullcareInternacaoHospitalId(PDO $conn, int $internacaoId): int
 {
     static $cache = [];
@@ -362,6 +394,8 @@ function processNegociacoesEntries(
         if (!$tipo) continue;
         $trocaDe = strOrNull($row['troca_de'] ?? null);
         $trocaPara = strOrNull($row['troca_para'] ?? null);
+        $trocaDe = fullcareResolveNegotiationAcomodacao($conn, $fkInternacao, $trocaDe);
+        $trocaPara = fullcareResolveNegotiationAcomodacao($conn, $fkInternacao, $trocaPara);
         [$trocaDe, $trocaPara] = fullcareHydrateNegotiationAcomodacoes($tipo, $trocaDe, $trocaPara);
         $qtd = toIntOrNull($row['qtd'] ?? null);
         $auditorId = fullcareResolveUserId(
@@ -913,7 +947,8 @@ if ($type === "create") {
         dbg("CREATE concluído. Redirecionamento suprimido no debug.");
         exit;
     }
-    header("Location: internacoes/lista");
+    $redirectNovoLancamento = rtrim((string)$BASE_URL, '/') . '/cad_visita.php?id_internacao=' . urlencode((string)$fk_internacao_vis) . '&novo_lancamento_prompt=1';
+    header("Location: " . $redirectNovoLancamento);
     exit;
 }
 

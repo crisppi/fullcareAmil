@@ -1,3 +1,47 @@
+<?php
+$prorrogDefaultAcomod = '';
+$prorrogDefaultIni = '';
+
+if (!empty($prorrogIntern) && is_array($prorrogIntern)) {
+    $ultimaProrrog = null;
+    $ultimaProrrogTs = 0;
+
+    foreach ($prorrogIntern as $row) {
+        if (!is_array($row)) {
+            continue;
+        }
+
+        $fim = trim((string)($row['prorrog1_fim_pror'] ?? ''));
+        $ini = trim((string)($row['prorrog1_ini_pror'] ?? ''));
+        $baseData = $fim !== '' ? $fim : $ini;
+        $baseTs = $baseData !== '' ? strtotime($baseData) : false;
+        $idAtual = (int)($row['id_prorrogacao'] ?? 0);
+
+        if ($baseTs === false) {
+            continue;
+        }
+
+        if ($ultimaProrrog === null || $baseTs > $ultimaProrrogTs || ($baseTs === $ultimaProrrogTs && $idAtual > (int)($ultimaProrrog['id_prorrogacao'] ?? 0))) {
+            $ultimaProrrog = $row;
+            $ultimaProrrogTs = $baseTs;
+        }
+    }
+
+    if ($ultimaProrrog) {
+        $prorrogDefaultAcomod = trim((string)($ultimaProrrog['acomod1_pror'] ?? ''));
+        $dataBaseNovaProrrog = trim((string)($ultimaProrrog['prorrog1_fim_pror'] ?? ''));
+        if ($dataBaseNovaProrrog === '') {
+            $dataBaseNovaProrrog = trim((string)($ultimaProrrog['prorrog1_ini_pror'] ?? ''));
+        }
+        if ($dataBaseNovaProrrog !== '') {
+            $tsNovaProrrog = strtotime($dataBaseNovaProrrog);
+            if ($tsNovaProrrog) {
+                $prorrogDefaultIni = date('Y-m-d', $tsNovaProrrog);
+            }
+        }
+    }
+}
+?>
 <style>
 .prorrogacao-container .form-group.row {
     display: flex;
@@ -240,7 +284,7 @@ if (isset($dados_alta) && is_array($dados_alta)) {
                     <option value=""> </option>
                     <?php sort($dados_acomodacao, SORT_ASC);
                     foreach ($dados_acomodacao as $acomd) { ?>
-                    <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)prorrogValorAcomod((string)$acomd, $prorrogAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>"><?= $acomd; ?></option>
+                    <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)prorrogValorAcomod((string)$acomd, $prorrogAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>" <?= $prorrogDefaultAcomod === (string)$acomd ? 'selected' : '' ?>><?= $acomd; ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -248,7 +292,7 @@ if (isset($dados_alta) && is_array($dados_alta)) {
             <div class="form-group col-sm-2">
                 <label class="control-label" for="prorrog1_ini_pror">Data inicial</label>
                 <input onchange="generateProrJSON()" type="date" class="form-control-sm form-control"
-                    id="prorrog1_ini_pror" name="prorrog1_ini_pror">
+                    id="prorrog1_ini_pror" name="prorrog1_ini_pror" value="<?= htmlspecialchars($prorrogDefaultIni, ENT_QUOTES, 'UTF-8') ?>">
             </div>
 
             <div class="form-group col-sm-2">
@@ -384,6 +428,11 @@ if (isset($dados_alta) && is_array($dados_alta)) {
     window.PRORROG_MAX_DATE = "<?= date('Y-m-d') ?>";
 </script>
 <script>
+window.__PRORROG_DEFAULT_FIRST__ = {
+    acomod1_pror: <?= json_encode($prorrogDefaultAcomod, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+    prorrog1_ini_pror: <?= json_encode($prorrogDefaultIni, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+};
+
 function openProrrogError(msg) {
     const dlg = document.getElementById("prorrogErrorDialog");
     const body = document.getElementById("prorrogErrorBody");
@@ -430,19 +479,25 @@ function getInternacaoDateForProrrog() {
 }
 
 function setFirstProrrogationDate() {
-    const dataInternacao = getInternacaoDateForProrrog();
     const firstContainer = document.querySelector(".field-container");
-    if (!firstContainer || !dataInternacao) return;
+    if (!firstContainer) return;
 
+    const defaults = window.__PRORROG_DEFAULT_FIRST__ || {};
+    const dataInternacao = getInternacaoDateForProrrog();
     const iniInput = firstContainer.querySelector('[name="prorrog1_ini_pror"]');
-    if (iniInput) {
-        iniInput.value = addOneDayToDate(dataInternacao);
+    const acomodInput = firstContainer.querySelector('[name="acomod1_pror"]');
+
+    if (acomodInput && defaults.acomod1_pror && !acomodInput.value) {
+        acomodInput.value = defaults.acomod1_pror;
+    }
+
+    if (iniInput && !iniInput.value) {
+        iniInput.value = defaults.prorrog1_ini_pror || (dataInternacao ? addOneDayToDate(dataInternacao) : '');
     }
 }
 
 function getManualProrrogMinDate() {
-    const dataInternacao = getInternacaoDateForProrrog();
-    return dataInternacao ? addOneDayToDate(dataInternacao) : '';
+    return getInternacaoDateForProrrog();
 }
 
 const dataInternInput = document.getElementById("data_intern_int");
@@ -614,7 +669,7 @@ function addField() {
         const newContainer = fieldContainers[fieldContainers.length - 1];
         const lastEndDate = lastContainer.querySelector('[name="prorrog1_fim_pror"]').value;
         if (lastEndDate) {
-            newContainer.querySelector('[name="prorrog1_ini_pror"]').value = addOneDayToDate(lastEndDate);
+            newContainer.querySelector('[name="prorrog1_ini_pror"]').value = lastEndDate;
         }
     }
     generateProrJSON();
@@ -680,7 +735,7 @@ function calculateDiarias(container) {
         const inicio = new Date(dataInicial);
         const manualStart = minManualDate ? new Date(minManualDate) : null;
         if (manualStart && inicio < manualStart) {
-            errorMessage.textContent = "A prorrogação manual deve começar a partir do dia seguinte à internação.";
+            errorMessage.textContent = "A data inicial da prorrogação precisa ter acomodação já cadastrada. Se não tiver, lance primeiro a acomodação desta data.";
             errorMessage.style.display = "block";
             const dataInicialInput = container.querySelector('[name="prorrog1_ini_pror"]');
             if (dataInicialInput) {

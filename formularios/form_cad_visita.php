@@ -454,6 +454,23 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
     </div>
 </div>
 
+<div class="modal fade" id="modalNovoLancamento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visita cadastrada</h5>
+            </div>
+            <div class="modal-body">
+                Haverá novo lançamento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-action="encerrar-lancamento">Não</button>
+                <button type="button" class="btn btn-success" data-action="continuar-lancamento">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal para abrir tela de cadastro -->
 <div class="modal fade" id="myModal1">
     <div class="modal-dialog  modal-dialog-centered modal-xl">
@@ -668,6 +685,47 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('novo_lancamento_prompt') !== '1') {
+        return;
+    }
+
+    var cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('novo_lancamento_prompt');
+    window.history.replaceState({}, document.title, cleanUrl.toString());
+
+    var modalEl = document.getElementById('modalNovoLancamento');
+    if (!modalEl || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+        return;
+    }
+
+    var modal = new bootstrap.Modal(modalEl, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    var btnEncerrar = modalEl.querySelector('[data-action="encerrar-lancamento"]');
+    var btnContinuar = modalEl.querySelector('[data-action="continuar-lancamento"]');
+
+    if (btnEncerrar) {
+        btnEncerrar.addEventListener('click', function() {
+            window.location.href = '<?= rtrim($BASE_URL, '/') ?>/internacoes/lista';
+        }, { once: true });
+    }
+
+    if (btnContinuar) {
+        btnContinuar.addEventListener('click', function() {
+            modal.hide();
+        }, { once: true });
+    }
+
+    window.setTimeout(function() {
+        modal.show();
+    }, 150);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     var modal = document.getElementById('modalDeleteVisitaList');
     if (!modal) return;
     var confirmBtn = modal.querySelector('[data-action=\"confirm-delete-row\"]');
@@ -738,7 +796,7 @@ function populateSelects(acomodacoes) {
     let options = '<option value="">Selecione a Acomodação</option>';
     acomodacoes.forEach(ac => {
         options +=
-            `<option value="${ac.id_acomodacao}" data-valor="${ac.valor_aco}">${ac.acomodacao_aco}</option>`;
+            `<option value="${ac.acomodacao_aco}" data-valor="${ac.valor_aco}">${ac.acomodacao_aco}</option>`;
     });
 
     // Atualiza os selects com as novas opções
@@ -1153,6 +1211,15 @@ function aumentarTextProgramacao() {
     flex: 1 1 0;
     min-width: 150px;
     max-width: none;
+}
+
+.visita-card--tabelas .tabelas-selects .form-control,
+.visita-card--tabelas .tabelas-selects .select-purple {
+    min-height: 46px !important;
+    height: 46px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    line-height: 1.2 !important;
 }
 
 .tabelas-detalhes-block {

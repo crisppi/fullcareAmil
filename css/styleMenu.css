@@ -121,6 +121,10 @@ li {
     /* Box shadow elegante */
 }
 
+.navbar.nav_bar_custom.fixed-top {
+    z-index: 3000 !important;
+}
+
 .navbar .dropdown-menu .dropdown-item {
     display: flex;
     flex-direction: row;
@@ -152,6 +156,7 @@ li {
     border-radius: 14px;
     backdrop-filter: blur(10px);
     transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+    z-index: 3005 !important;
 }
 
 .navbar .dropdown-menu .dropdown-item {

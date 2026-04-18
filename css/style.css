@@ -41,7 +41,7 @@ body {
 
 
 .fixed-top {
-    z-index: 1030;
+    z-index: 1080;
     /* Mantém o header no topo */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     /* Adiciona uma sombra opcional */
