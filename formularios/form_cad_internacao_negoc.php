@@ -180,7 +180,7 @@ if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
 
                 <div class="form-group col-sm-1" style="margin-top:25px;">
                     <div class="negotiation-actions">
-                        <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
+                        <button type="button" class="btn btn-add">+</button>
                     </div>
                 </div>
             </div>
@@ -381,9 +381,9 @@ function addNegotiationField() {
 
       <div class="form-group col-sm-1" style="margin-top:25px;">
         <div class="negotiation-actions">
-          <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
-          <button type="button" class="btn btn-remove" onclick="removeNegotiationField(this)">-</button>
-          <button type="button" class="btn btn-trash-negoc-inline" onclick="removeNegotiationField(this)" title="Remover negociação" aria-label="Remover negociação"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-add">+</button>
+          <button type="button" class="btn btn-remove">-</button>
+          <button type="button" class="btn btn-trash-negoc-inline" title="Remover negociação" aria-label="Remover negociação"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
         </div>
       </div>
     </div>`;
@@ -642,6 +642,16 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(clearNegotiationFields, 1000);
         });
     }
+});
+
+$(document).on('click', '#negotiationFieldsContainer .btn-add', function(event) {
+    event.preventDefault();
+    addNegotiationField();
+});
+
+$(document).on('click', '#negotiationFieldsContainer .btn-remove, #negotiationFieldsContainer .btn-trash-negoc-inline', function(event) {
+    event.preventDefault();
+    removeNegotiationField(this);
 });
 
 // Mantém só a 1ª linha após envio

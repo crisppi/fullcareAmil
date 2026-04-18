@@ -619,8 +619,8 @@ if (!function_exists('sel')) {
                 </div>
                 <div class="form-group col-md-1 mb-2">
                     <div class="negoc-row__actions">
-                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="return addNegotiationField(this)" title="Adicionar negociação">+</button>
-                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="return removeNegotiationField(this)" title="Remover negociação">−</button>
+                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" title="Adicionar negociação" onclick="return (function(btn){var tpl=document.getElementById('negotiationRowTemplate');var row=btn.closest('.negociation-field-container');if(!row){return false;}var newRow=(tpl&&tpl.content&&tpl.content.firstElementChild)?tpl.content.firstElementChild.cloneNode(true):row.cloneNode(true);newRow.querySelectorAll('.neg-trash-check, .btn-trash-negoc').forEach(function(el){el.remove();});newRow.querySelectorAll('input, select').forEach(function(el){if(el.name==='neg_id'||el.name==='saving'||el.name==='saving_show'||el.name==='data_inicio_neg'||el.name==='data_fim_neg'||el.name==='qtd'){el.value='';}if(el.tagName==='SELECT'){el.selectedIndex=0;}if(el.type==='checkbox'){el.checked=false;}});row.parentNode.insertBefore(newRow,row.nextSibling);return false;})(this);">+</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" title="Remover negociação" onclick="return (function(btn){var row=btn.closest('.negociation-field-container');if(!row){return false;}var rows=document.querySelectorAll('#negotiationFieldsContainer .negociation-field-container');if(rows.length>1){row.remove();return false;}row.querySelectorAll('input, select').forEach(function(el){if(el.type==='checkbox'){el.checked=false;return;}if(el.tagName==='SELECT'){el.selectedIndex=0;return;}el.value='';});return false;})(this);">−</button>
                     <?php if (!empty($neg['id_negociacao'])): ?>
                         <input
                             type="checkbox"
@@ -685,8 +685,8 @@ if (!function_exists('sel')) {
             </div>
             <div class="form-group col-md-1 mb-2">
                 <div class="negoc-row__actions">
-                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="return addNegotiationField(this)" title="Adicionar negociação">+</button>
-                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="return removeNegotiationField(this)" title="Remover negociação">−</button>
+                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" title="Adicionar negociação" onclick="return (function(btn){var tpl=document.getElementById('negotiationRowTemplate');var row=btn.closest('.negociation-field-container');if(!row){return false;}var newRow=(tpl&&tpl.content&&tpl.content.firstElementChild)?tpl.content.firstElementChild.cloneNode(true):row.cloneNode(true);newRow.querySelectorAll('.neg-trash-check, .btn-trash-negoc').forEach(function(el){el.remove();});newRow.querySelectorAll('input, select').forEach(function(el){if(el.name==='neg_id'||el.name==='saving'||el.name==='saving_show'||el.name==='data_inicio_neg'||el.name==='data_fim_neg'||el.name==='qtd'){el.value='';}if(el.tagName==='SELECT'){el.selectedIndex=0;}if(el.type==='checkbox'){el.checked=false;}});row.parentNode.insertBefore(newRow,row.nextSibling);return false;})(this);">+</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" title="Remover negociação" onclick="return (function(btn){var row=btn.closest('.negociation-field-container');if(!row){return false;}var rows=document.querySelectorAll('#negotiationFieldsContainer .negociation-field-container');if(rows.length>1){row.remove();return false;}row.querySelectorAll('input, select').forEach(function(el){if(el.type==='checkbox'){el.checked=false;return;}if(el.tagName==='SELECT'){el.selectedIndex=0;return;}el.value='';});return false;})(this);">−</button>
                 </div>
             </div>
         </div>
@@ -1190,18 +1190,35 @@ if (!function_exists('sel')) {
         debounce = setTimeout(genJSON, 200);
     });
 
-    window.addNegotiationField = function(btn) {
+    function buildNegotiationRow() {
         const template = document.getElementById('negotiationRowTemplate');
-        if (!template || !template.content || !template.content.firstElementChild) {
+        if (template && template.content && template.content.firstElementChild) {
+            return $(template.content.firstElementChild.cloneNode(true));
+        }
+
+        const $fallbackSource = $('#negotiationFieldsContainer .negociation-field-container').last();
+        if (!$fallbackSource.length) {
+            return $();
+        }
+
+        const $fallbackRow = $fallbackSource.clone(false, false);
+        clearNegotiationRow($fallbackRow);
+        $fallbackRow.find('.neg-trash-check, .btn-trash-negoc').remove();
+        return $fallbackRow;
+    }
+
+    window.addNegotiationField = function(btn) {
+        const $new = buildNegotiationRow();
+        if (!$new.length) {
             return false;
         }
-        const $new = $(template.content.firstElementChild.cloneNode(true));
         const $targetRow = btn ? $(btn).closest('.negociation-field-container') : $('.negociation-field-container').last();
         if ($targetRow.length) {
             $new.insertAfter($targetRow);
         } else {
             $('#negotiationFieldsContainer').append($new);
         }
+        clearNegotiationRow($new);
         genJSON();
         return false;
     };
@@ -1257,6 +1274,16 @@ if (!function_exists('sel')) {
 
     $(document).on('change', '.neg-trash-check', function() {
         genJSON();
+    });
+
+    $(document).on('click', '.btn-add-negoc', function(event) {
+        event.preventDefault();
+        window.addNegotiationField(this);
+    });
+
+    $(document).on('click', '.btn-del-negoc', function(event) {
+        event.preventDefault();
+        window.removeNegotiationField(this);
     });
 
 </script>

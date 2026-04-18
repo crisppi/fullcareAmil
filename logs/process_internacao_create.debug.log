@@ -160,3 +160,13 @@
 [2026-04-10 22:24:57] VISITA create ok id_int=673 id_visita=705
 [2026-04-10 22:24:57] GESTAO skip id_int=673 select= evento=n tipo=
 [2026-04-10 22:24:57] END ok id=673
+[2026-04-18 21:26:44] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-18 21:26:44] CREATE internacao ok id=744
+[2026-04-18 21:26:44] VISITA create ok id_int=744 id_visita=794
+[2026-04-18 21:26:44] GESTAO skip id_int=744 select= evento=n tipo=
+[2026-04-18 21:26:44] END ok id=744
+[2026-04-18 21:50:16] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-18 21:50:16] CREATE internacao ok id=745
+[2026-04-18 21:50:16] VISITA create ok id_int=745 id_visita=798
+[2026-04-18 21:50:16] GESTAO skip id_int=745 select= evento=n tipo=
+[2026-04-18 21:50:16] END ok id=745
