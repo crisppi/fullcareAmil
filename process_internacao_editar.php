@@ -643,6 +643,13 @@ try {
             error_log("[PRORROGAÇÃO] Deletada ID $delId");
         }
 
+        foreach ($negDao->findByInternacao($idInt) as $negExist) {
+            if ((string)($negExist['tipo_negociacao'] ?? '') !== 'PRORROGACAO_AUTOMATICA') {
+                continue;
+            }
+            $negDao->destroy((int)($negExist['id_negociacao'] ?? 0));
+        }
+
         foreach ($prArray as $p) {
             $pr = new prorrogacao();
             if (!empty($p['id_prorrogacao'])) $pr->id_prorrogacao = (int) $p['id_prorrogacao'];
@@ -669,63 +676,6 @@ try {
                 internacaoEditarDebugLog('PRORROG create ok id_int=' . (int)$idInt . ' ini=' . (string)$pr->prorrog1_ini_pror . ' fim=' . (string)$pr->prorrog1_fim_pror);
             }
 
-            $dataIni = $p['ini'] ?? null;
-            $dataFim = $p['fim'] ?? null;
-            $acomod = $p['acomod'] ?? '';
-            $diarias = (int)($p['diarias'] ?? 0);
-            if (!empty($dataIni) && !empty($dataFim) && !empty($acomod) && $diarias > 0) {
-                $acomodSolicitada = $p['acomod_solicitada'] ?? $acomod;
-                $trocaDeNorm = normalizeAcomodacaoNegociacao($acomodSolicitada);
-                $trocaParaNorm = normalizeAcomodacaoNegociacao($acomod);
-
-                if ($trocaDeNorm === $trocaParaNorm) {
-                    foreach ($negDao->findByInternacao($idInt) as $negExist) {
-                        $tipoExist = (string)($negExist['tipo_negociacao'] ?? '');
-                        if ($tipoExist !== 'PRORROGACAO_AUTOMATICA') {
-                            continue;
-                        }
-                        $iniExist = (string)($negExist['data_inicio_neg'] ?? '');
-                        $fimExist = (string)($negExist['data_fim_neg'] ?? '');
-                        $deExist = normalizeAcomodacaoNegociacao($negExist['troca_de'] ?? '');
-                        $paraExist = normalizeAcomodacaoNegociacao($negExist['troca_para'] ?? '');
-                        if ($iniExist === (string)$dataIni && $fimExist === (string)$dataFim && $deExist === $paraExist) {
-                            $negDao->destroy((int)($negExist['id_negociacao'] ?? 0));
-                        }
-                    }
-                    internacaoEditarDebugLog('PRORROG skip neg_auto sem troca id_int=' . (int)$idInt . ' ini=' . (string)$dataIni . ' fim=' . (string)$dataFim);
-                    continue;
-                }
-
-                $negAuto = new negociacao();
-                $negAuto->fk_id_int = $idInt;
-                $negAuto->tipo_negociacao = 'PRORROGACAO_AUTOMATICA';
-                $negAuto->data_inicio_neg = $dataIni;
-                $negAuto->data_fim_neg = $dataFim;
-                $negAuto->troca_de = $acomodSolicitada;
-                $negAuto->troca_para = $acomod;
-                $negAuto->qtd = $diarias;
-                $negAuto->saving = (float)($p['saving_estimado'] ?? 0);
-                $negAuto->fk_usuario_neg = resolveInternacaoEditUserId(
-                    $conn,
-                    isset($p['fk_usuario_pror']) ? (int)$p['fk_usuario_pror'] : null,
-                    isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
-                    isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
-                );
-                if (!shouldPersistNegotiation(
-                    $negAuto->tipo_negociacao,
-                    $negAuto->troca_de,
-                    $negAuto->troca_para,
-                    (int)$negAuto->qtd,
-                    (float)$negAuto->saving,
-                    (int)$negAuto->fk_usuario_neg
-                )) {
-                    internacaoEditarDebugLog('PRORROG skip neg_auto saving<=0 ou inválida id_int=' . (int)$idInt . ' ini=' . (string)$dataIni . ' fim=' . (string)$dataFim);
-                    continue;
-                }
-                if (!$negDao->existeNegociacao($negAuto)) {
-                    $negDao->create($negAuto);
-                }
-            }
         }
 
         $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(

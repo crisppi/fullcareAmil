@@ -2031,8 +2031,6 @@ function applyProrrogEntries(entries) {
         if (!target) return;
         const acomod = target.querySelector('[name="acomod1_pror"]');
         if (acomod) acomod.value = entry.acomod1_pror || '';
-        const acomodSolic = target.querySelector('[name="acomod_solicitada_pror"]');
-        if (acomodSolic) acomodSolic.value = entry.acomod_solicitada_pror || entry.acomod1_pror || '';
         const ini = target.querySelector('[name="prorrog1_ini_pror"]');
         if (ini) ini.value = normalizeDateValue(entry.prorrog1_ini_pror);
         const fim = target.querySelector('[name="prorrog1_fim_pror"]');
@@ -2041,8 +2039,6 @@ function applyProrrogEntries(entries) {
         if (isol) isol.value = entry.isol_1_pror || 'n';
         const diarias = target.querySelector('[name="diarias_1"]');
         if (diarias) diarias.value = entry.diarias_1 || '';
-        const saving = target.querySelector('[name="saving_estimado_pror"]');
-        if (saving) saving.value = entry.saving_estimado_pror || '';
         if (typeof calculateDiarias === 'function') {
             calculateDiarias(target);
         }

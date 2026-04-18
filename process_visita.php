@@ -278,42 +278,8 @@ function buildAutoNegociacoesFromProrrog(
     ?string $prorrogJsonRaw,
     ?int $fkUsuarioPadrao
 ): array {
-    if ($flagProrrog !== 's') return [];
-    $decoded = decodeJsonArray($prorrogJsonRaw);
-    if (!is_array($decoded) || !isset($decoded['prorrogations']) || !is_array($decoded['prorrogations'])) {
-        return [];
-    }
-
-    $auto = [];
-    foreach ($decoded['prorrogations'] as $row) {
-        if (!is_array($row)) continue;
-        $dataIni = strOrNull($row['prorrog1_ini_pror'] ?? null);
-        $dataFim = strOrNull($row['prorrog1_fim_pror'] ?? null);
-        $acomodLiberada = strOrNull($row['acomod1_pror'] ?? null);
-        if (!$dataIni || !$dataFim || !$acomodLiberada) continue;
-
-        $qtd = toIntOrNull($row['diarias_1'] ?? null);
-        if ($qtd === null && $dataIni && $dataFim) {
-            $iniTs = strtotime($dataIni);
-            $fimTs = strtotime($dataFim);
-            if ($iniTs && $fimTs && $fimTs >= $iniTs) {
-                $qtd = (int)ceil(($fimTs - $iniTs) / 86400);
-            }
-        }
-        if ($qtd === null || $qtd <= 0) continue;
-
-        $auto[] = [
-            'tipo_negociacao' => strOrNull($row['tipo_negociacao_pror'] ?? null) ?: 'PRORROGACAO_AUTOMATICA',
-            'data_inicio_negoc' => $dataIni,
-            'data_fim_negoc' => $dataFim,
-            'troca_de' => strOrNull($row['acomod_solicitada_pror'] ?? null) ?: $acomodLiberada,
-            'troca_para' => $acomodLiberada,
-            'qtd' => $qtd,
-            'saving' => toFloatOrNull($row['saving_estimado_pror'] ?? null) ?? 0.0,
-            'fk_usuario_neg' => toIntOrNull($row['fk_usuario_pror'] ?? null) ?? $fkUsuarioPadrao,
-        ];
-    }
-    return $auto;
+    // Saving deve existir apenas em negociacoes reais, nunca em prorrogacoes.
+    return [];
 }
 
 function processTussEntries(

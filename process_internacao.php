@@ -126,44 +126,8 @@ if (!function_exists('internacaoCreateDebugLog')) {
 if (!function_exists('buildAutoNegociacoesFromProrrogRows')) {
     function buildAutoNegociacoesFromProrrogRows(array $rows, ?int $fkUsuarioPadrao = null): array
     {
-        $auto = [];
-        foreach ($rows as $row) {
-            if (!is_array($row)) continue;
-            $dataIni = trim((string)($row['prorrog1_ini_pror'] ?? ''));
-            $dataFim = trim((string)($row['prorrog1_fim_pror'] ?? ''));
-            $acomodLiberada = trim((string)($row['acomod1_pror'] ?? ''));
-            if ($dataIni === '' || $dataFim === '' || $acomodLiberada === '') continue;
-
-            $qtd = filter_var($row['diarias_1'] ?? null, FILTER_VALIDATE_INT);
-            if ($qtd === false || $qtd <= 0) {
-                $iniTs = strtotime($dataIni);
-                $fimTs = strtotime($dataFim);
-                if ($iniTs && $fimTs && $fimTs >= $iniTs) {
-                    $qtd = (int)ceil(($fimTs - $iniTs) / 86400);
-                }
-            }
-            if (empty($qtd) || (int)$qtd <= 0) continue;
-
-            $saving = filter_var(str_replace(',', '.', (string)($row['saving_estimado_pror'] ?? '0')), FILTER_VALIDATE_FLOAT);
-            if ($saving === false) $saving = 0.0;
-
-            $fkUsuario = filter_var($row['fk_usuario_pror'] ?? null, FILTER_VALIDATE_INT);
-            if ($fkUsuario === false || !$fkUsuario) {
-                $fkUsuario = $fkUsuarioPadrao;
-            }
-
-            $auto[] = [
-                'tipo_negociacao' => trim((string)($row['tipo_negociacao_pror'] ?? '')) ?: 'PRORROGACAO_AUTOMATICA',
-                'data_inicio_neg' => $dataIni,
-                'data_fim_neg' => $dataFim,
-                'troca_de' => trim((string)($row['acomod_solicitada_pror'] ?? '')) ?: $acomodLiberada,
-                'troca_para' => $acomodLiberada,
-                'qtd' => (int)$qtd,
-                'saving' => (float)$saving,
-                'fk_usuario_neg' => $fkUsuario,
-            ];
-        }
-        return $auto;
+        // Saving deve existir apenas em negociacoes reais, nunca em prorrogacoes.
+        return [];
     }
 }
 if (!function_exists('normalizeNegotiationAcomodacao')) {
@@ -237,34 +201,8 @@ if (!function_exists('persistAutoNegociacoesFromProrrogRows')) {
         ?int $fkUsuarioPadrao = null,
         ?int $fkVisita = null
     ): void {
-        $autoRows = buildAutoNegociacoesFromProrrogRows($rows, $fkUsuarioPadrao);
-        foreach ($autoRows as $negData) {
-            if (!shouldPersistNegotiation(
-                $negData['tipo_negociacao'] ?? '',
-                $negData['troca_de'] ?? '',
-                $negData['troca_para'] ?? '',
-                (int)($negData['qtd'] ?? 0),
-                (float)($negData['saving'] ?? 0),
-                isset($negData['fk_usuario_neg']) ? (int)$negData['fk_usuario_neg'] : null
-            )) {
-                continue;
-            }
-            $negociacao = new Negociacao();
-            $negociacao->fk_id_int = $idInternacao;
-            $negociacao->fk_visita_neg = $fkVisita;
-            $negociacao->fk_usuario_neg = $negData['fk_usuario_neg'];
-            $negociacao->troca_de = $negData['troca_de'];
-            $negociacao->troca_para = $negData['troca_para'];
-            $negociacao->qtd = $negData['qtd'];
-            $negociacao->saving = $negData['saving'];
-            $negociacao->tipo_negociacao = $negData['tipo_negociacao'];
-            $negociacao->data_inicio_neg = $negData['data_inicio_neg'];
-            $negociacao->data_fim_neg = $negData['data_fim_neg'];
-
-            if (!$negociacaoDao->existeNegociacao($negociacao)) {
-                $negociacaoDao->create($negociacao);
-            }
-        }
+        // Mantido apenas por compatibilidade: prorrogacoes nao geram negociacoes.
+        return;
     }
 }
 
@@ -1309,13 +1247,10 @@ if ($type == "update") {
             persistAutoNegociacoesFromProrrogRows(
                 [[
                     'acomod1_pror' => $acomod1_pror,
-                    'acomod_solicitada_pror' => $acomod1_pror,
                     'prorrog1_ini_pror' => $prorrog1_ini_pror,
                     'prorrog1_fim_pror' => $prorrog1_fim_pror,
                     'diarias_1' => null,
                     'fk_usuario_pror' => $fk_usuario_pror,
-                    'saving_estimado_pror' => 0,
-                    'tipo_negociacao_pror' => 'PRORROGACAO_AUTOMATICA'
                 ]],
                 (int)$id_internacao,
                 $negociacaoDao,
