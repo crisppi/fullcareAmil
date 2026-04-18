@@ -30,3 +30,23 @@
 [2026-04-18 16:44:28] alta.create.ok {"id_internacao":719}
 [2026-04-18 16:44:28] internacao.updateAlta.ok {"id_internacao":719,"internado_int":"n"}
 [2026-04-18 16:44:28] transaction.commit {"id_internacao":719}
+[2026-04-18 18:53:24] payload {"id_internacao":703,"data_alta_alt":"2026-04-02","hora_alta_alt":"15:53","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 18:53:24] alta.create.ok {"id_internacao":703}
+[2026-04-18 18:53:24] internacao.updateAlta.ok {"id_internacao":703,"internado_int":"n"}
+[2026-04-18 18:53:24] transaction.commit {"id_internacao":703}
+[2026-04-18 18:58:48] payload {"id_internacao":705,"data_alta_alt":"2026-04-01","hora_alta_alt":"15:58","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 18:58:48] alta.create.ok {"id_internacao":705}
+[2026-04-18 18:58:48] internacao.updateAlta.ok {"id_internacao":705,"internado_int":"n"}
+[2026-04-18 18:58:48] transaction.commit {"id_internacao":705}
+[2026-04-18 19:01:29] payload {"id_internacao":707,"data_alta_alt":"2026-04-05","hora_alta_alt":"16:01","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 19:01:29] alta.create.ok {"id_internacao":707}
+[2026-04-18 19:01:29] internacao.updateAlta.ok {"id_internacao":707,"internado_int":"n"}
+[2026-04-18 19:01:29] transaction.commit {"id_internacao":707}
+[2026-04-18 19:21:23] payload {"id_internacao":723,"data_alta_alt":"2026-03-28","hora_alta_alt":"16:21","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 19:21:23] alta.create.ok {"id_internacao":723}
+[2026-04-18 19:21:23] internacao.updateAlta.ok {"id_internacao":723,"internado_int":"n"}
+[2026-04-18 19:21:23] transaction.commit {"id_internacao":723}
+[2026-04-18 19:22:26] payload {"id_internacao":702,"data_alta_alt":"2026-04-07","hora_alta_alt":"16:22","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 19:22:26] alta.create.ok {"id_internacao":702}
+[2026-04-18 19:22:26] internacao.updateAlta.ok {"id_internacao":702,"internado_int":"n"}
+[2026-04-18 19:22:26] transaction.commit {"id_internacao":702}

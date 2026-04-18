@@ -1491,14 +1491,8 @@
                     }
                 });
 
-                document.querySelectorAll('#negotiationFieldsContainer select[name="tipo_negociacao"]').forEach(function(sel) {
-                    if (window.fcFillNegotiationRowCore) {
-                        window.fcFillNegotiationRowCore(sel);
-                    }
-                });
-
-                if (typeof window.refreshNegotiationRows === 'function') {
-                    window.refreshNegotiationRows(false);
+                if (typeof window.genJSON === 'function') {
+                    window.genJSON();
                 }
             }
 

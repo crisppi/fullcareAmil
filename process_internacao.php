@@ -130,6 +130,31 @@ if (!function_exists('buildAutoNegociacoesFromProrrogRows')) {
         return [];
     }
 }
+if (!function_exists('normalizeInternacaoProrrogAcomodacao')) {
+    function normalizeInternacaoProrrogAcomodacao(?string $acomodacao): string
+    {
+        $acomodacao = trim((string)$acomodacao);
+        return $acomodacao !== '' ? $acomodacao : 'Apto';
+    }
+}
+if (!function_exists('buildInitialInternacaoProrrogRow')) {
+    function buildInitialInternacaoProrrogRow(?string $dataInternacao, ?string $acomodacaoInicial, ?int $fkUsuarioPror): ?array
+    {
+        $dataInternacao = trim((string)$dataInternacao);
+        if ($dataInternacao === '') {
+            return null;
+        }
+
+        return [
+            'fk_usuario_pror' => $fkUsuarioPror,
+            'acomod1_pror' => normalizeInternacaoProrrogAcomodacao($acomodacaoInicial),
+            'prorrog1_ini_pror' => $dataInternacao,
+            'prorrog1_fim_pror' => $dataInternacao,
+            'isol_1_pror' => 'n',
+            'diarias_1' => 1,
+        ];
+    }
+}
 if (!function_exists('normalizeNegotiationAcomodacao')) {
     function normalizeNegotiationAcomodacao(?string $value): string
     {
@@ -950,6 +975,23 @@ if ($type === "create") {
         }
 
         // PRORROGAÇÃO
+        $initialProrrogRow = buildInitialInternacaoProrrogRow(
+            $data_intern_int,
+            $acomodacao_int,
+            filter_var($fk_usuario_int, FILTER_VALIDATE_INT) ?: null
+        );
+        if ($initialProrrogRow) {
+            $prorrogacao = new prorrogacao();
+            $prorrogacao->fk_internacao_pror = $lastId; // [FK:$lastId]
+            $prorrogacao->fk_usuario_pror = $initialProrrogRow['fk_usuario_pror'];
+            $prorrogacao->acomod1_pror = $initialProrrogRow['acomod1_pror'];
+            $prorrogacao->prorrog1_ini_pror = $initialProrrogRow['prorrog1_ini_pror'];
+            $prorrogacao->prorrog1_fim_pror = $initialProrrogRow['prorrog1_fim_pror'];
+            $prorrogacao->isol_1_pror = $initialProrrogRow['isol_1_pror'];
+            $prorrogacao->diarias_1 = $initialProrrogRow['diarias_1'];
+            $prorrogacaoDao->create($prorrogacao);
+        }
+
         if ($select_prorrog == "s") {
             $prorrogacoesJson = $_POST['prorrogacoes-json'] ?? '[]';
             $prorrogacoesArray = json_decode($prorrogacoesJson, true);

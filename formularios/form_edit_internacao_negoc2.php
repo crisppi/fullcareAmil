@@ -86,10 +86,10 @@ if (!function_exists('negotiationDefaultsPhp')) {
         if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto', 'use_alta' => true];
         if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi', 'use_alta' => true];
         if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto', 'use_alta' => true];
-        if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI', 'use_alta' => true];
-        if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi', 'use_alta' => true];
+        if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI', 'use_alta' => false];
+        if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi', 'use_alta' => false];
         if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {
-            return ['troca_de' => 'Apto', 'troca_para' => 'Apto', 'use_alta' => true];
+            return ['troca_de' => 'Apto', 'troca_para' => 'Apto', 'use_alta' => false];
         }
         return ['troca_de' => '', 'troca_para' => '', 'use_alta' => false];
     }
@@ -453,10 +453,10 @@ if (!function_exists('sel')) {
         if (tipo === 'TROCA UTI/APTO') { trocaDe = 'UTI'; trocaPara = 'Apto'; useAlta = true; }
         else if (tipo === 'TROCA UTI/SEMI') { trocaDe = 'UTI'; trocaPara = 'Semi'; useAlta = true; }
         else if (tipo === 'TROCA SEMI/APTO') { trocaDe = 'Semi'; trocaPara = 'Apto'; useAlta = true; }
-        else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = true; }
-        else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = true; }
+        else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = false; }
+        else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = false; }
         else if (tipo === 'GLOSA APTO' || tipo === '1/2 DIARIA APTO' || tipo === 'TARDIA APTO' || tipo === 'DIARIA ADM') {
-            trocaDe = 'Apto'; trocaPara = 'Apto'; useAlta = true;
+            trocaDe = 'Apto'; trocaPara = 'Apto'; useAlta = false;
         }
 
         var trocaDeEl = getField(row, 'troca_de');
@@ -619,8 +619,8 @@ if (!function_exists('sel')) {
                 </div>
                 <div class="form-group col-md-1 mb-2">
                     <div class="negoc-row__actions">
-                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="addNegotiationField()" title="Adicionar negociação">+</button>
-                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="removeNegotiationField(this)" title="Remover negociação">−</button>
+                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="return addNegotiationField(this)" title="Adicionar negociação">+</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="return removeNegotiationField(this)" title="Remover negociação">−</button>
                     <?php if (!empty($neg['id_negociacao'])): ?>
                         <input
                             type="checkbox"
@@ -642,6 +642,55 @@ if (!function_exists('sel')) {
             </div>
         <?php endforeach; ?>
     </div>
+    <template id="negotiationRowTemplate">
+        <div class="negociation-field-container negoc-row">
+            <input type="hidden" name="neg_id" value="">
+            <div class="form-group col-sm-2">
+                <label>
+                    Tipo Negociação
+                    <span class="assist-anchor" data-assist-key="negociacao_tipo"></span>
+                </label>
+                <select name="tipo_negociacao" class="form-control" onchange="fcFillNegotiationRowCore(this)">
+                    <?= optionsTipoNegociacao('') ?>
+                </select>
+            </div>
+            <div class="form-group col-sm-1">
+                <label>Data inicial</label>
+                <input type="date" name="data_inicio_neg" class="form-control" value="">
+            </div>
+            <div class="form-group col-sm-1">
+                <label>Data final</label>
+                <input type="date" name="data_fim_neg" class="form-control" value="">
+            </div>
+            <div class="form-group col-sm-2">
+                <label>Acomod. Solicitada</label>
+                <select name="troca_de" class="form-control" data-current="">
+                    <?= optionsAcomod($acomodacoesNegocRenderList, '') ?>
+                </select>
+            </div>
+            <div class="form-group col-sm-2">
+                <label>Acomod. Liberada</label>
+                <select name="troca_para" class="form-control" data-current="">
+                    <?= optionsAcomod($acomodacoesNegocRenderList, '') ?>
+                </select>
+            </div>
+            <div class="form-group col-sm-1">
+                <label>Quantidade</label>
+                <input type="number" name="qtd" class="form-control" min="1" max="30" value="">
+            </div>
+            <div class="form-group col-sm-1">
+                <label>Saving</label>
+                <input type="text" name="saving_show" class="form-control" readonly value="">
+                <input type="hidden" name="saving" value="">
+            </div>
+            <div class="form-group col-md-1 mb-2">
+                <div class="negoc-row__actions">
+                    <button type="button" class="btn btn-success btn-sm btn-add-negoc" onclick="return addNegotiationField(this)" title="Adicionar negociação">+</button>
+                    <button type="button" class="btn btn-danger btn-sm btn-del-negoc" onclick="return removeNegotiationField(this)" title="Remover negociação">−</button>
+                </div>
+            </div>
+        </div>
+    </template>
     <hr>
 </div>
 
@@ -754,6 +803,8 @@ if (!function_exists('sel')) {
     function applyNegotiationDefaultsNative(row, forceDates) {
         const tipoEl = getField(row, 'tipo_negociacao');
         if (!tipoEl || !tipoEl.value) return;
+        const negIdEl = getField(row, 'neg_id');
+        const hasSavedRecord = !!((negIdEl && negIdEl.value) || '').toString().trim();
         const defaults = negotiationTypeDefaults(tipoEl.value);
         const trocaDeEl = getField(row, 'troca_de');
         const trocaParaEl = getField(row, 'troca_para');
@@ -766,16 +817,20 @@ if (!function_exists('sel')) {
         const altaDateTime = ((altaInput && altaInput.value) || '').toString().trim();
         const altaDate = altaDateTime ? altaDateTime.slice(0, 10) : '';
 
-        if (defaults.trocaDe) ensureSelectOptionNative(trocaDeEl, defaults.trocaDe);
-        if (defaults.trocaPara) ensureSelectOptionNative(trocaParaEl, defaults.trocaPara);
+        if (defaults.trocaDe && (!hasSavedRecord || forceDates || !(trocaDeEl && trocaDeEl.value))) {
+            ensureSelectOptionNative(trocaDeEl, defaults.trocaDe);
+        }
+        if (defaults.trocaPara && (!hasSavedRecord || forceDates || !(trocaParaEl && trocaParaEl.value))) {
+            ensureSelectOptionNative(trocaParaEl, defaults.trocaPara);
+        }
 
-        if (inicioEl && (forceDates || !inicioEl.value) && internDate) {
+        if (inicioEl && (forceDates || !hasSavedRecord || !inicioEl.value) && internDate) {
             inicioEl.value = internDate;
         }
-        if (fimEl && (forceDates || !fimEl.value)) {
+        if (fimEl && (forceDates || !hasSavedRecord || !fimEl.value)) {
             fimEl.value = defaults.useAlta && altaDate ? altaDate : ((inicioEl && inicioEl.value) || internDate || '');
         }
-        if (qtdEl) {
+        if (qtdEl && (!hasSavedRecord || forceDates || !qtdEl.value)) {
             const qtdCalc = diffDaysForNegotiation(
                 (inicioEl && inicioEl.value) || '',
                 (fimEl && fimEl.value) || ''
@@ -808,10 +863,10 @@ if (!function_exists('sel')) {
         if (tipo === 'TROCA UTI/APTO') { trocaDe = 'UTI'; trocaPara = 'Apto'; useAlta = true; }
         else if (tipo === 'TROCA UTI/SEMI') { trocaDe = 'UTI'; trocaPara = 'Semi'; useAlta = true; }
         else if (tipo === 'TROCA SEMI/APTO') { trocaDe = 'Semi'; trocaPara = 'Apto'; useAlta = true; }
-        else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = true; }
-        else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = true; }
+        else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = false; }
+        else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = false; }
         else if (tipo === 'GLOSA APTO' || tipo === '1/2 DIARIA APTO' || tipo === 'TARDIA APTO' || tipo === 'DIARIA ADM') {
-            trocaDe = 'Apto'; trocaPara = 'Apto'; useAlta = true;
+            trocaDe = 'Apto'; trocaPara = 'Apto'; useAlta = false;
         }
 
         function buildOptions(select, selectedLabel) {
@@ -988,10 +1043,10 @@ if (!function_exists('sel')) {
         if (t === 'TROCA UTI/APTO') return { trocaDe: 'UTI', trocaPara: 'Apto', useAlta: true };
         if (t === 'TROCA UTI/SEMI') return { trocaDe: 'UTI', trocaPara: 'Semi', useAlta: true };
         if (t === 'TROCA SEMI/APTO') return { trocaDe: 'Semi', trocaPara: 'Apto', useAlta: true };
-        if (t === 'GLOSA UTI' || t === 'TARDIA UTI') return { trocaDe: 'UTI', trocaPara: 'UTI', useAlta: true };
-        if (t === 'GLOSA SEMI') return { trocaDe: 'Semi', trocaPara: 'Semi', useAlta: true };
+        if (t === 'GLOSA UTI' || t === 'TARDIA UTI') return { trocaDe: 'UTI', trocaPara: 'UTI', useAlta: false };
+        if (t === 'GLOSA SEMI') return { trocaDe: 'Semi', trocaPara: 'Semi', useAlta: false };
         if (t === 'GLOSA APTO' || t === '1/2 DIARIA APTO' || t === 'TARDIA APTO' || t === 'DIARIA ADM') {
-            return { trocaDe: 'Apto', trocaPara: 'Apto', useAlta: true };
+            return { trocaDe: 'Apto', trocaPara: 'Apto', useAlta: false };
         }
         return defaults;
     }
@@ -999,6 +1054,7 @@ if (!function_exists('sel')) {
     function applyNegotiationDefaults($c, forceDates = false) {
         const tipo = ($c.find('[name="tipo_negociacao"]').val() || '').toString().trim();
         if (!tipo) return;
+        const hasSavedRecord = (($c.find('[name="neg_id"]').val() || '').toString().trim() !== '');
 
         const defaults = negotiationTypeDefaults(tipo);
         const $trocaDe = $c.find('[name="troca_de"]');
@@ -1013,37 +1069,39 @@ if (!function_exists('sel')) {
         ensureBaseOptions($trocaDe);
         ensureBaseOptions($trocaPara);
 
-        if (defaults.trocaDe) {
+        if (defaults.trocaDe && (!hasSavedRecord || forceDates || !$trocaDe.val())) {
             const matchDe = ensureSelectOption($trocaDe, defaults.trocaDe);
             if (matchDe) {
                 $trocaDe.val(matchDe).attr('data-current', defaults.trocaDe);
             }
         }
-        if (defaults.trocaPara) {
+        if (defaults.trocaPara && (!hasSavedRecord || forceDates || !$trocaPara.val())) {
             const matchPara = ensureSelectOption($trocaPara, defaults.trocaPara);
             if (matchPara) {
                 $trocaPara.val(matchPara).attr('data-current', defaults.trocaPara);
             }
         }
 
-        if (forceDates || !$inicio.val()) {
+        if (forceDates || !hasSavedRecord || !$inicio.val()) {
             if (internDate) {
                 $inicio.val(internDate);
             }
         }
-        if (forceDates || !$fim.val()) {
+        if (forceDates || !hasSavedRecord || !$fim.val()) {
             $fim.val(defaults.useAlta && altaDate ? altaDate : ($inicio.val() || internDate || ''));
         }
 
-        const qtdCalc = diffDaysForNegotiation($inicio.val(), $fim.val());
-        if (qtdCalc > 0) {
-            $qtd.val(qtdCalc);
+        if (!hasSavedRecord || forceDates || !$qtd.val()) {
+            const qtdCalc = diffDaysForNegotiation($inicio.val(), $fim.val());
+            if (qtdCalc > 0) {
+                $qtd.val(qtdCalc);
+            }
         }
     }
 
     function calcSaving($c) {
         const tipo = $c.find('[name="tipo_negociacao"]').val().toUpperCase().trim();
-        const de = safeNum($c.find('[name="troca_de"]   option:selected').data('valor'));
+        const de = safeNum($c.find('[name="troca_de"] option:selected').data('valor'));
         const para = safeNum($c.find('[name="troca_para"] option:selected').data('valor'));
         const qtd = parseInt($c.find('[name="qtd"]').val(), 10) || 0;
         let s = 0;
@@ -1096,9 +1154,6 @@ if (!function_exists('sel')) {
     // dispara a cada mudança
     $('#negotiationFieldsContainer').on('input change', 'select,input', function () {
         const $row = $(this).closest('.negociation-field-container');
-        if ($(this).attr('name') === 'tipo_negociacao') {
-            applyNegotiationDefaults($row, true);
-        }
         if ($(this).attr('name') === 'data_inicio_neg' || $(this).attr('name') === 'data_fim_neg') {
             const qtdCalc = diffDaysForNegotiation(
                 $row.find('[name="data_inicio_neg"]').val(),
@@ -1111,23 +1166,20 @@ if (!function_exists('sel')) {
         calcSaving($row);
         genJSON();
     });
-    // também no add/remove
-    $('.btn-add-negoc, .btn-del-negoc').on('click', genJSON);
     // e no submit do form, pra garantir
     $('form').on('submit', genJSON);
 
     // inicializa
     $(function () {
-        window.refreshNegotiationRows(false);
         document.querySelectorAll('#negotiationFieldsContainer select[name="tipo_negociacao"]').forEach(function(sel) {
             sel.addEventListener('change', function() {
                 window.handleNegotiationTypeChange(this);
             });
         });
         document.querySelectorAll('#negotiationFieldsContainer .negociation-field-container').forEach(function(row) {
-            applyNegotiationDefaultsNative(row, false);
             calcSavingNative(row);
         });
+        genJSON();
     });
 
     let debounce;
@@ -1138,15 +1190,20 @@ if (!function_exists('sel')) {
         debounce = setTimeout(genJSON, 200);
     });
 
-    window.addNegotiationField = function() {
-        const $new = $('.negociation-field-container').last().clone();
-        $new.find('input,select').not('[type="hidden"]').val('');
-        $new.find('[name="neg_id"]').val('');
-        $new.find('[name="saving"]').val('');
-        $new.find('[name="saving_show"]').val('').css('color', '');
-        $new.find('[name="troca_de"], [name="troca_para"]').attr('data-current', '');
-        $new.insertAfter($('.negociation-field-container').last());
-        window.refreshNegotiationRows(false);
+    window.addNegotiationField = function(btn) {
+        const template = document.getElementById('negotiationRowTemplate');
+        if (!template || !template.content || !template.content.firstElementChild) {
+            return false;
+        }
+        const $new = $(template.content.firstElementChild.cloneNode(true));
+        const $targetRow = btn ? $(btn).closest('.negociation-field-container') : $('.negociation-field-container').last();
+        if ($targetRow.length) {
+            $new.insertAfter($targetRow);
+        } else {
+            $('#negotiationFieldsContainer').append($new);
+        }
+        genJSON();
+        return false;
     };
 
     function clearNegotiationRow($row) {
@@ -1195,23 +1252,11 @@ if (!function_exists('sel')) {
             clearNegotiationRow($row);
         }
         genJSON();
+        return false;
     };
-
-    $(document).on('click', '.btn-add-negoc', function(event) {
-        event.preventDefault();
-        window.addNegotiationField();
-    });
-
-    $(document).on('click', '.btn-del-negoc', function(event) {
-        event.preventDefault();
-        window.removeNegotiationField(this);
-    });
 
     $(document).on('change', '.neg-trash-check', function() {
         genJSON();
     });
 
-    $(function () {
-        window.refreshNegotiationRows(false);
-    });
 </script>

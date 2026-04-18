@@ -396,6 +396,18 @@ function closeProrrogError() {
     if (dlg) dlg.style.display = "none";
 }
 
+function addOneDayToDate(dateValue) {
+    const base = String(dateValue || '').trim();
+    if (!base) return '';
+    const parts = base.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return '';
+    const nextDate = new Date(parts[0], parts[1] - 1, parts[2] + 1);
+    const yyyy = nextDate.getFullYear();
+    const mm = String(nextDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(nextDate.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}
+
 // Exibe o container ao carregar a página, se "select_prorrog" estiver marcado
 document.addEventListener("DOMContentLoaded", function() {
     const selectProrrog = document.getElementById("select_prorrog");
@@ -424,8 +436,13 @@ function setFirstProrrogationDate() {
 
     const iniInput = firstContainer.querySelector('[name="prorrog1_ini_pror"]');
     if (iniInput) {
-        iniInput.value = dataInternacao;
+        iniInput.value = addOneDayToDate(dataInternacao);
     }
+}
+
+function getManualProrrogMinDate() {
+    const dataInternacao = getInternacaoDateForProrrog();
+    return dataInternacao ? addOneDayToDate(dataInternacao) : '';
 }
 
 const dataInternInput = document.getElementById("data_intern_int");
@@ -596,7 +613,9 @@ function addField() {
         const lastContainer = fieldContainers[fieldContainers.length - 2];
         const newContainer = fieldContainers[fieldContainers.length - 1];
         const lastEndDate = lastContainer.querySelector('[name="prorrog1_fim_pror"]').value;
-        if (lastEndDate) newContainer.querySelector('[name="prorrog1_ini_pror"]').value = lastEndDate;
+        if (lastEndDate) {
+            newContainer.querySelector('[name="prorrog1_ini_pror"]').value = addOneDayToDate(lastEndDate);
+        }
     }
     generateProrJSON();
 }
@@ -646,7 +665,7 @@ window.recalculateProrrogSavings = function recalculateProrrogSavings() {
 // Calcula diárias e valida datas
 function calculateDiarias(container) {
     const dataAtual = new Date().toISOString().split("T")[0];
-    const dataInternacao = getInternacaoDateForProrrog();
+    const minManualDate = getManualProrrogMinDate();
     const maxDate = window.PRORROG_MAX_DATE || dataAtual;
 
     const dataInicial = container.querySelector('[name="prorrog1_ini_pror"]').value;
@@ -659,9 +678,9 @@ function calculateDiarias(container) {
 
     if (dataInicial) {
         const inicio = new Date(dataInicial);
-        const internacao = dataInternacao ? new Date(dataInternacao) : null;
-        if (internacao && inicio < internacao) {
-            errorMessage.textContent = "A data inicial não pode ser menor que a data de internação.";
+        const manualStart = minManualDate ? new Date(minManualDate) : null;
+        if (manualStart && inicio < manualStart) {
+            errorMessage.textContent = "A prorrogação manual deve começar a partir do dia seguinte à internação.";
             errorMessage.style.display = "block";
             const dataInicialInput = container.querySelector('[name="prorrog1_ini_pror"]');
             if (dataInicialInput) {
@@ -814,6 +833,7 @@ function clearProrrogInputs() {
             });
         }
     });
+    setFirstProrrogationDate();
     generateProrJSON();
 }
 </script>
