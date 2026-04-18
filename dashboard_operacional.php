@@ -102,7 +102,8 @@ if (!is_array($counts)) {
                FROM tb_negociacao n
                JOIN tb_internacao i ON i.id_internacao = n.fk_id_int
                JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
-              WHERE (n.data_fim_neg IS NULL OR n.data_fim_neg = '0000-00-00'){$seguradoraFiltroPac}"
+              WHERE (n.data_fim_neg IS NULL OR n.data_fim_neg = '0000-00-00')
+                AND UPPER(COALESCE(n.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'{$seguradoraFiltroPac}"
         ),
         'eventosCriticos' => dashFetchCount(
             $conn,

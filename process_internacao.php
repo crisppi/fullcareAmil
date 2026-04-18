@@ -43,6 +43,7 @@ require_once("models/alta.php");
 require_once("dao/altaDao.php");
 require_once("utils/flow_logger.php");
 require_once(__DIR__ . "/app/cuidadoContinuado.php");
+require_once(__DIR__ . "/app/prorrog_alta_helper.php");
 
 if (!function_exists('normalizeDateTimeInput')) {
 function normalizeDateTimeInput($value)
@@ -165,6 +166,68 @@ if (!function_exists('buildAutoNegociacoesFromProrrogRows')) {
         return $auto;
     }
 }
+if (!function_exists('normalizeNegotiationAcomodacao')) {
+    function normalizeNegotiationAcomodacao(?string $value): string
+    {
+        $value = trim((string)$value);
+        if ($value === '') {
+            return '';
+        }
+        if (strpos($value, '-') !== false) {
+            [, $value] = array_pad(explode('-', $value, 2), 2, '');
+        }
+        return mb_strtolower(trim($value), 'UTF-8');
+    }
+}
+if (!function_exists('calcNegotiationSavingValue')) {
+    function calcNegotiationSavingValue(PDO $conn, int $hospitalId, ?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd): float
+    {
+        static $cache = [];
+        if ($hospitalId <= 0 || $qtd <= 0) {
+            return 0.0;
+        }
+        if (!isset($cache[$hospitalId])) {
+            $stmt = $conn->prepare("SELECT acomodacao_aco, valor_aco FROM tb_acomodacao WHERE fk_hospital = :id");
+            $stmt->bindValue(':id', $hospitalId, PDO::PARAM_INT);
+            $stmt->execute();
+            $map = [];
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
+                $map[normalizeNegotiationAcomodacao($row['acomodacao_aco'] ?? '')] = (float)($row['valor_aco'] ?? 0);
+            }
+            $cache[$hospitalId] = $map;
+        }
+        $map = $cache[$hospitalId];
+        $de = (float)($map[normalizeNegotiationAcomodacao($trocaDe)] ?? 0);
+        $para = (float)($map[normalizeNegotiationAcomodacao($trocaPara)] ?? 0);
+        $tipoNorm = mb_strtoupper(trim((string)$tipo), 'UTF-8');
+
+        if (strpos($tipoNorm, 'TROCA') === 0) {
+            return ($de - $para) * $qtd;
+        }
+        if (strpos($tipoNorm, '1/2 DIARIA') !== false) {
+            return ($de / 2) * $qtd;
+        }
+        return $de * $qtd;
+    }
+}
+if (!function_exists('shouldPersistNegotiation')) {
+    function shouldPersistNegotiation(?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd, float $saving, ?int $auditorId): bool
+    {
+        if (trim((string)$tipo) === '') {
+            return false;
+        }
+        if (trim((string)$trocaDe) === '' || trim((string)$trocaPara) === '') {
+            return false;
+        }
+        if ($qtd <= 0) {
+            return false;
+        }
+        if ($auditorId === null || $auditorId <= 0) {
+            return false;
+        }
+        return $saving > 0;
+    }
+}
 
 if (!function_exists('persistAutoNegociacoesFromProrrogRows')) {
     function persistAutoNegociacoesFromProrrogRows(
@@ -176,6 +239,16 @@ if (!function_exists('persistAutoNegociacoesFromProrrogRows')) {
     ): void {
         $autoRows = buildAutoNegociacoesFromProrrogRows($rows, $fkUsuarioPadrao);
         foreach ($autoRows as $negData) {
+            if (!shouldPersistNegotiation(
+                $negData['tipo_negociacao'] ?? '',
+                $negData['troca_de'] ?? '',
+                $negData['troca_para'] ?? '',
+                (int)($negData['qtd'] ?? 0),
+                (float)($negData['saving'] ?? 0),
+                isset($negData['fk_usuario_neg']) ? (int)$negData['fk_usuario_neg'] : null
+            )) {
+                continue;
+            }
             $negociacao = new Negociacao();
             $negociacao->fk_id_int = $idInternacao;
             $negociacao->fk_visita_neg = $fkVisita;
@@ -606,8 +679,15 @@ if ($type === "create") {
         error_log('[CRONICOS][INTERNACAO][CREATE] ' . $e->getMessage());
     }
 
+    $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
+        $_POST,
+        'normalizeDateTimeInput',
+        filter_var($_POST['fk_usuario_int'] ?? ($_SESSION['id_usuario'] ?? null), FILTER_VALIDATE_INT) ?: null,
+        $_POST['usuario_alt'] ?? ($_SESSION['email_user'] ?? null)
+    );
+
     // Alta automática se internado = 'n'
-    if ($internado_int === 'n') {
+    if ($internado_int === 'n' && !$prorrogAltaPayload) {
         $alta = new alta();
         $alta->data_alta_alt = $data_alta_alt;
         $alta->hora_alta_alt = $hora_alta_alt;
@@ -835,15 +915,16 @@ if ($type === "create") {
                 error_log("[ERRO] Falha ao decodificar JSON de negociações: " . json_last_error_msg());
             } elseif (is_array($negociacoesArray) && count($negociacoesArray) > 0) {
                 foreach ($negociacoesArray as $negociacaoData) {
-                    $trocaDe = ($negociacaoData['troca_de']);
-                    $trocaPara = ($negociacaoData['troca_para']);
+                    $trocaDe = trim((string)($negociacaoData['troca_de'] ?? ''));
+                    $trocaPara = trim((string)($negociacaoData['troca_para'] ?? ''));
                     $qtd = filter_var($negociacaoData['qtd'], FILTER_VALIDATE_INT);
-                    $saving = filter_var($negociacaoData['saving'], FILTER_VALIDATE_FLOAT);
-                    $tipo_negociacao = filter_var($negociacaoData['tipo_negociacao']);
-                    $data_inicio_negoc = ($negociacaoData['data_inicio_negoc']);
-                    $data_fim_negoc = ($negociacaoData['data_fim_negoc']);
+                    $tipo_negociacao = trim((string)($negociacaoData['tipo_negociacao'] ?? ''));
+                    $data_inicio_negoc = ($negociacaoData['data_inicio_negoc'] ?? null);
+                    $data_fim_negoc = ($negociacaoData['data_fim_negoc'] ?? null);
+                    $auditorNeg = isset($negociacaoData['fk_usuario_neg']) ? (int)$negociacaoData['fk_usuario_neg'] : 0;
+                    $saving = calcNegotiationSavingValue($conn, (int)$fk_hospital_int, $tipo_negociacao, $trocaDe, $trocaPara, (int)$qtd);
 
-                    if (!$trocaDe || !$trocaPara || !$qtd || $saving === false) {
+                    if (!shouldPersistNegotiation($tipo_negociacao, $trocaDe, $trocaPara, (int)$qtd, $saving, $auditorNeg)) {
                         error_log("[ERRO] Negociação inválida ignorada: " . print_r($negociacaoData, true));
                         continue;
                     }
@@ -851,7 +932,7 @@ if ($type === "create") {
                     $negociacao = new Negociacao();
                     $negociacao->fk_id_int = $lastId; // [FK:$lastId]
                     $negociacao->fk_visita_neg = $visitaCriadaId ?? null;
-                    $negociacao->fk_usuario_neg = $negociacaoData['fk_usuario_neg'];
+                    $negociacao->fk_usuario_neg = $auditorNeg;
                     $negociacao->troca_de = $trocaDe;
                     $negociacao->troca_para = $trocaPara;
                     $negociacao->qtd = $qtd;
@@ -900,6 +981,9 @@ if ($type === "create") {
                 );
             } else {
                 throw new Exception("Formato de JSON inválido para prorrogações.");
+            }
+            if ($prorrogAltaPayload) {
+                fullcare_upsert_prorrog_alta($conn, (int)$lastId, $prorrogAltaPayload);
             }
         }
 
@@ -957,6 +1041,12 @@ if ($type == "update") {
     $acomodacao_int = filter_input(INPUT_POST, "acomodacao_int");
     $acoes_int = filter_input(INPUT_POST, "acoes_int");
     $acoes_int = limitInputLength($acoes_int, 5000);
+    $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
+        $_POST,
+        'normalizeDateTimeInput',
+        filter_var($_POST['fk_usuario_int'] ?? ($_SESSION['id_usuario'] ?? null), FILTER_VALIDATE_INT) ?: null,
+        $_POST['usuario_alt'] ?? ($_SESSION['email_user'] ?? null)
+    );
 
     $rel_int = filter_input(INPUT_POST, "rel_int");
     $rel_int = limitInputLength($rel_int, 5000);
@@ -1160,21 +1250,24 @@ if ($type == "update") {
         $negociacoesArray = json_decode($negociacoesJSON, true);
         if (is_array($negociacoesArray) && count($negociacoesArray) > 0) {
             foreach ($negociacoesArray as $negociacaoData) {
-                $trocaDe = filter_var($negociacaoData['troca_de'], FILTER_VALIDATE_INT);
-                $trocaPara = filter_var($negociacaoData['troca_para'], FILTER_VALIDATE_INT);
+                $trocaDe = trim((string)($negociacaoData['troca_de'] ?? ''));
+                $trocaPara = trim((string)($negociacaoData['troca_para'] ?? ''));
                 $qtd = filter_var($negociacaoData['qtd'], FILTER_VALIDATE_INT);
-                $saving = filter_var($negociacaoData['saving'], FILTER_VALIDATE_FLOAT);
-                if (!$trocaDe || !$trocaPara || !$qtd || $saving === false) {
+                $tipoNegociacao = trim((string)($negociacaoData['tipo_negociacao'] ?? ''));
+                $auditorNeg = isset($negociacaoData['fk_usuario_neg']) ? (int)$negociacaoData['fk_usuario_neg'] : 0;
+                $saving = calcNegotiationSavingValue($conn, (int)$fk_hospital_int, $tipoNegociacao, $trocaDe, $trocaPara, (int)$qtd);
+                if (!shouldPersistNegotiation($tipoNegociacao, $trocaDe, $trocaPara, (int)$qtd, $saving, $auditorNeg)) {
                     error_log("Negociação inválida ignorada: " . print_r($negociacaoData, true));
                     continue;
                 }
                 $negociacao = new Negociacao();
                 $negociacao->fk_id_int = $id_internacao; // mantém UPDATE
-                $negociacao->fk_usuario_neg = $negociacaoData['fk_usuario_neg'];
+                $negociacao->fk_usuario_neg = $auditorNeg;
                 $negociacao->troca_de = $trocaDe;
                 $negociacao->troca_para = $trocaPara;
                 $negociacao->qtd = $qtd;
                 $negociacao->saving = $saving;
+                $negociacao->tipo_negociacao = $tipoNegociacao;
                 if (!$negociacaoDao->existeNegociacao($negociacao)) {
                     $negociacaoDao->create($negociacao);
                 }
@@ -1228,6 +1321,9 @@ if ($type == "update") {
                 $negociacaoDao,
                 filter_var($fk_usuario_int, FILTER_VALIDATE_INT) ?: null
             );
+        }
+        if ($prorrogAltaPayload) {
+            fullcare_upsert_prorrog_alta($conn, (int)$id_internacao, $prorrogAltaPayload);
         }
     }
 

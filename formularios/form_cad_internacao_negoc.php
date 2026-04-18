@@ -38,6 +38,24 @@
     color: white;
 }
 
+.btn-trash-negoc-inline {
+    background: linear-gradient(180deg, #fff7f7 0%, #ffe9eb 100%);
+    color: #b42318;
+    border: 1px solid rgba(180, 35, 24, 0.18);
+    font-size: 0.85rem;
+}
+
+.btn-trash-negoc-inline:hover {
+    background: linear-gradient(180deg, #ffecef 0%, #ffd9de 100%);
+    color: #912018;
+}
+
+.negotiation-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
 #container-negoc .adicional-card {
     background: #f5f5f9;
     border-radius: 22px;
@@ -161,8 +179,9 @@ if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
                 </div>
 
                 <div class="form-group col-sm-1" style="margin-top:25px;">
-                    <!-- SOMENTE "+" na primeira linha -->
-                    <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
+                    <div class="negotiation-actions">
+                        <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -361,8 +380,11 @@ function addNegotiationField() {
       </div>
 
       <div class="form-group col-sm-1" style="margin-top:25px;">
-        <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
-        <button type="button" class="btn btn-remove" onclick="removeNegotiationField(this)">-</button>
+        <div class="negotiation-actions">
+          <button type="button" class="btn btn-add" onclick="addNegotiationField()">+</button>
+          <button type="button" class="btn btn-remove" onclick="removeNegotiationField(this)">-</button>
+          <button type="button" class="btn btn-trash-negoc-inline" onclick="removeNegotiationField(this)" title="Remover negociação" aria-label="Remover negociação"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
+        </div>
       </div>
     </div>`;
     negotiationContainer.append(newField);
@@ -584,11 +606,29 @@ function exibirAlerta(msg) {
     }, 4000);
 }
 
+function parseDateOnly(value) {
+    const raw = (value || '').toString().trim();
+    if (!raw) return null;
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const [y, m, d] = raw.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+        const [d, m, y] = raw.split('/').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    const fallback = new Date(raw + 'T00:00:00');
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 function calcularDiariasEntreDatas(dataInicioStr, dataFimStr) {
     if (!dataInicioStr || !dataFimStr) return null;
-    const inicio = new Date(dataInicioStr + 'T00:00:00');
-    const fim = new Date(dataFimStr + 'T00:00:00');
-    if (Number.isNaN(inicio.getTime()) || Number.isNaN(fim.getTime())) return null;
+    const inicio = parseDateOnly(dataInicioStr);
+    const fim = parseDateOnly(dataFimStr);
+    if (!inicio || !fim || Number.isNaN(inicio.getTime()) || Number.isNaN(fim.getTime())) return null;
     if (fim < inicio) return null;
     const umDiaMs = 24 * 60 * 60 * 1000;
     return Math.floor((fim - inicio) / umDiaMs); // exclusivo do dia final
@@ -609,7 +649,8 @@ function syncQuantidadeFromDates(container) {
 function validarTodasDatas() {
     const dataInternEl = document.getElementById("data_intern_int");
     if (!dataInternEl || !dataInternEl.value) return true;
-    const dataInternacao = new Date(dataInternEl.value);
+    const dataInternacao = parseDateOnly(dataInternEl.value);
+    if (!dataInternacao) return true;
     let valido = true;
 
     document.querySelectorAll(".negotiation-field-container").forEach(container => {
@@ -617,8 +658,8 @@ function validarTodasDatas() {
         const dataFimEl = container.querySelector('[name="data_fim_negoc"]');
         if (!dataInicioEl || !dataFimEl) return;
 
-        const dataInicio = dataInicioEl.value ? new Date(dataInicioEl.value) : null;
-        const dataFim = dataFimEl.value ? new Date(dataFimEl.value) : null;
+        const dataInicio = dataInicioEl.value ? parseDateOnly(dataInicioEl.value) : null;
+        const dataFim = dataFimEl.value ? parseDateOnly(dataFimEl.value) : null;
 
         if (dataInicio && dataInicio < dataInternacao) {
             exibirAlerta("A data de início não pode ser anterior à data de internação.");

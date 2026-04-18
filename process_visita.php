@@ -51,6 +51,66 @@ function fullcareResolveUserId(PDO $conn, ?int ...$candidates): ?int
 
     return null;
 }
+function fullcareNormalizeNegotiationAcomodacao(?string $value): string
+{
+    $value = trim((string)$value);
+    if ($value === '') {
+        return '';
+    }
+    if (strpos($value, '-') !== false) {
+        [, $value] = array_pad(explode('-', $value, 2), 2, '');
+    }
+    return mb_strtolower(trim($value), 'UTF-8');
+}
+
+function fullcareInternacaoHospitalId(PDO $conn, int $internacaoId): int
+{
+    static $cache = [];
+    if ($internacaoId <= 0) {
+        return 0;
+    }
+    if (isset($cache[$internacaoId])) {
+        return $cache[$internacaoId];
+    }
+
+    $stmt = $conn->prepare("SELECT fk_hospital_int FROM tb_internacao WHERE id_internacao = :id LIMIT 1");
+    $stmt->bindValue(':id', $internacaoId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $cache[$internacaoId] = (int)($stmt->fetchColumn() ?: 0);
+}
+
+function fullcareCalcNegotiationSaving(PDO $conn, int $internacaoId, ?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd): float
+{
+    static $cache = [];
+    $hospitalId = fullcareInternacaoHospitalId($conn, $internacaoId);
+    if ($hospitalId <= 0 || $qtd <= 0) {
+        return 0.0;
+    }
+    if (!isset($cache[$hospitalId])) {
+        $stmt = $conn->prepare("SELECT acomodacao_aco, valor_aco FROM tb_acomodacao WHERE fk_hospital = :id");
+        $stmt->bindValue(':id', $hospitalId, PDO::PARAM_INT);
+        $stmt->execute();
+        $map = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) ?: [] as $row) {
+            $map[fullcareNormalizeNegotiationAcomodacao($row['acomodacao_aco'] ?? '')] = (float)($row['valor_aco'] ?? 0);
+        }
+        $cache[$hospitalId] = $map;
+    }
+
+    $map = $cache[$hospitalId];
+    $de = (float)($map[fullcareNormalizeNegotiationAcomodacao($trocaDe)] ?? 0);
+    $para = (float)($map[fullcareNormalizeNegotiationAcomodacao($trocaPara)] ?? 0);
+    $tipoNorm = mb_strtoupper(trim((string)$tipo), 'UTF-8');
+
+    if (strpos($tipoNorm, 'TROCA') === 0) {
+        return ($de - $para) * $qtd;
+    }
+    if (strpos($tipoNorm, '1/2 DIARIA') !== false) {
+        return ($de / 2) * $qtd;
+    }
+    return $de * $qtd;
+}
 
 // ======================================================================
 // Includes / DAOs / Models
@@ -88,6 +148,7 @@ require_once("dao/usuarioDao.php");
 require_once("models/message.php");
 require_once("utils/flow_logger.php");
 require_once(__DIR__ . "/app/cuidadoContinuado.php");
+require_once(__DIR__ . "/app/prorrog_alta_helper.php");
 
 $message                = new Message($BASE_URL);
 $userDao                = new UserDAO($conn, $BASE_URL);
@@ -306,21 +367,28 @@ function processNegociacoesEntries(
         if (!is_array($row)) continue;
         $tipo = strOrNull($row['tipo_negociacao'] ?? null);
         if (!$tipo) continue;
+        $trocaDe = strOrNull($row['troca_de'] ?? null);
+        $trocaPara = strOrNull($row['troca_para'] ?? null);
+        $qtd = toIntOrNull($row['qtd'] ?? null);
         $auditorId = fullcareResolveUserId(
             $conn,
             toIntOrNull($row['fk_usuario_neg'] ?? null),
             $fkUsuarioNeg
         );
+        $saving = fullcareCalcNegotiationSaving($conn, $fkInternacao, $tipo, $trocaDe, $trocaPara, (int)$qtd);
+        if (!$trocaDe || !$trocaPara || !$qtd || $qtd <= 0 || !$auditorId || $saving <= 0) {
+            continue;
+        }
         $negociacao = new negociacao();
         $negociacao->fk_id_int = $fkInternacao;
         $negociacao->fk_visita_neg = $visitaId;
         $negociacao->tipo_negociacao = $tipo;
         $negociacao->data_inicio_neg = strOrNull($row['data_inicio_negoc'] ?? null);
         $negociacao->data_fim_neg = strOrNull($row['data_fim_negoc'] ?? null);
-        $negociacao->troca_de = strOrNull($row['troca_de'] ?? null);
-        $negociacao->troca_para = strOrNull($row['troca_para'] ?? null);
-        $negociacao->qtd = toIntOrNull($row['qtd'] ?? null);
-        $negociacao->saving = toFloatOrNull($row['saving'] ?? null);
+        $negociacao->troca_de = $trocaDe;
+        $negociacao->troca_para = $trocaPara;
+        $negociacao->qtd = $qtd;
+        $negociacao->saving = $saving;
         $negociacao->fk_usuario_neg = $auditorId;
         $negociacaoDao->create($negociacao);
     }
@@ -723,6 +791,15 @@ if ($type === "create") {
             $visitaDao->logAlteracao($visitaEmEdicao, $novoRegistro, $fk_usuario_vis, $usuarioNomeLog);
             processTussEntries($select_tuss ?? '', $tussJsonRaw, $id_visita_edit, $fk_internacao_vis, $tussDao, $resolvedUsuarioVis);
             processProrrogacoesEntries($select_prorrog ?? '', $prorrogacoesJsonRaw, $id_visita_edit, $fk_internacao_vis, $prorrogacaoDao, $conn, $resolvedUsuarioVis, true);
+            $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
+                $_POST,
+                'normalizeDateTimeInput',
+                $resolvedUsuarioVis,
+                $_SESSION['email_user'] ?? $usuario_create ?? null
+            );
+            if (($select_prorrog ?? '') === 's' && $prorrogAltaPayload) {
+                fullcare_upsert_prorrog_alta($conn, (int)$fk_internacao_vis, $prorrogAltaPayload);
+            }
             $autoNegociacoesProrrog = buildAutoNegociacoesFromProrrog($select_prorrog ?? '', $prorrogacoesJsonRaw, $resolvedUsuarioNeg ?? $resolvedUsuarioVis);
             $processaNegociacoes = (($select_negoc ?? '') === 's' || !empty($autoNegociacoesProrrog)) ? 's' : 'n';
             processNegociacoesEntries($processaNegociacoes, $negociacoesJsonRaw, $id_visita_edit, $fk_internacao_vis, $negociacaoDao, $conn, $resolvedUsuarioNeg ?? $resolvedUsuarioVis, $autoNegociacoesProrrog);
@@ -783,6 +860,15 @@ if ($type === "create") {
         $novoIdVisita = $visitaDao->create($visita);
         processTussEntries($select_tuss ?? '', $tussJsonRaw, $novoIdVisita, $fk_internacao_vis, $tussDao, $resolvedUsuarioVis);
         processProrrogacoesEntries($select_prorrog ?? '', $prorrogacoesJsonRaw, $novoIdVisita, $fk_internacao_vis, $prorrogacaoDao, $conn, $resolvedUsuarioVis);
+        $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
+            $_POST,
+            'normalizeDateTimeInput',
+            $resolvedUsuarioVis,
+            $_SESSION['email_user'] ?? $usuario_create ?? null
+        );
+        if (($select_prorrog ?? '') === 's' && $prorrogAltaPayload) {
+            fullcare_upsert_prorrog_alta($conn, (int)$fk_internacao_vis, $prorrogAltaPayload);
+        }
         $autoNegociacoesProrrog = buildAutoNegociacoesFromProrrog($select_prorrog ?? '', $prorrogacoesJsonRaw, $resolvedUsuarioNeg ?? $resolvedUsuarioVis);
         $processaNegociacoes = (($select_negoc ?? '') === 's' || !empty($autoNegociacoesProrrog)) ? 's' : 'n';
         processNegociacoesEntries($processaNegociacoes, $negociacoesJsonRaw, $novoIdVisita, $fk_internacao_vis, $negociacaoDao, $conn, $resolvedUsuarioNeg ?? $resolvedUsuarioVis, $autoNegociacoesProrrog);

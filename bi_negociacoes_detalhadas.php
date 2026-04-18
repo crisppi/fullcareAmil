@@ -19,17 +19,9 @@ $auditorId = filter_input(INPUT_GET, 'auditor_id', FILTER_VALIDATE_INT) ?: null;
 
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")->fetchAll(PDO::FETCH_ASSOC);
 $auditores = $conn->query("SELECT id_usuario, usuario_user FROM tb_user ORDER BY usuario_user")->fetchAll(PDO::FETCH_ASSOC);
+$negociacaoRealClause = "UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'";
 
-$savingExpr = "COALESCE(
-    NULLIF(ng.saving, 0),
-    CASE
-        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE 'TROCA%' THEN (COALESCE(aco_de.valor_aco, 0) - COALESCE(aco_para.valor_aco, 0)) * COALESCE(ng.qtd, 0)
-        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) = 'ALTA TARDIA APTO' THEN COALESCE(NULLIF(aco_para.valor_aco, 0), COALESCE(aco_de.valor_aco, 0)) * COALESCE(NULLIF(ng.qtd, 0), 1)
-        WHEN UPPER(COALESCE(ng.tipo_negociacao, '')) LIKE '%1/2 DIARIA%' THEN (COALESCE(aco_de.valor_aco, 0) / 2) * COALESCE(ng.qtd, 0)
-        ELSE COALESCE(aco_de.valor_aco, 0) * COALESCE(ng.qtd, 0)
-    END,
-    0
-)";
+$savingExpr = "COALESCE(ng.saving, 0)";
 
 if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $stmtAno = $conn->query("SELECT MAX(YEAR(data_inicio_neg)) AS ano FROM tb_negociacao WHERE data_inicio_neg IS NOT NULL AND data_inicio_neg <> '0000-00-00'");
@@ -40,6 +32,9 @@ if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
 $where = "ng.data_inicio_neg IS NOT NULL
     AND ng.data_inicio_neg <> '0000-00-00'
     AND ng.saving IS NOT NULL
+    AND COALESCE(ng.fk_usuario_neg, 0) > 0
+    AND {$negociacaoRealClause}
+    AND COALESCE(ng.saving, 0) <> 0
     AND YEAR(ng.data_inicio_neg) = :ano";
 $params = [':ano' => $ano];
 
@@ -58,14 +53,10 @@ if ($auditorId) {
 
 $sqlTotals = "
     SELECT
-        COUNT(*) AS total_registros,
+        COUNT(DISTINCT ng.id_negociacao) AS total_registros,
         SUM({$savingExpr}) AS total_saving
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
-    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
-        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
-    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
-        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$where}
 ";
 $stmt = $conn->prepare($sqlTotals);
@@ -91,10 +82,6 @@ $sqlRows = "
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
     LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
     LEFT JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
-    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int
-        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))
-    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int
-        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))
     WHERE {$where}
     ORDER BY MONTH(ng.data_inicio_neg) DESC, ng.data_inicio_neg DESC, h.nome_hosp ASC, paciente ASC
 ";

@@ -18,6 +18,7 @@ $auditorId = filter_input(INPUT_GET, 'auditor_id', FILTER_VALIDATE_INT) ?: null;
 
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")->fetchAll(PDO::FETCH_ASSOC);
 $auditores = $conn->query("SELECT id_usuario, usuario_user FROM tb_user ORDER BY usuario_user")->fetchAll(PDO::FETCH_ASSOC);
+$negociacaoRealClause = "UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'";
 
 $savingExpr = "COALESCE(
     NULLIF(ng.saving, 0),
@@ -39,6 +40,7 @@ if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
 $where = "ng.data_inicio_neg IS NOT NULL
     AND ng.data_inicio_neg <> '0000-00-00'
     AND ng.saving IS NOT NULL
+    AND {$negociacaoRealClause}
     AND YEAR(ng.data_inicio_neg) = :ano";
 $params = [':ano' => $ano];
 

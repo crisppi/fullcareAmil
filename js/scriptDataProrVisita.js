@@ -1,7 +1,3 @@
-// ****************************************** //
-// PEGAR DADOS DOS INPUTS //    
-// ****************************************** //
-
 let dataIntP_vis = document.getElementById("data_intern_int");
 
 let dataPro = document.getElementById("prorrog1_ini_pror");
@@ -13,234 +9,124 @@ let dataProF2 = document.getElementById("prorrog2_fim_pror");
 let dataPro3 = document.getElementById("prorrog3_ini_pror");
 let dataProF3 = document.getElementById("prorrog3_fim_pror");
 
-// ********** INICIO VERIFICACAO DATA INTERNACAO E DATA INICIAL PRORROGACAO 1********  // 
-dataPro.addEventListener("blur", function() {
+function parseDateOnly(value) {
+    const raw = (value || "").toString().trim();
+    if (!raw) return null;
 
-        // let dataInt = document.getElementById("data_intern_int");
-        let dataPro = document.getElementById("prorrog1_ini_pror");
-        dataIntV1 = dataIntP_vis.value;
-        dataProV = dataPro.value;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const [y, m, d] = raw.split("-").map(Number);
+        return new Date(y, m - 1, d);
+    }
 
-        dataIntVDao = new Date(dataIntV1);
-        dataProDao = new Date(dataProV);
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+        const [d, m, y] = raw.split("/").map(Number);
+        return new Date(y, m - 1, d);
+    }
 
-        var dataIntV1 = (dataIntVDao.getTime());
-        var dataProV = (dataProDao.getTime());
+    const fallback = new Date(raw);
+    return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
 
-        var dif11 = dataIntV1 > dataProV; // ver se a data inicial da prorrogacao é menor que a data da internacao
-        var divMsg1 = document.querySelector("#notif-input1");
+function setFieldError(field, msgSelector) {
+    const msg = document.querySelector(msgSelector);
+    if (msg) msg.style.display = "block";
+    if (field) {
+        field.style.borderColor = "red";
+        field.value = "";
+        field.focus();
+    }
+}
 
-        if (dif11 == true) { // se data da prorrog for maior q internacao - msg de erro
-            divMsg1.style.display = "block";
-            dataPro.style.borderColor = "red";
-            dataPro.value = "";
-            dataPro.focus();
+function clearFieldError(field, msgSelector) {
+    const msg = document.querySelector(msgSelector);
+    if (msg) msg.style.display = "none";
+    if (field) field.style.borderColor = "#d3d3d3";
+}
 
-        } else {
-            divMsg1.style.display = "none";
-            dataPro.style.borderColor = "#d3d3d3";
+function setDiarias(fieldId, wrapperId, startValue, endValue) {
+    const start = parseDateOnly(startValue);
+    const end = parseDateOnly(endValue);
+    if (!start || !end) return;
 
+    const field = document.getElementById(fieldId);
+    const wrapper = document.getElementById(wrapperId);
+    const days = (end.getTime() - start.getTime()) / 86400000;
+
+    if (wrapper) wrapper.style.display = "block";
+    if (field) field.value = days;
+}
+
+if (dataPro) {
+    dataPro.addEventListener("blur", function() {
+        const internacao = parseDateOnly(dataIntP_vis ? dataIntP_vis.value : "");
+        const inicio = parseDateOnly(dataPro.value);
+        if (!inicio || (internacao && internacao.getTime() > inicio.getTime())) {
+            setFieldError(dataPro, "#notif-input1");
+            return;
         }
+        clearFieldError(dataPro, "#notif-input1");
+    });
+}
 
-    })
-    // ********** FIM VERIFICACAO DATA INTERNACAO E DATA INICIAL PRORROGACAO 1  ********  // 
-
-
-// ********** INICIO VERIFICACAO DATA FINAL PRORROGACAO 1 COM DATA INICIAL PRORROGACAO 1 ********  // 
-dataProF.addEventListener("blur", function() {
-
-        let dataPro2 = document.getElementById("prorrog1_ini_pror");
-        let dataProF = document.getElementById("prorrog1_fim_pror");
-
-        dataProV = dataPro2.value;
-        dataProVF = dataProF.value;
-
-        dataProDao = new Date(dataProV);
-        dataProFDao = new Date(dataProVF);
-
-        var dataProV = (dataProDao.getTime());
-        var dataProVF = (dataProFDao.getTime());
-
-        var dif12 = dataProV < dataProVF; // ver se a data inicial da prorrogacao é menor que a data da internacao
-        var diariasV = dataProVF - dataProV;
-        var divMsg2 = document.querySelector("#notif-input2");
-
-        if (dif12 === false) {
-            divMsg2.style.display = "block";
-            dataProF.style.borderColor = "red";
-            dataProF.value = "";
-            dataProF.focus();
-
-        } else {
-            divMsg2.style.display = "none";
-            dataProF.style.borderColor = "#d3d3d3";
-            let diarias1 = document.getElementById("diarias_1");
-            let diarias_Div_1 = document.getElementById("div_diarias_1");
-
-            var diferencaEmMilissegundos = dataProVF - dataProV;
-            var diferencaEmDias = diferencaEmMilissegundos / 1000 / 60 / 60 / 24
-
-            diarias_Div_1.style.display = "block"
-            diarias1.value = diferencaEmDias;
-
+if (dataProF) {
+    dataProF.addEventListener("blur", function() {
+        const inicio = parseDateOnly(dataPro ? dataPro.value : "");
+        const fim = parseDateOnly(dataProF.value);
+        if (!inicio || !fim || inicio.getTime() >= fim.getTime()) {
+            setFieldError(dataProF, "#notif-input2");
+            return;
         }
-    })
-    // ********** FIM VERIFICACAO DATA FINAL PRORROGACAO 1 COM DATA INICIAL PRORROGACAO 1 ********  //
+        clearFieldError(dataProF, "#notif-input2");
+        setDiarias("diarias_1", "div_diarias_1", dataPro.value, dataProF.value);
+    });
+}
 
-
-// ********** INICIO VERIFICACAO DATA INICIAL PRORROGACAO 2 COM DATA FINAL PRORROGACAO 1 ********  // 
-dataPro2.addEventListener("blur", function() {
-
-        let dataProFb = document.getElementById("prorrog1_fim_pror");
-        let dataPro2 = document.getElementById("prorrog2_ini_pror");
-
-        dataProFV2 = dataProFb.value;
-        dataPro2V = dataPro2.value;
-
-        dataProFV2Dao = new Date(dataProFV2);
-        dataPro2Dao = new Date(dataPro2V);
-
-        var dataProVF2 = (dataProFV2Dao.getTime());
-        var dataProV2 = (dataPro2Dao.getTime());
-
-        var dif13 = dataProV2 < dataProVF2; // ver se a data inicial da prorrogacao2 é menor que a data da prorrogacao1
-
-        var divMsg3 = document.querySelector("#notif-input3");
-
-        if (dif13 === true) {
-            divMsg3.style.display = "block";
-            dataPro2.style.borderColor = "red";
-            dataPro2.value = "";
-            dataPro2.focus();
-
-        } else {
-            divMsg3.style.display = "none";
-            dataPro2.style.borderColor = "#d3d3d3";
-
+if (dataPro2) {
+    dataPro2.addEventListener("blur", function() {
+        const fimAnterior = parseDateOnly(dataProF ? dataProF.value : "");
+        const inicioAtual = parseDateOnly(dataPro2.value);
+        if (!inicioAtual || (fimAnterior && inicioAtual.getTime() < fimAnterior.getTime())) {
+            setFieldError(dataPro2, "#notif-input3");
+            return;
         }
-    })
-    // ********** FIM VERIFICACAO DATA INICIAL PRORROGACAO 2 COM DATA FINAL PRORROGACAO 1 ********  //
+        clearFieldError(dataPro2, "#notif-input3");
+    });
+}
 
-// ********** INICIO VERIFICACAO DATA FINAL PRORROGACAO 2 COM DATA INICIAL PRORROGACAO 2 ********  // 
-dataProF2.addEventListener("blur", function() {
-
-        let dataProF2 = document.getElementById("prorrog2_fim_pror");
-        let dataPro2B = document.getElementById("prorrog2_ini_pror");
-
-        dataProFV2B = dataProF2.value;
-        dataPro2VB = dataPro2B.value;
-
-        dataProFV2BDao = new Date(dataProFV2B);
-        dataPro2BDao = new Date(dataPro2VB);
-
-        var dataProVF2B = (dataProFV2BDao.getTime());
-        var dataProV2B = (dataPro2BDao.getTime());
-
-        var dif14 = dataProV2B < dataProVF2B; // ver se a data inicial da prorrogacao2 é menor que a data da prorrogacao1
-        var diarias2V = dataProVF2B - dataProV2B;
-
-        var divMsg4 = document.querySelector("#notif-input4");
-
-        if (dif14 === false) {
-            divMsg4.style.display = "block";
-            dataProF2.style.borderColor = "red";
-            dataProF2.value = "";
-            dataProF2.focus();
-
-        } else {
-            divMsg4.style.display = "none";
-            dataProF2.style.borderColor = "#d3d3d3";
-
-            let diarias2 = document.getElementById("diarias_2");
-            let diarias_Div_2 = document.getElementById("div_diarias_2");
-
-            var diferencaEmMilissegundos2 = dataProVF2B - dataProV2B;
-            var diferencaEmDias2 = diferencaEmMilissegundos2 / 1000 / 60 / 60 / 24
-            diarias_Div_2.style.display = "block"
-            diarias2.value = diferencaEmDias2;
-
+if (dataProF2) {
+    dataProF2.addEventListener("blur", function() {
+        const inicio = parseDateOnly(dataPro2 ? dataPro2.value : "");
+        const fim = parseDateOnly(dataProF2.value);
+        if (!inicio || !fim || inicio.getTime() >= fim.getTime()) {
+            setFieldError(dataProF2, "#notif-input4");
+            return;
         }
-    })
-    // ********** FIM VERIFICACAO DATA FINAL PRORROGACAO 2 COM DATA INICIAL PRORROGACAO 2 ********  //
+        clearFieldError(dataProF2, "#notif-input4");
+        setDiarias("diarias_2", "div_diarias_2", dataPro2.value, dataProF2.value);
+    });
+}
 
-
-
-
-
-// ********** INICIO VERIFICACAO DATA INICIAL PRORROGACAO 3 COM DATA FINAL PRORROGACAO 2 ********  // 
-dataPro3.addEventListener("blur", function() {
-
-        let dataProFc = document.getElementById("prorrog2_fim_pror");
-        let dataPro3 = document.getElementById("prorrog3_ini_pror");
-
-
-        dataProFV2b = dataProFc.value;
-        dataPro3V = dataPro3.value;
-
-
-        dataProFV2bDao = new Date(dataProFV2b);
-        dataPro3Dao = new Date(dataPro3V);
-
-        var dataProVF2b = (dataProFV2bDao.getTime());
-        var dataProV3 = (dataPro3Dao.getTime());
-
-        var dif15 = dataProV3 < dataProVF2b; // ver se a data inicial da prorrogacao2 é menor que a data da prorrogacao1
-
-        var divMsg5 = document.querySelector("#notif-input5");
-
-        if (dif15 === true) {
-            divMsg5.style.display = "block";
-            dataPro3.style.borderColor = "red";
-            dataPro3.value = "";
-            dataPro3.focus();
-
-        } else {
-            divMsg5.style.display = "none";
-            dataPro3.style.borderColor = "#d3d3d3";
-
+if (dataPro3) {
+    dataPro3.addEventListener("blur", function() {
+        const fimAnterior = parseDateOnly(dataProF2 ? dataProF2.value : "");
+        const inicioAtual = parseDateOnly(dataPro3.value);
+        if (!inicioAtual || (fimAnterior && inicioAtual.getTime() < fimAnterior.getTime())) {
+            setFieldError(dataPro3, "#notif-input5");
+            return;
         }
-    })
-    // ********** FIM VERIFICACAO DATA INICIAL PRORROGACAO 3 COM DATA FINAL PRORROGACAO 2 ********  //
+        clearFieldError(dataPro3, "#notif-input5");
+    });
+}
 
-
-// ********** INICIO VERIFICACAO DATA FINAL PRORROGACAO 3 COM DATA INICIAL PRORROGACAO 3 ********  // 
-dataProF3.addEventListener("blur", function() {
-
-        let dataProF3 = document.getElementById("prorrog3_fim_pror");
-        let dataPro3B = document.getElementById("prorrog3_ini_pror");
-
-        dataProFV3B = dataProF3.value;
-        dataPro3VB = dataPro3B.value;
-
-        dataProFV3BDao = new Date(dataProFV3B);
-        dataPro3BDao = new Date(dataPro3VB);
-
-        var dataProVF3B = (dataProFV3BDao.getTime());
-        var dataProV3B = (dataPro3BDao.getTime());
-
-        var dif16 = dataProV3B < dataProVF3B; // ver se a data inicial da prorrogacao2 é menor que a data da prorrogacao1
-
-        var divMsg6 = document.querySelector("#notif-input6");
-
-        if (dif16 === false) {
-            divMsg6.style.display = "block";
-            dataProF3.style.borderColor = "red";
-            dataProF3.value = "";
-            dataProF3.focus();
-
-        } else {
-            divMsg6.style.display = "none";
-            dataProF3.style.borderColor = "#d3d3d3";
-
-
-            let diarias3 = document.getElementById("diarias_3");
-            let diarias_Div_3 = document.getElementById("div_diarias_3");
-
-            var diferencaEmMilissegundos3 = dataProVF3B - dataProV3B;
-            var diferencaEmDias3 = diferencaEmMilissegundos3 / 1000 / 60 / 60 / 24
-            diarias_Div_3.style.display = "block"
-            diarias3.value = diferencaEmDias3;
-
+if (dataProF3) {
+    dataProF3.addEventListener("blur", function() {
+        const inicio = parseDateOnly(dataPro3 ? dataPro3.value : "");
+        const fim = parseDateOnly(dataProF3.value);
+        if (!inicio || !fim || inicio.getTime() >= fim.getTime()) {
+            setFieldError(dataProF3, "#notif-input6");
+            return;
         }
-    })
-    // ********** FIM VERIFICACAO DATA FINAL PRORROGACAO 2 COM DATA INICIAL PRORROGACAO 3 ********  //
+        clearFieldError(dataProF3, "#notif-input6");
+        setDiarias("diarias_3", "div_diarias_3", dataPro3.value, dataProF3.value);
+    });
+}

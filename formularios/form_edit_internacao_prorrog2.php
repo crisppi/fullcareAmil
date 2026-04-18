@@ -130,6 +130,21 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
         $pr_pendente_label = $missingDays . ' dias | ' . implode(' • ', $parts);
     }
 }
+$dadosAltaProrrog = [];
+if (isset($dados_alta) && is_array($dados_alta)) {
+    $dadosAltaProrrog = $dados_alta;
+    sort($dadosAltaProrrog, SORT_ASC);
+}
+$prorrogAltaDataValue = '';
+if (!empty($altaDataHoraValue)) {
+    $prorrogAltaDataValue = (string)$altaDataHoraValue;
+} elseif (!empty($altaAtual['data_alta_alt'])) {
+    $tsAltaProrrog = strtotime((string)$altaAtual['data_alta_alt']);
+    if ($tsAltaProrrog) {
+        $prorrogAltaDataValue = date('Y-m-d\TH:i', $tsAltaProrrog);
+    }
+}
+$prorrogAltaAtiva = $prorrogAltaDataValue !== '' || !empty($altaAtual['tipo_alta_alt']);
 ?>
 <style>
 /* ===================== PRORROGAÇÕES — ESTILO ===================== */
@@ -286,6 +301,52 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
     top: 0;
     right: 0;
 }
+.prorrog-inline-alta {
+    margin-top: 16px;
+    padding: 16px 18px;
+    border: 1px solid #e6dced;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fcf9ff 0%, #f7f2fb 100%);
+}
+.prorrog-inline-alta__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.prorrog-inline-alta__title {
+    margin: 0;
+    color: #3a184f;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.prorrog-inline-alta__hint {
+    margin: 4px 0 0;
+    color: #6f5a7e;
+    font-size: .84rem;
+}
+.prorrog-inline-alta__toggle {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.prorrog-inline-alta__toggle .btn {
+    min-width: 84px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+.prorrog-inline-alta__toggle .btn.is-active {
+    background: #5e2363;
+    border-color: #5e2363;
+    color: #fff;
+}
+.prorrog-inline-alta__fields {
+    display: none;
+}
+.prorrog-inline-alta__fields.is-visible {
+    display: block;
+}
 @media (max-width: 991.98px) {
     .prorrog-head {
         min-height: 0;
@@ -317,6 +378,9 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
 
     <!-- JSON oculto -->
     <input type="hidden" id="prorrogacoes_json" name="prorrogacoes_json">
+    <input type="hidden" id="prorrog_gerar_alta" name="prorrog_gerar_alta" value="<?= $prorrogAltaAtiva ? 's' : 'n' ?>">
+    <input type="hidden" id="prorrog_fk_usuario_alt" name="prorrog_fk_usuario_alt" value="<?= (int)($_SESSION['id_usuario'] ?? 0) ?>">
+    <input type="hidden" id="prorrog_usuario_alt" name="prorrog_usuario_alt" value="<?= htmlspecialchars((string)($_SESSION['email_user'] ?? 'sistema'), ENT_QUOTES, 'UTF-8') ?>">
 
     <div id="prorContainer">
         <?php foreach ($prorList as $i => $p): $idx = (int)$i; ?>
@@ -373,6 +437,40 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
             </div>
         </div>
         <?php endforeach; ?>
+    </div>
+
+    <div class="prorrog-inline-alta">
+        <div class="prorrog-inline-alta__header">
+            <div>
+                <h5 class="prorrog-inline-alta__title">Paciente teve alta nesta prorrogação?</h5>
+                <p class="prorrog-inline-alta__hint">Se sim, já salvamos a alta junto da atualização da internação.</p>
+            </div>
+            <div class="prorrog-inline-alta__toggle" role="group" aria-label="Paciente teve alta">
+                <button type="button" class="btn btn-outline-secondary<?= !$prorrogAltaAtiva ? ' is-active' : '' ?>" data-prorrog-inline-alta="n">Não</button>
+                <button type="button" class="btn btn-outline-primary<?= $prorrogAltaAtiva ? ' is-active' : '' ?>" data-prorrog-inline-alta="s">Sim</button>
+            </div>
+        </div>
+        <div class="prorrog-inline-alta__fields<?= $prorrogAltaAtiva ? ' is-visible' : '' ?>" id="prorrog-inline-alta-fields">
+            <div class="row g-2">
+                <div class="form-group col-sm-3">
+                    <label class="control-label" for="prorrog_data_alta_alt">Data/Hora Alta</label>
+                    <input type="datetime-local" class="form-control form-control-sm" id="prorrog_data_alta_alt"
+                        name="prorrog_data_alta_alt" step="60"
+                        value="<?= htmlspecialchars($prorrogAltaDataValue, ENT_QUOTES, 'UTF-8') ?>">
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="control-label" for="prorrog_tipo_alta_alt">Motivo Alta</label>
+                    <select class="form-control form-control-sm" id="prorrog_tipo_alta_alt" name="prorrog_tipo_alta_alt">
+                        <option value="">Selecione o motivo da alta</option>
+                        <?php foreach ($dadosAltaProrrog as $altaMotivo): ?>
+                            <option value="<?= htmlspecialchars((string)$altaMotivo, ENT_QUOTES, 'UTF-8') ?>" <?= (($altaAtual['tipo_alta_alt'] ?? '') === $altaMotivo) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars((string)$altaMotivo, ENT_QUOTES, 'UTF-8') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>
@@ -455,6 +553,77 @@ function parseDateOnly(value) {
     const normalized = raw.length >= 10 ? raw.slice(0, 10) : raw;
     const fallback = new Date(normalized + 'T00:00:00');
     return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
+function formatLocalDateTimeNow() {
+    const now = new Date();
+    now.setSeconds(0, 0);
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
+function formatDateToLocalDateTime(dateValue) {
+    const base = (dateValue || '').toString().trim();
+    if (!base) return '';
+    return `${base}T12:00`;
+}
+
+function getSuggestedAltaDateFromProrrog() {
+    const rows = Array.from(document.querySelectorAll('#prorContainer .pror-row'));
+    for (let i = rows.length - 1; i >= 0; i -= 1) {
+        const fim = rows[i].querySelector('[name$="[fim]"]')?.value || '';
+        if (fim) return formatDateToLocalDateTime(fim);
+        const ini = rows[i].querySelector('[name$="[ini]"]')?.value || '';
+        if (ini) return formatDateToLocalDateTime(ini);
+    }
+    const internDate = getInternacaoDateForProrrog();
+    if (!(internDate instanceof Date) || Number.isNaN(internDate.getTime())) {
+        return '';
+    }
+    return formatDateToLocalDateTime(internDate.toISOString().split('T')[0]);
+}
+
+function syncProrrogInlineAltaBounds() {
+    const dataInput = document.getElementById('prorrog_data_alta_alt');
+    if (!dataInput) return;
+
+    const internDate = getInternacaoDateForProrrog();
+    dataInput.max = formatLocalDateTimeNow();
+    if (internDate instanceof Date && !Number.isNaN(internDate.getTime())) {
+        dataInput.min = formatDateToLocalDateTime(internDate.toISOString().split('T')[0]);
+    } else {
+        dataInput.removeAttribute('min');
+    }
+}
+
+function syncProrrogInlineAlta(flag) {
+    const hidden = document.getElementById('prorrog_gerar_alta');
+    const fields = document.getElementById('prorrog-inline-alta-fields');
+    const btnNao = document.querySelector('[data-prorrog-inline-alta="n"]');
+    const btnSim = document.querySelector('[data-prorrog-inline-alta="s"]');
+    const dataInput = document.getElementById('prorrog_data_alta_alt');
+    const motivoInput = document.getElementById('prorrog_tipo_alta_alt');
+    const enabled = flag === 's';
+
+    if (hidden) hidden.value = enabled ? 's' : 'n';
+    if (fields) fields.classList.toggle('is-visible', enabled);
+    if (btnNao) btnNao.classList.toggle('is-active', !enabled);
+    if (btnSim) btnSim.classList.toggle('is-active', enabled);
+    if (dataInput) {
+        dataInput.required = enabled;
+        syncProrrogInlineAltaBounds();
+        if (!enabled) {
+            dataInput.value = '';
+        } else if (!dataInput.value) {
+            dataInput.value = getSuggestedAltaDateFromProrrog() || formatLocalDateTimeNow();
+        }
+    }
+    if (motivoInput) {
+        motivoInput.required = enabled;
+        if (!enabled) {
+            motivoInput.value = '';
+        }
+    }
 }
 
 function getInternacaoDateForProrrog() {
@@ -571,6 +740,13 @@ function recalcRow($row, changedName) {
 /* Inicialização */
 $(function() {
     const $container = $('#prorContainer');
+    document.querySelectorAll('[data-prorrog-inline-alta]').forEach(function(button) {
+        button.addEventListener('click', function() {
+            syncProrrogInlineAlta(this.getAttribute('data-prorrog-inline-alta') || 'n');
+        });
+    });
+    syncProrrogInlineAltaBounds();
+
     function getSuggestedIni() {
         let last = '';
         $container.find('.pror-row').each(function() {
@@ -586,6 +762,7 @@ $(function() {
     // change das datas com cálculo e popup
     $container.on('change', 'input[type="date"]', function() {
         recalcRow($(this).closest('.pror-row'), this.name);
+        syncProrrogInlineAltaBounds();
     });
 
     // adicionar linha
@@ -657,5 +834,6 @@ $(function() {
         else if (ini) last = ini;
     });
     syncJson();
+    syncProrrogInlineAlta(document.getElementById('prorrog_gerar_alta')?.value || 'n');
 });
 </script>

@@ -66,7 +66,7 @@ if ($type === "create-negoc") {
                 $qtd = filter_var($negociacao['qtd'], FILTER_VALIDATE_INT);
                 $saving = filter_var(str_replace('R$', '', $negociacao['saving']), FILTER_VALIDATE_FLOAT);
 
-                if (!$trocaDe || !$trocaPara || !$qtd || $saving === false) {
+                if (!$trocaDe || !$trocaPara || !$qtd || $saving === false || $saving <= 0 || !$fk_usuario_neg) {
                     $errors[] = "Dados incompletos ou inválidos para uma negociação.";
                     continue;
                 }

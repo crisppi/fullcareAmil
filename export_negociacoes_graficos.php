@@ -22,7 +22,8 @@ function fetchChartData(PDO $conn, string $sql): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$baseCondition = "(ng.deletado_neg IS NULL OR ng.deletado_neg != 's')";
+$baseCondition = "(ng.deletado_neg IS NULL OR ng.deletado_neg != 's')
+    AND UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'";
 
 function expandMonthlySeries(array $rows, string $valueKey = 'total'): array
 {

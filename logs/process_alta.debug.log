@@ -10,3 +10,11 @@
 [2026-04-18 01:59:16] alta.create.ok {"id_internacao":708}
 [2026-04-18 01:59:16] internacao.updateAlta.ok {"id_internacao":708,"internado_int":"n"}
 [2026-04-18 01:59:16] transaction.commit {"id_internacao":708}
+[2026-04-18 02:27:14] payload {"id_internacao":700,"data_alta_alt":"2026-04-09","hora_alta_alt":"23:26","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 02:27:14] alta.create.ok {"id_internacao":700}
+[2026-04-18 02:27:14] internacao.updateAlta.ok {"id_internacao":700,"internado_int":"n"}
+[2026-04-18 02:27:14] transaction.commit {"id_internacao":700}
+[2026-04-18 02:47:09] payload {"id_internacao":711,"data_alta_alt":"2026-04-02","hora_alta_alt":"23:47","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-18 02:47:09] alta.create.ok {"id_internacao":711}
+[2026-04-18 02:47:09] internacao.updateAlta.ok {"id_internacao":711,"internado_int":"n"}
+[2026-04-18 02:47:09] transaction.commit {"id_internacao":711}

@@ -46,6 +46,7 @@ require_once 'models/tuss.php';
 require_once 'dao/tussDao.php';
 require_once 'models/gestao.php';
 require_once 'dao/gestaoDao.php';
+require_once __DIR__ . '/app/prorrog_alta_helper.php';
 
 /*──────── helpers ────────*/
 if (!function_exists('decodeArray')) {
@@ -204,6 +205,21 @@ if (!function_exists('calcNegotiationSavingValue')) {
             return ($de / 2) * $qtd;
         }
         return $de * $qtd;
+    }
+}
+if (!function_exists('shouldPersistNegotiation')) {
+    function shouldPersistNegotiation(?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd, float $saving): bool
+    {
+        if (trim((string)$tipo) === '') {
+            return false;
+        }
+        if (trim((string)$trocaDe) === '' || trim((string)$trocaPara) === '') {
+            return false;
+        }
+        if ($qtd <= 0) {
+            return false;
+        }
+        return $saving > 0;
     }
 }
 
@@ -529,6 +545,39 @@ try {
             }
         }
 
+        $validNegArray = [];
+        foreach ($negArray as $nData) {
+            $negIdAtual = !empty($nData['id']) ? (int)$nData['id'] : 0;
+            $tipoAtual = trim((string)($nData['tipo_negociacao'] ?? ''));
+            $trocaDeAtual = trim((string)($nData['troca_de'] ?? ''));
+            $trocaParaAtual = trim((string)($nData['troca_para'] ?? ''));
+            $qtdAtual = (int)($nData['qtd'] ?? 0);
+            $savingAtual = calcNegotiationSavingValue(
+                $conn,
+                (int)($currentIntern->fk_hospital_int ?? 0),
+                $tipoAtual,
+                $trocaDeAtual,
+                $trocaParaAtual,
+                $qtdAtual
+            );
+
+            if (!shouldPersistNegotiation($tipoAtual, $trocaDeAtual, $trocaParaAtual, $qtdAtual, $savingAtual)) {
+                if ($negIdAtual > 0) {
+                    $deleteIds[$negIdAtual] = $negIdAtual;
+                }
+                continue;
+            }
+
+            $nData['id'] = $negIdAtual;
+            $nData['tipo_negociacao'] = $tipoAtual;
+            $nData['troca_de'] = $trocaDeAtual;
+            $nData['troca_para'] = $trocaParaAtual;
+            $nData['qtd'] = $qtdAtual;
+            $nData['saving'] = $savingAtual;
+            $validNegArray[] = $nData;
+        }
+        $negArray = $validNegArray;
+
         $postedIds = [];
         foreach ($negArray as $n) {
             if (!empty($n['id'])) $postedIds[] = (int) $n['id'];
@@ -562,14 +611,7 @@ try {
             $neg->troca_de        = $nData['troca_de']        ?? '';
             $neg->troca_para      = $nData['troca_para']      ?? '';
             $neg->qtd             = (int)($nData['qtd']       ?? 0);
-            $neg->saving          = calcNegotiationSavingValue(
-                $conn,
-                (int)($currentIntern->fk_hospital_int ?? 0),
-                $nData['tipo_negociacao'] ?? '',
-                $nData['troca_de'] ?? '',
-                $nData['troca_para'] ?? '',
-                (int)($nData['qtd'] ?? 0)
-            );
+            $neg->saving          = (float)($nData['saving'] ?? 0);
             $neg->data_inicio_neg = $nData['data_inicio_neg'] ?? null;
             $neg->data_fim_neg    = $nData['data_fim_neg']    ?? null;
             $neg->tipo_negociacao = $nData['tipo_negociacao'] ?? '';
@@ -669,10 +711,32 @@ try {
                     isset($currentIntern->fk_usuario_int) ? (int)$currentIntern->fk_usuario_int : null,
                     isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null
                 );
+                if (!shouldPersistNegotiation(
+                    $negAuto->tipo_negociacao,
+                    $negAuto->troca_de,
+                    $negAuto->troca_para,
+                    (int)$negAuto->qtd,
+                    (float)$negAuto->saving,
+                    (int)$negAuto->fk_usuario_neg
+                )) {
+                    internacaoEditarDebugLog('PRORROG skip neg_auto saving<=0 ou inválida id_int=' . (int)$idInt . ' ini=' . (string)$dataIni . ' fim=' . (string)$dataFim);
+                    continue;
+                }
                 if (!$negDao->existeNegociacao($negAuto)) {
                     $negDao->create($negAuto);
                 }
             }
+        }
+
+        $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
+            $_POST,
+            'normalizeDateTimeInput',
+            isset($_SESSION['id_usuario']) ? (int)$_SESSION['id_usuario'] : null,
+            $_SESSION['email_user'] ?? null
+        );
+        if ($prorrogAltaPayload) {
+            fullcare_upsert_prorrog_alta($conn, (int)$idInt, $prorrogAltaPayload);
+            internacaoEditarDebugLog('PRORROG alta inline ok id_int=' . (int)$idInt);
         }
     }
 

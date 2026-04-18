@@ -111,6 +111,55 @@
     cursor: pointer;
     font-size: 1.5rem
 }
+.prorrog-alta-box {
+    margin-top: 18px;
+    padding: 16px 18px;
+    border: 1px solid #e6dced;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fcf9ff 0%, #f7f2fb 100%);
+}
+.prorrog-alta-box__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.prorrog-alta-box__title {
+    margin: 0;
+    color: #3a184f;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.prorrog-alta-box__hint {
+    margin: 4px 0 0;
+    color: #6f5a7e;
+    font-size: .84rem;
+}
+.prorrog-alta-toggle {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.prorrog-alta-toggle .btn {
+    min-width: 84px;
+    border-radius: 999px;
+    border: 1px solid #cbb7d8;
+    background: #fff;
+    color: #5e2363;
+    font-weight: 600;
+}
+.prorrog-alta-toggle .btn.is-active {
+    background: #5e2363;
+    border-color: #5e2363;
+    color: #fff;
+}
+.prorrog-alta-fields {
+    display: none;
+}
+.prorrog-alta-fields.is-visible {
+    display: block;
+}
 </style>
 
 <?php
@@ -154,6 +203,11 @@ if (isset($acomodacao) && is_array($acomodacao)) {
             $prorrogAcomodValorMap[prorrogNormAcomod($nome)] = (float)$valor;
         }
     }
+}
+$dadosAltaProrrog = [];
+if (isset($dados_alta) && is_array($dados_alta)) {
+    $dadosAltaProrrog = $dados_alta;
+    sort($dadosAltaProrrog, SORT_ASC);
 }
 ?>
 
@@ -246,6 +300,41 @@ if (isset($acomodacao) && is_array($acomodacao)) {
     </div>
 
     <input type="hidden" id="prorrogacoes-json" name="prorrogacoes-json">
+    <input type="hidden" id="prorrog_gerar_alta" name="prorrog_gerar_alta" value="n">
+    <input type="hidden" id="prorrog_fk_usuario_alt" name="prorrog_fk_usuario_alt" value="<?= (int)($_SESSION["id_usuario"] ?? 0) ?>">
+    <input type="hidden" id="prorrog_usuario_alt" name="prorrog_usuario_alt" value="<?= htmlspecialchars((string)($_SESSION["email_user"] ?? 'sistema'), ENT_QUOTES, 'UTF-8') ?>">
+
+    <div class="prorrog-alta-box">
+        <div class="prorrog-alta-box__header">
+            <div>
+                <h5 class="prorrog-alta-box__title">Paciente teve alta nesta prorrogação?</h5>
+                <p class="prorrog-alta-box__hint">Se sim, já fechamos a alta aqui sem precisar ir para outra tela.</p>
+            </div>
+            <div class="prorrog-alta-toggle" role="group" aria-label="Paciente teve alta">
+                <button type="button" class="btn is-active" id="prorrog-alta-btn-nao" data-prorrog-alta-toggle="n">Não</button>
+                <button type="button" class="btn" id="prorrog-alta-btn-sim" data-prorrog-alta-toggle="s">Sim</button>
+            </div>
+        </div>
+
+        <div class="prorrog-alta-fields" id="prorrog-alta-fields">
+            <div class="form-group row">
+                <div class="form-group col-sm-3">
+                    <label class="control-label" for="prorrog_data_alta_alt">Data/Hora Alta</label>
+                    <input type="datetime-local" class="form-control-sm form-control" id="prorrog_data_alta_alt"
+                        name="prorrog_data_alta_alt" step="60">
+                </div>
+                <div class="form-group col-sm-4">
+                    <label class="control-label" for="prorrog_tipo_alta_alt">Motivo Alta</label>
+                    <select class="form-control-sm form-control" id="prorrog_tipo_alta_alt" name="prorrog_tipo_alta_alt">
+                        <option value="">Selecione o motivo da alta</option>
+                        <?php foreach ($dadosAltaProrrog as $altaMotivo): ?>
+                            <option value="<?= htmlspecialchars((string)$altaMotivo, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string)$altaMotivo, ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
 
@@ -369,6 +458,87 @@ if (dataInternVisible) {
     dataInternVisible.addEventListener("blur", setFirstProrrogationDate);
 }
 document.addEventListener("DOMContentLoaded", setFirstProrrogationDate);
+
+function formatLocalDateTimeNow() {
+    const now = new Date();
+    now.setSeconds(0, 0);
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
+function formatDateToLocalDateTime(dateValue) {
+    const base = (dateValue || '').toString().trim();
+    if (!base) return '';
+    return `${base}T12:00`;
+}
+
+function getSuggestedAltaDateFromProrrog() {
+    const rows = Array.from(document.querySelectorAll('#fieldsContainer .field-container'));
+    for (let i = rows.length - 1; i >= 0; i -= 1) {
+        const fim = rows[i].querySelector('[name="prorrog1_fim_pror"]')?.value || '';
+        if (fim) return formatDateToLocalDateTime(fim);
+        const ini = rows[i].querySelector('[name="prorrog1_ini_pror"]')?.value || '';
+        if (ini) return formatDateToLocalDateTime(ini);
+    }
+    const internDate = getInternacaoDateForProrrog();
+    return internDate ? formatDateToLocalDateTime(internDate) : '';
+}
+
+function syncProrrogAltaBounds() {
+    const dataInput = document.getElementById('prorrog_data_alta_alt');
+    if (!dataInput) return;
+
+    const internDate = getInternacaoDateForProrrog();
+    const now = formatLocalDateTimeNow();
+    dataInput.max = now;
+    if (internDate) {
+        dataInput.min = formatDateToLocalDateTime(internDate);
+    } else {
+        dataInput.removeAttribute('min');
+    }
+}
+
+function syncProrrogAltaToggle(flag) {
+    const hidden = document.getElementById('prorrog_gerar_alta');
+    const fields = document.getElementById('prorrog-alta-fields');
+    const btnNao = document.getElementById('prorrog-alta-btn-nao');
+    const btnSim = document.getElementById('prorrog-alta-btn-sim');
+    const dataInput = document.getElementById('prorrog_data_alta_alt');
+    const motivoInput = document.getElementById('prorrog_tipo_alta_alt');
+    const enabled = flag === 's';
+
+    if (hidden) hidden.value = enabled ? 's' : 'n';
+    if (fields) fields.classList.toggle('is-visible', enabled);
+    if (btnNao) btnNao.classList.toggle('is-active', !enabled);
+    if (btnSim) btnSim.classList.toggle('is-active', enabled);
+    if (dataInput) {
+        dataInput.required = enabled;
+        syncProrrogAltaBounds();
+        if (!enabled) {
+            dataInput.value = '';
+        } else if (!dataInput.value) {
+            dataInput.value = getSuggestedAltaDateFromProrrog() || formatLocalDateTimeNow();
+        }
+    }
+    if (motivoInput) {
+        motivoInput.required = enabled;
+        if (!enabled) {
+            motivoInput.value = '';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('[data-prorrog-alta-toggle]');
+    toggleButtons.forEach((button) => {
+        button.addEventListener('click', function() {
+            syncProrrogAltaToggle(this.getAttribute('data-prorrog-alta-toggle') || 'n');
+        });
+    });
+
+    syncProrrogAltaToggle(document.getElementById('prorrog_gerar_alta')?.value || 'n');
+    syncProrrogAltaBounds();
+});
 
 // Template de novas linhas (com "-" e "+")
 function createProrrogationField() {
@@ -628,6 +798,7 @@ document.getElementById("fieldsContainer").addEventListener("change", (event) =>
     if (!fieldContainer) return;
     calculateProrSaving(fieldContainer);
     generateProrJSON();
+    syncProrrogAltaBounds();
 });
 
 document.addEventListener("DOMContentLoaded", () => {

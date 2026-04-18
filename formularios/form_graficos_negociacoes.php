@@ -3,7 +3,8 @@ ob_start();
 
 require_once("templates/header.php");
 
-$baseCondition = "(ng.deletado_neg IS NULL OR ng.deletado_neg != 's')";
+$baseCondition = "(ng.deletado_neg IS NULL OR ng.deletado_neg != 's')
+    AND UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'";
 
 function fetchChartRows(PDO $conn, string $sql): array
 {
