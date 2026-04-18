@@ -207,6 +207,58 @@ if (!function_exists('calcNegotiationSavingValue')) {
         return $de * $qtd;
     }
 }
+if (!function_exists('internacaoEditNegotiationDefaults')) {
+    function internacaoEditNegotiationDefaults(?string $tipo): array
+    {
+        $tipo = mb_strtoupper(trim((string)$tipo), 'UTF-8');
+        if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto'];
+        if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi'];
+        if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto'];
+        if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI'];
+        if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi'];
+        if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {
+            return ['troca_de' => 'Apto', 'troca_para' => 'Apto'];
+        }
+        return ['troca_de' => '', 'troca_para' => ''];
+    }
+}
+if (!function_exists('internacaoEditHydrateNegotiationAcomodacoes')) {
+    function internacaoEditHydrateNegotiationAcomodacoes(?string $tipo, ?string $trocaDe, ?string $trocaPara): array
+    {
+        $trocaDe = trim((string)$trocaDe);
+        $trocaPara = trim((string)$trocaPara);
+        $defaults = internacaoEditNegotiationDefaults($tipo);
+        if ($trocaDe === '' && $defaults['troca_de'] !== '') {
+            $trocaDe = $defaults['troca_de'];
+        }
+        if ($trocaPara === '' && $defaults['troca_para'] !== '') {
+            $trocaPara = $defaults['troca_para'];
+        }
+        return [$trocaDe, $trocaPara];
+    }
+}
+if (!function_exists('internacaoEditNegotiationInvalidReasons')) {
+    function internacaoEditNegotiationInvalidReasons(?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd, float $saving): array
+    {
+        $reasons = [];
+        if (trim((string)$tipo) === '') {
+            $reasons[] = 'tipo_vazio';
+        }
+        if (trim((string)$trocaDe) === '') {
+            $reasons[] = 'troca_de_vazia';
+        }
+        if (trim((string)$trocaPara) === '') {
+            $reasons[] = 'troca_para_vazia';
+        }
+        if ($qtd <= 0) {
+            $reasons[] = 'qtd_invalida';
+        }
+        if ($saving <= 0) {
+            $reasons[] = 'saving_invalido';
+        }
+        return $reasons;
+    }
+}
 if (!function_exists('shouldPersistNegotiation')) {
     function shouldPersistNegotiation(?string $tipo, ?string $trocaDe, ?string $trocaPara, int $qtd, float $saving): bool
     {
@@ -551,6 +603,11 @@ try {
             $tipoAtual = trim((string)($nData['tipo_negociacao'] ?? ''));
             $trocaDeAtual = trim((string)($nData['troca_de'] ?? ''));
             $trocaParaAtual = trim((string)($nData['troca_para'] ?? ''));
+            [$trocaDeAtual, $trocaParaAtual] = internacaoEditHydrateNegotiationAcomodacoes(
+                $tipoAtual,
+                $trocaDeAtual,
+                $trocaParaAtual
+            );
             $qtdAtual = (int)($nData['qtd'] ?? 0);
             $savingAtual = calcNegotiationSavingValue(
                 $conn,
@@ -562,6 +619,22 @@ try {
             );
 
             if (!shouldPersistNegotiation($tipoAtual, $trocaDeAtual, $trocaParaAtual, $qtdAtual, $savingAtual)) {
+                internacaoEditarDebugLog(
+                    'NEGOC skip id_int=' . (int)$idInt
+                    . ' id_neg=' . $negIdAtual
+                    . ' reasons=' . implode(',', internacaoEditNegotiationInvalidReasons(
+                        $tipoAtual,
+                        $trocaDeAtual,
+                        $trocaParaAtual,
+                        $qtdAtual,
+                        $savingAtual
+                    ))
+                    . ' tipo=' . $tipoAtual
+                    . ' troca_de=' . $trocaDeAtual
+                    . ' troca_para=' . $trocaParaAtual
+                    . ' qtd=' . $qtdAtual
+                    . ' saving=' . number_format($savingAtual, 2, '.', '')
+                );
                 if ($negIdAtual > 0) {
                     $deleteIds[$negIdAtual] = $negIdAtual;
                 }

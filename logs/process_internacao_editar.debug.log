@@ -107,3 +107,58 @@
 [2026-04-18 02:57:56] PRORROG skip neg_auto sem troca id_int=712 ini=2026-04-12 fim=2026-04-14
 [2026-04-18 02:57:56] PRORROG alta inline ok id_int=712
 [2026-04-18 02:57:56] COMMIT ok id_int=712
+[2026-04-18 16:13:32] START id_int=713 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:13:32] GESTAO skip id_int=713 select_gestao=n evento=n
+[2026-04-18 16:13:32] NEGOC fallback post rows=1 id_int=713
+[2026-04-18 16:13:33] PRORROG input id_int=713 rows=1
+[2026-04-18 16:13:33] PRORROG create ok id_int=713 ini=2026-02-28 fim=2026-03-01
+[2026-04-18 16:13:33] COMMIT ok id_int=713
+[2026-04-18 16:14:32] START id_int=714 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:14:32] GESTAO skip id_int=714 select_gestao=n evento=n
+[2026-04-18 16:14:32] NEGOC fallback post rows=1 id_int=714
+[2026-04-18 16:14:32] PRORROG input id_int=714 rows=1
+[2026-04-18 16:14:33] PRORROG create ok id_int=714 ini=2026-04-09 fim=2026-04-10
+[2026-04-18 16:14:33] PRORROG alta inline ok id_int=714
+[2026-04-18 16:14:33] COMMIT ok id_int=714
+[2026-04-18 16:15:39] START id_int=715 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:15:39] GESTAO skip id_int=715 select_gestao=n evento=n
+[2026-04-18 16:15:39] NEGOC fallback post rows=1 id_int=715
+[2026-04-18 16:15:39] PRORROG input id_int=715 rows=1
+[2026-04-18 16:15:40] PRORROG create ok id_int=715 ini=2026-04-13 fim=
+[2026-04-18 16:15:40] COMMIT ok id_int=715
+[2026-04-18 16:22:29] START id_int=717 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:22:29] GESTAO skip id_int=717 select_gestao=n evento=n
+[2026-04-18 16:22:29] NEGOC fallback post rows=1 id_int=717
+[2026-04-18 16:22:29] PRORROG input id_int=717 rows=2
+[2026-04-18 16:22:29] PRORROG update ok id_int=717 id_pror=281
+[2026-04-18 16:22:29] PRORROG update ok id_int=717 id_pror=282
+[2026-04-18 16:22:29] PRORROG alta inline ok id_int=717
+[2026-04-18 16:22:29] COMMIT ok id_int=717
+[2026-04-18 16:44:11] START id_int=719 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:44:11] GESTAO skip id_int=719 select_gestao=n evento=n
+[2026-04-18 16:44:11] NEGOC fallback post rows=1 id_int=719
+[2026-04-18 16:44:11] PRORROG input id_int=719 rows=1
+[2026-04-18 16:44:11] PRORROG create ok id_int=719 ini=2026-04-14 fim=
+[2026-04-18 16:44:11] COMMIT ok id_int=719
+[2026-04-18 16:45:46] START id_int=701 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:45:46] GESTAO skip id_int=701 select_gestao=n evento=n
+[2026-04-18 16:45:46] NEGOC fallback post rows=1 id_int=701
+[2026-04-18 16:45:46] PRORROG input id_int=701 rows=1
+[2026-04-18 16:45:46] PRORROG update ok id_int=701 id_pror=236
+[2026-04-18 16:45:46] PRORROG alta inline ok id_int=701
+[2026-04-18 16:45:46] COMMIT ok id_int=701
+[2026-04-18 16:48:17] START id_int=696 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:48:17] GESTAO skip id_int=696 select_gestao=n evento=n
+[2026-04-18 16:48:17] NEGOC fallback post rows=1 id_int=696
+[2026-04-18 16:48:17] PRORROG input id_int=696 rows=1
+[2026-04-18 16:48:17] PRORROG update ok id_int=696 id_pror=234
+[2026-04-18 16:48:17] PRORROG alta inline ok id_int=696
+[2026-04-18 16:48:18] COMMIT ok id_int=696
+[2026-04-18 16:49:13] START id_int=672 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-18 16:49:14] GESTAO skip id_int=672 select_gestao=n evento=n
+[2026-04-18 16:49:14] NEGOC fallback post rows=1 id_int=672
+[2026-04-18 16:49:14] NEGOC skip id_int=672 id_neg=0 reasons=tipo_vazio,troca_de_vazia,troca_para_vazia,saving_invalido tipo= troca_de= troca_para= qtd=1 saving=0.00
+[2026-04-18 16:49:14] PRORROG input id_int=672 rows=1
+[2026-04-18 16:49:14] PRORROG create ok id_int=672 ini=2026-04-04 fim=2026-04-07
+[2026-04-18 16:49:14] PRORROG alta inline ok id_int=672
+[2026-04-18 16:49:14] COMMIT ok id_int=672

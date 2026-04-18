@@ -111,6 +111,33 @@ function fullcareCalcNegotiationSaving(PDO $conn, int $internacaoId, ?string $ti
     }
     return $de * $qtd;
 }
+function fullcareNegotiationDefaults(?string $tipo): array
+{
+    $tipo = mb_strtoupper(trim((string)$tipo), 'UTF-8');
+    if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto'];
+    if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi'];
+    if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto'];
+    if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI'];
+    if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi'];
+    if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {
+        return ['troca_de' => 'Apto', 'troca_para' => 'Apto'];
+    }
+    return ['troca_de' => '', 'troca_para' => ''];
+}
+
+function fullcareHydrateNegotiationAcomodacoes(?string $tipo, ?string $trocaDe, ?string $trocaPara): array
+{
+    $trocaDe = trim((string)$trocaDe);
+    $trocaPara = trim((string)$trocaPara);
+    $defaults = fullcareNegotiationDefaults($tipo);
+    if ($trocaDe === '' && $defaults['troca_de'] !== '') {
+        $trocaDe = $defaults['troca_de'];
+    }
+    if ($trocaPara === '' && $defaults['troca_para'] !== '') {
+        $trocaPara = $defaults['troca_para'];
+    }
+    return [$trocaDe, $trocaPara];
+}
 
 // ======================================================================
 // Includes / DAOs / Models
@@ -335,6 +362,7 @@ function processNegociacoesEntries(
         if (!$tipo) continue;
         $trocaDe = strOrNull($row['troca_de'] ?? null);
         $trocaPara = strOrNull($row['troca_para'] ?? null);
+        [$trocaDe, $trocaPara] = fullcareHydrateNegotiationAcomodacoes($tipo, $trocaDe, $trocaPara);
         $qtd = toIntOrNull($row['qtd'] ?? null);
         $auditorId = fullcareResolveUserId(
             $conn,
