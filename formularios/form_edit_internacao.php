@@ -1450,6 +1450,33 @@
                     return (parts.length > 1 ? parts.slice(1).join('-') : raw).trim().toLowerCase();
                 }
 
+                function resolveValueByLabel(label) {
+                    const raw = (label || '').toString().trim();
+                    if (!raw) return 0;
+
+                    if (typeof window.resolveNegotiationValueByLabel === 'function') {
+                        return parseFloat(window.resolveNegotiationValueByLabel(raw)) || 0;
+                    }
+
+                    const wanted = normalizeAcomod(raw);
+                    const exact = (acomodacoes || []).find(ac => normalizeAcomod(ac && ac.acomodacao_aco) === wanted);
+                    if (exact) {
+                        return parseFloat(String(exact.valor_aco || '0').replace(',', '.')) || 0;
+                    }
+
+                    if (wanted === 'apto') {
+                        const apto = (acomodacoes || []).find(ac => {
+                            const nome = normalizeAcomod(ac && ac.acomodacao_aco);
+                            return nome === 'apto' || nome === 'apartamento';
+                        });
+                        if (apto) {
+                            return parseFloat(String(apto.valor_aco || '0').replace(',', '.')) || 0;
+                        }
+                    }
+
+                    return 0;
+                }
+
                 window.fcNegValMap = window.fcNegValMap || {};
 
                 let options = '<option value="">Selecione a Acomodação</option>';
@@ -1461,11 +1488,24 @@
 
                     const norm = normalizeAcomod(label);
                     const valorNum = parseFloat(String(ac.valor_aco || '0').replace(',', '.')) || 0;
-                    if (norm.indexOf('uti') !== -1) window.fcNegValMap['UTI'] = valorNum;
-                    if (norm.indexOf('apto') !== -1 || norm.indexOf('apart') !== -1 || norm.indexOf('enferm') !== -1) {
+                    if (window.fcNegValMap['UTI'] <= 0 && norm === 'uti') window.fcNegValMap['UTI'] = valorNum;
+                    if (window.fcNegValMap['Apto'] <= 0 && (norm === 'apto' || norm === 'apartamento')) {
                         window.fcNegValMap['Apto'] = valorNum;
                     }
-                    if (norm.indexOf('semi') !== -1) {
+                    if (window.fcNegValMap['Semi'] <= 0 && norm === 'semi') {
+                        window.fcNegValMap['Semi'] = valorNum;
+                    }
+                });
+
+                acomodacoes.forEach(ac => {
+                    const label = `${ac.acomodacao_aco || ''}`;
+                    const norm = normalizeAcomod(label);
+                    const valorNum = parseFloat(String(ac.valor_aco || '0').replace(',', '.')) || 0;
+                    if (window.fcNegValMap['UTI'] <= 0 && norm.indexOf('uti') !== -1) window.fcNegValMap['UTI'] = valorNum;
+                    if (window.fcNegValMap['Apto'] <= 0 && (norm.indexOf('apto') !== -1 || norm.indexOf('apart') !== -1 || norm.indexOf('enferm') !== -1)) {
+                        window.fcNegValMap['Apto'] = valorNum;
+                    }
+                    if (window.fcNegValMap['Semi'] <= 0 && norm.indexOf('semi') !== -1) {
                         window.fcNegValMap['Semi'] = valorNum;
                     }
                 });
@@ -1512,9 +1552,10 @@
                 const trocaDeOption = container.find('select[name="troca_de"] option:selected');
                 const trocaParaOption = container.find('select[name="troca_para"] option:selected');
 
-                // Extrai os valores do atributo 'data-valor'
-                const trocaDe = parseFloat(trocaDeOption.data('valor')) || 0;
-                const trocaPara = parseFloat(trocaParaOption.data('valor')) || 0;
+                const trocaDeLabel = (trocaDeOption.text() || trocaDeOption.val() || '').toString().trim();
+                const trocaParaLabel = (trocaParaOption.text() || trocaParaOption.val() || '').toString().trim();
+                const trocaDe = resolveValueByLabel(trocaDeLabel);
+                const trocaPara = resolveValueByLabel(trocaParaLabel);
 
                 // Carrega os valores nos inputs correspondentes
                 container.find('input[name="troca_de"]').val(trocaDe);
@@ -1529,9 +1570,10 @@
                 const trocaParaOption = container.find('select[name="troca_para"] option:selected');
                 const quantidadeInput = container.find('input[name="qtd"]');
 
-                // Extraímos o valor correto do atributo 'data-valor'
-                const trocaDeValor = parseFloat(trocaDeOption.attr('data-valor')) || 0;
-                const trocaParaValor = parseFloat(trocaParaOption.attr('data-valor')) || 0;
+                const trocaDeLabel = (trocaDeOption.text() || trocaDeOption.val() || '').toString().trim();
+                const trocaParaLabel = (trocaParaOption.text() || trocaParaOption.val() || '').toString().trim();
+                const trocaDeValor = resolveValueByLabel(trocaDeLabel);
+                const trocaParaValor = resolveValueByLabel(trocaParaLabel);
                 const quantidade = parseInt(quantidadeInput.val(), 10) || 0;
 
                 // Se algum valor estiver inválido, apenas limpamos o campo e saímos

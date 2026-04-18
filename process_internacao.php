@@ -928,6 +928,9 @@ if ($type === "create") {
                     $data_inicio_negoc = ($negociacaoData['data_inicio_negoc'] ?? null);
                     $data_fim_negoc = ($negociacaoData['data_fim_negoc'] ?? null);
                     $auditorNeg = isset($negociacaoData['fk_usuario_neg']) ? (int)$negociacaoData['fk_usuario_neg'] : 0;
+                    if ($auditorNeg <= 0) {
+                        $auditorNeg = filter_var($fk_usuario_int, FILTER_VALIDATE_INT) ?: (int)($_SESSION['id_usuario'] ?? 0);
+                    }
                     [$trocaDe, $trocaPara] = internacaoHydrateNegotiationAcomodacoes($tipo_negociacao, $trocaDe, $trocaPara);
                     $saving = calcNegotiationSavingValue($conn, (int)$fk_hospital_int, $tipo_negociacao, $trocaDe, $trocaPara, (int)$qtd);
 
@@ -996,10 +999,10 @@ if ($type === "create") {
             $prorrogacoesJson = $_POST['prorrogacoes-json'] ?? '[]';
             $prorrogacoesArray = json_decode($prorrogacoesJson, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                $jsonError = json_last_error_msg();
-                throw new Exception("Erro ao decodificar o JSON de prorrogações: " . $jsonError);
+                internacaoCreateDebugLog('PRORROG skip invalid json error=' . json_last_error_msg());
+                $prorrogacoesArray = null;
             }
-            if (is_array($prorrogacoesArray) && isset($prorrogacoesArray['prorrogations'])) {
+            if (is_array($prorrogacoesArray) && isset($prorrogacoesArray['prorrogations']) && is_array($prorrogacoesArray['prorrogations'])) {
                 foreach ($prorrogacoesArray['prorrogations'] as $prorrogacaoData) {
                     $prorrogacao = new prorrogacao();
                     $prorrogacao->fk_internacao_pror = $lastId; // [FK:$lastId]
@@ -1019,7 +1022,7 @@ if ($type === "create") {
                     isset($visitaCriadaId) ? (int)$visitaCriadaId : null
                 );
             } else {
-                throw new Exception("Formato de JSON inválido para prorrogações.");
+                internacaoCreateDebugLog('PRORROG skip empty_or_invalid_structure id_int=' . (int)$lastId);
             }
             if ($prorrogAltaPayload) {
                 fullcare_upsert_prorrog_alta($conn, (int)$lastId, $prorrogAltaPayload);

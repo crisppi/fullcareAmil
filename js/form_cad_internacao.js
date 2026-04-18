@@ -1296,6 +1296,15 @@ document.addEventListener("DOMContentLoaded", function() {
 $("#myForm").submit(function(event) {
     event.preventDefault(); // Impede o envio tradicional do formulário
     syncHospitalHiddenField();
+    if (typeof window.mirrorVisitMedFromFk === 'function') {
+        window.mirrorVisitMedFromFk();
+    }
+    if (typeof window.generateNegotiationsJSON === 'function') {
+        window.generateNegotiationsJSON();
+    }
+    if (typeof window.generateProrJSON === 'function') {
+        window.generateProrJSON();
+    }
     let post_url = $(this).attr("action"); // Obtém a URL de ação do formulário
     let request_method = $(this).attr("method"); // Obtém o método do formulário (GET/POST)
     let form_data = new FormData(this); // Cria um objeto FormData com os dados do formulário

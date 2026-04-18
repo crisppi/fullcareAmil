@@ -150,10 +150,24 @@ $fcNegValMap = [
 foreach ($acomodJsList as $item) {
     $nomeCanon = mb_strtolower(trim((string)($item['acomodacao_aco'] ?? '')));
     $valorCanon = (float)($item['valor_aco'] ?? 0);
+
+    if ($fcNegValMap['UTI'] <= 0 && $nomeCanon === 'uti') {
+        $fcNegValMap['UTI'] = $valorCanon;
+    }
+    if ($fcNegValMap['Semi'] <= 0 && $nomeCanon === 'semi') {
+        $fcNegValMap['Semi'] = $valorCanon;
+    }
+    if ($fcNegValMap['Apto'] <= 0 && ($nomeCanon === 'apto' || $nomeCanon === 'apartamento')) {
+        $fcNegValMap['Apto'] = $valorCanon;
+    }
+}
+foreach ($acomodJsList as $item) {
+    $nomeCanon = mb_strtolower(trim((string)($item['acomodacao_aco'] ?? '')));
+    $valorCanon = (float)($item['valor_aco'] ?? 0);
     if ($fcNegValMap['UTI'] <= 0 && strpos($nomeCanon, 'uti') !== false) {
         $fcNegValMap['UTI'] = $valorCanon;
     }
-    if ($fcNegValMap['Semi'] <= 0 && (strpos($nomeCanon, 'semi') !== false)) {
+    if ($fcNegValMap['Semi'] <= 0 && strpos($nomeCanon, 'semi') !== false) {
         $fcNegValMap['Semi'] = $valorCanon;
     }
     if ($fcNegValMap['Apto'] <= 0 && (
@@ -373,6 +387,14 @@ if (!function_exists('sel')) {
         function getValor(label) {
             var wanted = (label || '').toString().trim().toLowerCase();
             var list = window.__NEGOC_ACOMODACOES || [];
+            for (var j = 0; j < list.length; j++) {
+                var exactItem = list[j] || {};
+                var exactNome = ((exactItem.acomodacao_aco || '') + '').trim().toLowerCase();
+                if (exactNome === wanted) return parseFloat(exactItem.valor_aco || 0) || 0;
+                if (wanted === 'apto' && (exactNome === 'apartamento' || exactNome === 'apto')) {
+                    return parseFloat(exactItem.valor_aco || 0) || 0;
+                }
+            }
             for (var i = 0; i < list.length; i++) {
                 var item = list[i] || {};
                 var nome = ((item.acomodacao_aco || '') + '').trim().toLowerCase();
@@ -381,6 +403,9 @@ if (!function_exists('sel')) {
                     return parseFloat(item.valor_aco || 0) || 0;
                 }
                 if (wanted === 'semi' && nome.indexOf('semi') !== -1) {
+                    return parseFloat(item.valor_aco || 0) || 0;
+                }
+                if (wanted === 'uti' && nome === 'uti') {
                     return parseFloat(item.valor_aco || 0) || 0;
                 }
                 if (wanted === 'uti' && nome.indexOf('uti') !== -1) {
@@ -410,7 +435,7 @@ if (!function_exists('sel')) {
             var d1 = new Date(startValue + 'T00:00:00');
             var d2 = new Date(endValue + 'T00:00:00');
             var diff = Math.round((d2.getTime() - d1.getTime()) / 86400000);
-            return diff > 0 ? diff : 1;
+            return diff >= 0 ? Math.max(1, diff) : 1;
         }
         function recalcRow(row) {
             var tipoLocalEl = getField(row, 'tipo_negociacao');
@@ -550,7 +575,7 @@ if (!function_exists('sel')) {
             }
 
             $savingNeg = (string)($neg['saving'] ?? '');
-            if ($savingNeg === '' && $tipoNeg !== '') {
+            if ($tipoNeg !== '') {
                 $deValor = (float)($acomodValorMap[normalizeNegAcomodPhp($trocaDeNeg)] ?? 0);
                 $paraValor = (float)($acomodValorMap[normalizeNegAcomodPhp($trocaParaNeg)] ?? 0);
                 $tipoUpper = mb_strtoupper($tipoNeg);
@@ -787,8 +812,14 @@ if (!function_exists('sel')) {
         const tipo = (tipoEl.value || '').toString().trim().toUpperCase();
         const trocaDeSelected = trocaDeEl.selectedOptions && trocaDeEl.selectedOptions[0] ? trocaDeEl.selectedOptions[0] : null;
         const trocaParaSelected = trocaParaEl.selectedOptions && trocaParaEl.selectedOptions[0] ? trocaParaEl.selectedOptions[0] : null;
-        const de = safeNum(trocaDeSelected && trocaDeSelected.dataset ? trocaDeSelected.dataset.valor : 0);
-        const para = safeNum(trocaParaSelected && trocaParaSelected.dataset ? trocaParaSelected.dataset.valor : 0);
+        const deLabel = trocaDeSelected
+            ? ((trocaDeSelected.textContent || trocaDeSelected.value || '').toString().trim())
+            : ((trocaDeEl.value || '').toString().trim());
+        const paraLabel = trocaParaSelected
+            ? ((trocaParaSelected.textContent || trocaParaSelected.value || '').toString().trim())
+            : ((trocaParaEl.value || '').toString().trim());
+        const de = resolveNegotiationValueByLabel(deLabel);
+        const para = resolveNegotiationValueByLabel(paraLabel);
         const qtd = parseInt(qtdEl.value, 10) || 0;
         let s = 0;
         if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
@@ -925,8 +956,14 @@ if (!function_exists('sel')) {
         if (savingEl && savingShowEl && (!savingShowEl.value || savingShowEl.value === 'R$ 0.00')) {
             var deSel = trocaDeEl && trocaDeEl.selectedOptions && trocaDeEl.selectedOptions[0] ? trocaDeEl.selectedOptions[0] : null;
             var paraSel = trocaParaEl && trocaParaEl.selectedOptions && trocaParaEl.selectedOptions[0] ? trocaParaEl.selectedOptions[0] : null;
-            var deVal = safeNum(deSel && deSel.dataset ? deSel.dataset.valor : 0);
-            var paraVal = safeNum(paraSel && paraSel.dataset ? paraSel.dataset.valor : 0);
+            var deLabel = deSel
+                ? ((deSel.textContent || deSel.value || '') + '').trim()
+                : ((trocaDeEl && trocaDeEl.value) || '').toString().trim();
+            var paraLabel = paraSel
+                ? ((paraSel.textContent || paraSel.value || '') + '').trim()
+                : ((trocaParaEl && trocaParaEl.value) || '').toString().trim();
+            var deVal = resolveNegotiationValueByLabel(deLabel);
+            var paraVal = resolveNegotiationValueByLabel(paraLabel);
             var qtdVal = parseInt((qtdEl && qtdEl.value) || '0', 10) || 0;
             var s = 0;
             if (tipo.indexOf('TROCA') === 0) s = (deVal - paraVal) * qtdVal;
@@ -985,9 +1022,34 @@ if (!function_exists('sel')) {
     function findAcomodMeta(label) {
         const wanted = normalizeNegValue(label);
         const list = Array.isArray(window.__NEGOC_ACOMODACOES) ? window.__NEGOC_ACOMODACOES : [];
-        return list.find(function(item) {
+        const exact = list.find(function(item) {
             return normalizeNegValue((item && item.acomodacao_aco) || '') === wanted;
-        }) || null;
+        });
+        if (exact) return exact;
+        if (wanted === 'apto') {
+            return list.find(function(item) {
+                const nome = normalizeNegValue((item && item.acomodacao_aco) || '');
+                return nome === 'apartamento' || nome === 'apto';
+            }) || null;
+        }
+        return null;
+    }
+
+    function resolveNegotiationValueByLabel(label) {
+        const raw = (label || '').toString().trim();
+        if (!raw) return 0;
+
+        const meta = findAcomodMeta(raw);
+        if (meta) {
+            return safeNum(meta.valor_aco);
+        }
+
+        const norm = normalizeNegValue(raw);
+        const values = window.fcNegValMap || {};
+        if (norm === 'uti') return safeNum(values.UTI);
+        if (norm === 'semi') return safeNum(values.Semi);
+        if (norm === 'apto' || norm === 'apartamento') return safeNum(values.Apto);
+        return 0;
     }
 
     function ensureBaseOptions($select) {
@@ -1101,8 +1163,10 @@ if (!function_exists('sel')) {
 
     function calcSaving($c) {
         const tipo = $c.find('[name="tipo_negociacao"]').val().toUpperCase().trim();
-        const de = safeNum($c.find('[name="troca_de"] option:selected').data('valor'));
-        const para = safeNum($c.find('[name="troca_para"] option:selected').data('valor'));
+        const deLabel = (($c.find('[name="troca_de"] option:selected').text() || $c.find('[name="troca_de"]').val() || '') + '').trim();
+        const paraLabel = (($c.find('[name="troca_para"] option:selected').text() || $c.find('[name="troca_para"]').val() || '') + '').trim();
+        const de = resolveNegotiationValueByLabel(deLabel);
+        const para = resolveNegotiationValueByLabel(paraLabel);
         const qtd = parseInt($c.find('[name="qtd"]').val(), 10) || 0;
         let s = 0;
         if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
@@ -1176,10 +1240,14 @@ if (!function_exists('sel')) {
                 window.handleNegotiationTypeChange(this);
             });
         });
-        document.querySelectorAll('#negotiationFieldsContainer .negociation-field-container').forEach(function(row) {
-            calcSavingNative(row);
-        });
-        genJSON();
+        if (typeof window.refreshNegotiationRows === 'function') {
+            window.refreshNegotiationRows(false);
+        } else {
+            document.querySelectorAll('#negotiationFieldsContainer .negociation-field-container').forEach(function(row) {
+                calcSavingNative(row);
+            });
+            genJSON();
+        }
     });
 
     let debounce;

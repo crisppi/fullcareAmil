@@ -551,7 +551,7 @@ function calcularDiariasEntreDatas(dataInicioStr, dataFimStr) {
     if (!inicio || !fim || Number.isNaN(inicio.getTime()) || Number.isNaN(fim.getTime())) return null;
     if (fim < inicio) return null;
     const umDiaMs = 24 * 60 * 60 * 1000;
-    return Math.floor((fim - inicio) / umDiaMs); // exclusivo do dia final
+    return Math.max(1, Math.floor((fim - inicio) / umDiaMs));
 }
 
 function syncQuantidadeFromDates(container) {

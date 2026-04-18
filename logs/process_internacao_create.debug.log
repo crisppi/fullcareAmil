@@ -182,3 +182,8 @@
 [2026-04-18 22:58:56] VISITA create ok id_int=747 id_visita=811
 [2026-04-18 22:58:56] GESTAO skip id_int=747 select= evento=n tipo=
 [2026-04-18 22:58:56] NEGOC skip create id_int=747 reasons=auditor_invalido tipo=TROCA UTI/APTO troca_de=7-UTI troca_para=8-Apto qtd=1 saving=1309.84
+[2026-04-18 23:51:18] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-18 23:51:18] CREATE internacao ok id=748
+[2026-04-18 23:51:18] VISITA create ok id_int=748 id_visita=813
+[2026-04-18 23:51:18] GESTAO skip id_int=748 select= evento=n tipo=
+[2026-04-18 23:51:18] NEGOC skip create id_int=748 reasons=auditor_invalido tipo=TROCA UTI/APTO troca_de=7-UTI troca_para=8-Apto qtd=1 saving=3850.86
