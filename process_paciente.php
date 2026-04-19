@@ -45,7 +45,6 @@ if ($type === "create") {
 
     // Receber os dados dos inputs
     $nome_pac = filter_input(INPUT_POST, "nome_pac", FILTER_SANITIZE_SPECIAL_CHARS);
-    $nome_pac = strtoupper($nome_pac);
     $nomePacNormalizado = preg_replace('/\s+/', ' ', trim((string)$nome_pac));
     $nomeTokens = array_values(array_filter(explode(' ', $nomePacNormalizado), function ($t) {
         return mb_strlen(trim((string)$t), 'UTF-8') >= 3;
@@ -56,7 +55,7 @@ if ($type === "create") {
     $confirmarHomonimo = filter_input(INPUT_POST, "confirmar_homonimo_pac");
     $confirmarHomonimo = in_array(strtolower((string)$confirmarHomonimo), ['1', 's', 'sim', 'true'], true);
     $nome_social_pac = filter_input(INPUT_POST, "nome_social_pac", FILTER_SANITIZE_SPECIAL_CHARS);
-    $nome_social_pac = strtoupper($nome_social_pac);
+    $nome_social_pac = preg_replace('/\s+/', ' ', trim((string)$nome_social_pac));
     $endereco_pac = filter_input(INPUT_POST, "endereco_pac", FILTER_SANITIZE_SPECIAL_CHARS);
     $email01_pac = filter_input(INPUT_POST, "email01_pac", FILTER_SANITIZE_EMAIL);
     $email01_pac = strtolower($email01_pac);
@@ -280,9 +279,8 @@ if ($type === "create") {
     // Receber os dados dos inputs
     $id_paciente = filter_input(INPUT_POST, "id_paciente");
     $nome_pac = filter_input(INPUT_POST, "nome_pac", FILTER_SANITIZE_SPECIAL_CHARS);
-    $nome_pac = strtoupper($nome_pac);
     $nome_social_pac = filter_input(INPUT_POST, "nome_social_pac", FILTER_SANITIZE_SPECIAL_CHARS);
-    $nome_social_pac = strtoupper($nome_social_pac);
+    $nome_social_pac = preg_replace('/\s+/', ' ', trim((string)$nome_social_pac));
     $endereco_pac = filter_input(INPUT_POST, "endereco_pac", FILTER_SANITIZE_SPECIAL_CHARS);
     $sexo_pac = filter_input(INPUT_POST, "sexo_pac", FILTER_SANITIZE_SPECIAL_CHARS);
     $data_nasc_pac = filter_input(INPUT_POST, "data_nasc_pac") ?: NULL;

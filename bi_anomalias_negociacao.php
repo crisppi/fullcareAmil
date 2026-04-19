@@ -1,7 +1,28 @@
 <?php
 $pageTitle = 'Padrao de Negociacao Suspeito';
 $pageSlug = 'bi/anomalias-negociacao';
-require_once("templates/bi_rede_bootstrap.php");
+require_once("bi_rede_bootstrap.php");
+
+if (!function_exists('fmtMoney')) {
+    function fmtMoney($value): string
+    {
+        return 'R$ ' . number_format((float)$value, 2, ',', '.');
+    }
+}
+
+if (!function_exists('fmtInt')) {
+    function fmtInt($value): string
+    {
+        return number_format((int)$value, 0, ',', '.');
+    }
+}
+
+if (!function_exists('fmtFloat')) {
+    function fmtFloat($value, int $dec = 1): string
+    {
+        return number_format((float)$value, $dec, ',', '.');
+    }
+}
 
 $internFilters = biRedeBuildWhere($filterValues, 'i.data_intern_int', 'i', true);
 $internWhere = $internFilters['where'];
@@ -56,7 +77,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         </div>
     </div>
 
-    <?php include "templates/bi_rede_filters.php"; ?>
+    <?php include "bi_rede_filters.php"; ?>
 
     <div class="bi-panel">
         <h3>Indicadores-chave</h3>

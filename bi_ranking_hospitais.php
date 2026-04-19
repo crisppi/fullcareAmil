@@ -273,6 +273,39 @@ unset($row);
 </div>
 
 <script>
+const biBarValueLabelPlugin = {
+    afterDatasetsDraw: function(chart) {
+        const ctx = chart.ctx;
+        ctx.save();
+
+        chart.data.datasets.forEach(function(dataset, datasetIndex) {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            if (!meta || meta.hidden) return;
+
+            meta.data.forEach(function(element, index) {
+                const value = Number(dataset.data[index] || 0);
+                if (!Number.isFinite(value)) return;
+
+                const labelFormatter = dataset.valueFormatter || function(v) {
+                    return Number(v || 0).toLocaleString('pt-BR');
+                };
+
+                ctx.font = '600 12px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = '#f5fbff';
+                ctx.shadowColor = 'rgba(8, 20, 38, 0.35)';
+                ctx.shadowBlur = 6;
+
+                const topY = Math.min(element._model.base, element._model.y);
+                ctx.fillText(labelFormatter(value), element._model.x, topY - 8);
+            });
+        });
+
+        ctx.restore();
+    }
+};
+
 function buildBarChart(canvasId, labels, values, tickFormatter) {
     const el = document.getElementById(canvasId);
     if (!el || !window.Chart) return;
@@ -288,12 +321,21 @@ function buildBarChart(canvasId, labels, values, tickFormatter) {
                 data: values,
                 backgroundColor: 'rgba(126,150,255,0.82)',
                 borderRadius: 10,
-                maxBarThickness: 48
+                maxBarThickness: 48,
+                valueFormatter: tickFormatter || function(v) {
+                    return Number(v || 0).toLocaleString('pt-BR');
+                }
             }]
         },
+        plugins: [biBarValueLabelPlugin],
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 24
+                }
+            },
             legend: { display: false },
             scales: scales,
             tooltips: {

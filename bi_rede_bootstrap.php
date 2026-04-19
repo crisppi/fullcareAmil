@@ -70,6 +70,122 @@ $tiposAdm = $conn->query("SELECT DISTINCT tipo_admissao_int FROM tb_internacao W
 $modosInt = $conn->query("SELECT DISTINCT modo_internacao_int FROM tb_internacao WHERE modo_internacao_int IS NOT NULL AND modo_internacao_int <> '' ORDER BY modo_internacao_int")
     ->fetchAll(PDO::FETCH_COLUMN);
 
+$filterValues = [
+    'data_ini' => $dataIni,
+    'data_fim' => $dataFim,
+    'hospital_id' => $hospitalId ? (string)$hospitalId : '',
+    'seguradora_id' => $seguradoraId ? (string)$seguradoraId : '',
+    'regiao' => $regiao,
+    'tipo_admissao' => $tipoAdmissao,
+    'modo_internacao' => $modoInternacao,
+    'uti' => $uti,
+];
+
+$filterOptions = [
+    'hospitais' => array_map(static function ($row): array {
+        return [
+            'value' => (string)($row['id_hospital'] ?? ''),
+            'label' => (string)($row['nome_hosp'] ?? ''),
+        ];
+    }, $hospitais),
+    'seguradoras' => array_map(static function ($row): array {
+        return [
+            'value' => (string)($row['id_seguradora'] ?? ''),
+            'label' => (string)($row['seguradora_seg'] ?? ''),
+        ];
+    }, $seguradoras),
+    'regioes' => array_map(static function ($value): array {
+        return [
+            'value' => (string)$value,
+            'label' => (string)$value,
+        ];
+    }, $regioes),
+    'tipos_admissao' => array_map(static function ($value): array {
+        return [
+            'value' => (string)$value,
+            'label' => (string)$value,
+        ];
+    }, $tiposAdm),
+    'modos_internacao' => array_map(static function ($value): array {
+        return [
+            'value' => (string)$value,
+            'label' => (string)$value,
+        ];
+    }, $modosInt),
+];
+
+if (!function_exists('biBindParams')) {
+    function biBindParams(PDOStatement $stmt, array $params): void
+    {
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+    }
+}
+
+if (!function_exists('biRedeBuildWhere')) {
+    function biRedeBuildWhere(array $filterValues, string $dateExpr, string $baseAlias = 'i', bool $includeUtiJoin = true): array
+    {
+        $joins = "
+            LEFT JOIN tb_hospital h ON h.id_hospital = {$baseAlias}.fk_hospital_int
+            LEFT JOIN tb_paciente pa ON pa.id_paciente = {$baseAlias}.fk_paciente_int
+            LEFT JOIN tb_seguradora s ON s.id_seguradora = pa.fk_seguradora_pac
+        ";
+        if ($includeUtiJoin) {
+            $joins .= "\nLEFT JOIN (SELECT DISTINCT fk_internacao_uti FROM tb_uti) ut ON ut.fk_internacao_uti = {$baseAlias}.id_internacao";
+        }
+
+        $where = "{$dateExpr} BETWEEN :data_ini AND :data_fim";
+        $params = [
+            ':data_ini' => (string)($filterValues['data_ini'] ?? ''),
+            ':data_fim' => (string)($filterValues['data_fim'] ?? ''),
+        ];
+
+        $hospitalId = (int)($filterValues['hospital_id'] ?? 0);
+        if ($hospitalId > 0) {
+            $where .= " AND {$baseAlias}.fk_hospital_int = :hospital_id";
+            $params[':hospital_id'] = $hospitalId;
+        }
+
+        $seguradoraId = (int)($filterValues['seguradora_id'] ?? 0);
+        if ($seguradoraId > 0) {
+            $where .= " AND pa.fk_seguradora_pac = :seguradora_id";
+            $params[':seguradora_id'] = $seguradoraId;
+        }
+
+        $regiao = trim((string)($filterValues['regiao'] ?? ''));
+        if ($regiao !== '') {
+            $where .= " AND h.estado_hosp = :regiao";
+            $params[':regiao'] = $regiao;
+        }
+
+        $tipoAdmissao = trim((string)($filterValues['tipo_admissao'] ?? ''));
+        if ($tipoAdmissao !== '') {
+            $where .= " AND {$baseAlias}.tipo_admissao_int = :tipo_admissao";
+            $params[':tipo_admissao'] = $tipoAdmissao;
+        }
+
+        $modoInternacao = trim((string)($filterValues['modo_internacao'] ?? ''));
+        if ($modoInternacao !== '') {
+            $where .= " AND {$baseAlias}.modo_internacao_int = :modo_internacao";
+            $params[':modo_internacao'] = $modoInternacao;
+        }
+
+        $uti = trim((string)($filterValues['uti'] ?? ''));
+        if ($includeUtiJoin && $uti === 's') {
+            $where .= " AND ut.fk_internacao_uti IS NOT NULL";
+        } elseif ($includeUtiJoin && $uti === 'n') {
+            $where .= " AND ut.fk_internacao_uti IS NULL";
+        }
+
+        return [
+            'where' => $where,
+            'params' => $params,
+            'joins' => $joins,
+        ];
+    }
+}
+
 $where = "i.data_intern_int BETWEEN :data_ini AND :data_fim";
 $params = [
     ':data_ini' => $dataIni,

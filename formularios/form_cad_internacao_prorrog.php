@@ -492,7 +492,7 @@ function setFirstProrrogationDate() {
     }
 
     if (iniInput && !iniInput.value) {
-        iniInput.value = defaults.prorrog1_ini_pror || (dataInternacao ? addOneDayToDate(dataInternacao) : '');
+        iniInput.value = defaults.prorrog1_ini_pror || dataInternacao || '';
     }
 }
 

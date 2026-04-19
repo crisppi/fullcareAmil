@@ -204,6 +204,56 @@ const countHosp = <?= json_encode($countHosp) ?>;
 const labelsMes = <?= json_encode($labelsMes) ?>;
 const savingMensal = <?= json_encode($savingMensal) ?>;
 
+const biValueLabelPlugin = {
+    afterDatasetsDraw: function(chart) {
+        const ctx = chart.ctx;
+        ctx.save();
+
+        chart.data.datasets.forEach(function(dataset, datasetIndex) {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            if (!meta || meta.hidden) return;
+
+            meta.data.forEach(function(element, index) {
+                const rawValue = Number(dataset.data[index] || 0);
+                if (!Number.isFinite(rawValue)) return;
+
+                const isMoney = !!dataset.isMoney;
+                const label = isMoney
+                    ? formatMoneyCompact(rawValue)
+                    : Number(rawValue).toLocaleString('pt-BR');
+
+                ctx.font = '600 12px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillStyle = isMoney ? '#f4fbff' : '#f6e6ff';
+                ctx.shadowColor = 'rgba(8, 20, 38, 0.35)';
+                ctx.shadowBlur = 6;
+
+                if (chart.config.type === 'line') {
+                    ctx.fillText(label, element._model.x, element._model.y - 10);
+                } else {
+                    const topY = Math.min(element._model.base, element._model.y);
+                    ctx.fillText(label, element._model.x, topY - 8);
+                }
+            });
+        });
+
+        ctx.restore();
+    }
+};
+
+function formatMoney(value) {
+    return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatMoneyCompact(value) {
+    const absValue = Math.abs(Number(value || 0));
+    if (absValue >= 1000) {
+        return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 });
+    }
+    return formatMoney(value);
+}
+
 function barChart(ctx, labels, data, color) {
     const scales = window.biChartScales ? window.biChartScales() : undefined;
     if (scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
@@ -213,16 +263,22 @@ function barChart(ctx, labels, data, color) {
     }
     return new Chart(ctx, {
         type: 'bar',
-        data: { labels, datasets: [{ data, backgroundColor: color }] },
+        data: { labels, datasets: [{ data, backgroundColor: color, isMoney: true }] },
+        plugins: [biValueLabelPlugin],
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 26
+                }
+            },
             legend: { display: false },
             scales: scales,
             tooltips: {
                 callbacks: {
                     label: function (tooltipItem) {
-                        return window.biMoneyTick ? window.biMoneyTick(tooltipItem.yLabel) : ('R$ ' + Number(tooltipItem.yLabel || 0).toLocaleString('pt-BR'));
+                        return window.biMoneyTick ? window.biMoneyTick(tooltipItem.yLabel) : formatMoney(tooltipItem.yLabel);
                     }
                 }
             }
@@ -255,27 +311,42 @@ function lineChart(ctx, labels, data, color, money = true) {
         data: {
             labels,
             datasets: [{
+                label: 'Saving',
                 data,
                 borderColor: color,
                 backgroundColor: 'rgba(0, 0, 0, 0)',
                 borderWidth: 2,
                 pointBackgroundColor: color,
-                pointRadius: 3,
+                pointRadius: 4,
                 tension: 0.35,
-                fill: false
+                fill: false,
+                isMoney: money
             }]
         },
-        options: opts
+        plugins: [biValueLabelPlugin],
+        options: Object.assign({}, opts, {
+            layout: {
+                padding: {
+                    top: 22
+                }
+            }
+        })
     });
 }
 
 barChart(document.getElementById('chartSavingHospital'), labelsHosp, savingHosp, 'rgba(141, 208, 255, 0.7)');
 new Chart(document.getElementById('chartQtdeHospital'), {
     type: 'bar',
-    data: { labels: labelsHosp, datasets: [{ data: countHosp, backgroundColor: 'rgba(208, 113, 176, 0.7)' }] },
+    data: { labels: labelsHosp, datasets: [{ data: countHosp, backgroundColor: 'rgba(208, 113, 176, 0.7)', isMoney: false }] },
+    plugins: [biValueLabelPlugin],
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 24
+            }
+        },
         legend: { display: false },
         scales: window.biChartScales ? window.biChartScales() : undefined
     }

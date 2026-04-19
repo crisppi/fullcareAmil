@@ -326,9 +326,10 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 }
 
 .bi-sidebar-group {
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.05);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.038));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     overflow: hidden;
 }
 
@@ -343,10 +344,11 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     align-items: center;
     gap: 10px;
     padding: 12px 14px;
-    color: #edf7ff;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: background .15s ease;
+    color: #f6fbff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: background .15s ease, color .15s ease;
 }
 
 .bi-sidebar-group summary::-webkit-details-marker {
@@ -355,7 +357,8 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 
 .bi-sidebar-group[open] summary,
 .bi-sidebar-group summary:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.085);
+    color: #ffffff;
 }
 
 .bi-sidebar-dot {
@@ -363,8 +366,8 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     width: 10px;
     height: 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.035);
 }
 
 .bi-sidebar-group.is-active .bi-sidebar-dot {
@@ -386,26 +389,28 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    padding: 0 10px 10px;
+    padding: 4px 10px 10px;
+    background: rgba(5, 18, 32, 0.18);
 }
 
 .bi-sidebar-link {
     display: flex;
     align-items: center;
     min-height: 42px;
-    padding: 8px 10px 8px 14px;
+    padding: 8px 12px 8px 16px;
     border-radius: 12px;
-    color: rgba(238, 247, 255, 0.88);
+    color: rgba(214, 227, 239, 0.9);
     text-decoration: none;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
+    font-weight: 500;
     line-height: 1.25;
-    border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .bi-sidebar-link:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
     color: #ffffff;
 }
 
@@ -413,6 +418,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     background: linear-gradient(135deg, #63d5c0, #2fa38c);
     border-color: rgba(60, 160, 140, 0.9);
     color: #0f2a25;
+    font-weight: 700;
     box-shadow: 0 10px 20px rgba(23, 103, 94, 0.28);
 }
 

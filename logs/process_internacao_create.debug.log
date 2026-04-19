@@ -187,3 +187,45 @@
 [2026-04-18 23:51:18] VISITA create ok id_int=748 id_visita=813
 [2026-04-18 23:51:18] GESTAO skip id_int=748 select= evento=n tipo=
 [2026-04-18 23:51:18] NEGOC skip create id_int=748 reasons=auditor_invalido tipo=TROCA UTI/APTO troca_de=7-UTI troca_para=8-Apto qtd=1 saving=3850.86
+[2026-04-19 01:10:04] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:10:04] CREATE internacao ok id=749
+[2026-04-19 01:10:04] VISITA create ok id_int=749 id_visita=814
+[2026-04-19 01:10:04] GESTAO skip id_int=749 select= evento=n tipo=
+[2026-04-19 01:10:04] END ok id=749
+[2026-04-19 01:15:43] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:15:43] CREATE internacao ok id=750
+[2026-04-19 01:15:43] VISITA create ok id_int=750 id_visita=815
+[2026-04-19 01:15:43] GESTAO skip id_int=750 select= evento=n tipo=
+[2026-04-19 01:15:43] END ok id=750
+[2026-04-19 01:19:32] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:19:32] CREATE internacao ok id=751
+[2026-04-19 01:19:32] VISITA create ok id_int=751 id_visita=816
+[2026-04-19 01:19:32] GESTAO skip id_int=751 select= evento=n tipo=
+[2026-04-19 01:19:33] END ok id=751
+[2026-04-19 01:31:19] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:31:19] CREATE internacao ok id=752
+[2026-04-19 01:31:19] VISITA create ok id_int=752 id_visita=817
+[2026-04-19 01:31:19] GESTAO skip id_int=752 select= evento=n tipo=
+[2026-04-19 01:31:19] NEGOC skip create id_int=752 reasons=troca_para_vazia tipo=VESPERA troca_de=8-Apto troca_para= qtd=1 saving=3416.71
+[2026-04-19 01:31:20] END ok id=752
+[2026-04-19 01:33:08] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:33:08] CREATE internacao ok id=753
+[2026-04-19 01:33:08] VISITA create ok id_int=753 id_visita=818
+[2026-04-19 01:33:08] GESTAO skip id_int=753 select= evento=n tipo=
+[2026-04-19 01:33:08] NEGOC skip create id_int=753 reasons=troca_para_vazia tipo=VESPERA troca_de=8-Apto troca_para= qtd=1 saving=3416.71
+[2026-04-19 01:33:08] END ok id=753
+[2026-04-19 01:48:33] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:48:33] CREATE internacao ok id=754
+[2026-04-19 01:48:33] VISITA create ok id_int=754 id_visita=819
+[2026-04-19 01:48:33] GESTAO skip id_int=754 select= evento=n tipo=
+[2026-04-19 01:48:33] END ok id=754
+[2026-04-19 01:50:13] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:50:13] CREATE internacao ok id=755
+[2026-04-19 01:50:14] VISITA create ok id_int=755 id_visita=820
+[2026-04-19 01:50:14] GESTAO skip id_int=755 select= evento=n tipo=
+[2026-04-19 01:50:14] END ok id=755
+[2026-04-19 01:52:56] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-04-19 01:52:56] CREATE internacao ok id=756
+[2026-04-19 01:52:57] VISITA create ok id_int=756 id_visita=821
+[2026-04-19 01:52:57] GESTAO skip id_int=756 select= evento=n tipo=
+[2026-04-19 01:52:57] END ok id=756
