@@ -1011,13 +1011,17 @@ function mirrorVisitMedFromFk() {
     const fk = document.getElementById('fk_usuario_int')?.value || '';
     const tipo = document.getElementById('resp_tipo')?.value || '';
     const medHidden = document.getElementById('visita_auditor_prof_med');
+    const enfHidden = document.getElementById('visita_auditor_prof_enf');
     const updateGroup = (selector) => {
         document.querySelectorAll(selector).forEach(el => {
             if (el) el.value = fk;
         });
     };
     if (medHidden) {
-        medHidden.value = (tipo === 'enf') ? '' : fk;
+        medHidden.value = (tipo === 'med') ? fk : '';
+    }
+    if (enfHidden) {
+        enfHidden.value = (tipo === 'enf') ? fk : '';
     }
     updateGroup('#fk_usuario_neg');
     updateGroup('#fk_usuario_tuss');

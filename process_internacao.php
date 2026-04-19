@@ -736,6 +736,7 @@ if ($type === "create") {
         // VISITA inicial (#1) automática
         $visita = new visita();
         $visita->fk_internacao_vis = $lastId; // [FK:$lastId]
+        $visita->fk_usuario_vis = $fk_usuario_int ?: ((int)($_SESSION['id_usuario'] ?? 0) ?: null);
         $visita->data_visita_vis = $data_visita_int ?: date('Y-m-d H:i:s');
         $visita->usuario_create = $usuario_create_int ?: ($_SESSION['email_user'] ?? 'sistema');
         $visita->visita_auditor_prof_med = $visita_auditor_prof_med ?: '';

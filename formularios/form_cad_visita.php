@@ -601,22 +601,14 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
         if (fkInput) fkInput.value = userId || '';
         if (flagMed) flagMed.value = (tipo === 'med') ? 's' : (isMedSessao && !tipo ? 's' : 'n');
         if (flagEnf) flagEnf.value = (tipo === 'enf') ? 's' : (isEnfSessao && !tipo ? 's' : 'n');
-        if (auditorMed) auditorMed.value = (tipo === 'med') ? userId : (isMedSessao && !tipo ? sessionId : '');
-        if (auditorEnf) auditorEnf.value = (tipo === 'enf') ? userId : (isEnfSessao && !tipo ? sessionId : '');
+        if (auditorMed) auditorMed.value = (tipo === 'med') ? userId : '';
+        if (auditorEnf) auditorEnf.value = (tipo === 'enf') ? userId : '';
     }
 
     function resetToSession() {
-        if (isMedSessao) {
-            applySelection(sessionId, 'med');
-        } else if (isEnfSessao) {
-            applySelection(sessionId, 'enf');
-        } else {
-            applySelection(sessionId, '');
-            if (auditorMed) auditorMed.value = '';
-            if (auditorEnf) auditorEnf.value = '';
-            if (flagMed) flagMed.value = 'n';
-            if (flagEnf) flagEnf.value = 'n';
-        }
+        applySelection(sessionId, '');
+        if (!isMedSessao && flagMed) flagMed.value = 'n';
+        if (!isEnfSessao && flagEnf) flagEnf.value = 'n';
     }
 
     function syncCadastroCentral() {
