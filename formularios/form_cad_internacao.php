@@ -1010,7 +1010,9 @@
     <script>
         window.hospitalUsuariosMap = <?= json_encode($hospitalUsuariosMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         window.formInternacaoConfig = Object.assign({}, window.formInternacaoConfig || {}, {
-            prefillPacienteId: <?= $id_paciente_get > 0 ? (int)$id_paciente_get : 'null' ?>
+            prefillPacienteId: <?= $id_paciente_get > 0 ? (int)$id_paciente_get : 'null' ?>,
+            idSessao: <?= json_encode((string) $idSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            cargoSessao: <?= json_encode((string) $cargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
         });
     </script>
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js"></script>

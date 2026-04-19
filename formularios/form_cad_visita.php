@@ -598,17 +598,17 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
     const isEnfSessao = <?= $isEnfSessao ? 'true' : 'false' ?>;
 
     function applySelection(userId, tipo) {
+        const effectiveTipo = tipo || (isMedSessao ? 'med' : (isEnfSessao ? 'enf' : ''));
+        const effectiveUserId = userId || sessionId || '';
         if (fkInput) fkInput.value = userId || '';
-        if (flagMed) flagMed.value = (tipo === 'med') ? 's' : (isMedSessao && !tipo ? 's' : 'n');
-        if (flagEnf) flagEnf.value = (tipo === 'enf') ? 's' : (isEnfSessao && !tipo ? 's' : 'n');
-        if (auditorMed) auditorMed.value = (tipo === 'med') ? userId : '';
-        if (auditorEnf) auditorEnf.value = (tipo === 'enf') ? userId : '';
+        if (flagMed) flagMed.value = (effectiveTipo === 'med') ? 's' : 'n';
+        if (flagEnf) flagEnf.value = (effectiveTipo === 'enf') ? 's' : 'n';
+        if (auditorMed) auditorMed.value = (effectiveTipo === 'med') ? effectiveUserId : '';
+        if (auditorEnf) auditorEnf.value = (effectiveTipo === 'enf') ? effectiveUserId : '';
     }
 
     function resetToSession() {
-        applySelection(sessionId, '');
-        if (!isMedSessao && flagMed) flagMed.value = 'n';
-        if (!isEnfSessao && flagEnf) flagEnf.value = 'n';
+        applySelection(sessionId, isMedSessao ? 'med' : (isEnfSessao ? 'enf' : ''));
     }
 
     function syncCadastroCentral() {

@@ -735,12 +735,41 @@ if ($type === "create") {
 
         // VISITA inicial (#1) automática
         $visita = new visita();
+        $cargoSessaoVisita = (string)($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
+        $cargoSessaoVisitaNorm = mb_strtolower(str_replace([' ', '-'], '_', $cargoSessaoVisita), 'UTF-8');
+        $isMedSessaoVisita = strpos($cargoSessaoVisitaNorm, 'med') === 0;
+        $isEnfSessaoVisita = strpos($cargoSessaoVisitaNorm, 'enf') === 0;
+        $resolvedVisitaUsuario = $fk_usuario_int ?: ((int)($_SESSION['id_usuario'] ?? 0) ?: null);
+        $resolvedVisitaMed = trim((string)$visita_auditor_prof_med);
+        $resolvedVisitaEnf = trim((string)$visita_auditor_prof_enf);
+
+        if ($resolvedVisitaMed !== '') {
+            $visita_med_int = 's';
+            $visita_enf_int = 'n';
+            $resolvedVisitaEnf = '';
+        } elseif ($resolvedVisitaEnf !== '') {
+            $visita_med_int = 'n';
+            $visita_enf_int = 's';
+        } elseif ($resolvedVisitaUsuario) {
+            if ($isMedSessaoVisita) {
+                $resolvedVisitaMed = (string)$resolvedVisitaUsuario;
+                $resolvedVisitaEnf = '';
+                $visita_med_int = 's';
+                $visita_enf_int = 'n';
+            } elseif ($isEnfSessaoVisita) {
+                $resolvedVisitaMed = '';
+                $resolvedVisitaEnf = (string)$resolvedVisitaUsuario;
+                $visita_med_int = 'n';
+                $visita_enf_int = 's';
+            }
+        }
+
         $visita->fk_internacao_vis = $lastId; // [FK:$lastId]
-        $visita->fk_usuario_vis = $fk_usuario_int ?: ((int)($_SESSION['id_usuario'] ?? 0) ?: null);
+        $visita->fk_usuario_vis = $resolvedVisitaUsuario;
         $visita->data_visita_vis = $data_visita_int ?: date('Y-m-d H:i:s');
         $visita->usuario_create = $usuario_create_int ?: ($_SESSION['email_user'] ?? 'sistema');
-        $visita->visita_auditor_prof_med = $visita_auditor_prof_med ?: '';
-        $visita->visita_auditor_prof_enf = $visita_auditor_prof_enf ?: '';
+        $visita->visita_auditor_prof_med = $resolvedVisitaMed;
+        $visita->visita_auditor_prof_enf = $resolvedVisitaEnf;
         $visita->visita_med_vis = $visita_med_int ?: 'n';
         $visita->visita_enf_vis = $visita_enf_int ?: 'n';
         $visita->visita_no_vis = 1;

@@ -51,6 +51,51 @@ function fullcareResolveUserId(PDO $conn, ?int ...$candidates): ?int
 
     return null;
 }
+
+function fullcareNormalizeVisitResponsible(array $payload): array
+{
+    $cargoSessao = (string)($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
+    $cargoNorm = mb_strtolower(str_replace([' ', '-'], '_', $cargoSessao), 'UTF-8');
+    $isMedSessao = strpos($cargoNorm, 'med') === 0;
+    $isEnfSessao = strpos($cargoNorm, 'enf') === 0;
+
+    $resolvedUsuarioVis = (int)($payload['fk_usuario_vis'] ?? 0);
+    $auditorMed = trim((string)($payload['visita_auditor_prof_med'] ?? ''));
+    $auditorEnf = trim((string)($payload['visita_auditor_prof_enf'] ?? ''));
+
+    if ($auditorMed !== '') {
+        $payload['visita_med_vis'] = 's';
+        $payload['visita_enf_vis'] = 'n';
+        if ($auditorEnf !== '') {
+            $payload['visita_auditor_prof_enf'] = '';
+        }
+        return $payload;
+    }
+
+    if ($auditorEnf !== '') {
+        $payload['visita_med_vis'] = 'n';
+        $payload['visita_enf_vis'] = 's';
+        return $payload;
+    }
+
+    if ($resolvedUsuarioVis > 0 && $isMedSessao) {
+        $payload['visita_auditor_prof_med'] = (string)$resolvedUsuarioVis;
+        $payload['visita_auditor_prof_enf'] = '';
+        $payload['visita_med_vis'] = 's';
+        $payload['visita_enf_vis'] = 'n';
+        return $payload;
+    }
+
+    if ($resolvedUsuarioVis > 0 && $isEnfSessao) {
+        $payload['visita_auditor_prof_med'] = '';
+        $payload['visita_auditor_prof_enf'] = (string)$resolvedUsuarioVis;
+        $payload['visita_med_vis'] = 'n';
+        $payload['visita_enf_vis'] = 's';
+        return $payload;
+    }
+
+    return $payload;
+}
 function fullcareNormalizeNegotiationAcomodacao(?string $value): string
 {
     $value = trim((string)$value);
@@ -747,6 +792,18 @@ if ($type === "create") {
     $fk_int_visita               = toIntOrNull($_POST['fk_int_visita'] ?? null); // você já envia "próximo id" no form
     $fk_usuario_neg_form         = toIntOrNull($_POST['fk_usuario_neg'] ?? null);
     $resolvedUsuarioVis          = fullcareResolveUserId($conn, $fk_usuario_vis);
+    [
+        'visita_auditor_prof_med' => $visita_auditor_prof_med,
+        'visita_auditor_prof_enf' => $visita_auditor_prof_enf,
+        'visita_med_vis' => $visita_med_vis,
+        'visita_enf_vis' => $visita_enf_vis,
+    ] = fullcareNormalizeVisitResponsible([
+        'fk_usuario_vis' => $resolvedUsuarioVis,
+        'visita_auditor_prof_med' => $visita_auditor_prof_med,
+        'visita_auditor_prof_enf' => $visita_auditor_prof_enf,
+        'visita_med_vis' => $visita_med_vis,
+        'visita_enf_vis' => $visita_enf_vis,
+    ]);
     $resolvedUsuarioNeg          = fullcareResolveUserId($conn, $fk_usuario_neg_form, $resolvedUsuarioVis);
 
     // ------------------- Sanidade mínima ------------------------------

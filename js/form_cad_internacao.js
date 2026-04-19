@@ -1010,6 +1010,11 @@ document.addEventListener("DOMContentLoaded", function() {
 function mirrorVisitMedFromFk() {
     const fk = document.getElementById('fk_usuario_int')?.value || '';
     const tipo = document.getElementById('resp_tipo')?.value || '';
+    const sessionId = config.idSessao || '';
+    const cargoSessaoNorm = String(config.cargoSessao || '').toLowerCase().replace(/[\s-]+/g, '_');
+    const sessionTipo = cargoSessaoNorm.indexOf('med') === 0 ? 'med' : (cargoSessaoNorm.indexOf('enf') === 0 ? 'enf' : '');
+    const effectiveTipo = tipo || sessionTipo;
+    const effectiveFk = fk || sessionId;
     const medHidden = document.getElementById('visita_auditor_prof_med');
     const enfHidden = document.getElementById('visita_auditor_prof_enf');
     const updateGroup = (selector) => {
@@ -1018,10 +1023,10 @@ function mirrorVisitMedFromFk() {
         });
     };
     if (medHidden) {
-        medHidden.value = (tipo === 'med') ? fk : '';
+        medHidden.value = (effectiveTipo === 'med') ? effectiveFk : '';
     }
     if (enfHidden) {
-        enfHidden.value = (tipo === 'enf') ? fk : '';
+        enfHidden.value = (effectiveTipo === 'enf') ? effectiveFk : '';
     }
     updateGroup('#fk_usuario_neg');
     updateGroup('#fk_usuario_tuss');
@@ -1185,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fkUsuario.value = idSessao || '';
         if (flgMed) flgMed.value = isMedSessao ? 's' : 'n';
         if (flgEnf) flgEnf.value = isEnfSessao ? 's' : 'n';
-        if (emailMed) emailMed.value = ''; // será setado por mirrorVisitMedFromFk
+        if (emailMed) emailMed.value = '';
         if (emailEnf) emailEnf.value = '';
         mirrorVisitMedFromFk();
     }
