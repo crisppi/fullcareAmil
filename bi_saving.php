@@ -69,7 +69,8 @@ $sqlHosp = "
     SELECT
         COALESCE(h.nome_hosp, 'Sem hospital') AS hospital,
         SUM({$savingExpr}) AS total_saving,
-        COUNT(DISTINCT ng.id_negociacao) AS total_registros
+        COUNT(DISTINCT ng.id_negociacao) AS total_registros,
+        SUM(COALESCE(ng.qtd, 0)) AS total_qtd
     FROM tb_negociacao ng
     INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
     LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
@@ -116,6 +117,7 @@ $savingMensal = array_values($savingMensalMap);
 $labelsHosp = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', $hospRows);
 $savingHosp = array_map(fn($r) => (float)$r['total_saving'], $hospRows);
 $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
+$qtdDiariasHosp = array_map(fn($r) => (int)($r['total_qtd'] ?? 0), $hospRows);
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
@@ -192,6 +194,10 @@ $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
         <div class="bi-chart ie-chart-sm"><canvas id="chartQtdeHospital"></canvas></div>
     </div>
     <div class="bi-panel">
+        <h3>Quantidade de diárias trocadas por hospital</h3>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartDiariasHospital"></canvas></div>
+    </div>
+    <div class="bi-panel">
         <h3>Evolução mensal do saving (ano completo)</h3>
         <div class="bi-chart ie-chart-md"><canvas id="chartSavingEvolucao"></canvas></div>
     </div>
@@ -201,6 +207,7 @@ $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
 const labelsHosp = <?= json_encode($labelsHosp) ?>;
 const savingHosp = <?= json_encode($savingHosp) ?>;
 const countHosp = <?= json_encode($countHosp) ?>;
+const qtdDiariasHosp = <?= json_encode($qtdDiariasHosp) ?>;
 const labelsMes = <?= json_encode($labelsMes) ?>;
 const savingMensal = <?= json_encode($savingMensal) ?>;
 
@@ -338,6 +345,22 @@ barChart(document.getElementById('chartSavingHospital'), labelsHosp, savingHosp,
 new Chart(document.getElementById('chartQtdeHospital'), {
     type: 'bar',
     data: { labels: labelsHosp, datasets: [{ data: countHosp, backgroundColor: 'rgba(208, 113, 176, 0.7)', isMoney: false }] },
+    plugins: [biValueLabelPlugin],
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 24
+            }
+        },
+        legend: { display: false },
+        scales: window.biChartScales ? window.biChartScales() : undefined
+    }
+});
+new Chart(document.getElementById('chartDiariasHospital'), {
+    type: 'bar',
+    data: { labels: labelsHosp, datasets: [{ data: qtdDiariasHosp, backgroundColor: 'rgba(112, 214, 168, 0.72)', isMoney: false }] },
     plugins: [biValueLabelPlugin],
     options: {
         responsive: true,

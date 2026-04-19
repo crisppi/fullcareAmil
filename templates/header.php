@@ -24,8 +24,8 @@ if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCare|FullConex(?:Aud)?)(
     $BASE_URL = $schemeHeader . '://' . $hostHeader . '/' . trim((string)$mBaseApp[1], '/') . '/';
 }
 
-// Caminho default
-$defaultFoto = $BASE_URL . 'img/user-default.png';
+// Caminho default da foto do usuario
+$defaultFoto = $BASE_URL . 'uploads/usuarios/default-user.jpeg';
 
 // error_reporting(E_ALL);
 
@@ -411,6 +411,17 @@ if (!empty($sessionIdUsuario)) {
 
         #search-results-dropdown .dropdown-item small {
             color: #5c5c5c;
+        }
+
+        .account-user-trigger::after {
+            display: none !important;
+        }
+
+        .account-user-caret {
+            font-size: 0.9rem;
+            margin-left: 6px;
+            color: #6b7280;
+            vertical-align: middle;
         }
 
         @media (max-width: 991.98px) {
@@ -1044,13 +1055,10 @@ if (!empty($sessionIdUsuario)) {
                     <div class="account-item clearfix js-item-menu" style="margin-right:0">
                         <div class="image" style="margin-top:15px">
                             <?php
-                            // imagem padrão
-                            $defaultFoto = $BASE_URL . 'uploads/usuarios/default-user.jpeg';
-
-                            // arquivo da sessão (sanitizado) e checagem no filesystem
+                            // arquivo da sessão (sanitizado) e checagem no filesystem real
                             $sessFoto  = $_SESSION['foto_usuario'] ?? '';
                             $fileName  = $sessFoto ? basename($sessFoto) : '';
-                            $fsPath    = __DIR__ . '/uploads/usuarios/' . $fileName;
+                            $fsPath    = __DIR__ . '/../uploads/usuarios/' . $fileName;
                             $urlFoto   = ($fileName && is_file($fsPath))
                                 ? ($BASE_URL . 'uploads/usuarios/' . $fileName)
                                 : $defaultFoto;
@@ -1059,7 +1067,10 @@ if (!empty($sessionIdUsuario)) {
                                 onerror="this.onerror=null;this.src='<?= $defaultFoto ?>';" />
                         </div>
                         <div class="content">
-                            <a class="js-acc-btn" href="#"><?php print $sessionUsuario ?></a>
+                            <a class="js-acc-btn account-user-trigger" href="#">
+                                <?php print $sessionUsuario ?>
+                                <i class="bi bi-chevron-down account-user-caret" aria-hidden="true"></i>
+                            </a>
                         </div>
                         <div class="account-dropdown js-dropdown">
 

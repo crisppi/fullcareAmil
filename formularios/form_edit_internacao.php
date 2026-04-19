@@ -320,6 +320,7 @@
     }));
     $activeEditSection = strtolower(trim((string)($_GET['section'] ?? '')));
     $forceProrrogSection = ($activeEditSection === 'prorrog');
+    $forceNegocSection = ($activeEditSection === 'negoc');
     $hasNegocReg = !empty(array_filter($negociacoesInt ?? [], static function ($row) {
         $row = (array)$row;
         return trim((string)($row['tipo_negociacao'] ?? '')) !== ''
@@ -852,8 +853,8 @@
                                 <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação<?= savedIndicator($hasProrrogReg, 'Existem dados salvos em Prorrogação') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_prorrog" name="select_prorrog">
                                     <option value="">Selecione</option>
-                                    <option value="s">Sim</option>
-                                    <option value="n" selected>Não</option>
+                                    <option value="s" <?= $forceProrrogSection ? 'selected' : '' ?>>Sim</option>
+                                    <option value="n" <?= !$forceProrrogSection ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
@@ -876,8 +877,8 @@
                                 <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações<?= savedIndicator($hasNegocReg, 'Existem dados salvos em Negociações') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
                                     <option value="">Selecione</option>
-                                    <option value="s">Sim</option>
-                                    <option value="n" selected>Não</option>
+                                    <option value="s" <?= $forceNegocSection ? 'selected' : '' ?>>Sim</option>
+                                    <option value="n" <?= !$forceNegocSection ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
                         </div>
@@ -1207,9 +1208,11 @@
                     <?php include_once('formularios/form_edit_internacao_gestao2.php'); ?>
                     <?php include_once('formularios/form_edit_internacao_uti2.php'); ?>
                     <div id="container-prorrog" style="display:none; margin:5px;">
+                        <div id="edit-prorrog-focus"></div>
                         <?php include_once('formularios/form_edit_internacao_prorrog2.php'); ?>
                     </div>
                     <div id="container-negoc" style="display:none; margin:5px;">
+                        <div id="edit-negoc-focus"></div>
                         <?php include_once('formularios/form_edit_internacao_negoc2.php'); ?>
                     </div>
                 </div>
@@ -1284,6 +1287,53 @@
             setupDetalhesToggle();
 
             setupToggle('select_uti', 'container-uti');
+
+            var activeEditSection = <?= json_encode($activeEditSection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+            if (activeEditSection === 'negoc') {
+                var selectNegoc = document.getElementById('select_negoc');
+                var containerNegoc = document.getElementById('container-negoc');
+                if (selectNegoc) {
+                    selectNegoc.value = 's';
+                }
+                if (containerNegoc) {
+                    containerNegoc.style.display = 'block';
+                }
+
+                window.requestAnimationFrame(function() {
+                    window.setTimeout(function() {
+                        var target = document.getElementById('edit-negoc-focus') || containerNegoc;
+                        if (!target) return;
+                        target.scrollIntoView({
+                            behavior: 'auto',
+                            block: 'center',
+                            inline: 'nearest'
+                        });
+                    }, 140);
+                });
+            }
+
+            if (activeEditSection === 'prorrog') {
+                var selectProrrog = document.getElementById('select_prorrog');
+                var containerProrrog = document.getElementById('container-prorrog');
+                if (selectProrrog) {
+                    selectProrrog.value = 's';
+                }
+                if (containerProrrog) {
+                    containerProrrog.style.display = 'block';
+                }
+
+                window.requestAnimationFrame(function() {
+                    window.setTimeout(function() {
+                        var target = document.getElementById('edit-prorrog-focus') || containerProrrog;
+                        if (!target) return;
+                        target.scrollIntoView({
+                            behavior: 'auto',
+                            block: 'center',
+                            inline: 'nearest'
+                        });
+                    }, 140);
+                });
+            }
         });
     </script>
     <script>

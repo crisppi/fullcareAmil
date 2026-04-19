@@ -42,6 +42,16 @@ $auditorExpr = "
     END
 ";
 
+$auditorIdExpr = "
+    CASE
+        WHEN NULLIF(v.visita_auditor_prof_med,'') IS NOT NULL
+            THEN CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
+        WHEN NULLIF(v.visita_auditor_prof_enf,'') IS NOT NULL
+            THEN CAST(NULLIF(v.visita_auditor_prof_enf,'') AS UNSIGNED)
+        ELSE COALESCE(v.fk_usuario_vis, 0)
+    END
+";
+
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
     ->fetchAll(PDO::FETCH_ASSOC);
 
@@ -80,6 +90,7 @@ if ($profissional === 'medico') {
 
 $sql = "
     SELECT
+        {$auditorIdExpr} AS auditor_id,
         {$auditorExpr} AS auditor_nome,
         h.id_hospital,
         h.nome_hosp,
@@ -100,16 +111,19 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $matrix = [];
 $totals = [];
+$auditorLabels = [];
 foreach ($rows as $row) {
     $aud = $row['auditor_nome'] ?? 'Sem informacoes';
+    $auditorId = (int)($row['auditor_id'] ?? 0);
     $hid = (int)($row['id_hospital'] ?? 0);
     $total = (int)($row['total'] ?? 0);
-    if (!isset($matrix[$aud])) {
-        $matrix[$aud] = [];
-        $totals[$aud] = 0;
+    if (!isset($matrix[$auditorId])) {
+        $matrix[$auditorId] = [];
+        $totals[$auditorId] = 0;
     }
-    $matrix[$aud][$hid] = $total;
-    $totals[$aud] += $total;
+    $matrix[$auditorId][$hid] = $total;
+    $totals[$auditorId] += $total;
+    $auditorLabels[$auditorId] = $aud;
 }
 
 $colTotals = [];
@@ -117,7 +131,7 @@ $grandTotal = 0;
 foreach ($hospitais as $h) {
     $colTotals[$h['id_hospital']] = 0;
 }
-foreach ($matrix as $aud => $data) {
+foreach ($matrix as $auditorId => $data) {
     foreach ($data as $hid => $total) {
         $colTotals[$hid] = ($colTotals[$hid] ?? 0) + $total;
         $grandTotal += $total;
@@ -129,6 +143,115 @@ $hospitais = array_values(array_filter($hospitais, static function ($h) use ($co
     $hid = (int)($h['id_hospital'] ?? 0);
     return (int)($colTotals[$hid] ?? 0) > 0;
 }));
+
+$negWhere = "
+    COALESCE(ng.fk_usuario_neg, 0) > 0
+    AND UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'
+";
+$negParams = [];
+if (!empty($ano)) {
+    $negWhere .= " AND YEAR(ng.data_inicio_neg) = :ano";
+    $negParams[':ano'] = (int)$ano;
+}
+if (!empty($mes)) {
+    $negWhere .= " AND MONTH(ng.data_inicio_neg) = :mes";
+    $negParams[':mes'] = (int)$mes;
+}
+if (!empty($hospitalId)) {
+    $negWhere .= " AND i.fk_hospital_int = :hospital_id";
+    $negParams[':hospital_id'] = (int)$hospitalId;
+}
+if (!empty($auditorNome)) {
+    $negWhere .= " AND {$auditorExpr} = :auditor_nome";
+    $negParams[':auditor_nome'] = $auditorNome;
+}
+if ($profissional === 'medico') {
+    $negWhere .= " AND (
+        COALESCE(NULLIF(u_neg.cargo_user, ''), '') LIKE '%med%'
+        OR {$auditorExpr} LIKE '%(Medico)'
+    )";
+} elseif ($profissional === 'enfermeiro') {
+    $negWhere .= " AND (
+        COALESCE(NULLIF(u_neg.cargo_user, ''), '') LIKE '%enf%'
+        OR {$auditorExpr} LIKE '%(Enfermagem)'
+    )";
+}
+
+$negSql = "
+    SELECT
+        COALESCE(ng.fk_usuario_neg, 0) AS auditor_id,
+        COALESCE({$auditorExpr}, COALESCE(u_neg.usuario_user, 'Sem informacoes')) AS auditor_nome,
+        h.id_hospital,
+        COUNT(DISTINCT ng.id_negociacao) AS total
+    FROM tb_negociacao ng
+    LEFT JOIN tb_user u_neg ON u_neg.id_usuario = ng.fk_usuario_neg
+    LEFT JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+    LEFT JOIN tb_visita v ON v.id_visita = ng.fk_visita_neg
+    LEFT JOIN tb_user u ON u.id_usuario = v.fk_usuario_vis
+    LEFT JOIN tb_user u_med ON u_med.id_usuario = CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
+    LEFT JOIN tb_user u_enf ON u_enf.id_usuario = CAST(NULLIF(v.visita_auditor_prof_enf,'') AS UNSIGNED)
+    WHERE {$negWhere}
+    GROUP BY auditor_id, auditor_nome, h.id_hospital
+    ORDER BY auditor_nome
+";
+$negStmt = $conn->prepare($negSql);
+$negStmt->execute($negParams);
+$negRows = $negStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$negMatrix = [];
+$negTotals = [];
+$negColTotals = [];
+$negGrandTotal = 0;
+foreach ($hospitais as $h) {
+    $negColTotals[(int)$h['id_hospital']] = 0;
+}
+foreach ($negRows as $row) {
+    $auditorId = (int)($row['auditor_id'] ?? 0);
+    $hid = (int)($row['id_hospital'] ?? 0);
+    $total = (int)($row['total'] ?? 0);
+    if (!isset($negMatrix[$auditorId])) {
+        $negMatrix[$auditorId] = [];
+        $negTotals[$auditorId] = 0;
+    }
+    $negMatrix[$auditorId][$hid] = $total;
+    $negTotals[$auditorId] += $total;
+    if (empty($auditorLabels[$auditorId])) {
+        $auditorLabels[$auditorId] = (string)($row['auditor_nome'] ?? 'Sem informacoes');
+    }
+    $negColTotals[$hid] = ($negColTotals[$hid] ?? 0) + $total;
+    $negGrandTotal += $total;
+}
+
+$allAuditorIds = array_values(array_unique(array_merge(array_keys($matrix), array_keys($negMatrix))));
+usort($allAuditorIds, static function ($a, $b) use ($auditorLabels): int {
+    return strcasecmp((string)($auditorLabels[$a] ?? ''), (string)($auditorLabels[$b] ?? ''));
+});
+
+$ratioRows = [];
+foreach ($allAuditorIds as $auditorId) {
+    $visitasTotal = (int)($totals[$auditorId] ?? 0);
+    $negociacoesTotal = (int)($negTotals[$auditorId] ?? 0);
+    $ratioRows[$auditorId] = $visitasTotal > 0 ? (($negociacoesTotal / $visitasTotal) * 100) : 0.0;
+}
+$ratioByHospital = [];
+foreach ($allAuditorIds as $auditorId) {
+    $ratioByHospital[$auditorId] = [];
+    foreach ($hospitais as $h) {
+        $hid = (int)($h['id_hospital'] ?? 0);
+        $visitasHospital = (int)($matrix[$auditorId][$hid] ?? 0);
+        $negociacoesHospital = (int)($negMatrix[$auditorId][$hid] ?? 0);
+        $ratioByHospital[$auditorId][$hid] = $visitasHospital > 0 ? (($negociacoesHospital / $visitasHospital) * 100) : 0.0;
+    }
+}
+$ratioColTotals = [];
+foreach ($hospitais as $h) {
+    $hid = (int)($h['id_hospital'] ?? 0);
+    $visitasHospitalTotal = (int)($colTotals[$hid] ?? 0);
+    $negociacoesHospitalTotal = (int)($negColTotals[$hid] ?? 0);
+    $ratioColTotals[$hid] = $visitasHospitalTotal > 0 ? (($negociacoesHospitalTotal / $visitasHospitalTotal) * 100) : 0.0;
+}
+$ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
@@ -214,14 +337,15 @@ $hospitais = array_values(array_filter($hospitais, static function ($h) use ($co
                             <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
                         </tr>
                     <?php else: ?>
-                        <?php foreach ($matrix as $aud => $data): ?>
+                        <?php foreach ($allAuditorIds as $auditorId): ?>
+                            <?php $data = $matrix[$auditorId] ?? []; ?>
                             <tr>
-                                <td><?= e($aud) ?></td>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
                                 <?php foreach ($hospitais as $h): ?>
                                     <?php $val = $data[$h['id_hospital']] ?? 0; ?>
                                     <td><?= (int)$val ?></td>
                                 <?php endforeach; ?>
-                                <td><?= (int)($totals[$aud] ?? 0) ?></td>
+                                <td><?= (int)($totals[$auditorId] ?? 0) ?></td>
                             </tr>
                         <?php endforeach; ?>
                         <tr>
@@ -230,6 +354,89 @@ $hospitais = array_values(array_filter($hospitais, static function ($h) use ($co
                                 <td><?= (int)($colTotals[$h['id_hospital']] ?? 0) ?></td>
                             <?php endforeach; ?>
                             <td><?= (int)$grandTotal ?></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bi-panel" style="margin-top:16px;">
+        <h3 class="text-center" style="margin-bottom:12px;">Quantidade de Negociações por Usuário</h3>
+        <div class="table-responsive">
+            <table class="bi-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <?php foreach ($hospitais as $h): ?>
+                            <th><?= e($h['nome_hosp']) ?></th>
+                        <?php endforeach; ?>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!$allAuditorIds): ?>
+                        <tr>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($allAuditorIds as $auditorId): ?>
+                            <?php $data = $negMatrix[$auditorId] ?? []; ?>
+                            <tr>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
+                                <?php foreach ($hospitais as $h): ?>
+                                    <td><?= (int)($data[$h['id_hospital']] ?? 0) ?></td>
+                                <?php endforeach; ?>
+                                <td><?= (int)($negTotals[$auditorId] ?? 0) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr>
+                            <td>Total</td>
+                            <?php foreach ($hospitais as $h): ?>
+                                <td><?= (int)($negColTotals[$h['id_hospital']] ?? 0) ?></td>
+                            <?php endforeach; ?>
+                            <td><?= (int)$negGrandTotal ?></td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bi-panel" style="margin-top:16px;">
+        <h3 class="text-center" style="margin-bottom:12px;">Percentual de Negociações sobre Visitas</h3>
+        <div class="table-responsive">
+            <table class="bi-table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <?php foreach ($hospitais as $h): ?>
+                            <th><?= e($h['nome_hosp']) ?></th>
+                        <?php endforeach; ?>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!$allAuditorIds): ?>
+                        <tr>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($allAuditorIds as $auditorId): ?>
+                            <tr>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
+                                <?php foreach ($hospitais as $h): ?>
+                                    <td><?= number_format((float)($ratioByHospital[$auditorId][$h['id_hospital']] ?? 0), 1, ',', '.') ?>%</td>
+                                <?php endforeach; ?>
+                                <td><?= number_format((float)($ratioRows[$auditorId] ?? 0), 1, ',', '.') ?>%</td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr>
+                            <td>Total</td>
+                            <?php foreach ($hospitais as $h): ?>
+                                <td><?= number_format((float)($ratioColTotals[$h['id_hospital']] ?? 0), 1, ',', '.') ?>%</td>
+                            <?php endforeach; ?>
+                            <td><?= number_format($ratioGrand, 1, ',', '.') ?>%</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

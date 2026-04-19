@@ -193,7 +193,7 @@ if (!in_array($currentPage, $flatPages, true) && !$matchedByHref && !($ieSlug !=
 
 <style>
 :root {
-    --bi-sidebar-top: 92px;
+    --bi-sidebar-top: 76px;
     --bi-sidebar-width: 308px;
     --bi-sidebar-collapsed-width: 84px;
 }
@@ -209,8 +209,8 @@ body.bi-theme.bi-nav-collapsed {
 
 .bi-side-toggle {
     position: fixed;
-    left: calc(var(--bi-sidebar-width) - 28px);
-    top: calc(var(--bi-sidebar-top) + 8px);
+    left: calc(var(--bi-sidebar-width) - 40px);
+    top: calc(var(--bi-sidebar-top) + 4px);
     z-index: 1202;
     width: 36px;
     height: 36px;
@@ -223,7 +223,7 @@ body.bi-theme.bi-nav-collapsed {
 }
 
 body.bi-theme.bi-nav-collapsed .bi-side-toggle {
-    left: calc(var(--bi-sidebar-collapsed-width) - 28px);
+    left: calc((var(--bi-sidebar-collapsed-width) / 2) - 20px);
 }
 
 .bi-side-toggle:hover {
@@ -455,8 +455,8 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-group summary span {
 }
 
 body.bi-theme.bi-nav-collapsed .bi-sidebar-head {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 body.bi-theme.bi-nav-collapsed .bi-sidebar-group {
@@ -474,8 +474,8 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-dot {
 }
 
 body.bi-theme.bi-nav-collapsed .bi-sidebar-body {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .bi-mobile-backdrop {
@@ -490,7 +490,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-body {
 
     .bi-side-toggle {
         left: 14px !important;
-        top: calc(var(--bi-sidebar-top) + 8px);
+        top: calc(var(--bi-sidebar-top) + 4px);
     }
 
     .bi-sidebar-shell {

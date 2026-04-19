@@ -46,7 +46,14 @@ function pick_visit_user(array $r)
 function pick_visit_text(array $r)
 {
     foreach (['rel_visita', 'rel_visita_vis', 'rel_vis', 'relatorio', 'observacao', 'obs', 'descricao'] as $k) {
-        if (!empty($r[$k])) return $r[$k];
+        if (empty($r[$k])) {
+            continue;
+        }
+        $text = trim((string)$r[$k]);
+        if (preg_match('/^(Importado do OCR do PDF|Complementado via OCR)/i', $text)) {
+            continue;
+        }
+        return $text;
     }
     return '';
 }

@@ -244,7 +244,14 @@ function pick_visit_time($row)
 function pick_visit_text($row)
 {
     foreach (['rel_visita', 'rel_visita_vis', 'rel_vis', 'relatorio', 'observacao', 'obs', 'descricao'] as $k) {
-        if (!empty($row[$k])) return $row[$k];
+        if (empty($row[$k])) {
+            continue;
+        }
+        $text = trim((string)$row[$k]);
+        if (preg_match('/^(Importado do OCR do PDF|Complementado via OCR)/i', $text)) {
+            continue;
+        }
+        return $text;
     }
     return '';
 }

@@ -86,6 +86,9 @@ try {
   $payload = array_map(function($r) use ($fmtDateTime) {
     // resumo curto do relatório
     $rel = trim((string)($r['rel_visita_vis'] ?? ''));
+    if (preg_match('/^(Importado do OCR do PDF|Complementado via OCR)/i', $rel)) {
+      $rel = '';
+    }
     $resumo = mb_substr(preg_replace('/\s+/', ' ', $rel), 0, 120);
     if (mb_strlen($rel) > 120) $resumo .= '…';
 
