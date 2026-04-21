@@ -4,6 +4,8 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../php-error.log');
 error_reporting(E_ALL);
 
+ob_start();
+require_once(__DIR__ . "/../templates/header.php");
 require_once(__DIR__ . "/../dao/internacaoDao.php");
 require_once(__DIR__ . "/../models/pagination.php");
 
