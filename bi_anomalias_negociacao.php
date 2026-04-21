@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Padrao de Negociacao Suspeito';
+$pageTitle = 'Padrao de Negociacao';
 $pageSlug = 'bi/anomalias-negociacao';
 require_once("bi_rede_bootstrap.php");
 
@@ -54,7 +54,7 @@ $negociacoes = (int)($summary['negociacoes'] ?? 0);
 $savingTotal = (float)($summary['saving_total'] ?? 0);
 $prorrogacoes = (int)($summary['prorrogacoes'] ?? 0);
 
-$rowsStmt = $conn->prepare("\n    SELECT\n        h.nome_hosp AS hospital,\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM({$savingExpr}) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))\n    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital\n    HAVING h.id_hospital IS NOT NULL\n    ORDER BY negociacoes DESC, saving_total DESC\n    LIMIT 10\n");
+$rowsStmt = $conn->prepare("\n    SELECT\n        h.nome_hosp AS hospital,\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        COUNT(DISTINCT ng.id_negociacao) AS negociacoes,\n        SUM({$savingExpr}) AS saving_total,\n        COUNT(DISTINCT pr.id_prorrogacao) AS prorrogacoes\n    FROM tb_internacao i\n    LEFT JOIN tb_negociacao ng ON ng.fk_id_int = i.id_internacao\n    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao\n    LEFT JOIN tb_acomodacao aco_de ON aco_de.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_de.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_de) > 0, SUBSTRING_INDEX(ng.troca_de, '-', -1), ng.troca_de)))\n    LEFT JOIN tb_acomodacao aco_para ON aco_para.fk_hospital = i.fk_hospital_int\n        AND LOWER(TRIM(aco_para.acomodacao_aco)) = LOWER(TRIM(IF(LOCATE('-', ng.troca_para) > 0, SUBSTRING_INDEX(ng.troca_para, '-', -1), ng.troca_para)))\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital, h.nome_hosp\n    HAVING h.id_hospital IS NOT NULL\n    ORDER BY negociacoes DESC, saving_total DESC\n    LIMIT 10\n");
 biBindParams($rowsStmt, $internParams);
 $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
@@ -67,7 +67,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Padrao de Negociacao Suspeito</h1>
+            <h1 class="bi-title">Padrao de Negociacao</h1>
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Hospitais com excesso de negociacoes ou prorrogações.</div>
         </div>
         <div class="bi-header-actions">

@@ -153,7 +153,7 @@ $navGroups = [
         'key' => 'anomalias',
         'items' => [
             ['label' => 'Outliers de Permanência', 'href' => 'bi/anomalias-permanencia'],
-            ['label' => 'Negociações Suspeitas', 'href' => 'bi/anomalias-negociacao'],
+            ['label' => 'Padrão de Negociação', 'href' => 'bi/anomalias-negociacao'],
             ['label' => 'OPME sem Justificativa', 'href' => 'bi/anomalias-opme'],
         ],
     ],

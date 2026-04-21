@@ -106,7 +106,7 @@ $biSections = [
     ],
     'Anomalias & Fraude' => [
         ['label' => 'Outliers de Permanência', 'href' => 'bi/anomalias-permanencia', 'file' => 'AnomaliasPermanenciaBI.php'],
-        ['label' => 'Negociações Suspeitas', 'href' => 'bi/anomalias-negociacao', 'file' => 'AnomaliasNegociacaoBI.php'],
+        ['label' => 'Padrão de Negociação', 'href' => 'bi/anomalias-negociacao', 'file' => 'AnomaliasNegociacaoBI.php'],
         ['label' => 'OPME sem Justificativa', 'href' => 'bi/anomalias-opme', 'file' => 'AnomaliasOPMEBI.php'],
     ],
     'Conformidade & Auditoria' => [
