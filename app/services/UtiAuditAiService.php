@@ -9,7 +9,7 @@ class UtiAuditAiService
     public function __construct(?string $apiKey = null, ?string $apiUrl = null, ?string $model = null)
     {
         $this->loadEnvFile(dirname(__DIR__, 2) . '/.env');
-        $this->apiKey = trim((string)($apiKey ?: getenv('OPENAI_API_KEY') ?: ($_ENV['OPENAI_API_KEY'] ?? '')));
+        $this->apiKey = trim((string)($apiKey ?: getenv('MINHA_API_TOKEN') ?: ($_ENV['MINHA_API_TOKEN'] ?? '') ?: getenv('OPENAI_API_KEY') ?: ($_ENV['OPENAI_API_KEY'] ?? '')));
         $this->apiUrl = trim((string)($apiUrl ?: getenv('OPENAI_API_URL') ?: 'https://api.openai.com/v1/responses'));
         $this->model = trim((string)($model ?: getenv('OPENAI_MODEL') ?: 'gpt-4.1-mini'));
     }
@@ -24,7 +24,7 @@ class UtiAuditAiService
             throw new RuntimeException('Extensão cURL não disponível no servidor.');
         }
         if ($this->apiKey === '') {
-            throw new RuntimeException('OPENAI_API_KEY não configurada no ambiente.');
+            throw new RuntimeException('MINHA_API_TOKEN não configurada no ambiente.');
         }
 
         $prompt = $this->buildPrompt($report);
@@ -129,10 +129,26 @@ class UtiAuditAiService
             throw new RuntimeException('Falha de conexão com o serviço de IA.');
         }
         if ($httpCode < 200 || $httpCode >= 300) {
-            throw new RuntimeException('Serviço de IA indisponível no momento (HTTP ' . $httpCode . ').');
+            $apiMessage = $this->extractErrorMessage((string)$raw);
+            if ($httpCode === 429) {
+                $detail = $apiMessage !== '' ? ' Detalhe: ' . $apiMessage : '';
+                throw new RuntimeException('Limite ou cota da API atingido (HTTP 429).' . $detail);
+            }
+            throw new RuntimeException('Serviço de IA indisponível no momento (HTTP ' . $httpCode . ').' . ($apiMessage !== '' ? ' Detalhe: ' . $apiMessage : ''));
         }
 
         return (string)$raw;
+    }
+
+    private function extractErrorMessage(string $raw): string
+    {
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            return '';
+        }
+
+        $message = $decoded['error']['message'] ?? $decoded['message'] ?? '';
+        return trim((string)$message);
     }
 
     private function extractText(array $responseJson): ?string
@@ -243,7 +259,12 @@ class UtiAuditAiService
 
             $key = trim(substr($line, 0, $pos));
             $value = trim(substr($line, $pos + 1));
-            if ($key === '' || getenv($key) !== false) {
+            if ($key === '') {
+                continue;
+            }
+
+            $current = getenv($key);
+            if ($current !== false && trim((string)$current) !== '') {
                 continue;
             }
 

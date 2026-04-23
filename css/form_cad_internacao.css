@@ -660,6 +660,135 @@
             font-size: .8rem;
         }
 
+        .auditoria-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .auditoria-action-btn {
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .parecer-ia-card {
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .parecer-ia-card__header {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 12px;
+            background: #eef2f7;
+            border-bottom: 1px solid #d1d5db;
+        }
+
+        .parecer-ia-card__header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .parecer-ia-toggle {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .parecer-ia-card__body {
+            padding: 12px;
+        }
+
+        .parecer-ia-status {
+            margin: 10px 12px 0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: .88rem;
+        }
+
+        .parecer-ia-status--info {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .parecer-ia-status--success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .parecer-ia-status--error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .parecer-ia-result-head {
+            margin-bottom: 10px;
+        }
+
+        .parecer-ia-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+        }
+
+        .parecer-ia-badge--ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .parecer-ia-badge--bad {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .parecer-ia-badge--neutral {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .parecer-ia-section {
+            margin-top: 10px;
+            color: #1f2937;
+        }
+
+        .parecer-ia-section p,
+        .parecer-ia-section ul {
+            margin: 4px 0 0;
+        }
+
+        .parecer-ia-section ul {
+            padding-left: 18px;
+        }
+
+        .parecer-ia-empty {
+            margin: 0;
+            color: #6b7280;
+        }
+
         .internacao-card__body {
             display: flex;
             flex-direction: column;

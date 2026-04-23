@@ -111,9 +111,9 @@ function gerarNarrativaGerencialIA(array $indicadores, ?string &$erro = null): ?
         $erro = 'Extensão cURL não disponível no servidor.';
         return null;
     }
-    $apiKey = getenv('OPENAI_API_KEY') ?: ($_ENV['OPENAI_API_KEY'] ?? '');
+    $apiKey = getenv('MINHA_API_TOKEN') ?: ($_ENV['MINHA_API_TOKEN'] ?? '') ?: getenv('OPENAI_API_KEY') ?: ($_ENV['OPENAI_API_KEY'] ?? '');
     if (!$apiKey) {
-        $erro = 'OPENAI_API_KEY não configurada no ambiente.';
+        $erro = 'MINHA_API_TOKEN não configurada no ambiente.';
         return null;
     }
 

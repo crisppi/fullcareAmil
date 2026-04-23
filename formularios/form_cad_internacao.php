@@ -788,10 +788,21 @@
                     <p class="internacao-card__eyebrow">Auditoria</p>
                     <!-- título removido conforme solicitado -->
                 </div>
+                <div class="auditoria-actions">
+                    <input type="file" id="pdf-auditoria-input" accept="application/pdf,.pdf" hidden>
+                    <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-auditoria">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        LER PDF
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
+                        <i class="bi bi-cpu"></i>
+                        Executar Prompt UTI
+                    </button>
+                </div>
             </div>
             <div class="internacao-card__body">
                 <div>
-                    <label for="rel_int">Relatório de Auditoria</label>
+                    <label for="rel_int">Relatório da Auditoria</label>
                     <div id="cronicos-relatorio-alert"
                         style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#fff3cd,#ffe3a3);border:1px solid #f0c36d;color:#6a4a00;box-shadow:0 8px 20px rgba(240,195,109,.18);"
                         hidden>
@@ -838,6 +849,21 @@
                     <textarea data-saude-autocomplete="true" style="resize:none" maxlength="5000" rows="2"
                         onclick="aumentarText('programacao_int')" class="form-control" id="programacao_int"
                         name="programacao_int"></textarea>
+                </div>
+
+                <div class="parecer-ia-card">
+                    <div class="parecer-ia-card__header">
+                        <h4>Parecer IA</h4>
+                        <button type="button" class="parecer-ia-toggle" id="btn-toggle-parecer-ia" aria-expanded="false" aria-controls="parecer-ia-body">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div id="parecer-ia-status" class="parecer-ia-status" hidden></div>
+                    <div class="parecer-ia-card__body" id="parecer-ia-body" hidden>
+                        <div id="parecer-ia-content" class="parecer-ia-content">
+                            <p class="parecer-ia-empty">Nenhum parecer gerado.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1010,6 +1036,7 @@
     <script>
         window.hospitalUsuariosMap = <?= json_encode($hospitalUsuariosMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
         window.formInternacaoConfig = Object.assign({}, window.formInternacaoConfig || {}, {
+            baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             prefillPacienteId: <?= $id_paciente_get > 0 ? (int)$id_paciente_get : 'null' ?>,
             idSessao: <?= json_encode((string) $idSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             cargoSessao: <?= json_encode((string) $cargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
@@ -1017,6 +1044,8 @@
     </script>
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js"></script>
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="<?= $BASE_URL ?>js/uti_audit_ai.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function syncAssistClearButtons() {

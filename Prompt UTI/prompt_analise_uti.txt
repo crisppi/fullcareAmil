@@ -1,0 +1,73 @@
+PROMPT PARA AVALIACAO DE PERTINENCIA EM PERMANENCIA CLINICA EM TERAPIA
+INTENSIVA E INTERMEDIARIA - LOC 001 / LOC 002
+
+Objetivo: Aplicar de forma padronizada os criterios UTI (LOC-001), os criterios Semi-UTI
+(LOC-002) e as definicoes de alteracoes clinicas do MCG Health Care como referencias oficiais
+para todas as analises de pertinencia de permanencia em UTI ou Semi-UTI.
+
+PROMPT:
+
+Considerar os seguintes itens de 1 a 9:
+
+1. Leia os 7 anexos inseridos:
+   - Anexo 1 - Diretrizes de Terapia Intensiva
+   - Anexo 2 - Diretrizes de Cuidados Intermediarios
+   - Anexo 3 - DEFINICOES CONFORME MCG HEALTH CARE
+   - Anexo 4 - DEFINICOES CLINICAS
+   - Anexo 5 - Cuidados Paliativos
+   - Anexo 6 - Evento Adverso
+   - Anexo 7 - Siglario
+
+2. Busque no anexo a seguir a identificacao do paciente e me traga:
+   - nome
+   - idade
+   - sexo
+   - marca optica ou MO
+   - pedido
+
+3. Busque no anexo a seguir e me traga somente as informacoes de comorbidades
+   descompensadas e estado clinico do paciente conforme Anexo 4.
+
+4. Busque no anexo a seguir dados sobre cuidados paliativos do paciente e me traga as
+   informacoes conforme Anexo 5.
+
+5. Busque no anexo a seguir a ocorrencia de um ou mais que sugira evento adverso,
+   ocorrido no pronto socorro/pronto atendimento ou durante internacao, e me traga
+   somente os eventos ocorridos conforme Anexo 6.
+
+6. Busque no anexo a seguir e traga somente as informacoes que estao em conformidade
+   com o Anexo 1, Anexo 3 e Anexo 4, e organize da seguinte forma:
+   - Alteracao do estado mental
+   - Alteracoes dos sinais vitais - traga os valores quando houver registro
+   - Instabilidade hemodinamica
+   - Arritmia cardiaca
+   - Hipoxemia ou insuficiencia respiratoria - traga os valores quando houver registro
+   - Alteracoes laboratoriais - traga os valores quando houver registro
+   - Condicoes sistemicas
+   - Necessidade de monitoramento ou cuidados de nivel intermediario
+
+7. Busque no anexo a seguir e traga somente as informacoes que estao em conformidade
+   com o Anexo 2, Anexo 3 e Anexo 4, e organize da seguinte forma:
+   - Alteracao do estado mental
+   - Alteracoes dos sinais vitais
+   - Instabilidade hemodinamica
+   - Arritmia cardiaca
+   - Hipoxemia ou insuficiencia respiratoria
+   - Alteracoes laboratoriais
+   - Condicoes sistemicas
+   - Necessidade de monitoramento ou cuidados de nivel intermediario
+
+8. Analise o item 6 e classifique este paciente em:
+   - "Com criterio de UTI" - quando houver uma ou mais informacao em conformidade
+     com Anexo 1
+   - "Sem criterio de UTI" - quando nao houver qualquer informacao em conformidade
+     com Anexo 1
+
+9. Analise o item 7 e classifique este paciente em:
+   - "Com criterio de Semi-UTI" - quando houver uma ou mais informacao em conformidade
+     com Anexo 2
+   - "Sem criterio de Semi-UTI" - quando nao houver qualquer informacao em conformidade
+     com Anexo 2
+
+Observacao: o texto do item 9 foi completado por analogia ao item 8, pois a captura de tela
+fornecida corta a parte final do item 9.
