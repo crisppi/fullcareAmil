@@ -48,6 +48,20 @@
         return 'parecer-ia-badge parecer-ia-badge--neutral';
     }
 
+    function levelLabel(value) {
+        if (value === 'SEMI_UTI') return 'Semi-UTI';
+        if (value === 'UTI') return 'UTI';
+        if (value === 'APTO') return 'Apto';
+        return 'Indeterminado';
+    }
+
+    function levelClass(value) {
+        if (value === 'UTI') return 'parecer-ia-badge parecer-ia-badge--danger';
+        if (value === 'SEMI_UTI') return 'parecer-ia-badge parecer-ia-badge--warn';
+        if (value === 'APTO') return 'parecer-ia-badge parecer-ia-badge--info';
+        return 'parecer-ia-badge parecer-ia-badge--neutral';
+    }
+
     function readableKey(key) {
         return String(key || '').replace(/_/g, ' ');
     }
@@ -67,14 +81,20 @@
             : '<p class="parecer-ia-empty">Sem pendências documentais apontadas.</p>';
 
         var classificacao = data && data.classificacao ? data.classificacao : 'DADOS_INSUFICIENTES';
+        var nivel = data && data.nivel_recomendado ? data.nivel_recomendado : 'INDETERMINADO';
+        var fraseFinal = data && data.frase_final ? data.frase_final : '';
         content.innerHTML = ''
             + '<div class="parecer-ia-result-head">'
+            + '<div class="parecer-ia-chip-row">'
             + '<span class="' + labelClass(classificacao) + '">' + escapeHtml(classificacao.replace(/_/g, ' ')) + '</span>'
+            + '<span class="' + levelClass(nivel) + '">' + escapeHtml(levelLabel(nivel)) + '</span>'
+            + '</div>'
             + '</div>'
             + '<div class="parecer-ia-section"><strong>Resumo clínico</strong><p>' + escapeHtml(data.resumo_clinico || '-') + '</p></div>'
             + '<div class="parecer-ia-section"><strong>Critérios</strong><ul>' + criterioHtml + '</ul></div>'
             + '<div class="parecer-ia-section"><strong>Justificativa técnica</strong><p>' + escapeHtml(data.justificativa_tecnica || '-') + '</p></div>'
-            + '<div class="parecer-ia-section"><strong>Pendências documentais</strong>' + pendenciasHtml + '</div>';
+            + '<div class="parecer-ia-section"><strong>Pendências documentais</strong>' + pendenciasHtml + '</div>'
+            + '<div class="parecer-ia-final-alert">' + escapeHtml(fraseFinal || 'Parecer IA concluído.') + '</div>';
     }
 
     async function extractPdfText(file) {

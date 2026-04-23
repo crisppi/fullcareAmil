@@ -676,11 +676,57 @@
             font-weight: 700;
         }
 
+        .ia-highlight-box {
+            margin-top: 2px;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid #bfdbfe;
+            background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 48%, #f8fafc 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 14px 30px rgba(37, 99, 235, 0.08);
+        }
+
+        .ia-highlight-box__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .ia-highlight-box__title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ia-highlight-box__eyebrow {
+            margin: 0 0 2px;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: #1d4ed8;
+        }
+
+        .ia-highlight-box__title {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .auditoria-actions--ia {
+            justify-content: flex-start;
+        }
+
         .parecer-ia-card {
-            border: 1px solid #d1d5db;
+            border: 1px solid #c7d2fe;
             border-radius: 12px;
-            background: #fff;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
             overflow: hidden;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.10);
         }
 
         .parecer-ia-card__header {
@@ -690,8 +736,15 @@
             justify-content: space-between;
             gap: 12px;
             padding: 8px 12px;
-            background: #eef2f7;
-            border-bottom: 1px solid #d1d5db;
+            background: linear-gradient(135deg, #dbeafe 0%, #eef2ff 50%, #ecfeff 100%);
+            border-bottom: 1px solid #c7d2fe;
+        }
+
+        .parecer-ia-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .parecer-ia-card__header h4 {
@@ -699,6 +752,22 @@
             font-size: 1rem;
             font-weight: 700;
             color: #111827;
+        }
+
+        .parecer-ia-powered {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(99, 102, 241, 0.22);
+            color: #1d4ed8;
+            font-size: .76rem;
+            font-weight: 800;
+            letter-spacing: .03em;
+            text-transform: uppercase;
         }
 
         .parecer-ia-toggle {
@@ -744,6 +813,13 @@
             margin-bottom: 10px;
         }
 
+        .parecer-ia-chip-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .parecer-ia-badge {
             display: inline-flex;
             align-items: center;
@@ -770,6 +846,21 @@
             color: #92400e;
         }
 
+        .parecer-ia-badge--danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .parecer-ia-badge--warn {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .parecer-ia-badge--info {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
         .parecer-ia-section {
             margin-top: 10px;
             color: #1f2937;
@@ -787,6 +878,17 @@
         .parecer-ia-empty {
             margin: 0;
             color: #6b7280;
+        }
+
+        .parecer-ia-final-alert {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #fecaca;
+            background: linear-gradient(135deg, #fff1f2, #fee2e2);
+            color: #b91c1c;
+            font-weight: 800;
+            line-height: 1.4;
         }
 
         .internacao-card__body {

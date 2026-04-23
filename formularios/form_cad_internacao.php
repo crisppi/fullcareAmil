@@ -788,17 +788,6 @@
                     <p class="internacao-card__eyebrow">Auditoria</p>
                     <!-- título removido conforme solicitado -->
                 </div>
-                <div class="auditoria-actions">
-                    <input type="file" id="pdf-auditoria-input" accept="application/pdf,.pdf" hidden>
-                    <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-auditoria">
-                        <i class="bi bi-file-earmark-pdf"></i>
-                        LER PDF
-                    </button>
-                    <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
-                        <i class="bi bi-cpu"></i>
-                        Executar Prompt UTI
-                    </button>
-                </div>
             </div>
             <div class="internacao-card__body">
                 <div>
@@ -851,17 +840,44 @@
                         name="programacao_int"></textarea>
                 </div>
 
-                <div class="parecer-ia-card">
-                    <div class="parecer-ia-card__header">
-                        <h4>Parecer IA</h4>
-                        <button type="button" class="parecer-ia-toggle" id="btn-toggle-parecer-ia" aria-expanded="false" aria-controls="parecer-ia-body">
-                            <i class="bi bi-chevron-down"></i>
-                        </button>
+                <div class="ia-highlight-box">
+                    <div class="ia-highlight-box__header">
+                        <div class="ia-highlight-box__title-wrap">
+                            <div>
+                                <p class="ia-highlight-box__eyebrow">Inteligência Artificial</p>
+                                <h3 class="ia-highlight-box__title">Assistente de parecer clínico</h3>
+                            </div>
+                            <span class="parecer-ia-powered">
+                                <i class="bi bi-stars"></i>
+                                IA conectada
+                            </span>
+                        </div>
+                        <div class="auditoria-actions auditoria-actions--ia">
+                            <input type="file" id="pdf-auditoria-input" accept="application/pdf,.pdf" hidden>
+                            <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-auditoria">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                LER PDF
+                            </button>
+                            <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
+                                <i class="bi bi-cpu"></i>
+                                Executar Prompt UTI
+                            </button>
+                        </div>
                     </div>
-                    <div id="parecer-ia-status" class="parecer-ia-status" hidden></div>
-                    <div class="parecer-ia-card__body" id="parecer-ia-body" hidden>
-                        <div id="parecer-ia-content" class="parecer-ia-content">
-                            <p class="parecer-ia-empty">Nenhum parecer gerado.</p>
+                    <div class="parecer-ia-card">
+                        <div class="parecer-ia-card__header">
+                            <div class="parecer-ia-title-wrap">
+                                <h4>Parecer IA</h4>
+                            </div>
+                            <button type="button" class="parecer-ia-toggle" id="btn-toggle-parecer-ia" aria-expanded="false" aria-controls="parecer-ia-body">
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div id="parecer-ia-status" class="parecer-ia-status" hidden></div>
+                        <div class="parecer-ia-card__body" id="parecer-ia-body" hidden>
+                            <div id="parecer-ia-content" class="parecer-ia-content">
+                                <p class="parecer-ia-empty">Nenhum parecer gerado.</p>
+                            </div>
                         </div>
                     </div>
                 </div>

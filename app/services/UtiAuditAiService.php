@@ -89,9 +89,16 @@ class UtiAuditAiService
             . "- Nao invente dados ausentes.\n"
             . "- Se faltarem elementos centrais, use DADOS_INSUFICIENTES.\n"
             . "- A justificativa tecnica deve ser objetiva e adequada para auditoria medica.\n\n"
+            . "Classificacao complementar obrigatoria:\n"
+            . "- Informe o nivel recomendado em UTI, SEMI_UTI, APTO ou INDETERMINADO.\n"
+            . "- Use UTI quando houver criterios de terapia intensiva.\n"
+            . "- Use SEMI_UTI quando houver criterios intermediarios, mas sem elementos suficientes para UTI plena.\n"
+            . "- Use APTO quando o quadro descrito for compativel com permanencia em apartamento/enfermaria, sem criterio para UTI ou Semi-UTI.\n"
+            . "- Use INDETERMINADO quando faltarem dados para definir o nivel.\n\n"
             . "Formato obrigatorio de saida: retorne SOMENTE JSON valido com esta estrutura:\n"
             . "{\n"
             . "  \"classificacao\": \"JUSTIFICADO | NAO_JUSTIFICADO | DADOS_INSUFICIENTES\",\n"
+            . "  \"nivel_recomendado\": \"UTI | SEMI_UTI | APTO | INDETERMINADO\",\n"
             . "  \"resumo_clinico\": \"texto curto\",\n"
             . "  \"criterios\": {\n"
             . "    \"instabilidade_hemodinamica\": \"presente | ausente | inconclusivo\",\n"
@@ -101,6 +108,7 @@ class UtiAuditAiService
             . "    \"complexidade_terapeutica\": \"presente | ausente | inconclusivo\"\n"
             . "  },\n"
             . "  \"justificativa_tecnica\": \"texto objetivo de auditoria\",\n"
+            . "  \"frase_final\": \"frase curta e conclusiva para destaque visual\",\n"
             . "  \"pendencias_documentais\": [\"item 1\", \"item 2\"]\n"
             . "}\n\n"
             . "RELATORIO CLINICO:\n" . $report;
@@ -190,6 +198,7 @@ class UtiAuditAiService
     private function normalizeResult(array $result, string $report): array
     {
         $allowedClassifications = ['JUSTIFICADO', 'NAO_JUSTIFICADO', 'DADOS_INSUFICIENTES'];
+        $allowedLevels = ['UTI', 'SEMI_UTI', 'APTO', 'INDETERMINADO'];
         $allowedCriteria = ['presente', 'ausente', 'inconclusivo'];
         $criteriaKeys = [
             'instabilidade_hemodinamica',
@@ -202,6 +211,11 @@ class UtiAuditAiService
         $classification = strtoupper(trim((string)($result['classificacao'] ?? 'DADOS_INSUFICIENTES')));
         if (!in_array($classification, $allowedClassifications, true)) {
             $classification = 'DADOS_INSUFICIENTES';
+        }
+
+        $recommendedLevel = strtoupper(trim((string)($result['nivel_recomendado'] ?? 'INDETERMINADO')));
+        if (!in_array($recommendedLevel, $allowedLevels, true)) {
+            $recommendedLevel = 'INDETERMINADO';
         }
 
         $criteria = [];
@@ -221,11 +235,18 @@ class UtiAuditAiService
             }
         }
 
+        $finalPhrase = trim((string)($result['frase_final'] ?? ''));
+        if ($finalPhrase === '') {
+            $finalPhrase = $this->defaultFinalPhrase($recommendedLevel);
+        }
+
         return [
             'classificacao' => $classification,
+            'nivel_recomendado' => $recommendedLevel,
             'resumo_clinico' => trim((string)($result['resumo_clinico'] ?? '')),
             'criterios' => $criteria,
             'justificativa_tecnica' => trim((string)($result['justificativa_tecnica'] ?? '')),
+            'frase_final' => $finalPhrase,
             'pendencias_documentais' => $pendencias,
             'meta' => [
                 'model' => $this->model,
@@ -233,6 +254,21 @@ class UtiAuditAiService
                 'report_chars' => strlen($report),
             ],
         ];
+    }
+
+    private function defaultFinalPhrase(string $recommendedLevel): string
+    {
+        if ($recommendedLevel === 'UTI') {
+            return 'Parecer IA: caso considerado com criterios para UTI.';
+        }
+        if ($recommendedLevel === 'SEMI_UTI') {
+            return 'Parecer IA: caso considerado com criterios para Semi-UTI.';
+        }
+        if ($recommendedLevel === 'APTO') {
+            return 'Parecer IA: caso considerado com criterios para Apto.';
+        }
+
+        return 'Parecer IA: nao foi possivel definir com seguranca o nivel assistencial com os dados informados.';
     }
 
     private function loadEnvFile(string $path): void
