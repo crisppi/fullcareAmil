@@ -853,10 +853,10 @@
                             </span>
                         </div>
                         <div class="auditoria-actions auditoria-actions--ia">
-                            <input type="file" id="pdf-auditoria-input" accept="application/pdf,.pdf" hidden>
+                            <input type="file" id="pdf-auditoria-input" accept="application/pdf,.pdf,image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg" hidden>
                             <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-auditoria">
                                 <i class="bi bi-file-earmark-pdf"></i>
-                                LER PDF
+                                LER PDF/IMAGEM
                             </button>
                             <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
                                 <i class="bi bi-cpu"></i>
@@ -1061,6 +1061,7 @@
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js"></script>
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="<?= $BASE_URL ?>js/uti_audit_ai.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

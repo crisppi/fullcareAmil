@@ -1,4 +1,181 @@
 <div class="row">
+    <style>
+        .auditoria-action-btn {
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .ia-highlight-box {
+            margin: 8px 0 20px;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid #bfdbfe;
+            background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 48%, #f8fafc 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 14px 30px rgba(37,99,235,.08);
+        }
+
+        .ia-highlight-box__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .ia-highlight-box__title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .ia-highlight-box__eyebrow {
+            margin: 0 0 2px;
+            font-size: .72rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: #1d4ed8;
+        }
+
+        .ia-highlight-box__title {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .auditoria-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .auditoria-actions--ia {
+            justify-content: flex-start;
+        }
+
+        .parecer-ia-card {
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.10);
+        }
+
+        .parecer-ia-card__header {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #dbeafe 0%, #eef2ff 50%, #ecfeff 100%);
+            border-bottom: 1px solid #c7d2fe;
+        }
+
+        .parecer-ia-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .parecer-ia-card__header h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .parecer-ia-powered {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.78);
+            border: 1px solid rgba(99,102,241,.22);
+            color: #1d4ed8;
+            font-size: .76rem;
+            font-weight: 800;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        .parecer-ia-toggle {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .parecer-ia-card__body {
+            padding: 12px;
+        }
+
+        .parecer-ia-status {
+            margin: 10px 12px 0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: .88rem;
+        }
+
+        .parecer-ia-status--info { background: #e0f2fe; color: #075985; }
+        .parecer-ia-status--success { background: #dcfce7; color: #166534; }
+        .parecer-ia-status--error { background: #fee2e2; color: #991b1b; }
+
+        .parecer-ia-result-head { margin-bottom: 10px; }
+        .parecer-ia-chip-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .parecer-ia-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 28px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+        }
+
+        .parecer-ia-badge--ok { background: #dcfce7; color: #166534; }
+        .parecer-ia-badge--bad { background: #fee2e2; color: #991b1b; }
+        .parecer-ia-badge--neutral { background: #fef3c7; color: #92400e; }
+        .parecer-ia-badge--danger { background: #fee2e2; color: #b91c1c; }
+        .parecer-ia-badge--warn { background: #ffedd5; color: #c2410c; }
+        .parecer-ia-badge--info { background: #dbeafe; color: #1d4ed8; }
+
+        .parecer-ia-section { margin-top: 10px; color: #1f2937; }
+        .parecer-ia-section p,
+        .parecer-ia-section ul { margin: 4px 0 0; }
+        .parecer-ia-section ul { padding-left: 18px; }
+        .parecer-ia-empty { margin: 0; color: #6b7280; }
+
+        .parecer-ia-final-alert {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #fecaca;
+            background: linear-gradient(135deg, #fff1f2, #fee2e2);
+            color: #b91c1c;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+    </style>
     <?php
     // calculo de dias da internacao e dias da ultima visita
     $hoje = date('Y-m-d');
@@ -84,6 +261,52 @@
                 <label for="acoes_int_vis">Ações Auditoria</label>
                 <textarea type="textarea" rows="2" onclick="aumentarTextAcoes()" class="form-control" id="acoes_int_vis"
                     name="acoes_int_vis" placeholder="Ações de auditoria"></textarea>
+            </div>
+            <div style="margin-bottom:20px">
+                <label for="programacao_enf">Programação Terapêutica</label>
+                <textarea type="textarea" rows="2" class="form-control" id="programacao_enf"
+                    name="programacao_enf" placeholder="Programação terapêutica"></textarea>
+            </div>
+            <div class="ia-highlight-box">
+                <div class="ia-highlight-box__header">
+                    <div class="ia-highlight-box__title-wrap">
+                        <div>
+                            <p class="ia-highlight-box__eyebrow">Inteligência Artificial</p>
+                            <h3 class="ia-highlight-box__title">Assistente de parecer clínico</h3>
+                        </div>
+                        <span class="parecer-ia-powered">
+                            <i class="bi bi-stars"></i>
+                            IA conectada
+                        </span>
+                    </div>
+                    <div class="auditoria-actions auditoria-actions--ia">
+                        <input type="file" id="pdf-visita-input" accept="application/pdf,.pdf,image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg" hidden>
+                        <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-visita">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            LER PDF/IMAGEM
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti-visita">
+                            <i class="bi bi-cpu"></i>
+                            Executar Prompt UTI
+                        </button>
+                    </div>
+                </div>
+                <div class="parecer-ia-card">
+                    <div class="parecer-ia-card__header">
+                        <div class="parecer-ia-title-wrap">
+                            <h4>Parecer IA</h4>
+                        </div>
+                        <button type="button" class="parecer-ia-toggle" id="btn-toggle-parecer-visita-ia" aria-expanded="false" aria-controls="parecer-visita-ia-body">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div id="parecer-visita-ia-status" class="parecer-ia-status" hidden></div>
+                    <div class="parecer-ia-card__body" id="parecer-visita-ia-body" hidden>
+                        <div id="parecer-visita-ia-content" class="parecer-ia-content">
+                            <p class="parecer-ia-empty">Nenhum parecer gerado.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <hr>
             <!-- ENTRADA DE DADOS AUTOMATICOS NO INPUT-->
@@ -303,6 +526,14 @@
 
 <script src="js/text_cad_visita.js"></script>
 <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
+<script>
+window.visitaAiConfig = Object.assign({}, window.visitaAiConfig || {}, {
+    baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="<?= $BASE_URL ?>js/uti_audit_ai_visita.js"></script>
 <script src="js/select_visita.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"

@@ -4,7 +4,7 @@
     }
 
     function setStatus(message, type) {
-        var status = byId('parecer-ia-status');
+        var status = byId('parecer-visita-ia-status');
         if (!status) return;
         status.textContent = message || '';
         status.className = 'parecer-ia-status' + (type ? ' parecer-ia-status--' + type : '');
@@ -12,8 +12,8 @@
     }
 
     function openPanel() {
-        var body = byId('parecer-ia-body');
-        var toggle = byId('btn-toggle-parecer-ia');
+        var body = byId('parecer-visita-ia-body');
+        var toggle = byId('btn-toggle-parecer-visita-ia');
         if (!body || !toggle) return;
         body.hidden = false;
         toggle.setAttribute('aria-expanded', 'true');
@@ -21,8 +21,8 @@
     }
 
     function togglePanel() {
-        var body = byId('parecer-ia-body');
-        var toggle = byId('btn-toggle-parecer-ia');
+        var body = byId('parecer-visita-ia-body');
+        var toggle = byId('btn-toggle-parecer-visita-ia');
         if (!body || !toggle) return;
         var willOpen = body.hidden;
         body.hidden = !willOpen;
@@ -67,7 +67,7 @@
     }
 
     function renderResult(data) {
-        var content = byId('parecer-ia-content');
+        var content = byId('parecer-visita-ia-content');
         if (!content) return;
 
         var criterios = data && data.criterios ? data.criterios : {};
@@ -83,6 +83,7 @@
         var classificacao = data && data.classificacao ? data.classificacao : 'DADOS_INSUFICIENTES';
         var nivel = data && data.nivel_recomendado ? data.nivel_recomendado : 'INDETERMINADO';
         var fraseFinal = data && data.frase_final ? data.frase_final : '';
+
         content.innerHTML = ''
             + '<div class="parecer-ia-result-head">'
             + '<div class="parecer-ia-chip-row">'
@@ -145,9 +146,9 @@
     }
 
     function setupPdfReader() {
-        var button = byId('btn-ler-pdf-auditoria');
-        var input = byId('pdf-auditoria-input');
-        var relatorio = byId('rel_int');
+        var button = byId('btn-ler-pdf-visita');
+        var input = byId('pdf-visita-input');
+        var relatorio = byId('rel_visita_vis');
         if (!button || !input || !relatorio) return;
 
         button.addEventListener('click', function() {
@@ -178,8 +179,8 @@
     }
 
     function setupAiPrompt() {
-        var button = byId('btn-executar-prompt-uti');
-        var relatorio = byId('rel_int');
+        var button = byId('btn-executar-prompt-uti-visita');
+        var relatorio = byId('rel_visita_vis');
         if (!button || !relatorio) return;
 
         button.addEventListener('click', async function() {
@@ -195,7 +196,7 @@
             setStatus('Gerando parecer IA...', 'info');
 
             try {
-                var baseUrl = (window.formInternacaoConfig && window.formInternacaoConfig.baseUrl) || '';
+                var baseUrl = (window.visitaAiConfig && window.visitaAiConfig.baseUrl) || '';
                 var response = await fetch(baseUrl + 'ajax/uti_audit_ai.php', {
                     method: 'POST',
                     headers: {
@@ -221,7 +222,7 @@
         if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
-        var toggle = byId('btn-toggle-parecer-ia');
+        var toggle = byId('btn-toggle-parecer-visita-ia');
         if (toggle) {
             toggle.addEventListener('click', togglePanel);
         }
