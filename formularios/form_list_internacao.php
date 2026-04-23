@@ -214,6 +214,20 @@ try {
 } catch (Throwable $th) {
     $hospitalOptions = [];
 }
+
+$seguradoraOptions = [];
+try {
+    $stmtSegOptions = $conn->query("SELECT seguradora_seg FROM tb_seguradora WHERE seguradora_seg IS NOT NULL AND seguradora_seg <> '' ORDER BY seguradora_seg");
+    $rawSeguradoras = $stmtSegOptions->fetchAll(PDO::FETCH_COLUMN) ?: [];
+    foreach ($rawSeguradoras as $nomeSeg) {
+        $nome = trim((string)$nomeSeg);
+        if ($nome !== '' && !isset($seguradoraOptions[$nome])) {
+            $seguradoraOptions[$nome] = $nome;
+        }
+    }
+} catch (Throwable $th) {
+    $seguradoraOptions = [];
+}
 ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
@@ -1821,6 +1835,7 @@ if (typeof window.paginateInternacao !== 'function') {
     const smartFeedback = document.getElementById('smartSearchFeedback');
     const isSeguradoraRole = <?= $isGestorSeguradora ? 'true' : 'false' ?>;
     const seguradoraNomeEscopo = <?= json_encode((string)$seguradoraUserNome, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    const smartSeguradoraOptions = <?= json_encode(array_values($seguradoraOptions), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 
     const fieldNames = [
         'pesquisa_nome',
@@ -2028,6 +2043,51 @@ if (typeof window.paginateInternacao !== 'function') {
         submitFiltersWithoutRefresh();
     }
 
+    function normalizeSmartTerm(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    }
+
+    function escapeRegex(value) {
+        return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function findKnownSeguradora(phrase) {
+        const normalizedPhrase = ` ${normalizeSmartTerm(phrase)} `;
+        if (!normalizedPhrase.trim()) return null;
+
+        const ordered = smartSeguradoraOptions
+            .map((label) => ({
+                label,
+                normalized: normalizeSmartTerm(label)
+            }))
+            .filter((item) => item.normalized.length >= 3)
+            .sort((a, b) => b.normalized.length - a.normalized.length);
+
+        for (const item of ordered) {
+            if (normalizedPhrase.includes(` ${item.normalized} `)) {
+                return item.label;
+            }
+        }
+        return null;
+    }
+
+    function removeKnownTermFromPhrase(phrase, term) {
+        const termWords = normalizeSmartTerm(term).split(' ').filter(Boolean);
+        if (!termWords.length) return phrase;
+
+        let result = String(phrase || '');
+        termWords.forEach((word) => {
+            if (word.length < 3) return;
+            result = result.replace(new RegExp(`\\b${escapeRegex(word)}\\b`, 'ig'), ' ');
+        });
+        return result.replace(/\s+/g, ' ').trim();
+    }
+
     function parseSmartPhrase(phrase) {
         if (!phrase) return null;
         const cleaned = phrase.trim();
@@ -2049,13 +2109,15 @@ if (typeof window.paginateInternacao !== 'function') {
         };
         const result = {};
         const lower = cleaned.toLowerCase();
+        const knownSeguradora = !isSeguradoraRole ? findKnownSeguradora(cleaned) : null;
+        const cleanedForTextFields = knownSeguradora ? removeKnownTermFromPhrase(cleaned, knownSeguradora) : cleaned;
 
         let monthInfo = null;
         Object.keys(months).some((name) => {
             const regex = new RegExp(name, 'i');
-            const match = cleaned.match(regex);
+            const match = cleanedForTextFields.match(regex);
             if (match) {
-                const yearMatch = cleaned.match(/20\d{2}/);
+                const yearMatch = cleanedForTextFields.match(/20\d{2}/);
                 const year = yearMatch ? parseInt(yearMatch[0], 10) : new Date().getFullYear();
                 const monthNum = parseInt(months[name], 10);
                 const start = `${year}-${String(monthNum).padStart(2, '0')}-01`;
@@ -2075,17 +2137,17 @@ if (typeof window.paginateInternacao !== 'function') {
 
         const hospRegex =
             /(?:contas|hospital|hosp)\s+([^0-9]+?)(?=(?:janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro|paciente|\d{4}|$))/i;
-        const hospMatch = cleaned.match(hospRegex);
+        const hospMatch = cleanedForTextFields.match(hospRegex);
         if (hospMatch) {
             result.pesquisa_nome = hospMatch[1].trim();
         } else if (monthInfo && monthInfo.index > 0) {
-            const possible = cleaned.slice(0, monthInfo.index).replace(/^(contas|hospital|hosp)\s+/i, '').trim();
+            const possible = cleanedForTextFields.slice(0, monthInfo.index).replace(/^(contas|hospital|hosp)\s+/i, '').trim();
             if (possible) result.pesquisa_nome = possible;
         }
 
         const pacRegex =
             /paciente\s+([^0-9]+?)(?=(?:contas|hospital|hosp|janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro|\d{4}|$))/i;
-        const pacMatch = cleaned.match(pacRegex);
+        const pacMatch = cleanedForTextFields.match(pacRegex);
         if (pacMatch) {
             result.pesquisa_pac = pacMatch[1].trim();
         }
@@ -2095,6 +2157,8 @@ if (typeof window.paginateInternacao !== 'function') {
         const segMatch = cleaned.match(segRegex);
         if (segMatch) {
             result.pesquisa_seguradora = segMatch[1].trim();
+        } else if (knownSeguradora) {
+            result.pesquisa_seguradora = knownSeguradora;
         }
 
         const senhaMatch = cleaned.match(/senha\s+([\w-]+)/i);
@@ -2105,6 +2169,13 @@ if (typeof window.paginateInternacao !== 'function') {
         const matriculaMatch = cleaned.match(/matr[íi]cula\s+([\w.-]+)/i);
         if (matriculaMatch) {
             result.pesquisa_matricula = matriculaMatch[1];
+        }
+
+        if (knownSeguradora && !result.pesquisa_pac && !result.pesquisa_nome && !result.senha_int && !result.pesquisa_matricula) {
+            const remainingTerm = cleanedForTextFields.replace(/\b(paciente|seguradora|operadora|convenio|conv[êe]nio)\b/ig, '').trim();
+            if (remainingTerm.length >= 3) {
+                result.pesquisa_pac = remainingTerm;
+            }
         }
 
         // Fallback: texto simples sem chave vira seguradora (ex.: "Bradesco")

@@ -13,6 +13,20 @@ if (!function_exists('e')) {
     }
 }
 
+if (!function_exists('fmtInt')) {
+    function fmtInt($value): string
+    {
+        return number_format((int)$value, 0, ',', '.');
+    }
+}
+
+if (!function_exists('fmtFloat')) {
+    function fmtFloat($value, int $dec = 1): string
+    {
+        return number_format((float)$value, $dec, ',', '.');
+    }
+}
+
 $pageTitle = $pageTitle ?? 'Performance Comparativa da Rede Hospitalar';
 $pageSubtitle = $pageSubtitle ?? 'Custo, qualidade e eficiencia por hospital';
 $clearUrl = $clearUrl ?? 'bi/rede-comparativa';
