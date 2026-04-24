@@ -1,4 +1,6 @@
 (function() {
+    var initialized = false;
+
     function byId(id) {
         return document.getElementById(id);
     }
@@ -149,6 +151,8 @@
         var input = byId('pdf-auditoria-input');
         var relatorio = byId('rel_int');
         if (!button || !input || !relatorio) return;
+        if (button.dataset.aiBound === '1') return;
+        button.dataset.aiBound = '1';
 
         button.addEventListener('click', function() {
             input.click();
@@ -181,6 +185,8 @@
         var button = byId('btn-executar-prompt-uti');
         var relatorio = byId('rel_int');
         if (!button || !relatorio) return;
+        if (button.dataset.aiBound === '1') return;
+        button.dataset.aiBound = '1';
 
         button.addEventListener('click', async function() {
             var report = relatorio.value.trim();
@@ -203,7 +209,13 @@
                     },
                     body: JSON.stringify({ report: report })
                 });
-                var payload = await response.json();
+                var raw = await response.text();
+                var payload = {};
+                try {
+                    payload = raw ? JSON.parse(raw) : {};
+                } catch (parseError) {
+                    throw new Error(raw ? String(raw).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : 'Resposta inválida do servidor.');
+                }
                 if (!response.ok || !payload.success) {
                     throw new Error(payload.message || payload.error || 'Falha ao gerar parecer.');
                 }
@@ -217,15 +229,25 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function init() {
+        if (initialized) return;
+        initialized = true;
+
         if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
             window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
         var toggle = byId('btn-toggle-parecer-ia');
-        if (toggle) {
+        if (toggle && toggle.dataset.aiBound !== '1') {
+            toggle.dataset.aiBound = '1';
             toggle.addEventListener('click', togglePanel);
         }
         setupPdfReader();
         setupAiPrompt();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();

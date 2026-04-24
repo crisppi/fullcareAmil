@@ -61,6 +61,29 @@ function trendLabel(?float $variation, string $up = 'aumento', string $down = 'r
     return $variation >= 0 ? $up : $down;
 }
 
+function variationBadgeClass(?float $variation): string
+{
+    if ($variation === null) {
+        return 'neutral';
+    }
+    if ($variation > 0) {
+        return 'up';
+    }
+    if ($variation < 0) {
+        return 'down';
+    }
+    return 'neutral';
+}
+
+function variationLabel(?float $variation, int $decimals = 1): string
+{
+    if ($variation === null) {
+        return 'Sem base comparativa';
+    }
+    $signal = $variation > 0 ? '+' : '';
+    return $signal . number_format($variation, $decimals, ',', '.') . '% vs. ano anterior';
+}
+
 function buildSelfUrlWithQuery(array $overrides = []): string
 {
     $query = $_GET;
@@ -572,15 +595,182 @@ if ($relatorioModo === 'ia') {
 $modoPadraoUrl = buildSelfUrlWithQuery(['relatorio_modo' => 'padrao']);
 $modoIaUrl = buildSelfUrlWithQuery(['relatorio_modo' => 'ia']);
 
+$resumoExecutivo = [];
+$resumoExecutivo[] = 'No recorte de ' . $ano . ', o painel consolidou ' . fmtInt($internacaoAtual['total_internacoes']) . ' internações, '
+    . fmtInt($internacaoAtual['total_diarias']) . ' diárias e permanência média de '
+    . number_format($internacaoAtual['mp'], 1, ',', '.') . ' dias para ' . $hospitalNome . '.';
+$resumoExecutivo[] = 'No financeiro, foram auditadas ' . fmtInt($financeiroGerAtual['total_contas']) . ' contas, com valor apresentado de '
+    . fmtMoney($financeiroGerAtual['valor_apresentado']) . ', valor final de ' . fmtMoney($financeiroGerAtual['valor_final'])
+    . ' e glosa consolidada de ' . fmtMoney($financeiroGerAtual['valor_glosa']) . '.';
+$resumoExecutivo[] = 'Em produtividade, a operação registrou ' . fmtInt($produtividadeGerAtual['total_visitas']) . ' visitas, média de '
+    . number_format($produtividadeGerAtual['media_visitas_dia'], 2, ',', '.') . ' visitas por dia produtivo e '
+    . number_format($visitasPorAuditor, 2, ',', '.') . ' visitas por auditor ativo.';
+
+$alertasExecutivos = [];
+$alertasExecutivos[] = [
+    'tone' => $glosaPct >= 5 ? 'attention' : 'positive',
+    'title' => 'Eficiência financeira',
+    'detail' => $glosaPct >= 5
+        ? 'A glosa de ' . fmtPct($glosaPct, 2) . ' sugere oportunidade de reforço em qualidade documental e negociação técnica.'
+        : 'A glosa de ' . fmtPct($glosaPct, 2) . ' sinaliza boa aderência entre conta apresentada, documentação e auditoria.',
+];
+$alertasExecutivos[] = [
+    'tone' => ($diariasVar !== null && $internacoesVar !== null && $diariasVar > $internacoesVar) ? 'attention' : 'neutral',
+    'title' => 'Pressão assistencial',
+    'detail' => ($diariasVar !== null && $internacoesVar !== null && $diariasVar > $internacoesVar)
+        ? 'As diárias cresceram acima do volume de internações, sugerindo mudança de case mix ou alongamento de permanência.'
+        : 'A relação entre internações e diárias está mais alinhada ao volume assistencial do período.',
+];
+$alertasExecutivos[] = [
+    'tone' => $utiParticipacaoInternacoesPct >= 25 ? 'attention' : 'neutral',
+    'title' => 'Gravidade e UTI',
+    'detail' => 'A participação da UTI foi de ' . fmtPct($utiParticipacaoInternacoesPct, 1) . ' das internações e '
+        . fmtPct($utiParticipacaoDiariasPct, 1) . ' das diárias do período.',
+];
+$alertasExecutivos[] = [
+    'tone' => ($prodMediaDiaVar !== null && $prodMediaDiaVar < 0) ? 'attention' : 'positive',
+    'title' => 'Capacidade operacional',
+    'detail' => ($prodMediaDiaVar !== null && $prodMediaDiaVar < 0)
+        ? 'A produtividade média diária recuou frente ao ano anterior e merece acompanhamento de capacidade e carteira.'
+        : 'A produtividade média diária sustenta leitura favorável para acompanhamento da carteira e dimensionamento da equipe.',
+];
+
+$kpiCards = [
+    [
+        'label' => 'Internações',
+        'value' => fmtInt($internacaoAtual['total_internacoes']),
+        'meta' => 'Ano ' . $ano,
+        'variation' => $internacoesVar,
+    ],
+    [
+        'label' => 'MP Geral',
+        'value' => number_format($internacaoAtual['mp'], 1, ',', '.') . ' dias',
+        'meta' => fmtInt($internacaoAtual['total_diarias']) . ' diárias',
+        'variation' => $diariasVar,
+    ],
+    [
+        'label' => 'Valor Apresentado',
+        'value' => fmtMoney($financeiroGerAtual['valor_apresentado']),
+        'meta' => fmtInt($financeiroGerAtual['total_contas']) . ' contas',
+        'variation' => $financeiroApresentadoVar,
+    ],
+    [
+        'label' => 'Valor Final',
+        'value' => fmtMoney($financeiroGerAtual['valor_final']),
+        'meta' => 'Aproveitamento ' . fmtPct($aproveitamentoFinanceiroPct, 1),
+        'variation' => $financeiroFinalVar,
+    ],
+    [
+        'label' => 'Participação UTI',
+        'value' => fmtPct($utiParticipacaoInternacoesPct, 1),
+        'meta' => number_format($utiAtual['mp'], 1, ',', '.') . ' dias de MP UTI',
+        'variation' => $utiVar,
+    ],
+    [
+        'label' => 'Visitas',
+        'value' => fmtInt($produtividadeGerAtual['total_visitas']),
+        'meta' => number_format($produtividadeGerAtual['media_visitas_dia'], 2, ',', '.') . ' por dia',
+        'variation' => $prodVisitasVar,
+    ],
+];
+
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+    .bi-report-title {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-end;
+        margin-bottom: 18px;
+    }
+    .bi-report-title h3 {
+        margin: 0;
+    }
+    .bi-report-meta-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .bi-report-meta-stack span {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(41, 83, 116, .10);
+        color: #41586c;
+        font-size: .84rem;
+    }
+    .bi-section-anchor-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+    }
+    .bi-section-anchor-nav a {
+        padding: 9px 12px;
+        border-radius: 10px;
+        background: rgba(41, 83, 116, .08);
+        color: #26435a;
+        text-decoration: none;
+        font-size: .84rem;
+    }
+    .bi-report-intro {
+        margin-top: 16px;
+        padding: 18px 20px;
+        border-radius: 14px;
+        background: rgba(41, 83, 116, .06);
+        border: 1px solid rgba(41, 83, 116, .12);
+        color: #243746;
+        line-height: 1.7;
+    }
+    .bi-report-section {
+        margin-top: 18px;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+    .bi-report-section h4 {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.04rem;
+        color: #1a2a35;
+    }
+    .bi-report-section p {
+        color: #243746;
+        line-height: 1.82;
+        margin-bottom: 14px;
+    }
+    .bi-report-section p:last-child {
+        margin-bottom: 0;
+    }
+    .bi-report-section + .bi-report-section {
+        border-top: 1px solid rgba(255,255,255,.08);
+        padding-top: 18px;
+    }
+    .bi-report-submeta {
+        margin-top: 10px;
+        color: #5a7286;
+        font-size: .84rem;
+    }
+    .bi-report-highlight {
+        color: #1b4f72;
+        font-weight: 700;
+    }
+    @media (max-width: 991.98px) {
+        .bi-report-title {
+            align-items: flex-start;
+        }
+    }
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
-        <h1 class="bi-title">Dashboard Inteligencia Artificial</h1>
+        <h1 class="bi-title">Relatório Executivo com Inteligência Artificial</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"></div>
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
@@ -623,24 +813,22 @@ $modoIaUrl = buildSelfUrlWithQuery(['relatorio_modo' => 'ia']);
     </form>
 
     <div class="bi-panel" style="margin-top:16px;">
-        <div class="d-flex flex-wrap align-items-center justify-content-between" style="gap:10px;">
-            <div class="text-white-50" style="font-size:.9rem;">
-                Relatórios gerenciais para o mesmo recorte selecionado (modo atual: <strong><?= e(strtoupper($relatorioModo)) ?></strong>)
-            </div>
-            <div class="d-flex flex-wrap" style="gap:10px;">
-                <a class="bi-btn <?= $relatorioModo === 'padrao' ? '' : 'bi-btn-secondary' ?>" href="<?= e($modoPadraoUrl) ?>#relatorio-gerencial-financeiro">
-                    Usar texto padrão
-                </a>
-                <a class="bi-btn <?= $relatorioModo === 'ia' ? '' : 'bi-btn-secondary' ?>" href="<?= e($modoIaUrl) ?>#relatorio-gerencial-financeiro">
-                    Gerar texto com IA
-                </a>
-                <a class="bi-btn bi-btn-secondary" href="<?= e($selfReportUrl) ?>#relatorio-gerencial-financeiro">
-                    Relatório Gerencial Financeiro
-                </a>
-                <a class="bi-btn bi-btn-secondary" href="<?= e($selfReportUrl) ?>#relatorio-gerencial-produtividade">
-                    Relatório Gerencial de Produtividade
-                </a>
-            </div>
+        <div class="text-white-50" style="font-size:.92rem;">
+            Relatório textual automático com base em internações, permanência, UTI, custos, glosas e produtividade do recorte selecionado.
+        </div>
+        <div class="d-flex flex-wrap" style="gap:10px;margin-top:18px;">
+            <a class="bi-btn <?= $relatorioModo === 'padrao' ? '' : 'bi-btn-secondary' ?>" href="<?= e($modoPadraoUrl) ?>#relatorio-executivo">
+                Usar texto padrão
+            </a>
+            <a class="bi-btn <?= $relatorioModo === 'ia' ? '' : 'bi-btn-secondary' ?>" href="<?= e($modoIaUrl) ?>#relatorio-executivo">
+                Gerar texto com IA
+            </a>
+            <a class="bi-btn bi-btn-secondary" href="<?= e($selfReportUrl) ?>#relatorio-gerencial-financeiro">
+                Financeiro
+            </a>
+            <a class="bi-btn bi-btn-secondary" href="<?= e($selfReportUrl) ?>#relatorio-gerencial-produtividade">
+                Produtividade
+            </a>
         </div>
         <?php if ($relatorioModo === 'ia' && $iaNarrativa === null && $iaErro): ?>
             <div class="alert alert-warning mt-3 mb-0" role="alert">
@@ -649,9 +837,33 @@ $modoIaUrl = buildSelfUrlWithQuery(['relatorio_modo' => 'ia']);
         <?php endif; ?>
     </div>
 
-    <div class="bi-panel bi-report">
-        <h3>Relatório Anual de Sinistralidade Hospitalar - <?= e($hospitalNome) ?> - (<?= e($ano) ?>)</h3>
-        <div class="bi-report-meta">Tipo admissão: <?= e($tipoLabel) ?></div>
+    <div class="bi-panel bi-report" style="margin-top:16px;">
+        <div class="bi-report-title">
+            <div>
+                <h3>Relatório Anual de Sinistralidade Hospitalar - <?= e($hospitalNome) ?> - (<?= e($ano) ?>)</h3>
+                <div class="bi-report-submeta">Tipo admissão: <?= e($tipoLabel) ?></div>
+            </div>
+            <div class="bi-report-meta-stack">
+                <span>Modo: <?= e(strtoupper($relatorioModo)) ?></span>
+                <span><?= fmtInt($internacaoAtual['total_internacoes']) ?> internações</span>
+                <span><?= fmtInt($financeiroGerAtual['total_contas']) ?> contas</span>
+            </div>
+        </div>
+        <div class="bi-section-anchor-nav">
+            <a href="#relatorio-gerencial-financeiro">Financeiro</a>
+            <a href="#relatorio-gerencial-produtividade">Produtividade</a>
+        </div>
+        <div class="bi-report-intro" id="relatorio-executivo">
+            <?php foreach ($resumoExecutivo as $paragrafo): ?>
+                <p><?= e($paragrafo) ?></p>
+            <?php endforeach; ?>
+            <p style="margin-bottom:0;">
+                Principais leituras do recorte:
+                <?php foreach ($alertasExecutivos as $index => $alerta): ?>
+                    <span class="bi-report-highlight"><?= e($alerta['title']) ?></span>: <?= e($alerta['detail']) ?><?= $index < count($alertasExecutivos) - 1 ? ' ' : '' ?>
+                <?php endforeach; ?>
+            </p>
+        </div>
 
         <?php if (!$temAlgum): ?>
             <p>Sem dados para o recorte selecionado.</p>

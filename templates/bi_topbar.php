@@ -310,6 +310,75 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     background: linear-gradient(135deg, #4b5fd6, #2c3fb6);
 }
 
+.bi-sidebar-search-trigger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #edf4ff;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+
+.bi-sidebar-search-trigger:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+.bi-sidebar-search {
+    margin-top: 10px;
+}
+
+.bi-sidebar-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.bi-sidebar-search-box:focus-within {
+    border-color: rgba(99, 213, 192, 0.45);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(99, 213, 192, 0.12);
+}
+
+.bi-sidebar-search-box i {
+    color: rgba(237, 244, 255, 0.62);
+    font-size: 0.86rem;
+}
+
+.bi-sidebar-search-input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #edf4ff;
+    font-size: 0.86rem;
+}
+
+.bi-sidebar-search-input::placeholder {
+    color: rgba(237, 244, 255, 0.42);
+}
+
+.bi-sidebar-search-meta {
+    min-height: 16px;
+    margin-top: 6px;
+    color: rgba(237, 244, 255, 0.5);
+    font-size: 0.74rem;
+    text-align: center;
+}
+
 .bi-sidebar-body {
     flex: 1 1 auto;
     overflow-y: auto;
@@ -331,6 +400,11 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.038));
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     overflow: hidden;
+}
+
+.bi-sidebar-group.is-search-hidden,
+.bi-sidebar-link.is-search-hidden {
+    display: none !important;
 }
 
 .bi-sidebar-group + .bi-sidebar-group {
@@ -445,6 +519,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 
 body.bi-theme.bi-nav-collapsed .bi-crumb,
 body.bi-theme.bi-nav-collapsed .bi-sidebar-navlink,
+body.bi-theme.bi-nav-collapsed .bi-sidebar-search,
 body.bi-theme.bi-nav-collapsed .bi-sidebar-links,
 body.bi-theme.bi-nav-collapsed .bi-sidebar-foot,
 body.bi-theme.bi-nav-collapsed .bi-sidebar-chevron,
@@ -452,6 +527,10 @@ body.bi-theme.bi-nav-collapsed .bi-topbar-title span,
 body.bi-theme.bi-nav-collapsed .bi-sidebar-group summary span {
     opacity: 0;
     pointer-events: none;
+}
+
+body.bi-theme.bi-nav-collapsed .bi-sidebar-search-trigger {
+    display: inline-flex;
 }
 
 body.bi-theme.bi-nav-collapsed .bi-sidebar-head {
@@ -550,6 +629,23 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             href="<?= htmlspecialchars($navUrl, ENT_QUOTES, 'UTF-8') ?>">
             Navegação Geral
         </a>
+        <button type="button" class="bi-sidebar-search-trigger" id="biSidebarSearchTrigger" aria-label="Abrir pesquisa do BI" title="Pesquisar no BI">
+            <i class="bi bi-search"></i>
+        </button>
+        <div class="bi-sidebar-search">
+            <div class="bi-sidebar-search-box">
+                <i class="bi bi-search"></i>
+                <input
+                    type="search"
+                    id="biSidebarSearch"
+                    class="bi-sidebar-search-input"
+                    placeholder="Pesquisar relatório ou módulo"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+            </div>
+            <div class="bi-sidebar-search-meta" id="biSidebarSearchMeta">Exibindo todos os atalhos</div>
+        </div>
     </div>
 
     <div class="bi-sidebar-body">
@@ -620,6 +716,9 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
     const body = document.body;
     const toggle = document.getElementById('biSideToggle');
     const backdrop = document.getElementById('biMobileBackdrop');
+    const searchInput = document.getElementById('biSidebarSearch');
+    const searchMeta = document.getElementById('biSidebarSearchMeta');
+    const searchTrigger = document.getElementById('biSidebarSearchTrigger');
     const mobileMq = window.matchMedia('(max-width: 1100px)');
     const storageKey = 'bi_sidebar_collapsed';
 
@@ -645,9 +744,69 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
     syncInitialState();
     toggle?.addEventListener('click', toggleSidebar);
     backdrop?.addEventListener('click', () => body.classList.remove('bi-nav-open'));
+    searchTrigger?.addEventListener('click', () => {
+        if (!mobileMq.matches && body.classList.contains('bi-nav-collapsed')) {
+            body.classList.remove('bi-nav-collapsed');
+            window.localStorage.setItem(storageKey, '0');
+        } else if (mobileMq.matches && !body.classList.contains('bi-nav-open')) {
+            body.classList.add('bi-nav-open');
+        }
+        window.setTimeout(() => searchInput?.focus(), 120);
+    });
     mobileMq.addEventListener('change', () => {
         body.classList.remove('bi-nav-open');
         syncInitialState();
     });
+
+    if (searchInput) {
+        const normalize = (value) => (value || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+
+        const groups = Array.from(document.querySelectorAll('.bi-sidebar-group'));
+        const initiallyOpen = new WeakMap();
+        groups.forEach((group) => {
+            const hasActiveLink = !!group.querySelector('.bi-sidebar-link.is-active');
+            initiallyOpen.set(group, group.hasAttribute('open') || hasActiveLink);
+            group.open = initiallyOpen.get(group);
+        });
+
+        const applySearch = () => {
+            const term = normalize(searchInput.value);
+            let visible = 0;
+
+            groups.forEach((group) => {
+                const title = normalize(group.querySelector('summary span:nth-child(2)')?.textContent || '');
+                const links = Array.from(group.querySelectorAll('.bi-sidebar-link'));
+                let visibleInGroup = 0;
+
+                links.forEach((link) => {
+                    const text = normalize((link.getAttribute('title') || '') + ' ' + (link.textContent || ''));
+                    const match = term === '' || text.includes(term) || title.includes(term);
+                    link.classList.toggle('is-search-hidden', !match);
+                    if (match) {
+                        visible += 1;
+                        visibleInGroup += 1;
+                    }
+                });
+
+                const showGroup = visibleInGroup > 0;
+                group.classList.toggle('is-search-hidden', !showGroup);
+                group.open = term !== '' ? showGroup : !!initiallyOpen.get(group);
+            });
+
+            if (searchMeta) {
+                searchMeta.textContent = term === ''
+                    ? 'Digite para localizar uma tela do BI'
+                    : 'Resultados encontrados: ' + visible;
+            }
+        };
+
+        searchInput.addEventListener('input', applySearch);
+        applySearch();
+    }
 })();
 </script>

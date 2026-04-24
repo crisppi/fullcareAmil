@@ -21,6 +21,56 @@
     padding: 0;
 }
 
+.bi-navegacao .bi-nav-search-wrap {
+    margin-bottom: 18px;
+}
+
+.bi-navegacao .bi-nav-search-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #51637f;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.bi-navegacao .bi-nav-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(110, 124, 156, 0.18);
+    background: #f8fbff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.bi-navegacao .bi-nav-search-box i {
+    color: #5a6f91;
+    font-size: 0.95rem;
+}
+
+.bi-navegacao .bi-nav-search-input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #22324f;
+    font-size: 0.96rem;
+}
+
+.bi-navegacao .bi-nav-search-input::placeholder {
+    color: #8192ad;
+}
+
+.bi-navegacao .bi-nav-search-meta {
+    margin-top: 8px;
+    color: #6a7894;
+    font-size: 0.84rem;
+}
+
 .bi-navegacao .bi-title {
     font-size: 1rem;
     color: #263b61;
@@ -113,6 +163,11 @@
     transform: translateY(-1px);
     border-color: rgba(94, 35, 99, 0.2);
     box-shadow: 0 8px 16px rgba(18, 28, 54, 0.1);
+}
+
+.bi-navegacao .bi-nav-card.is-hidden,
+.bi-navegacao .bi-nav-group.is-hidden {
+    display: none !important;
 }
 
 .bi-navegacao .bi-nav-group[data-theme="resumo"] .bi-nav-group-title {

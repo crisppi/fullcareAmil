@@ -232,17 +232,38 @@ $navGroups = [
     </div>
 
     <div class="bi-panel">
+        <div class="bi-nav-search-wrap">
+            <label class="bi-nav-search-label" for="bi-nav-search">Navegação geral</label>
+            <div class="bi-nav-search-box">
+                <i class="bi bi-search"></i>
+                <input
+                    type="search"
+                    id="bi-nav-search"
+                    class="bi-nav-search-input"
+                    placeholder="Pesquisar por nome, módulo ou tema"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+            </div>
+            <div class="bi-nav-search-meta">
+                <span id="bi-nav-search-count">Exibindo todos os atalhos</span>
+            </div>
+        </div>
         <div class="bi-nav-groups-grid">
             <?php foreach ($navGroups as $idx => $group): ?>
                 <?php $isOpen = $idx < 4; ?>
-                <details class="bi-nav-group" data-theme="<?= e($group['key']) ?>" <?= $isOpen ? 'open' : '' ?>>
+                <details class="bi-nav-group" data-theme="<?= e($group['key']) ?>" data-group-title="<?= e($group['title']) ?>" <?= $isOpen ? 'open' : '' ?>>
                     <summary class="bi-nav-group-summary">
                         <span class="bi-nav-group-title"><?= e($group['title']) ?></span>
                         <span class="bi-nav-group-count"><?= count($group['items']) ?></span>
                     </summary>
                     <div class="bi-nav-grid">
                         <?php foreach ($group['items'] as $link): ?>
-                            <a class="bi-nav-card" href="<?= $BASE_URL . e($link['href']) ?>">
+                            <a
+                                class="bi-nav-card"
+                                href="<?= $BASE_URL . e($link['href']) ?>"
+                                data-search-text="<?= e(mb_strtolower($group['title'] . ' ' . $link['label'], 'UTF-8')) ?>"
+                            >
                                 <?= e($link['label']) ?>
                             </a>
                         <?php endforeach; ?>

@@ -423,13 +423,24 @@ if ($isExport) {
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Visitas');
 
-        $logoPath = __DIR__ . '/img/LogoConexAud.png';
-        if (file_exists($logoPath)) {
+        $logoCandidates = [
+            __DIR__ . '/img/LogoFullCare.png',
+            __DIR__ . '/img/fullCare-01.png',
+            __DIR__ . '/img/logo.png',
+        ];
+        $logoPath = null;
+        foreach ($logoCandidates as $candidate) {
+            if (is_file($candidate)) {
+                $logoPath = $candidate;
+                break;
+            }
+        }
+        if ($logoPath !== null) {
             $logo = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
             $logo->setName('Logo');
-            $logo->setDescription('Logo Conex');
+            $logo->setDescription('Logo FullCare');
             $logo->setPath($logoPath);
-            $logo->setHeight(32);
+            $logo->setHeight(42);
             $logo->setCoordinates('A2');
             $logo->setWorksheet($sheet);
         }
