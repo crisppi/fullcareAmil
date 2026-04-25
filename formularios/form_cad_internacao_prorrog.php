@@ -278,9 +278,17 @@ $prorrogInitialRows = $prorrogEditRows ?: [[
 .prorrog-alta-fields.is-visible {
     display: block;
 }
+.prorrog-alta-fields > .form-group.row {
+    width: 100% !important;
+}
+.prorrog-alta-fields > .form-group.row > .form-group[class*="col-"] {
+    min-width: 220px !important;
+}
 .prorrog-ia-box {
     margin-top: 18px;
     padding: 14px;
+    width: 100%;
+    max-width: none;
     border-radius: 16px;
     border: 1px solid #bfdbfe;
     background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 48%, #f8fafc 100%);
@@ -335,7 +343,29 @@ $prorrogInitialRows = $prorrogEditRows ?: [[
     gap: 8px;
     flex-wrap: wrap;
 }
+.prorrog-ia-box > .form-group.row {
+    display: block !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+.prorrog-ia-box > .form-group.row > .form-group[class*="col-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.prorrog-ia-box textarea.form-control,
+#prorrog-ia-contexto {
+    display: block;
+    width: 100% !important;
+    max-width: none !important;
+}
 .prorrog-ia-card {
+    width: 100%;
+    max-width: none;
     border: 1px solid #c7d2fe;
     border-radius: 12px;
     background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
@@ -986,10 +1016,20 @@ window.recalculateProrrogSavings = function recalculateProrrogSavings() {
     generateProrJSON();
 };
 
+function isCompleteProrrogDate(value) {
+    return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''));
+}
+
+function parseProrrogDate(value) {
+    const raw = String(value || '').trim();
+    if (!isCompleteProrrogDate(raw)) return null;
+    const parts = raw.split('-').map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
 // Calcula diárias e valida datas
 function calculateDiarias(container) {
     const dataAtual = new Date().toISOString().split("T")[0];
-    const minManualDate = getManualProrrogMinDate();
     const maxDate = window.PRORROG_MAX_DATE || dataAtual;
 
     const dataInicial = container.querySelector('[name="prorrog1_ini_pror"]').value;
@@ -1000,40 +1040,35 @@ function calculateDiarias(container) {
     errorMessage.textContent = ""; // limpa
     errorMessage.style.display = "none";
 
-    if (dataInicial) {
-        const inicio = new Date(dataInicial);
-        const manualStart = minManualDate ? new Date(minManualDate) : null;
-        if (manualStart && inicio < manualStart) {
-            errorMessage.textContent = "A data inicial da prorrogação precisa ter acomodação já cadastrada. Se não tiver, lance primeiro a acomodação desta data.";
-            errorMessage.style.display = "block";
-            const dataInicialInput = container.querySelector('[name="prorrog1_ini_pror"]');
-            if (dataInicialInput) {
-                dataInicialInput.value = "";
-                dataInicialInput.focus();
-            }
+    if ((dataInicial && !isCompleteProrrogDate(dataInicial)) || (dataFinal && !isCompleteProrrogDate(dataFinal))) {
+        if (diariasField) diariasField.value = "";
+        generateProrJSON();
+        return;
+    }
+
+    if (dataInicial && dataFinal) {
+        const inicio = parseProrrogDate(dataInicial);
+        const fim = parseProrrogDate(dataFinal);
+        const max = parseProrrogDate(maxDate);
+        if (!inicio || !fim) {
             if (diariasField) diariasField.value = "";
             generateProrJSON();
             return;
         }
-    }
-
-    if (dataInicial && dataFinal) {
-        const inicio = new Date(dataInicial);
-        const fim = new Date(dataFinal);
         if (fim < inicio) {
             errorMessage.textContent = "A data final não pode ser menor que a data inicial.";
             errorMessage.style.display = "block";
             diariasField.value = "";
             return;
         }
-        if (dataInicial && new Date(dataInicial) > new Date(maxDate)) {
+        if (max && inicio > max) {
             errorMessage.textContent = "Não é permitido prorrogar após a data atual.";
             errorMessage.style.display = "block";
             openProrrogError("Não é permitido prorrogar após a data atual.");
             diariasField.value = "";
             return;
         }
-        if (dataFinal && new Date(dataFinal) > new Date(maxDate)) {
+        if (max && fim > max) {
             errorMessage.textContent = "Não é permitido prorrogar após a data atual.";
             errorMessage.style.display = "block";
             openProrrogError("Não é permitido prorrogar após a data atual.");
@@ -1077,6 +1112,19 @@ document.getElementById("fieldsContainer").addEventListener("input", (event) => 
     if (!target.matches('[name="prorrog1_ini_pror"], [name="prorrog1_fim_pror"]')) return;
     const fieldContainer = target.closest(".field-container");
     if (!fieldContainer) return;
+    const ini = fieldContainer.querySelector('[name="prorrog1_ini_pror"]')?.value || '';
+    const fim = fieldContainer.querySelector('[name="prorrog1_fim_pror"]')?.value || '';
+    if ((ini && !isCompleteProrrogDate(ini)) || (fim && !isCompleteProrrogDate(fim))) {
+        const errorMessage = fieldContainer.querySelector(".error-message");
+        const diariasField = fieldContainer.querySelector('[name="diarias_1"]');
+        if (errorMessage) {
+            errorMessage.textContent = "";
+            errorMessage.style.display = "none";
+        }
+        if (diariasField) diariasField.value = "";
+        generateProrJSON();
+        return;
+    }
     calculateDiarias(fieldContainer);
 });
 

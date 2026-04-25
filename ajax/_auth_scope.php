@@ -170,13 +170,18 @@ function ajax_scope_clause_for_paciente(array $ctx, string $alias, array &$param
         return ' AND 1=0 ';
     }
     $k = ':' . $prefix . '_uid';
+    $kOwn = ':' . $prefix . '_own_uid';
     $params[$k] = $uid;
-    return " AND EXISTS (
+    $params[$kOwn] = $uid;
+    return " AND (
+        EXISTS (
         SELECT 1
           FROM tb_internacao ac_scope
           JOIN tb_hospitalUser hu_scope ON hu_scope.fk_hospital_user = ac_scope.fk_hospital_int
          WHERE ac_scope.fk_paciente_int = {$alias}.id_paciente
            AND hu_scope.fk_usuario_hosp = {$k}
+        )
+        OR {$alias}.fk_usuario_pac = {$kOwn}
     ) ";
 }
 
