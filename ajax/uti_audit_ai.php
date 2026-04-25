@@ -8,6 +8,7 @@ chdir($ROOT);
 
 require_once 'db.php';
 require_once 'ajax/_auth_scope.php';
+require_once 'app/services/TextSecurityService.php';
 require_once 'app/services/UtiAuditAiService.php';
 
 ajax_require_active_session();
@@ -33,6 +34,19 @@ if ($report === '') {
 }
 
 try {
+    $security = new TextSecurityService();
+    $assessment = $security->assess($report, 'relatorio_uti_ia', true);
+    if ($security->shouldBlock($assessment)) {
+        http_response_code(422);
+        echo json_encode([
+            'success' => false,
+            'error' => 'conteudo_suspeito',
+            'message' => 'O relatorio contem padroes suspeitos e nao foi enviado para IA.',
+            'security' => $assessment,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+
     $service = new UtiAuditAiService();
     echo json_encode([
         'success' => true,

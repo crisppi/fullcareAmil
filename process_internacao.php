@@ -44,6 +44,7 @@ require_once("dao/altaDao.php");
 require_once("utils/flow_logger.php");
 require_once(__DIR__ . "/app/cuidadoContinuado.php");
 require_once(__DIR__ . "/app/prorrog_alta_helper.php");
+require_once(__DIR__ . "/app/services/TextSecurityService.php");
 
 if (!function_exists('normalizeDateTimeInput')) {
 function normalizeDateTimeInput($value)
@@ -83,6 +84,29 @@ if (!function_exists('limitInputLength')) {
         }
         $value = (string)$value;
         return substr($value, 0, $length);
+    }
+}
+
+if (!function_exists('validatePostedClinicalTextSecurity')) {
+    function validatePostedClinicalTextSecurity(array $fields, array $flowCtx): void
+    {
+        $security = new TextSecurityService();
+        foreach ($fields as $fieldName => $value) {
+            $value = trim((string)$value);
+            if ($value === '') {
+                continue;
+            }
+
+            $assessment = $security->assess($value, $fieldName, true);
+            if ($security->shouldBlock($assessment)) {
+                flowLog($flowCtx, 'text_security.blocked', 'WARN', [
+                    'field' => $fieldName,
+                    'assessment' => $assessment,
+                ]);
+                echo 'conteudo_suspeito';
+                exit;
+            }
+        }
     }
 }
 
@@ -370,6 +394,11 @@ if ($type === "create") {
 
     $programacao_int = filter_input(INPUT_POST, "programacao_int");
     $programacao_int = limitInputLength($programacao_int, 5000);
+    validatePostedClinicalTextSecurity([
+        'rel_int' => $rel_int,
+        'acoes_int' => $acoes_int,
+        'programacao_int' => $programacao_int,
+    ], $flowCtx);
     $timer_int_raw = filter_input(INPUT_POST, "timer_int", FILTER_VALIDATE_INT);
     $timer_int = ($timer_int_raw !== false && $timer_int_raw !== null) ? max(0, $timer_int_raw) : null;
 
@@ -1125,6 +1154,11 @@ if ($type == "update") {
 
     $programacao_int = filter_input(INPUT_POST, "programacao_int");
     $programacao_int = limitInputLength($programacao_int, 5000);
+    validatePostedClinicalTextSecurity([
+        'rel_int' => $rel_int,
+        'acoes_int' => $acoes_int,
+        'programacao_int' => $programacao_int,
+    ], $flowCtx);
 
     $senha_int = filter_input(INPUT_POST, "senha_int");
     $usuario_create_int = filter_input(INPUT_POST, "usuario_create_int");

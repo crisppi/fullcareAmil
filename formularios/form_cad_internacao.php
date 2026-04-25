@@ -805,8 +805,15 @@
                         </p>
                         <p style="margin:4px 0 0;line-height:1.45;" data-role="auto-note"></p>
                     </div>
+                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
+                    </div>
                     <textarea data-saude-autocomplete="true" maxlength="5000" style="resize:none" rows="2"
                         onclick="aumentarText('rel_int')" class="form-control" id="rel_int" name="rel_int"></textarea>
+                    <div class="d-flex justify-content-end mt-1">
+                        <small class="text-muted" data-counter-for="rel_int">0/5000</small>
+                    </div>
                 </div>
 
                 <!-- Chat Widget -->
@@ -828,16 +835,30 @@
 
                 <div>
                     <label for="acoes_int">Ações da Auditoria</label>
+                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int">Limpar formatação</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int">Organizar com IA</button>
+                    </div>
                     <textarea data-saude-autocomplete="true" rows="2" style="resize:none"
                         onclick="aumentarText('acoes_int')" class="form-control" maxlength="5000" id="acoes_int"
                         name="acoes_int"></textarea>
+                    <div class="d-flex justify-content-end mt-1">
+                        <small class="text-muted" data-counter-for="acoes_int">0/5000</small>
+                    </div>
                 </div>
 
                 <div>
                     <label for="programacao_int">Programação Terapêutica</label>
+                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_int">Limpar formatação</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_int">Organizar com IA</button>
+                    </div>
                     <textarea data-saude-autocomplete="true" style="resize:none" maxlength="5000" rows="2"
                         onclick="aumentarText('programacao_int')" class="form-control" id="programacao_int"
                         name="programacao_int"></textarea>
+                    <div class="d-flex justify-content-end mt-1">
+                        <small class="text-muted" data-counter-for="programacao_int">0/5000</small>
+                    </div>
                 </div>
 
                 <div class="ia-highlight-box">
@@ -857,6 +878,10 @@
                             <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-ler-pdf-auditoria">
                                 <i class="bi bi-file-earmark-pdf"></i>
                                 LER PDF/IMAGEM
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary auditoria-action-btn" id="btn-checklist-auditoria">
+                                <i class="bi bi-card-checklist"></i>
+                                Checklist Auditoria
                             </button>
                             <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
                                 <i class="bi bi-cpu"></i>
@@ -1058,7 +1083,7 @@
             cargoSessao: <?= json_encode((string) $cargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
         });
     </script>
-    <script src="<?= $BASE_URL ?>js/form_cad_internacao.js"></script>
+    <script src="<?= $BASE_URL ?>js/form_cad_internacao.js?v=<?= filemtime(__DIR__ . '/../js/form_cad_internacao.js') ?>"></script>
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>

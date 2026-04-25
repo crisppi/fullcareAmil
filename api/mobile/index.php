@@ -143,7 +143,12 @@ try {
             mobileJsonResponse(['success' => false, 'message' => 'Internacao invalida.'], 422);
         }
 
-        $evolution = mobileCreateAdmissionEvolution($conn, $authUser, $input);
+        try {
+            $evolution = mobileCreateAdmissionEvolution($conn, $authUser, $input);
+        } catch (InvalidArgumentException $exception) {
+            mobileJsonResponse(['success' => false, 'message' => $exception->getMessage()], 422);
+        }
+
         mobileJsonResponse([
             'success' => true,
             'message' => 'Evolucao salva com sucesso.',

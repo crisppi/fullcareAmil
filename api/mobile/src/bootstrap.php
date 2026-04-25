@@ -12,6 +12,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
 }
 
 require_once dirname(__DIR__, 3) . '/db.php';
+require_once dirname(__DIR__, 3) . '/app/services/TextSecurityService.php';
 require_once __DIR__ . '/response.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/repositories.php';

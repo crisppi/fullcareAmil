@@ -253,6 +253,7 @@ require_once("models/message.php");
 require_once("utils/flow_logger.php");
 require_once(__DIR__ . "/app/cuidadoContinuado.php");
 require_once(__DIR__ . "/app/prorrog_alta_helper.php");
+require_once(__DIR__ . "/app/services/TextSecurityService.php");
 
 $message                = new Message($BASE_URL);
 $userDao                = new UserDAO($conn, $BASE_URL);
@@ -339,6 +340,31 @@ function strOrNull($v)
 {
     $v = is_string($v) ? trim($v) : '';
     return $v === '' ? null : $v;
+}
+
+function fullcareValidateVisitTextSecurity(array $fields, array $flowCtx): void
+{
+    $security = new TextSecurityService();
+    foreach ($fields as $fieldName => $value) {
+        $value = trim((string)$value);
+        if ($value === '') {
+            continue;
+        }
+
+        $assessment = $security->assess($value, $fieldName, true);
+        if ($security->shouldBlock($assessment)) {
+            flowLog($flowCtx, 'text_security.blocked', 'WARN', [
+                'field' => $fieldName,
+                'assessment' => $assessment,
+            ]);
+            $message = $GLOBALS['message'] ?? null;
+            if ($message instanceof Message) {
+                $message->setMessage("Conteúdo suspeito no relatório da visita. Revise o texto antes de salvar.", "error", "back");
+            }
+            echo 'conteudo_suspeito';
+            exit;
+        }
+    }
 }
 
 function normalizeDateTimeInput($value)
@@ -766,6 +792,12 @@ if ($type === "create") {
     $exames_enf                  = strOrNull($_POST['exames_enf'] ?? null);
     $oportunidades_enf           = strOrNull($_POST['oportunidades_enf'] ?? null);
     $programacao_enf             = strOrNull($_POST['programacao_enf'] ?? null);
+
+    fullcareValidateVisitTextSecurity([
+        'rel_visita_vis' => $rel_visita_vis,
+        'acoes_int_vis' => $acoes_int_vis,
+        'programacao_enf' => $programacao_enf,
+    ], $flowCtx);
 
     // retificar (ATENÇÃO: precisa ser número de visita, não data)
     $retificou                   = toIntOrNull($_POST['retificou'] ?? null);

@@ -47,6 +47,7 @@ require_once 'dao/tussDao.php';
 require_once 'models/gestao.php';
 require_once 'dao/gestaoDao.php';
 require_once __DIR__ . '/app/prorrog_alta_helper.php';
+require_once __DIR__ . '/app/services/TextSecurityService.php';
 
 /*──────── helpers ────────*/
 if (!function_exists('decodeArray')) {
@@ -74,6 +75,28 @@ function limpa(?string $t, int $lim = 5000): string
 {
     $t = htmlspecialchars($t ?? '', ENT_QUOTES, 'UTF-8');
     return substr($t, 0, $lim);
+}
+if (!function_exists('validateInternacaoEditTextSecurity')) {
+    function validateInternacaoEditTextSecurity(array $fields): void
+    {
+        $security = new TextSecurityService();
+        foreach ($fields as $fieldName => $value) {
+            $value = trim((string)$value);
+            if ($value === '') {
+                continue;
+            }
+
+            $assessment = $security->assess($value, $fieldName, true);
+            if ($security->shouldBlock($assessment)) {
+                internacaoEditarDebugLog('TEXT_SECURITY blocked field=' . $fieldName . ' assessment=' . json_encode($assessment, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+                $_SESSION['msg'] = 'Conteúdo suspeito no relatório da internação. Revise o texto antes de salvar.';
+                $_SESSION['type'] = 'error';
+                $redirect = $_SERVER['HTTP_REFERER'] ?? 'internacoes/lista';
+                header('Location: ' . $redirect);
+                exit;
+            }
+        }
+    }
 }
 if (!function_exists('normalizeDateTimeInput')) {
     function normalizeDateTimeInput($value)
@@ -299,6 +322,12 @@ internacaoEditarDebugLog(
     . ' evento_adverso_ges=' . (string)($_POST['evento_adverso_ges'] ?? '')
     . ' id_gestao=' . (string)($_POST['id_gestao'] ?? '')
 );
+
+validateInternacaoEditTextSecurity([
+    'rel_int' => $_POST['rel_int'] ?? '',
+    'acoes_int' => $_POST['acoes_int'] ?? '',
+    'programacao_int' => $_POST['programacao_int'] ?? '',
+]);
 
 try {
     $conn->beginTransaction();

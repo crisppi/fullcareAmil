@@ -241,6 +241,10 @@
 
             <div>
                 <label for="rel_visita_vis">Relatório Auditoria</label>
+                <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_visita_vis">Limpar formatação</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_visita_vis">Organizar com IA</button>
+                </div>
                 <div id="cronicos-relatorio-alert"
                     style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#fff3cd,#ffe3a3);border:1px solid #f0c36d;color:#6a4a00;box-shadow:0 8px 20px rgba(240,195,109,.18);"
                     hidden>
@@ -256,16 +260,33 @@
                 </div>
                 <textarea type="textarea" rows="2" onclick="aumentarTextAudit()" class="form-control"
                     id="rel_visita_vis" name="rel_visita_vis"></textarea>
+                <div class="d-flex justify-content-end mt-1">
+                    <small class="text-muted" data-counter-for="rel_visita_vis">0/5000</small>
+                </div>
             </div>
             <div style="margin-bottom:20px">
                 <label for="acoes_int_vis">Ações Auditoria</label>
+                <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int_vis">Limpar formatação</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int_vis">Organizar com IA</button>
+                </div>
                 <textarea type="textarea" rows="2" onclick="aumentarTextAcoes()" class="form-control" id="acoes_int_vis"
                     name="acoes_int_vis" placeholder="Ações de auditoria"></textarea>
+                <div class="d-flex justify-content-end mt-1">
+                    <small class="text-muted" data-counter-for="acoes_int_vis">0/5000</small>
+                </div>
             </div>
             <div style="margin-bottom:20px">
                 <label for="programacao_enf">Programação Terapêutica</label>
+                <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_enf">Limpar formatação</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_enf">Organizar com IA</button>
+                </div>
                 <textarea type="textarea" rows="2" class="form-control" id="programacao_enf"
                     name="programacao_enf" placeholder="Programação terapêutica"></textarea>
+                <div class="d-flex justify-content-end mt-1">
+                    <small class="text-muted" data-counter-for="programacao_enf">0/5000</small>
+                </div>
             </div>
             <div class="ia-highlight-box">
                 <div class="ia-highlight-box__header">
@@ -457,6 +478,10 @@
             <br>
 
             <div>
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                    <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft="fields">Limpar rascunho</button>
+                </div>
                 <button style="margin:10px" type="submit" class="btn-sm btn-success btn-int-niveis">Cadastrar</button>
             </div>
     </form>
@@ -526,6 +551,15 @@
 
 <script src="js/text_cad_visita.js"></script>
 <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
+<script>
+window.clinicalTextToolsConfig = {
+    baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+    draftKey: <?= json_encode('fullcare:visita-enf:' . (string)($id_internacao ?? ($_GET['id_internacao'] ?? 'local')), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+    fields: ['rel_visita_vis', 'acoes_int_vis', 'programacao_enf'],
+    autosaveStatusId: 'clinical-autosave-status'
+};
+</script>
+<script src="<?= $BASE_URL ?>js/clinical_text_tools.js?v=<?= filemtime(__DIR__ . '/../js/clinical_text_tools.js') ?>"></script>
 <script>
 window.visitaAiConfig = Object.assign({}, window.visitaAiConfig || {}, {
     baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>

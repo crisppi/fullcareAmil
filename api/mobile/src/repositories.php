@@ -17,6 +17,26 @@ function mobileBindAll(PDOStatement $stmt, array $params): void
     }
 }
 
+function mobileValidateClinicalTextSecurity(array $fields): void
+{
+    if (!class_exists('TextSecurityService')) {
+        return;
+    }
+
+    $security = new TextSecurityService();
+    foreach ($fields as $fieldName => $value) {
+        $value = trim((string)$value);
+        if ($value === '') {
+            continue;
+        }
+
+        $assessment = $security->assess($value, $fieldName, true);
+        if ($security->shouldBlock($assessment)) {
+            throw new InvalidArgumentException('Conteúdo suspeito no relatório. Revise o texto antes de salvar.');
+        }
+    }
+}
+
 function mobileSearchPatients(PDO $conn, array $authUser, string $query): array
 {
     [$scopeSql, $scopeParams] = mobileUserScopeWhere($authUser, 'p');
@@ -451,6 +471,11 @@ function mobileCreateAdmissionEvolution(PDO $conn, array $authUser, array $input
 {
     $admissionId = (int)($input['admission_id'] ?? 0);
     $report = trim((string)($input['report'] ?? ''));
+
+    mobileValidateClinicalTextSecurity([
+        'rel_int' => $report,
+        'rel_visita_vis' => $report,
+    ]);
 
     $lastVisitStmt = $conn->prepare("
         SELECT COALESCE(MAX(visita_no_vis), 0) AS max_visit

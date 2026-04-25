@@ -305,6 +305,334 @@ document.addEventListener('DOMContentLoaded', function() {
         el.addEventListener('blur', () => reduzirText(id, rowsFechado));
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const fields = ['rel_int', 'acoes_int', 'programacao_int'];
+    const form = document.getElementById('myForm');
+    const statusEl = document.getElementById('autosave-status');
+    const clearDraftBtn = document.getElementById('btn-clear-draft');
+    const draftKey = 'fullcare:internacao:draft:' + (config.idSessao || 'local');
+    let autosaveTimer = null;
+
+    function setDraftStatus(message, type) {
+        if (!statusEl) return;
+        statusEl.textContent = message;
+        statusEl.classList.remove('text-muted', 'text-success', 'text-danger', 'text-warning');
+        statusEl.classList.add(type === 'success' ? 'text-success' : type === 'error' ? 'text-danger' : type === 'warning' ? 'text-warning' : 'text-muted');
+    }
+
+    function readDraft() {
+        try {
+            return JSON.parse(localStorage.getItem(draftKey) || '{}') || {};
+        } catch (err) {
+            return {};
+        }
+    }
+
+    function writeDraft() {
+        const payload = {
+            updated_at: new Date().toISOString(),
+            values: {}
+        };
+        fields.forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) payload.values[id] = el.value || '';
+        });
+        try {
+            localStorage.setItem(draftKey, JSON.stringify(payload));
+            setDraftStatus('Rascunho automático: salvo agora', 'success');
+        } catch (err) {
+            setDraftStatus('Rascunho automático indisponível neste navegador', 'warning');
+        }
+    }
+
+    function scheduleDraftSave() {
+        setDraftStatus('Rascunho automático: salvando...', 'muted');
+        if (autosaveTimer) clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(writeDraft, 500);
+    }
+
+    function updateCounter(id) {
+        const el = document.getElementById(id);
+        const counter = document.querySelector('[data-counter-for="' + id + '"]');
+        if (!el || !counter) return;
+        const max = Number(el.getAttribute('maxlength') || 5000);
+        const len = (el.value || '').length;
+        counter.textContent = len + '/' + max;
+        counter.classList.toggle('text-warning', len >= Math.floor(max * 0.9));
+        counter.classList.toggle('text-danger', len >= max);
+    }
+
+    window.updateInternacaoTextCounter = updateCounter;
+
+    function normalizePlainText(value) {
+        return String(value || '')
+            .replace(/\r\n?/g, '\n')
+            .replace(/\u00a0/g, ' ')
+            .replace(/[ \t]+/g, ' ')
+            .replace(/[ \t]+\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+    }
+
+    function setFieldValue(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const max = Number(el.getAttribute('maxlength') || 5000);
+        el.value = String(value || '').slice(0, max);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    function restoreDraft() {
+        const draft = readDraft();
+        const values = draft.values || {};
+        let restored = false;
+        fields.forEach(function(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (!el.value && values[id]) {
+                el.value = values[id];
+                restored = true;
+            }
+            updateCounter(id);
+        });
+        if (restored) {
+            setDraftStatus('Rascunho automático: restaurado', 'success');
+        }
+    }
+
+    window.clearInternacaoDraft = function(options) {
+        options = options || {};
+        if (autosaveTimer) {
+            clearTimeout(autosaveTimer);
+            autosaveTimer = null;
+        }
+        if (options.clearFields) {
+            fields.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.value = '';
+                updateCounter(id);
+            });
+        }
+        try {
+            localStorage.removeItem(draftKey);
+        } catch (err) {}
+        setDraftStatus(options.clearFields ? 'Rascunho e campos limpos' : 'Rascunho automático: limpo', 'muted');
+    };
+
+    fields.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const handleTextChange = function() {
+            updateCounter(id);
+            scheduleDraftSave();
+        };
+        el.addEventListener('input', handleTextChange);
+        el.addEventListener('keyup', handleTextChange);
+        el.addEventListener('change', handleTextChange);
+        el.addEventListener('paste', function() {
+            setTimeout(function() {
+                updateCounter(id);
+                scheduleDraftSave();
+            }, 0);
+        });
+        updateCounter(id);
+    });
+
+    document.addEventListener('input', function(event) {
+        if (event.target && fields.includes(event.target.id)) {
+            updateCounter(event.target.id);
+        }
+    }, true);
+
+    document.querySelectorAll('[data-clean-text]').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const id = button.getAttribute('data-clean-text');
+            const el = document.getElementById(id);
+            if (!el || !el.value.trim()) return;
+            setFieldValue(id, normalizePlainText(el.value));
+            setDraftStatus('Texto normalizado e rascunho atualizado', 'success');
+        });
+    });
+
+    document.querySelectorAll('[data-ai-improve]').forEach(function(button) {
+        button.addEventListener('click', async function() {
+            const id = button.getAttribute('data-ai-improve');
+            const el = document.getElementById(id);
+            if (!el || !el.value.trim()) {
+                setDraftStatus('Informe um texto antes de organizar com IA', 'warning');
+                el && el.focus();
+                return;
+            }
+
+            const originalLabel = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Organizando...';
+            setDraftStatus('IA organizando o texto...', 'muted');
+
+            try {
+                const baseUrl = config.baseUrl || '';
+                const response = await fetch(baseUrl + 'ajax/clinical_text_ai.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'improve',
+                        field: id,
+                        text: el.value
+                    })
+                });
+                const raw = await response.text();
+                let payload = {};
+                try {
+                    payload = raw ? JSON.parse(raw) : {};
+                } catch (parseError) {
+                    throw new Error(raw ? raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : 'Resposta inválida do servidor.');
+                }
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || payload.error || 'Não foi possível organizar o texto.');
+                }
+                setFieldValue(id, payload.data && payload.data.text ? payload.data.text : el.value);
+                setDraftStatus('Texto organizado com IA. Revise antes de salvar.', 'success');
+            } catch (error) {
+                setDraftStatus(error.message || 'Erro ao organizar texto com IA.', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        });
+    });
+
+    if (clearDraftBtn) {
+        clearDraftBtn.addEventListener('click', function() {
+            window.clearInternacaoDraft({ clearFields: true });
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function() {
+            writeDraft();
+        });
+    }
+
+    restoreDraft();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const button = document.getElementById('btn-checklist-auditoria');
+    const content = document.getElementById('parecer-ia-content');
+    const status = document.getElementById('parecer-ia-status');
+    const body = document.getElementById('parecer-ia-body');
+    const toggle = document.getElementById('btn-toggle-parecer-ia');
+    if (!button || !content) return;
+
+    function esc(value) {
+        return String(value ?? '').replace(/[&<>"']/g, function(ch) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[ch];
+        });
+    }
+
+    function fieldValue(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+    }
+
+    function openChecklistPanel() {
+        if (body) body.hidden = false;
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', 'true');
+            const icon = toggle.querySelector('i');
+            if (icon) {
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            }
+        }
+    }
+
+    function setStatus(message, type) {
+        if (!status) return;
+        status.hidden = false;
+        status.textContent = message;
+        status.classList.remove('is-success', 'is-error', 'is-info');
+        status.classList.add(type === 'success' ? 'is-success' : type === 'error' ? 'is-error' : 'is-info');
+    }
+
+    function renderChecklist(data) {
+        const items = Array.isArray(data.itens) ? data.itens : [];
+        const rows = items.length ? items.map(function(item) {
+            const statusText = item.status || 'pendente';
+            return `
+                <li>
+                    <strong>${esc(statusText.toUpperCase())}: ${esc(item.item || '')}</strong>
+                    ${item.detalhe ? `<br><span>${esc(item.detalhe)}</span>` : ''}
+                </li>
+            `;
+        }).join('') : '<li>Nenhuma pendência objetiva retornada.</li>';
+
+        content.innerHTML = `
+            <div class="parecer-section">
+                <h5>Checklist de auditoria</h5>
+                ${data.resumo ? `<p>${esc(data.resumo)}</p>` : ''}
+                <ul>${rows}</ul>
+            </div>
+        `;
+    }
+
+    button.addEventListener('click', async function() {
+        const relatorio = fieldValue('rel_int');
+        const acoes = fieldValue('acoes_int');
+        const programacao = fieldValue('programacao_int');
+        const acomodacao = fieldValue('acomodacao_int');
+
+        if (!relatorio && !acoes && !programacao) {
+            setStatus('Informe relatório, ações ou programação antes de gerar o checklist.', 'error');
+            openChecklistPanel();
+            return;
+        }
+
+        const originalHtml = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Checklist...';
+        openChecklistPanel();
+        setStatus('Gerando checklist de auditoria...', 'info');
+
+        try {
+            const baseUrl = config.baseUrl || '';
+            const response = await fetch(baseUrl + 'ajax/clinical_text_ai.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'checklist',
+                    field: 'checklist_auditoria',
+                    context: { relatorio, acoes, programacao, acomodacao }
+                })
+            });
+            const raw = await response.text();
+            let payload = {};
+            try {
+                payload = raw ? JSON.parse(raw) : {};
+            } catch (parseError) {
+                throw new Error(raw ? raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : 'Resposta inválida do servidor.');
+            }
+            if (!response.ok || !payload.success) {
+                throw new Error(payload.message || payload.error || 'Falha ao gerar checklist.');
+            }
+            renderChecklist(payload.data || {});
+            setStatus('Checklist gerado. Revise antes de salvar.', 'success');
+        } catch (error) {
+            setStatus(error.message || 'Erro ao gerar checklist.', 'error');
+        } finally {
+            button.disabled = false;
+            button.innerHTML = originalHtml;
+        }
+    });
+});
 // selectpicker só se o plugin existir (evita quebrar tudo)
 $(function() {
     if ($.fn.selectpicker) {
@@ -473,6 +801,31 @@ const patientInsightsHelper = (function() {
         if (body) body.innerHTML = msg;
     }
 
+    function esc(value) {
+        return String(value ?? '').replace(/[&<>"']/g, function(ch) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[ch];
+        });
+    }
+
+    function fmtDate(value) {
+        if (!value) return 'Não informado';
+        const raw = String(value).slice(0, 10);
+        const parts = raw.split('-');
+        if (parts.length !== 3) return esc(raw);
+        return parts[2] + '/' + parts[1] + '/' + parts[0];
+    }
+
+    function compact(value, fallback) {
+        const text = String(value ?? '').trim();
+        return text ? esc(text) : (fallback || 'Não informado');
+    }
+
     function disableHub() {
         if (hubLink) {
             hubLink.classList.add('disabled');
@@ -553,6 +906,15 @@ const patientInsightsHelper = (function() {
             if (current !== requestId) return;
             if (!payload.success || !payload.data) throw new Error(payload.error || 'Resposta inválida.');
             const data = payload.data;
+            const cadastro = data.cadastro || {};
+            const ultimaInternacao = data.ultima_internacao || null;
+            const ultimaVisita = data.ultima_visita || null;
+            const pendencias = data.pendencias || {};
+            const alertas = Array.isArray(data.alertas_longa_permanencia) ? data.alertas_longa_permanencia : [];
+            const pendenciasList = [];
+            if ((pendencias.internacoes_abertas || 0) > 0) pendenciasList.push(`${pendencias.internacoes_abertas} internação(ões) aberta(s)`);
+            if ((pendencias.sem_relatorio || 0) > 0) pendenciasList.push(`${pendencias.sem_relatorio} sem relatório`);
+            if ((pendencias.sem_acoes || 0) > 0) pendenciasList.push(`${pendencias.sem_acoes} sem ações`);
             const html = `
                 <div class="patient-insight-metrics">
                     <div>
@@ -568,6 +930,25 @@ const patientInsightsHelper = (function() {
                         <strong>${data.mp ?? 0}</strong>
                     </div>
                 </div>
+                <div class="mt-2 small">
+                    <div><strong>Seguradora:</strong> ${compact(cadastro.seguradora)}</div>
+                    <div><strong>Matrícula:</strong> ${compact(cadastro.matricula)}</div>
+                    <div><strong>Patologias:</strong> ${compact(data.patologias)}</div>
+                </div>
+                <div class="mt-2 small">
+                    <strong>Última internação:</strong>
+                    ${ultimaInternacao ? `${compact(ultimaInternacao.hospital)} em ${fmtDate(ultimaInternacao.data_internacao)} (${compact(ultimaInternacao.status)}, ${ultimaInternacao.dias ?? 0} dia(s))` : 'Nenhuma internação encontrada.'}
+                    ${ultimaInternacao && ultimaInternacao.patologia ? `<br><span>Patologia: ${compact(ultimaInternacao.patologia)}</span>` : ''}
+                </div>
+                <div class="mt-2 small">
+                    <strong>Última visita:</strong>
+                    ${ultimaVisita ? `${fmtDate(ultimaVisita.data)}${ultimaVisita.numero ? ` - visita ${compact(ultimaVisita.numero)}` : ''}` : 'Nenhuma visita encontrada.'}
+                    ${ultimaVisita && ultimaVisita.resumo ? `<br><span>${compact(ultimaVisita.resumo)}</span>` : ''}
+                </div>
+                <div class="mt-2 small">
+                    <strong>Pendências:</strong> ${pendenciasList.length ? esc(pendenciasList.join(' • ')) : 'Sem pendências principais.'}
+                </div>
+                ${alertas.length ? `<div class="mt-2 small text-warning"><strong>Longa permanência:</strong> ${esc(alertas.join(' '))}</div>` : ''}
             `;
             setMessage(html);
             enableHub(pacId);
@@ -1445,6 +1826,10 @@ $("#myForm").submit(function(event) {
                 showSubmitAlert('error', "Selecione um hospital antes de cadastrar.", 3500);
                 return;
             }
+            if (resposta === 'conteudo_suspeito') {
+                showSubmitAlert('error', "O relatório contém padrões suspeitos. Revise o texto antes de salvar.", 4500);
+                return;
+            }
 
             if (resposta === '0') {
                 showSubmitAlert('error', "Paciente possui internação ativa", 2000);
@@ -1579,6 +1964,9 @@ $("#myForm").submit(function(event) {
                 $('#retroativa_confirmada').val('0');
                 $('#retroativa-alert').addClass('d-none');
                 $('#retroativa-container').addClass('d-none');
+                if (typeof window.clearInternacaoDraft === 'function') {
+                    window.clearInternacaoDraft();
+                }
             }
 
             // Clear additional fields

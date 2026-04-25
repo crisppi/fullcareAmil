@@ -793,25 +793,46 @@
                 <div class="form-group" style="margin-left:0px; margin-top:-15px">
                     <div>
                         <label for="rel_int">Relatório de Auditoria</label>
+                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
+                        </div>
                         <textarea id="rel_int" name="rel_int" maxlength="5000" class="form-control" style="resize:none"
                             rows="2" onclick="aumentarText('rel_int')" onblur="reduzirText('rel_int', 2)"><?= htmlspecialchars($intern['rel_int'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
 </textarea>
+                        <div class="d-flex justify-content-end mt-1">
+                            <small class="text-muted" data-counter-for="rel_int">0/5000</small>
+                        </div>
                     </div>
 
                     <div style="margin-top: 10px;">
                         <label for="acoes_int">Ações da Auditoria</label>
+                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int">Limpar formatação</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int">Organizar com IA</button>
+                        </div>
                         <textarea id="acoes_int" name="acoes_int" rows="2" maxlength="5000" class="form-control"
                             style="resize:none" onclick="aumentarText('acoes_int')"
                             onblur="reduzirText('acoes_int', 2)"><?= htmlspecialchars($intern['acoes_int'] ?? ''); ?></textarea>
+                        <div class="d-flex justify-content-end mt-1">
+                            <small class="text-muted" data-counter-for="acoes_int">0/5000</small>
+                        </div>
                     </div>
 
 
                     <div style="margin-top: 10px;">
                         <label for="programacao_int">Programação Terapêutica</label>
+                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_int">Limpar formatação</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_int">Organizar com IA</button>
+                        </div>
                         <textarea type="textarea" style="resize:none" maxlength="5000" rows="2"
                             onclick="aumentarText('programacao_int')" onblur="reduzirText('programacao_int', 2)"
                             class="form-control" id="programacao_int"
                             name="programacao_int"><?= htmlspecialchars($intern['programacao_int'] ?? ''); ?></textarea>
+                        <div class="d-flex justify-content-end mt-1">
+                            <small class="text-muted" data-counter-for="programacao_int">0/5000</small>
+                        </div>
                     </div>
 
                     <div class="ia-highlight-box">
@@ -1261,6 +1282,10 @@
 
 
                 <br>
+                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                    <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft="fields">Limpar rascunho</button>
+                </div>
                 <button type="submit" class="btn btn-success btn-submit-standard">
                     <i class="fas fa-check edit-icon" style="font-size:1rem;margin-right:8px;"></i>
                     Atualizar
@@ -1417,6 +1442,15 @@
 
     <!-- <script src="js/scriptDataInt.js"></script> -->
     <script src="<?= $BASE_URL ?>js/text_cad_internacao.js"></script>
+    <script>
+        window.clinicalTextToolsConfig = {
+            baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            draftKey: <?= json_encode('fullcare:edit-internacao:' . (string)($intern['id_internacao'] ?? ($_GET['id_internacao'] ?? 'local')), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            fields: ['rel_int', 'acoes_int', 'programacao_int'],
+            autosaveStatusId: 'clinical-autosave-status'
+        };
+    </script>
+    <script src="<?= $BASE_URL ?>js/clinical_text_tools.js?v=<?= filemtime(__DIR__ . '/../js/clinical_text_tools.js') ?>"></script>
     <script src="js/select_internacao.js"></script>
 
     <script>
