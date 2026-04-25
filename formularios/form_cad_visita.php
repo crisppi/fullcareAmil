@@ -198,7 +198,16 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                         <option value="">Selecione a visita</option>
                         <?php foreach ((array) $visitasAntigas as $visita): ?>
                         <?php if (is_array($visita) && isset($visita['visita_no_vis'])): ?>
-                        <option value="<?= $visita['visita_no_vis'] ?>">
+                        <?php
+                            $visitaNoOption = (int)($visita['visita_no_vis'] ?? 0);
+                            $visitaIdOption = (int)($visita['id_visita'] ?? 0);
+                            $retificarSelected = (
+                                isset($editVisitaIdParam, $editVisitaIdReal)
+                                && $editVisitaIdParam
+                                && ($visitaNoOption === (int)$editVisitaIdParam || $visitaIdOption === (int)$editVisitaIdReal)
+                            );
+                        ?>
+                        <option value="<?= $visita['visita_no_vis'] ?>" <?= $retificarSelected ? 'selected' : '' ?>>
                             Visita ID <?= $visita['visita_no_vis'] ?> -
                             <?= isset($visita['data_visita_vis']) ? DateTime::createFromFormat('Y-m-d', $visita['data_visita_vis'])->format('d/m/Y') : 'Data não informada' ?>
                         </option>
@@ -425,7 +434,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <label class="control-label" for="select_tuss">Tuss</label>
                             <select class="form-control select-purple" id="select_tuss" name="select_tuss">
                                 <option value="">Selecione</option>
-                                <option value="s">Sim</option>
+                                <option value="s" <?= (($editAdditionalSelects['tuss'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
@@ -433,7 +442,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <label class="control-label" for="select_prorrog">Prorrogação</label>
                             <select class="form-control select-purple" id="select_prorrog" name="select_prorrog">
                                 <option value="">Selecione</option>
-                                <option value="s">Sim</option>
+                                <option value="s" <?= (($editAdditionalSelects['prorrog'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
@@ -443,7 +452,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
 
                             <select class="form-control select-purple" id="select_gestao" name="select_gestao">
                                 <option value="">Selecione</option>
-                                <option value="s">Sim</option>
+                                <option value="s" <?= (($editAdditionalSelects['gestao'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
@@ -451,7 +460,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <label class="control-label" for="select_uti">UTI</label>
                             <select class="form-control select-purple" id="select_uti" name="select_uti">
                                 <option value="">Selecione</option>
-                                <option value="s">Sim</option>
+                                <option value="s" <?= (($editAdditionalSelects['uti'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
@@ -461,7 +470,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <label class="control-label" for="select_negoc">Negociações</label>
                             <select class="form-control select-purple" id="select_negoc" name="select_negoc">
                                 <option value="">Selecione</option>
-                                <option value="s">Sim</option>
+                                <option value="s" <?= (($editAdditionalSelects['negoc'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
@@ -1699,6 +1708,9 @@ dataVisitaInput.addEventListener('click', () => {
 </script>
 
 <script>
+var currentEditVisitaId = null;
+var isHydratingAdditionalSection = false;
+
 window.VISITA_TUSS_DATA = <?= json_encode($tussPorVisita, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 window.VISITA_TUSS_FALLBACK = <?= json_encode($tussPorInternacao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 window.VISITA_NEG_DATA = <?= json_encode($negPorVisita, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
@@ -1709,6 +1721,9 @@ window.VISITA_UTI_DATA = <?= json_encode($utiPorVisita, JSON_UNESCAPED_UNICODE |
 window.VISITA_UTI_FALLBACK = <?= json_encode($utiPorInternacao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 window.VISITA_PRORR_DATA = <?= json_encode($prorrogPorVisita, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 window.VISITA_PRORR_FALLBACK = <?= json_encode($prorrogPorInternacao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+window.VISITA_EDIT_ID_REAL = <?= json_encode((int)($editVisitaIdReal ?? 0), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+window.VISITA_PRORR_EDIT_ROWS = <?= json_encode($prorrogEditRows ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+window.VISITA_EDIT_ADDITIONAL_SELECTS = <?= json_encode($editAdditionalSelects ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 window.VISITA_INTER_MAP = <?= json_encode($visitaInterMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 </script>
 <script>
@@ -1718,6 +1733,9 @@ const __NEG_FALLBACK = window.VISITA_NEG_FALLBACK || {};
 const __GESTAO_FALLBACK = window.VISITA_GESTAO_FALLBACK || {};
 const __UTI_FALLBACK = window.VISITA_UTI_FALLBACK || {};
 const __PRORR_FALLBACK = window.VISITA_PRORR_FALLBACK || {};
+const __VISITA_EDIT_ID_REAL = window.VISITA_EDIT_ID_REAL || 0;
+const __VISITA_PRORR_EDIT_ROWS = Array.isArray(window.VISITA_PRORR_EDIT_ROWS) ? window.VISITA_PRORR_EDIT_ROWS : [];
+const __VISITA_EDIT_ADDITIONAL_SELECTS = window.VISITA_EDIT_ADDITIONAL_SELECTS || {};
 </script>
 
 <script>
@@ -1818,8 +1836,6 @@ document.addEventListener('DOMContentLoaded', function() {
         dataLanc: dataLancInput ? dataLancInput.value : ''
     };
 
-    let currentEditVisitaId = null;
-    let isHydratingAdditionalSection = false;
     let lastSyncedVisitaDate = defaults.dataVisita;
 
     function syncLancamentoWithVisita(force) {
@@ -1870,6 +1886,17 @@ document.addEventListener('DOMContentLoaded', function() {
         currentEditVisitaId = vis.id_visita != null ? String(vis.id_visita) : null;
         syncVisitaFormMode(true);
         resetAdditionalTables();
+        const hydrateCurrentVisit = function() {
+            if (typeof hydrateAdditionalTablesForVisita === 'function') {
+                hydrateAdditionalTablesForVisita(currentEditVisitaId);
+            }
+            if (typeof signalAdditionalSelectsForVisita === 'function') {
+                signalAdditionalSelectsForVisita(currentEditVisitaId);
+            }
+        };
+        hydrateCurrentVisit();
+        window.setTimeout(hydrateCurrentVisit, 0);
+        window.setTimeout(hydrateCurrentVisit, 100);
     }
 
     function resetCampos() {
@@ -1907,12 +1934,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.selecionarVisitaParaEditar = function(idVisita) {
         const mapKey = idVisita != null ? String(idVisita) : null;
-        const visita = mapKey ? visitaMapById[mapKey] : null;
+        const visita = mapKey ? (visitaMapById[mapKey] || visitaMap[mapKey]) : null;
         if (!visita) return;
         if (selectRet && visita.visita_no_vis != null) {
             selectRet.value = String(visita.visita_no_vis);
-            selectRet.dispatchEvent(new Event('change'));
         }
+        fillCampos(visita);
         if (modalEl) {
             if (window.bootstrap && window.bootstrap.Modal) {
                 const instance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
@@ -1926,7 +1953,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const editVisitaId = params.get('edit_visita');
     if (editVisitaId && /^\d+$/.test(editVisitaId)) {
-        window.selecionarVisitaParaEditar(editVisitaId);
+        window.setTimeout(function() {
+            window.selecionarVisitaParaEditar(editVisitaId);
+        }, 0);
     }
 })();
 
@@ -2021,7 +2050,7 @@ function resetAdditionalTables() {
     resetProrrogFields();
 }
 
-function hydrateTussForVisita(visitaId) {
+function hydrateTussForVisita(visitaId, openPanel) {
     const map = window.VISITA_TUSS_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entries = key && map[key] ? map[key] : [];
@@ -2039,8 +2068,7 @@ function hydrateTussForVisita(visitaId) {
         selectTuss.dispatchEvent(new Event('change'));
         return;
     }
-    selectTuss.value = 's';
-    selectTuss.dispatchEvent(new Event('change'));
+    markAdditionalSelect('select_tuss', openPanel);
     applyTussEntries(entries);
 }
 
@@ -2074,11 +2102,26 @@ function bindLazyHydration(selectId, shouldHydrate, hydrator) {
         }
         isHydratingAdditionalSection = true;
         try {
-            hydrator(currentEditVisitaId);
+            hydrator(currentEditVisitaId, true);
         } finally {
             isHydratingAdditionalSection = false;
         }
     });
+}
+
+function markAdditionalSelect(selectId, openPanel) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    if (openPanel && typeof window.fullcareShowAdditionalSection === 'function') {
+        select.value = 's';
+        window.fullcareShowAdditionalSection(selectId);
+        return;
+    }
+    if (typeof window.fullcareSignalAdditionalSection === 'function') {
+        window.fullcareSignalAdditionalSection(selectId, 's');
+    } else {
+        select.value = 's';
+    }
 }
 
 function resetTussFields() {
@@ -2118,7 +2161,7 @@ function applyTussEntries(entries) {
     if (typeof generateTussJSON === 'function') generateTussJSON();
 }
 
-function hydrateNegForVisita(visitaId) {
+function hydrateNegForVisita(visitaId, openPanel) {
     const map = window.VISITA_NEG_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entries = key && map[key] ? map[key] : [];
@@ -2136,8 +2179,7 @@ function hydrateNegForVisita(visitaId) {
         selectNeg.dispatchEvent(new Event('change'));
         return;
     }
-    selectNeg.value = 's';
-    selectNeg.dispatchEvent(new Event('change'));
+    markAdditionalSelect('select_negoc', openPanel);
     applyNegotiationEntries(entries);
 }
 
@@ -2224,7 +2266,7 @@ function applyGestaoEntry(entry) {
     });
 }
 
-function hydrateGestaoForVisita(visitaId) {
+function hydrateGestaoForVisita(visitaId, openPanel) {
     const map = window.VISITA_GESTAO_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entry = key && map[key] ? map[key] : null;
@@ -2244,8 +2286,7 @@ function hydrateGestaoForVisita(visitaId) {
         return;
     }
     if (selectGestao) {
-        selectGestao.value = 's';
-        selectGestao.dispatchEvent(new Event('change'));
+        markAdditionalSelect('select_gestao', openPanel);
     }
     applyGestaoEntry(entry);
 }
@@ -2290,7 +2331,7 @@ function applyUtiEntry(entry) {
     }
 }
 
-function hydrateUtiForVisita(visitaId) {
+function hydrateUtiForVisita(visitaId, openPanel) {
     const map = window.VISITA_UTI_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entry = key && map[key] ? map[key] : null;
@@ -2310,8 +2351,7 @@ function hydrateUtiForVisita(visitaId) {
         return;
     }
     if (selectUti) {
-        selectUti.value = 's';
-        selectUti.dispatchEvent(new Event('change'));
+        markAdditionalSelect('select_uti', openPanel);
     }
     applyUtiEntry(entry);
 }
@@ -2337,20 +2377,28 @@ function applyProrrogEntries(entries) {
         resetProrrogFields();
         return;
     }
+    entries = entries.slice().sort((a, b) => {
+        const aDate = Date.parse(a.prorrog1_ini_pror || '') || 0;
+        const bDate = Date.parse(b.prorrog1_ini_pror || '') || 0;
+        if (aDate === bDate) {
+            return (parseInt(a.id_prorrogacao || 0, 10) || 0) - (parseInt(b.id_prorrogacao || 0, 10) || 0);
+        }
+        return aDate - bDate;
+    });
     if (typeof clearProrrogInputs === 'function') {
         clearProrrogInputs();
     }
-    let base = document.querySelector('.field-container');
+    let base = document.querySelector('#fieldsContainer .field-container');
     if (!base && typeof addField === 'function') {
         addField();
-        base = document.querySelector('.field-container');
+        base = document.querySelector('#fieldsContainer .field-container');
     }
     if (!base) return;
     entries.forEach((entry, idx) => {
         let target = base;
         if (idx > 0 && typeof addField === 'function') {
             addField();
-            const containers = document.querySelectorAll('.field-container');
+            const containers = document.querySelectorAll('#fieldsContainer .field-container');
             target = containers[containers.length - 1];
         }
         if (!target) return;
@@ -2373,10 +2421,13 @@ function applyProrrogEntries(entries) {
     }
 }
 
-function hydrateProrrogForVisita(visitaId) {
+function hydrateProrrogForVisita(visitaId, openPanel) {
     const map = window.VISITA_PRORR_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entries = key && map[key] ? map[key] : [];
+    if ((!entries || !entries.length) && __VISITA_EDIT_ID_REAL && String(visitaId) === String(__VISITA_EDIT_ID_REAL)) {
+        entries = __VISITA_PRORR_EDIT_ROWS;
+    }
     if ((!entries || !entries.length) && visitaId != null) {
         const interId = __VISITA_INTER_MAP[String(visitaId)];
         if (interId && __PRORR_FALLBACK[String(interId)]) {
@@ -2393,10 +2444,60 @@ function hydrateProrrogForVisita(visitaId) {
         return;
     }
     if (selectProrr) {
-        selectProrr.value = 's';
-        selectProrr.dispatchEvent(new Event('change'));
+        markAdditionalSelect('select_prorrog', openPanel);
     }
     applyProrrogEntries(entries);
+}
+
+function hydrateAdditionalTablesForVisita(visitaId) {
+    if (!visitaId) return;
+    isHydratingAdditionalSection = true;
+    try {
+        if (hasEntriesForVisita(visitaId, window.VISITA_TUSS_DATA || {}, __TUSS_FALLBACK)) {
+            hydrateTussForVisita(visitaId);
+        }
+        if (hasEntriesForVisita(visitaId, window.VISITA_NEG_DATA || {}, __NEG_FALLBACK)) {
+            hydrateNegForVisita(visitaId);
+        }
+        if (hasEntriesForVisita(visitaId, window.VISITA_GESTAO_DATA || {}, __GESTAO_FALLBACK)) {
+            hydrateGestaoForVisita(visitaId);
+        }
+        if (hasEntriesForVisita(visitaId, window.VISITA_UTI_DATA || {}, __UTI_FALLBACK)) {
+            hydrateUtiForVisita(visitaId);
+        }
+        if (
+            hasEntriesForVisita(visitaId, window.VISITA_PRORR_DATA || {}, __PRORR_FALLBACK)
+            || (__VISITA_EDIT_ID_REAL && String(visitaId) === String(__VISITA_EDIT_ID_REAL) && __VISITA_PRORR_EDIT_ROWS.length > 0)
+        ) {
+            hydrateProrrogForVisita(visitaId);
+        }
+    } finally {
+        isHydratingAdditionalSection = false;
+    }
+}
+
+function signalAdditionalSelectsForVisita(visitaId) {
+    if (!visitaId) return;
+    const realVisitaId = String(visitaId);
+    const checks = [
+        ['select_tuss', hasEntriesForVisita(realVisitaId, window.VISITA_TUSS_DATA || {}, __TUSS_FALLBACK)],
+        ['select_negoc', hasEntriesForVisita(realVisitaId, window.VISITA_NEG_DATA || {}, __NEG_FALLBACK)],
+        ['select_gestao', hasEntriesForVisita(realVisitaId, window.VISITA_GESTAO_DATA || {}, __GESTAO_FALLBACK)],
+        ['select_uti', hasEntriesForVisita(realVisitaId, window.VISITA_UTI_DATA || {}, __UTI_FALLBACK)],
+        [
+            'select_prorrog',
+            hasEntriesForVisita(realVisitaId, window.VISITA_PRORR_DATA || {}, __PRORR_FALLBACK)
+            || (__VISITA_EDIT_ID_REAL && realVisitaId === String(__VISITA_EDIT_ID_REAL) && __VISITA_PRORR_EDIT_ROWS.length > 0)
+        ]
+    ];
+    checks.forEach(([selectId, hasData]) => {
+        if (hasData) {
+            markAdditionalSelect(selectId, false);
+        }
+    });
+    if (typeof window.fullcareHideAdditionalSections === 'function') {
+        window.fullcareHideAdditionalSections();
+    }
 }
 
 bindLazyHydration(
@@ -2438,6 +2539,39 @@ bindLazyHydration(
     },
     hydrateProrrogForVisita
 );
+
+function hydrateCurrentEditVisitAfterSetup() {
+    if (!currentEditVisitaId) return;
+    hydrateAdditionalTablesForVisita(currentEditVisitaId);
+    signalAdditionalSelectsForVisita(currentEditVisitaId);
+}
+
+function signalEditAdditionalSelectsFromServer() {
+    if (!__VISITA_EDIT_ID_REAL) return;
+    const map = {
+        tuss: 'select_tuss',
+        prorrog: 'select_prorrog',
+        gestao: 'select_gestao',
+        uti: 'select_uti',
+        negoc: 'select_negoc'
+    };
+    Object.keys(map).forEach((key) => {
+        if (__VISITA_EDIT_ADDITIONAL_SELECTS[key] === 's') {
+            markAdditionalSelect(map[key], false);
+        }
+    });
+    if (typeof window.fullcareHideAdditionalSections === 'function') {
+        window.fullcareHideAdditionalSections();
+    }
+}
+
+hydrateCurrentEditVisitAfterSetup();
+document.addEventListener('DOMContentLoaded', hydrateCurrentEditVisitAfterSetup);
+window.addEventListener('load', hydrateCurrentEditVisitAfterSetup);
+signalEditAdditionalSelectsFromServer();
+document.addEventListener('DOMContentLoaded', signalEditAdditionalSelectsFromServer);
+window.addEventListener('load', signalEditAdditionalSelectsFromServer);
+window.setTimeout(signalEditAdditionalSelectsFromServer, 0);
 </script>
 
 <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>

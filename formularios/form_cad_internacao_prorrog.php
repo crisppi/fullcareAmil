@@ -1,6 +1,12 @@
 <?php
 $prorrogDefaultAcomod = '';
 $prorrogDefaultIni = '';
+$prorrogFkInternacaoValue = (int)($id_internacao ?? 0);
+if ($prorrogFkInternacaoValue <= 0 && isset($ultimoReg)) {
+    $prorrogFkInternacaoValue = is_array($ultimoReg)
+        ? (int)($ultimoReg['id_internacao'] ?? 0)
+        : (int)$ultimoReg;
+}
 
 if (!empty($prorrogIntern) && is_array($prorrogIntern)) {
     $ultimaProrrog = null;
@@ -41,6 +47,35 @@ if (!empty($prorrogIntern) && is_array($prorrogIntern)) {
         }
     }
 }
+
+function prorrogDateValue($value): string
+{
+    $value = trim((string)$value);
+    if ($value === '') {
+        return '';
+    }
+    $ts = strtotime($value);
+    return $ts ? date('Y-m-d', $ts) : substr($value, 0, 10);
+}
+
+$prorrogEditRows = (isset($prorrogEditRows) && is_array($prorrogEditRows))
+    ? array_values(array_filter($prorrogEditRows, 'is_array'))
+    : [];
+usort($prorrogEditRows, static function ($a, $b) {
+    $aDate = strtotime((string)($a['prorrog1_ini_pror'] ?? '')) ?: 0;
+    $bDate = strtotime((string)($b['prorrog1_ini_pror'] ?? '')) ?: 0;
+    if ($aDate === $bDate) {
+        return (int)($a['id_prorrogacao'] ?? 0) <=> (int)($b['id_prorrogacao'] ?? 0);
+    }
+    return $aDate <=> $bDate;
+});
+$prorrogInitialRows = $prorrogEditRows ?: [[
+    'acomod1_pror' => $prorrogDefaultAcomod,
+    'prorrog1_ini_pror' => $prorrogDefaultIni,
+    'prorrog1_fim_pror' => '',
+    'diarias_1' => '',
+    'isol_1_pror' => 'n',
+]];
 ?>
 <style>
 .prorrogacao-container .form-group.row {
@@ -452,57 +487,67 @@ if (isset($dados_alta) && is_array($dados_alta)) {
         </div>
     <div id="fieldsContainer">
 
-        <!-- Linha inicial (sem botão "-") -->
+        <?php foreach ($prorrogInitialRows as $prorrogRowIndex => $prorrogRow): ?>
+        <?php
+            $prorrogRowAcomod = (string)($prorrogRow['acomod1_pror'] ?? '');
+            $prorrogRowIni = prorrogDateValue($prorrogRow['prorrog1_ini_pror'] ?? '');
+            $prorrogRowFim = prorrogDateValue($prorrogRow['prorrog1_fim_pror'] ?? '');
+            $prorrogRowDiarias = (string)($prorrogRow['diarias_1'] ?? '');
+            $prorrogRowIsol = (string)($prorrogRow['isol_1_pror'] ?? 'n');
+        ?>
         <div class="field-container form-group row">
-            <input type="hidden" id="fk_internacao_pror" name="fk_internacao_pror" value="<?= $ultimoReg ?>">
-            <input type="hidden" id="fk_usuario_pror" name="fk_usuario_pror" value="<?= $_SESSION["id_usuario"] ?>">
+            <input type="hidden" <?= $prorrogRowIndex === 0 ? 'id="fk_internacao_pror"' : '' ?> name="fk_internacao_pror" value="<?= $prorrogFkInternacaoValue ?>">
+            <input type="hidden" <?= $prorrogRowIndex === 0 ? 'id="fk_usuario_pror"' : '' ?> name="fk_usuario_pror" value="<?= (int)($_SESSION["id_usuario"] ?? 0) ?>">
 
             <div class="form-group col-sm-2">
-                <label class="control-label" for="acomod1_pror">Acomodação</label>
-                <select onchange="generateProrJSON()" class="form-control-sm form-control" id="acomod1_pror"
+                <label class="control-label" for="acomod1_pror_<?= $prorrogRowIndex ?>">Acomodação</label>
+                <select onchange="generateProrJSON()" class="form-control-sm form-control" id="acomod1_pror_<?= $prorrogRowIndex ?>"
                     name="acomod1_pror">
                     <option value=""> </option>
                     <?php sort($dados_acomodacao, SORT_ASC);
                     foreach ($dados_acomodacao as $acomd) { ?>
-                    <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)prorrogValorAcomod((string)$acomd, $prorrogAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>" <?= $prorrogDefaultAcomod === (string)$acomd ? 'selected' : '' ?>><?= $acomd; ?></option>
+                    <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)prorrogValorAcomod((string)$acomd, $prorrogAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>" <?= $prorrogRowAcomod === (string)$acomd ? 'selected' : '' ?>><?= $acomd; ?></option>
                     <?php } ?>
                 </select>
             </div>
 
             <div class="form-group col-sm-2">
-                <label class="control-label" for="prorrog1_ini_pror">Data inicial</label>
+                <label class="control-label" for="prorrog1_ini_pror_<?= $prorrogRowIndex ?>">Data inicial</label>
                 <input onchange="generateProrJSON()" type="date" class="form-control-sm form-control"
-                    id="prorrog1_ini_pror" name="prorrog1_ini_pror" value="<?= htmlspecialchars($prorrogDefaultIni, ENT_QUOTES, 'UTF-8') ?>">
+                    id="prorrog1_ini_pror_<?= $prorrogRowIndex ?>" name="prorrog1_ini_pror" value="<?= htmlspecialchars($prorrogRowIni, ENT_QUOTES, 'UTF-8') ?>">
             </div>
 
             <div class="form-group col-sm-2">
-                <label class="control-label" for="prorrog1_fim_pror">Data final</label>
+                <label class="control-label" for="prorrog1_fim_pror_<?= $prorrogRowIndex ?>">Data final</label>
                 <input onchange="generateProrJSON()" type="date" class="form-control-sm form-control"
-                    id="prorrog1_fim_pror" name="prorrog1_fim_pror">
+                    id="prorrog1_fim_pror_<?= $prorrogRowIndex ?>" name="prorrog1_fim_pror" value="<?= htmlspecialchars($prorrogRowFim, ENT_QUOTES, 'UTF-8') ?>">
             </div>
 
             <div class="form-group col-sm-1">
-                <label class="control-label" for="diarias_1">Diárias</label>
+                <label class="control-label" for="diarias_1_<?= $prorrogRowIndex ?>">Diárias</label>
                 <input type="text" style="text-align:center; font-weight:600; background-color:darkgray" readonly
-                    class="form-control-sm form-control" id="diarias_1" name="diarias_1">
+                    class="form-control-sm form-control" id="diarias_1_<?= $prorrogRowIndex ?>" name="diarias_1" value="<?= htmlspecialchars($prorrogRowDiarias, ENT_QUOTES, 'UTF-8') ?>">
             </div>
 
             <div class="form-group col-sm-1">
-                <label class="control-label" for="isol_1_pror">Isolamento</label>
-                <select onchange="generateProrJSON()" class="form-control-sm form-control" id="isol_1_pror"
+                <label class="control-label" for="isol_1_pror_<?= $prorrogRowIndex ?>">Isolamento</label>
+                <select onchange="generateProrJSON()" class="form-control-sm form-control" id="isol_1_pror_<?= $prorrogRowIndex ?>"
                     name="isol_1_pror">
-                    <option value="n">Não</option>
-                    <option value="s">Sim</option>
+                    <option value="n" <?= $prorrogRowIsol === 'n' ? 'selected' : '' ?>>Não</option>
+                    <option value="s" <?= $prorrogRowIsol === 's' ? 'selected' : '' ?>>Sim</option>
                 </select>
             </div>
 
             <div class="form-group col-sm-2" style="margin-top:25px">
-                <!-- apenas (+) na primeira linha -->
+                <?php if ($prorrogRowIndex > 0): ?>
+                <button type="button" class="btn btn-remove" onclick="removeField(this)">-</button>
+                <?php endif; ?>
                 <button type="button" class="btn btn-add" onclick="addField()">+</button>
             </div>
 
             <div class="error-message prorrog-alert" role="alert"></div>
         </div>
+        <?php endforeach; ?>
     </div>
 
     <input type="hidden" id="prorrogacoes-json" name="prorrogacoes-json">
@@ -703,7 +748,7 @@ function getInternacaoDateForProrrog() {
 }
 
 function setFirstProrrogationDate() {
-    const firstContainer = document.querySelector(".field-container");
+    const firstContainer = document.querySelector("#fieldsContainer .field-container");
     if (!firstContainer) return;
 
     const defaults = window.__PRORROG_DEFAULT_FIRST__ || {};
@@ -820,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Template de novas linhas (com "-" e "+")
 function createProrrogationField() {
-    const firstRow = document.querySelector('.field-container');
+    const firstRow = document.querySelector('#fieldsContainer .field-container');
     const liberadaRef = firstRow ? firstRow.querySelector('[name="acomod1_pror"]') : null;
 
     const buildOptionsFromSelect = (selectEl) => {
@@ -887,7 +932,7 @@ function addField() {
     const newField = createProrrogationField();
     fieldsContainer.insertAdjacentHTML("beforeend", newField);
 
-    const fieldContainers = document.querySelectorAll(".field-container");
+    const fieldContainers = document.querySelectorAll("#fieldsContainer .field-container");
     if (fieldContainers.length > 1) {
         const lastContainer = fieldContainers[fieldContainers.length - 2];
         const newContainer = fieldContainers[fieldContainers.length - 1];
@@ -1065,11 +1110,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // Gera JSON das prorrogações
 function generateProrJSON() {
     // pega fk_internacao e usuario da primeira linha (evita conflito de IDs repetidos)
-    const first = document.querySelector(".field-container");
+    const first = document.querySelector("#fieldsContainer .field-container");
     const fk_internacao_pror = first ? (first.querySelector('input[name="fk_internacao_pror"]')?.value || '') : '';
     const fk_usuario_pror = first ? (first.querySelector('input[name="fk_usuario_pror"]')?.value || '') : '';
 
-    const fieldContainers = document.querySelectorAll(".field-container");
+    const fieldContainers = document.querySelectorAll("#fieldsContainer .field-container");
     const prorrogationsWithContext = Array.from(fieldContainers).map((container) => ({
         fk_internacao_pror: fk_internacao_pror,
         fk_usuario_pror: fk_usuario_pror,
@@ -1099,7 +1144,7 @@ document.getElementById("prorrogacoes-json").value = JSON.stringify(jsonData, nu
 
 // Limpa todos os inputs (mantém só a primeira linha)
 function clearProrrogInputs() {
-    const fieldContainers = document.querySelectorAll(".field-container");
+    const fieldContainers = document.querySelectorAll("#fieldsContainer .field-container");
     fieldContainers.forEach((container, index) => {
         if (index > 0) {
             container.remove();

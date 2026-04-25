@@ -27,26 +27,38 @@ function bindAdditionalTables() {
         sections.forEach((section) => {
             const select = document.getElementById(section.selectId);
             const show = section.selectId === activeSelectId && select && select.value === 's';
-            styleSelect(select, show);
+            styleSelect(select, select && select.value === 's');
             setSection(section, show);
         });
     }
+
+    window.fullcareShowAdditionalSection = showOnly;
+    window.fullcareHideAdditionalSections = function() {
+        sections.forEach((section) => {
+            const select = document.getElementById(section.selectId);
+            styleSelect(select, select && select.value === 's');
+            setSection(section, false);
+        });
+    };
+    window.fullcareSignalAdditionalSection = function(selectId, value) {
+        const section = sections.find((item) => item.selectId === selectId);
+        const select = document.getElementById(selectId);
+        if (!section || !select) return;
+        select.value = value || '';
+        styleSelect(select, select.value === 's');
+        setSection(section, false);
+    };
 
     sections.forEach((section) => {
         const select = document.getElementById(section.selectId);
         if (!select) return;
         select.addEventListener('change', () => showOnly(section.selectId));
+        select.addEventListener('click', () => {
+            if (select.value === 's') showOnly(section.selectId);
+        });
     });
 
-    const initiallyOpen = sections.find((section) => {
-        const select = document.getElementById(section.selectId);
-        return select && select.value === 's';
-    });
-    if (initiallyOpen) {
-        showOnly(initiallyOpen.selectId);
-    } else {
-        sections.forEach((section) => setSection(section, false));
-    }
+    window.fullcareHideAdditionalSections();
 }
 
 document.addEventListener('DOMContentLoaded', bindAdditionalTables);

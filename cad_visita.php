@@ -190,6 +190,31 @@ if ($id_internacao) {
         }
     }
 }
+
+$editVisitaIdParam = filter_input(INPUT_GET, 'edit_visita', FILTER_VALIDATE_INT);
+$editVisitaIdReal = $editVisitaIdParam ?: 0;
+if ($editVisitaIdParam && empty($prorrogPorVisita[$editVisitaIdReal])) {
+    foreach ((array)$visitasAntigas as $visitaAntiga) {
+        if (!is_array($visitaAntiga)) {
+            continue;
+        }
+        if ((int)($visitaAntiga['visita_no_vis'] ?? 0) === $editVisitaIdParam) {
+            $editVisitaIdReal = (int)($visitaAntiga['id_visita'] ?? 0);
+            break;
+        }
+    }
+}
+$prorrogEditRows = ($editVisitaIdReal && !empty($prorrogPorVisita[$editVisitaIdReal]))
+    ? $prorrogPorVisita[$editVisitaIdReal]
+    : [];
+$editInternacaoIdForFallback = $editVisitaIdReal ? (int)($visitaInterMap[$editVisitaIdReal] ?? $id_internacao ?? 0) : 0;
+$editAdditionalSelects = [
+    'tuss' => ($editVisitaIdReal && (!empty($tussPorVisita[$editVisitaIdReal]) || ($editInternacaoIdForFallback && !empty($tussPorInternacao[$editInternacaoIdForFallback])))) ? 's' : '',
+    'prorrog' => ($editVisitaIdReal && (!empty($prorrogPorVisita[$editVisitaIdReal]) || ($editInternacaoIdForFallback && !empty($prorrogPorInternacao[$editInternacaoIdForFallback])))) ? 's' : '',
+    'gestao' => ($editVisitaIdReal && (!empty($gestaoPorVisita[$editVisitaIdReal]) || ($editInternacaoIdForFallback && !empty($gestaoPorInternacao[$editInternacaoIdForFallback])))) ? 's' : '',
+    'uti' => ($editVisitaIdReal && (!empty($utiPorVisita[$editVisitaIdReal]) || ($editInternacaoIdForFallback && !empty($utiPorInternacao[$editInternacaoIdForFallback])))) ? 's' : '',
+    'negoc' => ($editVisitaIdReal && (!empty($negPorVisita[$editVisitaIdReal]) || ($editInternacaoIdForFallback && !empty($negPorInternacao[$editInternacaoIdForFallback])))) ? 's' : '',
+];
 extract($internacaoList);
 
 $ultimaVis = end($internacaoList);
