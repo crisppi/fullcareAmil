@@ -135,7 +135,12 @@ class ProrrogacaoAiService
         if (!is_array($decoded)) {
             return '';
         }
-        return trim((string)($decoded['error']['message'] ?? $decoded['message'] ?? ''));
+        return $this->redactSecrets(trim((string)($decoded['error']['message'] ?? $decoded['message'] ?? '')));
+    }
+
+    private function redactSecrets(string $message): string
+    {
+        return (string)preg_replace('/sk-[A-Za-z0-9_-]+/', '[chave removida]', $message);
     }
 
     private function extractText(array $responseJson): ?string

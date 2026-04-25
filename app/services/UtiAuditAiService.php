@@ -156,7 +156,12 @@ class UtiAuditAiService
         }
 
         $message = $decoded['error']['message'] ?? $decoded['message'] ?? '';
-        return trim((string)$message);
+        return $this->redactSecrets(trim((string)$message));
+    }
+
+    private function redactSecrets(string $message): string
+    {
+        return (string)preg_replace('/sk-[A-Za-z0-9_-]+/', '[chave removida]', $message);
     }
 
     private function extractText(array $responseJson): ?string
