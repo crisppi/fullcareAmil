@@ -870,7 +870,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // Função para popular os selects "troca_de" e "troca_para" com as acomodações recebidas
 function populateSelects(acomodacoes) {
     let options = '<option value="">Selecione a Acomodação</option>';
+    window.__NEG_ACOMOD_VALOR_MAP = {};
     acomodacoes.forEach(ac => {
+        const nome = String(ac.acomodacao_aco || '').trim();
+        if (nome) {
+            window.__NEG_ACOMOD_VALOR_MAP[nome.toUpperCase()] = parseFloat(ac.valor_aco || 0);
+        }
         options +=
             `<option value="${ac.acomodacao_aco}" data-valor="${ac.valor_aco}">${ac.acomodacao_aco}</option>`;
     });
@@ -888,83 +893,6 @@ function populateSelects(acomodacoes) {
 const acomodacoes = <?php echo $jsonAcomodacoes; ?>;
 
 populateSelects(acomodacoes)
-
-function parseDateOnly(value) {
-    const raw = (value || '').toString().trim();
-    if (!raw) return null;
-
-    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-        const [y, m, d] = raw.split('-').map(Number);
-        return new Date(y, m - 1, d);
-    }
-
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
-        const [d, m, y] = raw.split('/').map(Number);
-        return new Date(y, m - 1, d);
-    }
-
-    const normalized = raw.length >= 10 ? raw.slice(0, 10) : raw;
-    const fallback = new Date(normalized + 'T00:00:00');
-    return Number.isNaN(fallback.getTime()) ? null : fallback;
-}
-
-// Função para calcular as diárias e validar as datas
-function calculateDiarias(container) {
-    const dataAtual = new Date().toISOString().split("T")[0];
-    const dataInicial = container.querySelector('[name="prorrog1_ini_pror"]').value;
-    const dataInternacao = document.getElementById('data_internacao').value
-    const dataFinal = container.querySelector('[name="prorrog1_fim_pror"]').value;
-    const diariasField = container.querySelector('[name="diarias_1"]');
-    const errorMessage = container.querySelector(".error-message");
-
-    errorMessage.textContent = ""; // Limpa mensagens de erro
-
-    if (dataInicial && dataFinal) {
-        const inicio = parseDateOnly(dataInicial);
-        const fim = parseDateOnly(dataFinal);
-        const internacao = parseDateOnly(dataInternacao);
-        const atual = parseDateOnly(dataAtual);
-
-        if (!inicio || !fim) {
-            diariasField.value = "";
-            return;
-        }
-
-        if (internacao && inicio < internacao) {
-            errorMessage.textContent = "A data inicial não pode ser menor que a data de internação.";
-            errorMessage.style.display = "block";
-            diariasField.value = "";
-            return;
-        }
-
-        if (fim < inicio) {
-            errorMessage.textContent = "A data final não pode ser menor que a data inicial.";
-            errorMessage.style.display = "block";
-            diariasField.value = "";
-            return;
-        }
-
-        if (atual && fim > atual) {
-            errorMessage.textContent = "A data final não pode ser maior que a data atual.";
-            errorMessage.style.display = "block";
-            diariasField.value = "";
-            return;
-        }
-
-        const diffTime = Math.abs(fim - inicio);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        diariasField.value = diffDays;
-        errorMessage.style.display = "none";
-    }
-}
-
-// Adiciona listeners para validação automática ao alterar as datas
-document.getElementById("fieldsContainer").addEventListener("input", (event) => {
-    const fieldContainer = event.target.closest(".field-container");
-    if (fieldContainer) {
-        calculateDiarias(fieldContainer);
-    }
-});
 </script>
 
 <script>
@@ -2054,7 +1982,7 @@ function hydrateTussForVisita(visitaId, openPanel) {
     const map = window.VISITA_TUSS_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entries = key && map[key] ? map[key] : [];
-    if ((!entries || !entries.length) && visitaId != null) {
+    if ((!entries || !entries.length) && visitaId != null && openPanel) {
         const interId = __VISITA_INTER_MAP[String(visitaId)];
         if (interId && __TUSS_FALLBACK[String(interId)]) {
             entries = __TUSS_FALLBACK[String(interId)];
@@ -2088,6 +2016,16 @@ function hasEntriesForVisita(visitaId, visitMap, fallbackMap) {
         return fallbackData.length > 0;
     }
     return !!fallbackData;
+}
+
+function hasDirectEntriesForVisita(visitaId, visitMap) {
+    const key = visitaId != null ? String(visitaId) : null;
+    if (!key || !visitMap) return false;
+    const directData = visitMap[key];
+    if (Array.isArray(directData)) {
+        return directData.length > 0;
+    }
+    return !!directData;
 }
 
 function bindLazyHydration(selectId, shouldHydrate, hydrator) {
@@ -2217,19 +2155,28 @@ function applyNegotiationEntries(entries) {
         if (dataIni) dataIni.value = (entry.data_inicio_negoc || '').substring(0, 10);
         const dataFim = target.querySelector('[name="data_fim_negoc"]');
         if (dataFim) dataFim.value = (entry.data_fim_negoc || '').substring(0, 10);
+        if (tipo && typeof setTrocaFromTipo === 'function') {
+            setTrocaFromTipo($(target));
+        }
         const trocaDe = target.querySelector('[name="troca_de"]');
         if (trocaDe) trocaDe.value = entry.troca_de || '';
         const trocaPara = target.querySelector('[name="troca_para"]');
         if (trocaPara) trocaPara.value = entry.troca_para || '';
         const qtd = target.querySelector('[name="qtd"]');
         if (qtd) qtd.value = entry.qtd || '';
-        const saving = target.querySelector('[name="saving"]');
-        if (saving) saving.value = entry.saving || '';
-        const savingShow = target.querySelector('[name="saving_show"]');
-        if (savingShow) savingShow.value = entry.saving ? `R$ ${parseFloat(entry.saving).toFixed(2)}` : '';
-
-        if (typeof setTrocaFromTipo === 'function') setTrocaFromTipo($(target));
         if (typeof calculateSaving === 'function') calculateSaving($(target));
+        const savedSaving = parseFloat(entry.saving || 'NaN');
+        const saving = target.querySelector('[name="saving"]');
+        const savingShow = target.querySelector('[name="saving_show"]');
+        if (!Number.isNaN(savedSaving)) {
+            if (saving) saving.value = savedSaving.toFixed(2);
+            if (savingShow) {
+                savingShow.value = savedSaving >= 0
+                    ? `R$ ${savedSaving.toFixed(2)}`
+                    : `-R$ ${Math.abs(savedSaving).toFixed(2)}`;
+                savingShow.style.color = savedSaving >= 0 ? 'green' : 'red';
+            }
+        }
     });
     if (typeof generateNegotiationsJSON === 'function') generateNegotiationsJSON();
     if (typeof validarTodasDatas === 'function') validarTodasDatas();
@@ -2270,7 +2217,7 @@ function hydrateGestaoForVisita(visitaId, openPanel) {
     const map = window.VISITA_GESTAO_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entry = key && map[key] ? map[key] : null;
-    if (!entry && visitaId != null) {
+    if (!entry && visitaId != null && openPanel) {
         const interId = __VISITA_INTER_MAP[String(visitaId)];
         if (interId && __GESTAO_FALLBACK[String(interId)]) {
             entry = __GESTAO_FALLBACK[String(interId)];
@@ -2335,7 +2282,7 @@ function hydrateUtiForVisita(visitaId, openPanel) {
     const map = window.VISITA_UTI_DATA || {};
     const key = visitaId != null ? String(visitaId) : null;
     let entry = key && map[key] ? map[key] : null;
-    if (!entry && visitaId != null) {
+    if (!entry && visitaId != null && openPanel) {
         const interId = __VISITA_INTER_MAP[String(visitaId)];
         if (interId && __UTI_FALLBACK[String(interId)]) {
             entry = __UTI_FALLBACK[String(interId)];
@@ -2428,7 +2375,7 @@ function hydrateProrrogForVisita(visitaId, openPanel) {
     if ((!entries || !entries.length) && __VISITA_EDIT_ID_REAL && String(visitaId) === String(__VISITA_EDIT_ID_REAL)) {
         entries = __VISITA_PRORR_EDIT_ROWS;
     }
-    if ((!entries || !entries.length) && visitaId != null) {
+    if ((!entries || !entries.length) && visitaId != null && openPanel) {
         const interId = __VISITA_INTER_MAP[String(visitaId)];
         if (interId && __PRORR_FALLBACK[String(interId)]) {
             entries = __PRORR_FALLBACK[String(interId)];
@@ -2453,20 +2400,20 @@ function hydrateAdditionalTablesForVisita(visitaId) {
     if (!visitaId) return;
     isHydratingAdditionalSection = true;
     try {
-        if (hasEntriesForVisita(visitaId, window.VISITA_TUSS_DATA || {}, __TUSS_FALLBACK)) {
+        if (hasDirectEntriesForVisita(visitaId, window.VISITA_TUSS_DATA || {})) {
             hydrateTussForVisita(visitaId);
         }
         if (hasEntriesForVisita(visitaId, window.VISITA_NEG_DATA || {}, __NEG_FALLBACK)) {
             hydrateNegForVisita(visitaId);
         }
-        if (hasEntriesForVisita(visitaId, window.VISITA_GESTAO_DATA || {}, __GESTAO_FALLBACK)) {
+        if (hasDirectEntriesForVisita(visitaId, window.VISITA_GESTAO_DATA || {})) {
             hydrateGestaoForVisita(visitaId);
         }
-        if (hasEntriesForVisita(visitaId, window.VISITA_UTI_DATA || {}, __UTI_FALLBACK)) {
+        if (hasDirectEntriesForVisita(visitaId, window.VISITA_UTI_DATA || {})) {
             hydrateUtiForVisita(visitaId);
         }
         if (
-            hasEntriesForVisita(visitaId, window.VISITA_PRORR_DATA || {}, __PRORR_FALLBACK)
+            hasDirectEntriesForVisita(visitaId, window.VISITA_PRORR_DATA || {})
             || (__VISITA_EDIT_ID_REAL && String(visitaId) === String(__VISITA_EDIT_ID_REAL) && __VISITA_PRORR_EDIT_ROWS.length > 0)
         ) {
             hydrateProrrogForVisita(visitaId);
@@ -2480,13 +2427,13 @@ function signalAdditionalSelectsForVisita(visitaId) {
     if (!visitaId) return;
     const realVisitaId = String(visitaId);
     const checks = [
-        ['select_tuss', hasEntriesForVisita(realVisitaId, window.VISITA_TUSS_DATA || {}, __TUSS_FALLBACK)],
+        ['select_tuss', hasDirectEntriesForVisita(realVisitaId, window.VISITA_TUSS_DATA || {})],
         ['select_negoc', hasEntriesForVisita(realVisitaId, window.VISITA_NEG_DATA || {}, __NEG_FALLBACK)],
-        ['select_gestao', hasEntriesForVisita(realVisitaId, window.VISITA_GESTAO_DATA || {}, __GESTAO_FALLBACK)],
-        ['select_uti', hasEntriesForVisita(realVisitaId, window.VISITA_UTI_DATA || {}, __UTI_FALLBACK)],
+        ['select_gestao', hasDirectEntriesForVisita(realVisitaId, window.VISITA_GESTAO_DATA || {})],
+        ['select_uti', hasDirectEntriesForVisita(realVisitaId, window.VISITA_UTI_DATA || {})],
         [
             'select_prorrog',
-            hasEntriesForVisita(realVisitaId, window.VISITA_PRORR_DATA || {}, __PRORR_FALLBACK)
+            hasDirectEntriesForVisita(realVisitaId, window.VISITA_PRORR_DATA || {})
             || (__VISITA_EDIT_ID_REAL && realVisitaId === String(__VISITA_EDIT_ID_REAL) && __VISITA_PRORR_EDIT_ROWS.length > 0)
         ]
     ];

@@ -321,10 +321,27 @@ function setTrocaFromTipo($container) {
 }
 
 // ========= Saving =========
+function getNegotiationAcomodValue($select) {
+    const selected = $select.find('option:selected');
+    const fromOption = parseFloat(selected.data('valor') || selected.attr('data-valor') || 'NaN');
+    if (!Number.isNaN(fromOption)) {
+        return fromOption;
+    }
+
+    const map = window.__NEG_ACOMOD_VALOR_MAP || {};
+    const byValue = String($select.val() || '').trim().toUpperCase();
+    const byText = String(selected.text() || '').trim().toUpperCase();
+    const fromValue = parseFloat(map[byValue] ?? 'NaN');
+    const fromText = parseFloat(map[byText] ?? 'NaN');
+
+    if (!Number.isNaN(fromValue)) return fromValue;
+    if (!Number.isNaN(fromText)) return fromText;
+    return 0;
+}
+
 function calculateSaving(container) {
-    // Se quiser valores por acomodação, adicione data-valor nas <option>. Sem isso, saving fica 0.
-    const trocaDe = parseFloat(container.find('select[name="troca_de"] option:selected').data('valor') || 0);
-    const trocaPara = parseFloat(container.find('select[name="troca_para"] option:selected').data('valor') || 0);
+    const trocaDe = getNegotiationAcomodValue(container.find('select[name="troca_de"]'));
+    const trocaPara = getNegotiationAcomodValue(container.find('select[name="troca_para"]'));
     const quantidade = parseInt(container.find('input[name="qtd"]').val(), 10) || 0;
 
     const tipoNegociacao = (container.find('select[name="tipo_negociacao"] option:selected').text() || '')

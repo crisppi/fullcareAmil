@@ -408,8 +408,68 @@ function buildAutoNegociacoesFromProrrog(
     ?string $prorrogJsonRaw,
     ?int $fkUsuarioPadrao
 ): array {
-    // Saving deve existir apenas em negociacoes reais, nunca em prorrogacoes.
-    return [];
+    if ($flagProrrog !== 's') {
+        return [];
+    }
+
+    $decoded = decodeJsonArray($prorrogJsonRaw);
+    $rows = is_array($decoded['prorrogations'] ?? null) ? $decoded['prorrogations'] : [];
+    if (count($rows) < 2) {
+        return [];
+    }
+
+    usort($rows, static function ($a, $b) {
+        $aDate = strtotime((string)($a['prorrog1_ini_pror'] ?? '')) ?: 0;
+        $bDate = strtotime((string)($b['prorrog1_ini_pror'] ?? '')) ?: 0;
+        return $aDate <=> $bDate;
+    });
+
+    $tipoFromAcomodacoes = static function (?string $de, ?string $para): ?string {
+        $deNorm = fullcareNormalizeNegotiationAcomodacao($de);
+        $paraNorm = fullcareNormalizeNegotiationAcomodacao($para);
+        if ($deNorm === 'uti' && $paraNorm === 'apto') return 'TROCA UTI/APTO';
+        if ($deNorm === 'uti' && $paraNorm === 'semi') return 'TROCA UTI/SEMI';
+        if ($deNorm === 'semi' && $paraNorm === 'apto') return 'TROCA SEMI/APTO';
+        return null;
+    };
+
+    $auto = [];
+    for ($i = 1; $i < count($rows); $i++) {
+        $prev = is_array($rows[$i - 1]) ? $rows[$i - 1] : [];
+        $current = is_array($rows[$i]) ? $rows[$i] : [];
+        $trocaDe = strOrNull($prev['acomod1_pror'] ?? null);
+        $trocaPara = strOrNull($current['acomod1_pror'] ?? null);
+        $tipo = $tipoFromAcomodacoes($trocaDe, $trocaPara);
+        if (!$tipo) {
+            continue;
+        }
+
+        $dataInicio = strOrNull($current['prorrog1_ini_pror'] ?? null);
+        $dataFim = strOrNull($current['prorrog1_fim_pror'] ?? null);
+        $qtd = toIntOrNull($current['diarias_1'] ?? null);
+        if (!$qtd && $dataInicio && $dataFim) {
+            $iniTs = strtotime($dataInicio);
+            $fimTs = strtotime($dataFim);
+            if ($iniTs && $fimTs && $fimTs >= $iniTs) {
+                $qtd = (int)ceil(($fimTs - $iniTs) / 86400);
+            }
+        }
+        if (!$dataInicio || !$dataFim || !$qtd || $qtd <= 0) {
+            continue;
+        }
+
+        $auto[] = [
+            'tipo_negociacao' => $tipo,
+            'data_inicio_negoc' => substr($dataInicio, 0, 10),
+            'data_fim_negoc' => substr($dataFim, 0, 10),
+            'troca_de' => $trocaDe,
+            'troca_para' => $trocaPara,
+            'qtd' => $qtd,
+            'fk_usuario_neg' => $fkUsuarioPadrao,
+        ];
+    }
+
+    return $auto;
 }
 
 function processTussEntries(
@@ -459,6 +519,7 @@ function processNegociacoesEntries(
     $decoded = decodeJsonArray($jsonRaw);
     if (!is_array($decoded)) $decoded = [];
     $rows = array_merge($decoded, $autoNegociacoes);
+    $seenRows = [];
     foreach ($rows as $row) {
         if (!is_array($row)) continue;
         $tipo = strOrNull($row['tipo_negociacao'] ?? null);
@@ -478,6 +539,18 @@ function processNegociacoesEntries(
         if (!$trocaDe || !$trocaPara || !$qtd || $qtd <= 0 || !$auditorId || $saving <= 0) {
             continue;
         }
+        $rowKey = implode('|', [
+            mb_strtoupper($tipo, 'UTF-8'),
+            mb_strtoupper($trocaDe, 'UTF-8'),
+            mb_strtoupper($trocaPara, 'UTF-8'),
+            (string)$qtd,
+            substr((string)($row['data_inicio_negoc'] ?? ''), 0, 10),
+            substr((string)($row['data_fim_negoc'] ?? ''), 0, 10),
+        ]);
+        if (isset($seenRows[$rowKey])) {
+            continue;
+        }
+        $seenRows[$rowKey] = true;
         $negociacao = new negociacao();
         $negociacao->fk_id_int = $fkInternacao;
         $negociacao->fk_visita_neg = $visitaId;
