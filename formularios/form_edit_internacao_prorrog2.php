@@ -152,25 +152,16 @@ $prorrogAltaAtiva = $prorrogAltaDataValue !== '' || !empty($altaAtual['tipo_alta
 @media (min-width: 768px) {
     .pror-row .form-grid {
         display: grid;
-        grid-template-columns:
-            clamp(180px, 24vw, 320px)
-            /* Acomodação com largura controlada */
-            160px
-            /* Data inicial */
-            160px
-            /* Data final   */
-            110px
-            /* Diárias      */
-            140px
-            /* Isolamento   */
-            110px;
-        /* Botões       */
-        column-gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
         align-items: end;
+        width: 100%;
     }
 
     .pror-row .form-group {
         margin: 0 !important;
+        width: 100% !important;
+        min-width: 0 !important;
     }
 
     .pror-row .form-control,

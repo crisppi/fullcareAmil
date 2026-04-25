@@ -288,11 +288,22 @@ if (!function_exists('sel')) {
 ?>
 <style>
     .negoc-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+        gap: 14px;
+        align-items: end;
+        width: 100%;
         margin-bottom: 12px;
         background: #f5f5f9
+    }
+
+    .negoc-row > .form-group[class*="col-"] {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-bottom: 0 !important;
     }
 
     .negoc-row label {
@@ -302,6 +313,8 @@ if (!function_exists('sel')) {
     }
 
     .negoc-row .form-control {
+        width: 100%;
+        min-height: 42px;
         font-size: .9rem;
         padding: 4px 6px
     }
@@ -315,7 +328,7 @@ if (!function_exists('sel')) {
         display: flex;
         align-items: center;
         gap: 6px;
-        margin-top: 25px;
+        margin-top: 0;
     }
 
     .btn-trash-negoc {

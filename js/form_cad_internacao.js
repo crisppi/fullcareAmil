@@ -2090,6 +2090,140 @@ document.addEventListener('DOMContentLoaded', function() {
     selectDet.addEventListener('change', aplicar);
 })();
 
+// Mantem somente um bloco de tabela adicional aberto, sempre logo abaixo dos seletores.
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = [{
+            selectId: 'relatorio-detalhado',
+            containerId: 'detalhes-card-wrapper',
+            bodyId: 'div-detalhado',
+            hiddenId: 'select_detalhes'
+        },
+        {
+            selectId: 'select_tuss',
+            containerId: 'container-tuss'
+        },
+        {
+            selectId: 'select_prorrog',
+            containerId: 'container-prorrog'
+        },
+        {
+            selectId: 'select_gestao',
+            containerId: 'container-gestao'
+        },
+        {
+            selectId: 'select_uti',
+            containerId: 'container-uti'
+        },
+        {
+            selectId: 'select_negoc',
+            containerId: 'container-negoc'
+        }
+    ];
+
+    function setSection(section, show) {
+        const container = document.getElementById(section.containerId);
+        const body = section.bodyId ? document.getElementById(section.bodyId) : null;
+        const hidden = section.hiddenId ? document.getElementById(section.hiddenId) : null;
+        if (container) container.style.display = show ? 'block' : 'none';
+        if (body) body.style.display = show ? 'block' : 'none';
+        if (hidden) hidden.value = show ? 's' : 'n';
+    }
+
+    function showOnly(activeSelectId) {
+        sections.forEach(function(section) {
+            const select = document.getElementById(section.selectId);
+            const show = section.selectId === activeSelectId && select && select.value === 's';
+            setSection(section, show);
+        });
+    }
+
+    sections.forEach(function(section) {
+        const select = document.getElementById(section.selectId);
+        if (!select) return;
+        select.addEventListener('change', function() {
+            showOnly(section.selectId);
+        });
+    });
+
+    const acomodacao = document.getElementById('acomodacao_int');
+    if (acomodacao) {
+        acomodacao.addEventListener('change', function() {
+            const selectUti = document.getElementById('select_uti');
+            if (this.value === 'UTI' && selectUti) {
+                selectUti.value = 's';
+                showOnly('select_uti');
+            }
+        });
+    }
+
+    const initiallyOpen = sections.find(function(section) {
+        const select = document.getElementById(section.selectId);
+        return select && select.value === 's';
+    });
+    sections.forEach(function(section) {
+        setSection(section, initiallyOpen && section.selectId === initiallyOpen.selectId);
+    });
+});
+
+// Layout visual dos blocos adicionais no cadastro. Nao altera valores enviados ao banco.
+document.addEventListener('DOMContentLoaded', function() {
+    function applyGrid(row, minWidth) {
+        if (!row) return;
+        row.style.setProperty('display', 'grid', 'important');
+        row.style.setProperty('grid-template-columns', 'repeat(auto-fit, minmax(' + minWidth + 'px, 1fr))', 'important');
+        row.style.setProperty('gap', '14px', 'important');
+        row.style.setProperty('align-items', 'end', 'important');
+        row.style.setProperty('width', '100%', 'important');
+        row.style.setProperty('max-width', '100%', 'important');
+
+        row.querySelectorAll(':scope > .form-group[class*="col-"], :scope > .tuss-actions-col').forEach(function(col) {
+            col.style.setProperty('width', '100%', 'important');
+            col.style.setProperty('max-width', 'none', 'important');
+            col.style.setProperty('min-width', '0', 'important');
+            col.style.setProperty('padding-left', '0', 'important');
+            col.style.setProperty('padding-right', '0', 'important');
+            col.style.setProperty('margin-bottom', '0', 'important');
+        });
+
+        row.querySelectorAll(':scope > .form-group[class*="col-"] .form-control, :scope > .form-group[class*="col-"] .form-control-sm').forEach(function(control) {
+            control.style.setProperty('width', '100%', 'important');
+            control.style.setProperty('min-height', '42px', 'important');
+        });
+    }
+
+    function applyAdditionalTablesLayout() {
+        document.querySelectorAll('#container-tuss .tuss-field-container').forEach(function(row) {
+            applyGrid(row, 170);
+        });
+        document.querySelectorAll('#container-gestao .adicional-card > .form-group.row').forEach(function(row) {
+            applyGrid(row, 170);
+        });
+        document.querySelectorAll('#container-uti .uti-grid-row').forEach(function(row) {
+            applyGrid(row, 170);
+        });
+        document.querySelectorAll('#container-prorrog .field-container').forEach(function(row) {
+            applyGrid(row, 160);
+        });
+        document.querySelectorAll('#container-negoc .negotiation-field-container').forEach(function(row) {
+            applyGrid(row, 160);
+        });
+    }
+
+    applyAdditionalTablesLayout();
+    ['select_tuss', 'select_gestao', 'select_uti', 'select_prorrog', 'select_negoc'].forEach(function(selectId) {
+        var select = document.getElementById(selectId);
+        if (!select) return;
+        select.addEventListener('change', function() {
+            window.setTimeout(applyAdditionalTablesLayout, 0);
+        });
+    });
+    document.addEventListener('click', function(event) {
+        if (event.target && event.target.closest('.btn-add, .btn-remove')) {
+            window.setTimeout(applyAdditionalTablesLayout, 0);
+        }
+    });
+});
+
 
 // Carregar acomodações via hospital (para negociações/savings)
 $(document).ready(function() {

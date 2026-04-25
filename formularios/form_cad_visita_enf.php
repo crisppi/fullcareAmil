@@ -475,6 +475,60 @@
 
             <!-- <FORMULARO DE NEGOCIACOES -->
             <?php include_once('formularios/form_cad_visita_negoc.php'); ?>
+            <style>
+                #container-tuss .form-group.row > .form-group.row,
+                #container-gestao form > .form-group.row > .form-group.row,
+                #container-uti > .form-group.row,
+                #container-prorrog > .form-group.row,
+                #container-negoc .form-group.row {
+                    display: grid !important;
+                    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+                    gap: 14px;
+                    align-items: end;
+                    width: 100%;
+                }
+
+                #container-tuss .form-group.row > .form-group.row > .form-group[class*="col-"],
+                #container-gestao form > .form-group.row > .form-group.row > .form-group[class*="col-"],
+                #container-uti > .form-group.row > .form-group[class*="col-"],
+                #container-prorrog > .form-group.row > .form-group[class*="col-"],
+                #container-negoc .form-group.row > .form-group[class*="col-"] {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    max-width: none !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
+                    margin-bottom: 0 !important;
+                }
+
+                #container-tuss .form-control,
+                #container-gestao .form-control,
+                #container-uti .form-control,
+                #container-prorrog .form-control,
+                #container-negoc .form-control {
+                    width: 100% !important;
+                    min-height: 42px !important;
+                }
+
+                #container-tuss textarea.form-control,
+                #container-gestao textarea.form-control,
+                #container-uti textarea.form-control,
+                #container-prorrog textarea.form-control,
+                #container-negoc textarea.form-control {
+                    min-height: 92px !important;
+                    height: auto !important;
+                }
+
+                @media (max-width: 768px) {
+                    #container-tuss .form-group.row > .form-group.row,
+                    #container-gestao form > .form-group.row > .form-group.row,
+                    #container-uti > .form-group.row,
+                    #container-prorrog > .form-group.row,
+                    #container-negoc .form-group.row {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
             <br>
 
             <div>
@@ -568,7 +622,7 @@ window.visitaAiConfig = Object.assign({}, window.visitaAiConfig || {}, {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="<?= $BASE_URL ?>js/uti_audit_ai_visita.js"></script>
-<script src="js/select_visita.js"></script>
+<script src="<?= $BASE_URL ?>js/select_visita.js?v=<?= filemtime(__DIR__ . '/../js/select_visita.js') ?>"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">

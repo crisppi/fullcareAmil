@@ -642,7 +642,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
         </div>
     </div>
 </div>
-<script src="js/select_visita.js"></script>
+<script src="<?= $BASE_URL ?>js/select_visita.js?v=<?= filemtime(__DIR__ . '/../js/select_visita.js') ?>"></script>
 <script src="js/text_cad_visita.js"></script>
 <script>
 window.clinicalTextToolsConfig = {

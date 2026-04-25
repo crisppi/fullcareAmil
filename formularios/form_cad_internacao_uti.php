@@ -26,6 +26,52 @@
     margin-right:12px;
     background:linear-gradient(180deg,#2db6c4,#6be4dc);
 }
+
+#container-uti .uti-grid-row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+    margin: 0 0 16px !important;
+}
+
+#container-uti .uti-grid-row > .form-group[class*="col-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#container-uti .uti-grid-row > [style*="display:none"] {
+    display: none !important;
+}
+
+#container-uti .adicional-card .form-control,
+#container-uti .adicional-card .form-control-sm.form-control {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+}
+
+#container-uti .adicional-card textarea.form-control {
+    min-height: 92px !important;
+    height: auto !important;
+}
+
+#container-uti .uti-report {
+    width: 100%;
+    max-width: 620px;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    #container-uti .uti-grid-row {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
 <div id="container-uti" style="display:none; margin:5px">
@@ -40,7 +86,7 @@
     <!-- <input type="text" class="form-control" id="id_internacao" name="id_internacao" value="<?= ($ultimoReg) + 1  ?> "> -->
 
     <!-- DADOS PARA FORMULARIO UTI -->
-    <div class="form-group row">
+    <div class="uti-grid-row">
         <?php
             $fkInternacaoUtiValue = 0;
             if (!empty($id_internacao)) {
@@ -110,8 +156,9 @@
             <input type="time" class="form-control-sm form-control" id="hora_internacao_uti"
                 value="<?php echo date('H:i') ?>" name="hora_internacao_uti">
         </div>
+    </div>
 
-        <div class="form-group row">
+        <div class="uti-grid-row">
             <div class="form-group col-sm-2">
                 <label for="vm_uti">Ventilação Mecânica</label>
                 <select class="form-control-sm form-control" id="vm_uti" name="vm_uti">
@@ -152,7 +199,7 @@
                 </select>
             </div>
         </div>
-        <div class="form-group row" style="margin-top:-15px">
+        <div class="uti-grid-row">
             <div class="form-group col-sm-2">
                 <label for="score_uti">Score</label>
                 <select class="form-control-sm form-control" id="score_uti" name="score_uti">
@@ -187,12 +234,11 @@
                     target="_blank">Calcular SAPS</a>
             </div>
         </div>
-        <div style="margin-top:-15px">
+        <div class="uti-report">
             <label for="rel_uti">Relatório UTI</label>
             <textarea type="textarea" style="resize:none" onclick="aumentarTextUTI()" rows="2" class="form-control"
                 id="rel_uti" name="rel_uti"></textarea>
         </div>
-    </div>
     </div>
 </div>
 

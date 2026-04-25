@@ -1,65 +1,49 @@
-// Função genérica para lidar com os selects e exibição de divs
-function handleSelectChange(selectId, divId) {
-    $(`#${selectId}`).change(function () {
-        var option = $(this).find(":selected").text();
+function bindInternacaoAdditionalTables() {
+    const sections = [
+        { selectId: 'select_tuss', containerId: 'container-tuss' },
+        { selectId: 'select_prorrog', containerId: 'container-prorrog' },
+        { selectId: 'select_gestao', containerId: 'container-gestao' },
+        { selectId: 'select_uti', containerId: 'container-uti' },
+        { selectId: 'select_negoc', containerId: 'container-negoc' }
+    ];
 
-        // Lista de todos os selects e containers
-        var selects = ["select_tuss", "select_gestao", "select_prorrog", "select_uti", "select_negoc"];
-        var containers = ["container-tuss", "container-gestao", "container-prorrog", "container-uti", "container-negoc"];
+    function styleSelect(select, active) {
+        if (!select) return;
+        select.style.color = active ? 'black' : 'gray';
+        select.style.fontWeight = active ? 'bold' : 'normal';
+        select.style.border = active ? '2px solid green' : '1px solid gray';
+        select.style.backgroundColor = active ? 'rgba(128, 110, 129, 0.3)' : '';
+    }
 
-        // Esconde todos os containers
-        containers.forEach(function (container) {
-            var div = document.querySelector(`#${container}`);
-            if (div) {
-                div.style.display = "none";
-            }
+    function setSection(section, show) {
+        const container = document.getElementById(section.containerId);
+        if (container) container.style.display = show ? 'block' : 'none';
+    }
+
+    function showOnly(activeSelectId) {
+        sections.forEach((section) => {
+            const select = document.getElementById(section.selectId);
+            const show = section.selectId === activeSelectId && select && select.value === 's';
+            styleSelect(select, show);
+            setSection(section, show);
         });
+    }
 
-        // Reseta estilos de todos os selects (sem fundo roxo)
-        selects.forEach(function (select) {
-            $(`#${select}`).css({
-                "color": "gray",
-                "font-weight": "normal",
-                "border": "1px solid gray",
-                "background-color": "" // Remove o fundo roxo
-            });
-        });
-
-        // Se a opção for "Sim", aplica estilo ao select ativo e exibe o container correspondente
-        if (option === "Sim") {
-            $(`#${selectId}`).css({
-                "color": "black",
-                "font-weight": "bold",
-                "border": "2px solid green",
-                "background-color": "rgba(128, 110, 129, 0.3)" // Fundo roxo claro
-            });
-
-            var activeDiv = document.querySelector(`#${divId}`);
-            if (activeDiv) {
-                activeDiv.style.display = "block";
-            }
-        }
-
-        // Mantém o estilo para outros selects com "Sim" (sem fundo roxo)
-        selects.forEach(function (select) {
-            if (select !== selectId) { // Ignora o ativo atual
-                var selectedOption = $(`#${select}`).find(":selected").text();
-                if (selectedOption === "Sim") {
-                    $(`#${select}`).css({
-                        "color": "black",
-                        "font-weight": "bold",
-                        "border": "2px solid green",
-                        "background-color": "" // Sem fundo roxo
-                    });
-                }
-            }
-        });
+    sections.forEach((section) => {
+        const select = document.getElementById(section.selectId);
+        if (!select) return;
+        select.addEventListener('change', () => showOnly(section.selectId));
     });
+
+    const initiallyOpen = sections.find((section) => {
+        const select = document.getElementById(section.selectId);
+        return select && select.value === 's';
+    });
+    if (initiallyOpen) {
+        showOnly(initiallyOpen.selectId);
+    } else {
+        sections.forEach((section) => setSection(section, false));
+    }
 }
 
-// Adiciona o evento para cada select
-handleSelectChange("select_tuss", "container-tuss");
-handleSelectChange("select_gestao", "container-gestao");
-handleSelectChange("select_prorrog", "container-prorrog");
-handleSelectChange("select_uti", "container-uti");
-handleSelectChange("select_negoc", "container-negoc");
+document.addEventListener('DOMContentLoaded', bindInternacaoAdditionalTables);

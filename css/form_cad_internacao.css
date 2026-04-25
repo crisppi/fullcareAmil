@@ -570,26 +570,25 @@
 
         .internacao-page {
             width: 100%;
-            margin: -8px 0 0;
-            padding: 0 0 60px;
+            margin: 0;
+            padding: 0 0 40px;
         }
 
         .internacao-page__hero {
             background: linear-gradient(135deg, #5a2f78, #a06bd4);
             color: #fff;
-            border-radius: 32px;
-            padding: 18px 26px;
-            box-shadow: 0 25px 50px rgba(24, 0, 30, 0.35);
+            border-radius: 28px;
+            padding: 20px 24px;
+            box-shadow: 0 20px 40px rgba(24, 0, 30, 0.25);
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 24px;
-            margin: 0 0 4px;
+            gap: 16px;
         }
 
         .internacao-page__hero h1 {
             margin: 0 0 6px;
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             letter-spacing: .02em;
             color: #fff;
         }
@@ -602,25 +601,26 @@
 
         .internacao-page__tag {
             background: rgba(255, 255, 255, 0.16);
-            padding: 8px 18px;
+            color: #f7efff;
+            padding: 6px 14px;
             border-radius: 999px;
             font-weight: 600;
-            font-size: .8rem;
+            font-size: .78rem;
         }
 
         .internacao-page__content {
-            margin-top: 4px;
+            margin-top: 18px;
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 16px;
         }
 
         .internacao-card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
-            border-radius: 28px;
-            padding: 18px 10px;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+            background: #f5f5f9;
+            border-radius: 18px;
+            padding: 18px 18px 22px;
+            border: 1px solid #ebe1f5;
+            box-shadow: 0 12px 24px rgba(45, 18, 70, .08);
             margin: 0;
             width: 100%;
         }
@@ -631,7 +631,7 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
         .internacao-card__eyebrow {
@@ -646,18 +646,44 @@
 
         .internacao-card__title {
             margin: 2px 0 0;
-            font-size: 1.4rem;
-            color: #000;
+            font-size: 1.2rem;
+            color: #2e114c;
             font-weight: 600;
         }
 
         .internacao-card__tag {
-            background: #f3f4f6;
-            color: #374151;
-            padding: 6px 16px;
+            background: #f8eefc;
+            color: #5e2363;
+            padding: 4px 12px;
             border-radius: 999px;
             font-weight: 600;
-            font-size: .8rem;
+            font-size: .75rem;
+        }
+
+        .clinical-text-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .clinical-text-field__head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .clinical-text-field__head label {
+            margin: 0;
+        }
+
+        .clinical-text-field__actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .auditoria-actions {
@@ -894,8 +920,8 @@
         .internacao-card__body {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            padding: 0 10px;
+            gap: 14px;
+            padding: 0;
         }
 
         .internacao-card--central .internacao-card__body {
@@ -903,13 +929,12 @@
         }
 
         .internacao-card--central {
-            border-color: #d1d5db;
-            background: #f3f4f6;
-            padding: 14px 22px 10px;
+            border-color: #ebe1f5;
+            background: #f5f5f9;
         }
 
         .internacao-card--central .internacao-card__header {
-            margin-bottom: 2px;
+            margin-bottom: 14px;
         }
 
         #cadastro-central-wrapper .form-group {
@@ -917,8 +942,8 @@
         }
 
         .internacao-card--general {
-            border-color: #d1d5db;
-            background: #f3f4f6;
+            border-color: #ebe1f5;
+            background: #f5f5f9;
         }
 
         .internacao-head-grid {
@@ -1008,15 +1033,15 @@
         .internacao-card--notes,
         .detalhes-card,
         .tabelas-adicionais-card {
-            border-color: #d1d5db;
+            border-color: #ebe1f5;
             border-width: 1px;
             border-style: solid;
-            background: #f3f4f6;
-            box-shadow: 0 12px 24px rgba(15, 23, 42, .06);
+            background: #f5f5f9;
+            box-shadow: 0 12px 24px rgba(45, 18, 70, .08);
         }
 
         .internacao-card--fields .internacao-card__body {
-            gap: 8px;
+            gap: 14px;
         }
 
         .internacao-card--fields .internacao-card__body .row,
@@ -1180,7 +1205,7 @@
 
         /* Padronização completa das tabelas adicionais (Internação) */
         .tabelas-adicionais-card .tabelas-col,
-        #tabelas-dynamic-stack .adicional-card .form-group[class*="col-"],
+        .tabelas-adicionais-card .adicional-card .form-group[class*="col-"],
         #detalhes-card-wrapper .form-group[class*="col-"] {
             flex: 1 1 210px !important;
             min-width: 210px;
@@ -1188,7 +1213,7 @@
         }
 
         .tabelas-adicionais-card .tabelas-col label,
-        #tabelas-dynamic-stack .adicional-card label,
+        .tabelas-adicionais-card .adicional-card label,
         #detalhes-card-wrapper label {
             min-height: 20px;
             display: flex;
@@ -1200,8 +1225,8 @@
 
         .tabelas-adicionais-card .form-control,
         .tabelas-adicionais-card .form-control-sm.form-control,
-        #tabelas-dynamic-stack .adicional-card .form-control,
-        #tabelas-dynamic-stack .adicional-card .form-control-sm.form-control,
+        .tabelas-adicionais-card .adicional-card .form-control,
+        .tabelas-adicionais-card .adicional-card .form-control-sm.form-control,
         #detalhes-card-wrapper .form-control,
         #detalhes-card-wrapper .form-control-sm.form-control {
             min-height: 42px !important;
@@ -1211,35 +1236,35 @@
             line-height: 1.25;
         }
 
-        #tabelas-dynamic-stack .adicional-card textarea.form-control,
+        .tabelas-adicionais-card .adicional-card textarea.form-control,
         #detalhes-card-wrapper textarea.form-control {
             min-height: 92px !important;
             height: auto !important;
             padding: 10px 12px !important;
         }
 
-        #tabelas-dynamic-stack .adicional-card .bootstrap-select,
-        #tabelas-dynamic-stack .adicional-card .bootstrap-select>.dropdown-toggle {
+        .tabelas-adicionais-card .adicional-card .bootstrap-select,
+        .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle {
             width: 100% !important;
             min-height: 42px !important;
             height: 42px !important;
         }
 
-        #tabelas-dynamic-stack .adicional-card .bootstrap-select>.dropdown-toggle .filter-option {
+        .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle .filter-option {
             display: flex;
             align-items: center;
         }
 
-        #tabelas-dynamic-stack .adicional-card .btn-add,
-        #tabelas-dynamic-stack .adicional-card .btn-remove {
+        .tabelas-adicionais-card .adicional-card .btn-add,
+        .tabelas-adicionais-card .adicional-card .btn-remove {
             min-height: 42px;
             height: 42px;
             min-width: 42px;
             padding: 8px 12px;
         }
 
-        #tabelas-dynamic-stack .adicional-card .form-group[style*="margin-top:25px"],
-        #tabelas-dynamic-stack .adicional-card .form-group[style*="margin-top: 25px"] {
+        .tabelas-adicionais-card .adicional-card .form-group[style*="margin-top:25px"],
+        .tabelas-adicionais-card .adicional-card .form-group[style*="margin-top: 25px"] {
             margin-top: 0 !important;
             display: flex;
             align-items: flex-end;
@@ -1256,6 +1281,60 @@
             flex: 1 1 210px !important;
             min-width: 210px;
             max-width: none !important;
+        }
+
+        #container-tuss .tuss-field-container {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+            align-items: end;
+            width: 100%;
+        }
+
+        #container-tuss .tuss-field-container>.form-group[class*="col-"] {
+            flex: none !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        #container-tuss .tuss-actions-col {
+            min-width: 0 !important;
+            width: 56px !important;
+        }
+
+        #container-gestao .adicional-card>.form-group.row,
+        #container-uti .adicional-card>.form-group.row,
+        #container-prorrog .adicional-card .field-container,
+        #container-negoc .adicional-card .negotiation-field-container {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+            align-items: end;
+            width: 100%;
+        }
+
+        #container-gestao .adicional-card>.form-group.row>.form-group[class*="col-"],
+        #container-uti .adicional-card>.form-group.row>.form-group[class*="col-"],
+        #container-prorrog .adicional-card .field-container>.form-group[class*="col-"],
+        #container-negoc .adicional-card .negotiation-field-container>.form-group[class*="col-"] {
+            flex: none !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        #container-gestao .adicional-card>.form-group.row>[style*="display:none"],
+        #container-uti .adicional-card>.form-group.row>[style*="display:none"],
+        #container-prorrog .adicional-card .field-container>[style*="display:none"],
+        #container-negoc .adicional-card .negotiation-field-container>[style*="display:none"] {
+            display: none !important;
         }
 
         #container-tuss label,
@@ -1372,8 +1451,23 @@
                 max-width: 48%;
             }
 
+            #container-tuss .tuss-field-container {
+                grid-template-columns: 1fr;
+            }
+
+            #container-tuss .tuss-actions-col {
+                width: 56px !important;
+            }
+
+            #container-gestao .adicional-card>.form-group.row,
+            #container-uti .adicional-card>.form-group.row,
+            #container-prorrog .adicional-card .field-container,
+            #container-negoc .adicional-card .negotiation-field-container {
+                grid-template-columns: 1fr;
+            }
+
             .tabelas-adicionais-card .tabelas-col,
-            #tabelas-dynamic-stack .adicional-card .form-group[class*="col-"],
+            .tabelas-adicionais-card .adicional-card .form-group[class*="col-"],
             #detalhes-card-wrapper .form-group[class*="col-"] {
                 min-width: 160px;
                 flex-basis: 160px !important;

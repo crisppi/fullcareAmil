@@ -129,6 +129,45 @@ if (!empty($prorrogIntern) && is_array($prorrogIntern)) {
     margin-right:12px;
     background:linear-gradient(180deg,#8f5ff3,#b995ff);
 }
+
+#container-prorrog .adicional-card .field-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+}
+
+#container-prorrog .adicional-card .field-container > .form-group[class*="col-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+}
+
+#container-prorrog .adicional-card .field-container > [style*="display:none"] {
+    display: none !important;
+}
+
+#container-prorrog .adicional-card .form-control,
+#container-prorrog .adicional-card .form-control-sm.form-control {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+}
+
+#container-prorrog .adicional-card textarea.form-control {
+    min-height: 92px !important;
+    height: auto !important;
+}
+
+@media (max-width: 768px) {
+    #container-prorrog .adicional-card .field-container {
+        grid-template-columns: 1fr;
+    }
+}
 .custom-dialog {
     display: none;
     position: fixed;

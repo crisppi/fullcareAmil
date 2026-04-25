@@ -192,7 +192,7 @@
     }
     ?>
     <link href="<?= $BASE_URL ?>css/style.css" rel="stylesheet">
-    <link href="<?= $BASE_URL ?>css/form_cad_internacao.css" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/form_cad_internacao.css?v=<?= filemtime(__DIR__ . '/../css/form_cad_internacao.css') ?>" rel="stylesheet">
     <style>
         .assist-select-clear {
             position: relative;
@@ -274,7 +274,7 @@
                 <div class="internacao-card internacao-card--general">
                     <div class="internacao-card__header">
                         <div>
-                            <p class="internacao-card__eyebrow">Dados essenciais</p>
+                            <h2 class="internacao-card__title">Dados da internação</h2>
                         </div>
                     </div>
                     <div class="internacao-card__body">
@@ -535,8 +535,7 @@
                     <div id="cadastro-central-wrapper" class="internacao-card internacao-card--central">
                         <div class="internacao-card__header">
                             <div>
-                                <p class="internacao-card__eyebrow">Cadastro Central</p>
-                                <!-- título removido conforme solicitado -->
+                                <h3 class="internacao-card__title">Responsável pela visita</h3>
                             </div>
                             <span class="internacao-card__tag">
                                 <?php if ($cadastroCentralObrigatorio): ?>
@@ -592,8 +591,7 @@
                 <div class="internacao-card internacao-card--fields">
                     <div class="internacao-card__header">
                         <div>
-                            <p class="internacao-card__eyebrow">Dados assistenciais</p>
-                            <!-- título removido conforme solicitado -->
+                            <h3 class="internacao-card__title">Dados assistenciais</h3>
                         </div>
                     </div>
                     <div class="internacao-card__body">
@@ -785,13 +783,18 @@
         <div class="internacao-card internacao-card--notes">
             <div class="internacao-card__header">
                 <div>
-                    <p class="internacao-card__eyebrow">Auditoria</p>
-                    <!-- título removido conforme solicitado -->
+                    <h3 class="internacao-card__title">Relatórios e observações</h3>
                 </div>
             </div>
             <div class="internacao-card__body">
-                <div>
-                    <label for="rel_int">Relatório da Auditoria</label>
+                <div class="clinical-text-field">
+                    <div class="clinical-text-field__head">
+                        <label for="rel_int">Relatório da Auditoria</label>
+                        <div class="clinical-text-field__actions">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
+                        </div>
+                    </div>
                     <div id="cronicos-relatorio-alert"
                         style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#fff3cd,#ffe3a3);border:1px solid #f0c36d;color:#6a4a00;box-shadow:0 8px 20px rgba(240,195,109,.18);"
                         hidden>
@@ -804,10 +807,6 @@
                             <strong data-role="matched-list"></strong>.
                         </p>
                         <p style="margin:4px 0 0;line-height:1.45;" data-role="auto-note"></p>
-                    </div>
-                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
                     </div>
                     <textarea data-saude-autocomplete="true" maxlength="5000" style="resize:none" rows="2"
                         onclick="aumentarText('rel_int')" class="form-control" id="rel_int" name="rel_int"></textarea>
@@ -833,11 +832,13 @@
                         </div>
                     </div> -->
 
-                <div>
-                    <label for="acoes_int">Ações da Auditoria</label>
-                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
+                <div class="clinical-text-field">
+                    <div class="clinical-text-field__head">
+                        <label for="acoes_int">Ações da Auditoria</label>
+                        <div class="clinical-text-field__actions">
                         <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int">Limpar formatação</button>
                         <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int">Organizar com IA</button>
+                        </div>
                     </div>
                     <textarea data-saude-autocomplete="true" rows="2" style="resize:none"
                         onclick="aumentarText('acoes_int')" class="form-control" maxlength="5000" id="acoes_int"
@@ -847,11 +848,13 @@
                     </div>
                 </div>
 
-                <div>
-                    <label for="programacao_int">Programação Terapêutica</label>
-                    <div class="d-flex justify-content-end flex-wrap gap-2 mb-1">
+                <div class="clinical-text-field">
+                    <div class="clinical-text-field__head">
+                        <label for="programacao_int">Programação Terapêutica</label>
+                        <div class="clinical-text-field__actions">
                         <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_int">Limpar formatação</button>
                         <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_int">Organizar com IA</button>
+                        </div>
                     </div>
                     <textarea data-saude-autocomplete="true" style="resize:none" maxlength="5000" rows="2"
                         onclick="aumentarText('programacao_int')" class="form-control" id="programacao_int"
@@ -975,11 +978,14 @@
                     </div>
                 <?php } ?>
                 </div>
+
+                <?php include_once('formularios/form_cad_internacao_detalhes.php'); ?>
+                <?php include_once('formularios/form_cad_internacao_tuss.php'); ?>
+                <?php include_once('formularios/form_cad_internacao_gestao.php'); ?>
+                <?php include_once('formularios/form_cad_internacao_uti.php'); ?>
+                <?php include_once('formularios/form_cad_internacao_prorrog.php'); ?>
+                <?php include_once('formularios/form_cad_internacao_negoc.php'); ?>
             </div>
-
-            <div id="tabelas-dynamic-stack"></div>
-
-            <?php include_once('formularios/form_cad_internacao_detalhes.php'); ?>
 
         <input type="hidden" class="form-control" value="<?= ($ultimoReg + 1) ?>" id="fk_int_capeante"
             name="fk_int_capeante">
@@ -987,12 +993,6 @@
         <input type="hidden" class="form-control" value="s" id="aberto_cap" name="aberto_cap">
         <input type="hidden" class="form-control" value="n" id="em_auditoria_cap" name="em_auditoria_cap">
         <input type="hidden" class="form-control" value="n" id="senha_finalizada" name="senha_finalizada">
-
-        <?php include_once('formularios/form_cad_internacao_tuss.php'); ?>
-        <?php include_once('formularios/form_cad_internacao_gestao.php'); ?>
-        <?php include_once('formularios/form_cad_internacao_uti.php'); ?>
-        <?php include_once('formularios/form_cad_internacao_prorrog.php'); ?>
-        <?php include_once('formularios/form_cad_internacao_negoc.php'); ?>
 
         <div class="row">
             <div class="form-group col-md-6">

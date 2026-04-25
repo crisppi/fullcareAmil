@@ -50,14 +50,29 @@
 }
 
 #container-tuss .tuss-field-container {
-    align-items: flex-end;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+}
+
+#container-tuss .tuss-field-container > .form-group[class*="col-"] {
+    flex: none !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 #container-tuss .tuss-actions-col {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    min-width: 72px;
+    min-width: 0 !important;
+    width: 56px !important;
 }
 
 #container-tuss .tuss-actions {
@@ -82,6 +97,16 @@
     line-height: 1;
     font-size: 1rem;
     font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    #container-tuss .tuss-field-container {
+        grid-template-columns: 1fr;
+    }
+
+    #container-tuss .tuss-actions-col {
+        width: 56px !important;
+    }
 }
 </style>
 

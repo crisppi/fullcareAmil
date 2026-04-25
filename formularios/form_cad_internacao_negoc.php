@@ -85,6 +85,40 @@
     margin-right: 12px;
     background: linear-gradient(180deg, #b169d9, #d199ff);
 }
+
+#container-negoc .adicional-card .negotiation-field-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+}
+
+#container-negoc .adicional-card .negotiation-field-container > .form-group[class*="col-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#container-negoc .adicional-card .negotiation-field-container > [style*="display:none"] {
+    display: none !important;
+}
+
+#container-negoc .adicional-card .form-control,
+#container-negoc .adicional-card .form-control-sm.form-control {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+}
+
+@media (max-width: 768px) {
+    #container-negoc .adicional-card .negotiation-field-container {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
 <?php

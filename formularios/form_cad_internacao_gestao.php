@@ -28,6 +28,40 @@
     margin-right:12px;
     background:linear-gradient(180deg,#4b9fa4,#7ad0c8);
 }
+
+#container-gestao .adicional-card > .form-group.row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+}
+
+#container-gestao .adicional-card > .form-group.row > .form-group[class*="col-"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#container-gestao .adicional-card > .form-group.row > [style*="display:none"] {
+    display: none !important;
+}
+
+#container-gestao .adicional-card .form-control,
+#container-gestao .adicional-card .form-control-sm.form-control {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+}
+
+@media (max-width: 768px) {
+    #container-gestao .adicional-card > .form-group.row {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
 <div id="container-gestao" style="display:none; margin:5px">

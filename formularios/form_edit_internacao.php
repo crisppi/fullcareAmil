@@ -342,7 +342,7 @@
     ?>
 
     <link href="<?= $BASE_URL ?>css/style.css" rel="stylesheet">
-    <link href="<?= $BASE_URL ?>css/form_cad_internacao.css" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/form_cad_internacao.css?v=<?= filemtime(__DIR__ . '/../css/form_cad_internacao.css') ?>" rel="stylesheet">
     <style>
         .edit-primary-row {
             display: grid;
@@ -436,10 +436,57 @@
             cursor: help;
         }
 
+        #tabelas-adicionais-paineis-edit #container-gestao[style*="block"] {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+            align-items: end;
+            width: 100%;
+        }
+
+        #tabelas-adicionais-paineis-edit #container-gestao > .form-group.row {
+            display: contents !important;
+        }
+
+        #tabelas-adicionais-paineis-edit #container-uti[style*="block"] > .form-group.row,
+        #tabelas-adicionais-paineis-edit #container-uti[style*="block"] .form-group.row {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+            align-items: end;
+            width: 100%;
+        }
+
+        #tabelas-adicionais-paineis-edit #container-gestao .form-group[class*="col-"],
+        #tabelas-adicionais-paineis-edit #container-uti .form-group[class*="col-"] {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        #tabelas-adicionais-paineis-edit #container-gestao textarea.form-control,
+        #tabelas-adicionais-paineis-edit #container-uti textarea.form-control,
+        #tabelas-adicionais-paineis-edit #container-prorrog textarea.form-control,
+        #tabelas-adicionais-paineis-edit #container-negoc textarea.form-control {
+            min-height: 92px !important;
+            height: auto !important;
+        }
+
+        #tabelas-adicionais-paineis-edit #container-gestao [id^="div_rel_"],
+        #tabelas-adicionais-paineis-edit #container-uti .form-group.col-sm-12 {
+            grid-column: 1 / -1;
+        }
+
         @media (max-width: 991.98px) {
             .edit-primary-row,
             .edit-secondary-row,
-            .edit-alta-row {
+            .edit-alta-row,
+            #tabelas-adicionais-paineis-edit #container-gestao[style*="block"],
+            #tabelas-adicionais-paineis-edit #container-uti[style*="block"] > .form-group.row,
+            #tabelas-adicionais-paineis-edit #container-uti[style*="block"] .form-group.row {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -447,7 +494,10 @@
         @media (max-width: 575.98px) {
             .edit-primary-row,
             .edit-secondary-row,
-            .edit-alta-row {
+            .edit-alta-row,
+            #tabelas-adicionais-paineis-edit #container-gestao[style*="block"],
+            #tabelas-adicionais-paineis-edit #container-uti[style*="block"] > .form-group.row,
+            #tabelas-adicionais-paineis-edit #container-uti[style*="block"] .form-group.row {
                 grid-template-columns: 1fr;
             }
         }
@@ -951,6 +1001,21 @@
                             value='<?= $agora; ?>' name="data_create_int">
                     </div>
                 </div>
+                <div id="tabelas-adicionais-paineis-edit">
+                    <div id="container-tuss" style="display:none; margin:5px;">
+                        <?php include_once('formularios/form_edit_internacao_tuss2.php'); ?>
+                    </div>
+                    <?php include_once('formularios/form_edit_internacao_gestao2.php'); ?>
+                    <?php include_once('formularios/form_edit_internacao_uti2.php'); ?>
+                    <div id="container-prorrog" style="display:none; margin:5px;">
+                        <div id="edit-prorrog-focus"></div>
+                        <?php include_once('formularios/form_edit_internacao_prorrog2.php'); ?>
+                    </div>
+                    <div id="container-negoc" style="display:none; margin:5px;">
+                        <div id="edit-negoc-focus"></div>
+                        <?php include_once('formularios/form_edit_internacao_negoc2.php'); ?>
+                    </div>
+                </div>
                 <div id="detalhes-card-wrapper" style="display:none;">
                 <div class="detalhes-card">
                 <div class="detalhes-card__header">
@@ -1264,23 +1329,6 @@
                 </div>
                 </div>
 
-                <div id="tabelas-dynamic-stack-edit">
-                    <div id="container-tuss" style="display:none; margin:5px;">
-                        <?php include_once('formularios/form_edit_internacao_tuss2.php'); ?>
-                    </div>
-                    <?php include_once('formularios/form_edit_internacao_gestao2.php'); ?>
-                    <?php include_once('formularios/form_edit_internacao_uti2.php'); ?>
-                    <div id="container-prorrog" style="display:none; margin:5px;">
-                        <div id="edit-prorrog-focus"></div>
-                        <?php include_once('formularios/form_edit_internacao_prorrog2.php'); ?>
-                    </div>
-                    <div id="container-negoc" style="display:none; margin:5px;">
-                        <div id="edit-negoc-focus"></div>
-                        <?php include_once('formularios/form_edit_internacao_negoc2.php'); ?>
-                    </div>
-                </div>
-
-
                 <br>
                 <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                     <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
@@ -1318,53 +1366,69 @@
             document.getElementById(textareaId).rows = originalRows;
         }
         document.addEventListener('DOMContentLoaded', function() {
-            function setupToggle(selectId, containerId) {
-                var selectEl = document.getElementById(selectId);
-                var containerEl = document.getElementById(containerId);
-                if (!selectEl || !containerEl) return;
-
-                function aplicar() {
-                    containerEl.style.display = selectEl.value === 's' ? 'block' : 'none';
+            var additionalSections = [{
+                    selectId: 'relatorio-detalhado',
+                    containerId: 'detalhes-card-wrapper',
+                    bodyId: 'div-detalhado',
+                    display: 'flex'
+                },
+                {
+                    selectId: 'select_tuss',
+                    containerId: 'container-tuss'
+                },
+                {
+                    selectId: 'select_prorrog',
+                    containerId: 'container-prorrog'
+                },
+                {
+                    selectId: 'select_gestao',
+                    containerId: 'container-gestao'
+                },
+                {
+                    selectId: 'select_uti',
+                    containerId: 'container-uti'
+                },
+                {
+                    selectId: 'select_negoc',
+                    containerId: 'container-negoc'
                 }
+            ];
 
-                aplicar();
-                selectEl.addEventListener('change', aplicar);
+            function setAdditionalSection(section, show) {
+                var containerEl = document.getElementById(section.containerId);
+                var bodyEl = section.bodyId ? document.getElementById(section.bodyId) : null;
+                if (containerEl) {
+                    containerEl.style.display = show ? 'block' : 'none';
+                }
+                if (bodyEl) {
+                    bodyEl.style.display = show ? (section.display || 'block') : 'none';
+                }
             }
 
-            function setupDetalhesToggle() {
-                var selectDet = document.getElementById('relatorio-detalhado');
-                var wrapperDet = document.getElementById('detalhes-card-wrapper');
-                var divDet = document.getElementById('div-detalhado');
-                if (!selectDet || !wrapperDet || !divDet) return;
-
-                function aplicarDetalhes() {
-                    var show = selectDet.value === 's';
-                    wrapperDet.style.display = show ? 'block' : 'none';
-                    divDet.style.display = show ? 'flex' : 'none';
-                }
-
-                aplicarDetalhes();
-                selectDet.addEventListener('change', aplicarDetalhes);
+            function showOnlyAdditional(activeSelectId) {
+                additionalSections.forEach(function(section) {
+                    var selectEl = document.getElementById(section.selectId);
+                    var show = section.selectId === activeSelectId && selectEl && selectEl.value === 's';
+                    setAdditionalSection(section, show);
+                });
             }
 
-            setupToggle('select_tuss', 'container-tuss');
-            setupToggle('select_prorrog', 'container-prorrog');
-            setupToggle('select_gestao', 'container-gestao');
-            setupToggle('select_negoc', 'container-negoc');
-            setupDetalhesToggle();
-
-            setupToggle('select_uti', 'container-uti');
+            additionalSections.forEach(function(section) {
+                var selectEl = document.getElementById(section.selectId);
+                if (!selectEl) return;
+                selectEl.addEventListener('change', function() {
+                    showOnlyAdditional(section.selectId);
+                });
+            });
 
             var activeEditSection = <?= json_encode($activeEditSection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
             if (activeEditSection === 'negoc') {
                 var selectNegoc = document.getElementById('select_negoc');
-                var containerNegoc = document.getElementById('container-negoc');
                 if (selectNegoc) {
                     selectNegoc.value = 's';
                 }
-                if (containerNegoc) {
-                    containerNegoc.style.display = 'block';
-                }
+                showOnlyAdditional('select_negoc');
+                var containerNegoc = document.getElementById('container-negoc');
 
                 window.requestAnimationFrame(function() {
                     window.setTimeout(function() {
@@ -1381,13 +1445,11 @@
 
             if (activeEditSection === 'prorrog') {
                 var selectProrrog = document.getElementById('select_prorrog');
-                var containerProrrog = document.getElementById('container-prorrog');
                 if (selectProrrog) {
                     selectProrrog.value = 's';
                 }
-                if (containerProrrog) {
-                    containerProrrog.style.display = 'block';
-                }
+                showOnlyAdditional('select_prorrog');
+                var containerProrrog = document.getElementById('container-prorrog');
 
                 window.requestAnimationFrame(function() {
                     window.setTimeout(function() {
@@ -1400,6 +1462,20 @@
                         });
                     }, 140);
                 });
+            }
+
+            if (activeEditSection !== 'negoc' && activeEditSection !== 'prorrog') {
+                var initiallyOpen = additionalSections.find(function(section) {
+                    var selectEl = document.getElementById(section.selectId);
+                    return selectEl && selectEl.value === 's';
+                });
+                if (initiallyOpen) {
+                    showOnlyAdditional(initiallyOpen.selectId);
+                } else {
+                    additionalSections.forEach(function(section) {
+                        setAdditionalSection(section, false);
+                    });
+                }
             }
         });
     </script>
@@ -1451,7 +1527,7 @@
         };
     </script>
     <script src="<?= $BASE_URL ?>js/clinical_text_tools.js?v=<?= filemtime(__DIR__ . '/../js/clinical_text_tools.js') ?>"></script>
-    <script src="js/select_internacao.js"></script>
+    <script src="<?= $BASE_URL ?>js/select_internacao.js?v=<?= filemtime(__DIR__ . '/../js/select_internacao.js') ?>"></script>
 
     <script>
         let pacienteStatus = null; // Variável global para armazenar o status do paciente
@@ -1731,29 +1807,6 @@
 
 
 
-
-        // Exibe o container apenas quando select_prorrog for "s"
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectProrrog = document.getElementById("select_prorrog");
-            const containerProrrog = document.getElementById("container-prorrog");
-
-            if (selectProrrog) {
-                selectProrrog.addEventListener("change", function() {
-                    if (this.value === "s") {
-                        containerProrrog.style.display = "block";
-                    } else {
-                        containerProrrog.style.display = "none";
-                    }
-                });
-
-                // Verifica o valor inicial
-                if (selectProrrog.value === "s") {
-                    containerProrrog.style.display = "block";
-                } else {
-                    containerProrrog.style.display = "none";
-                }
-            }
-        });
 
         // Mostrar/ocultar Data/Hora Alta e Motivo Alta conforme "Internado"
         document.addEventListener("DOMContentLoaded", function() {
