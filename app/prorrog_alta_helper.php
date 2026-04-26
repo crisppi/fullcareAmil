@@ -28,6 +28,9 @@ if (!function_exists('fullcare_prorrog_alta_payload_from_post')) {
         }
 
         $rawDate = $source['prorrog_data_alta_alt'] ?? null;
+        if (is_string($rawDate)) {
+            $rawDate = preg_replace('/\s*,\s*/', ' ', trim($rawDate));
+        }
         $normalized = $normalizeDateTimeInput($rawDate);
         if (!$normalized) {
             return null;

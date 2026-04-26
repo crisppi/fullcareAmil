@@ -168,15 +168,51 @@ if (!function_exists('buildInitialInternacaoProrrogRow')) {
         if ($dataInternacao === '') {
             return null;
         }
+        $dataFim = date('Y-m-d', strtotime($dataInternacao . ' +1 day'));
 
         return [
             'fk_usuario_pror' => $fkUsuarioPror,
             'acomod1_pror' => normalizeInternacaoProrrogAcomodacao($acomodacaoInicial),
             'prorrog1_ini_pror' => $dataInternacao,
-            'prorrog1_fim_pror' => $dataInternacao,
+            'prorrog1_fim_pror' => $dataFim,
             'isol_1_pror' => 'n',
             'diarias_1' => 1,
         ];
+    }
+}
+if (!function_exists('internacaoDateOnlyTs')) {
+    function internacaoDateOnlyTs($value): ?int
+    {
+        $value = trim((string)($value ?? ''));
+        if ($value === '') {
+            return null;
+        }
+        $ts = strtotime(substr($value, 0, 10));
+        return $ts ? (int)$ts : null;
+    }
+}
+if (!function_exists('internacaoProrrogInvalidReasons')) {
+    function internacaoProrrogInvalidReasons(array $row): array
+    {
+        $reasons = [];
+        $acomod = trim((string)($row['acomod1_pror'] ?? ''));
+        $ini = internacaoDateOnlyTs($row['prorrog1_ini_pror'] ?? null);
+        $fim = internacaoDateOnlyTs($row['prorrog1_fim_pror'] ?? null);
+
+        if ($acomod === '') {
+            $reasons[] = 'acomodacao_vazia';
+        }
+        if (!$ini) {
+            $reasons[] = 'data_inicial_invalida';
+        }
+        if (!$fim) {
+            $reasons[] = 'data_final_invalida';
+        }
+        if ($ini && $fim && $fim <= $ini) {
+            $reasons[] = 'periodo_invalido';
+        }
+
+        return $reasons;
     }
 }
 if (!function_exists('normalizeNegotiationAcomodacao')) {
@@ -1063,14 +1099,24 @@ if ($type === "create") {
             }
             if (is_array($prorrogacoesArray) && isset($prorrogacoesArray['prorrogations']) && is_array($prorrogacoesArray['prorrogations'])) {
                 foreach ($prorrogacoesArray['prorrogations'] as $prorrogacaoData) {
+                    $invalidReasons = internacaoProrrogInvalidReasons((array)$prorrogacaoData);
+                    if ($invalidReasons) {
+                        internacaoCreateDebugLog(
+                            'PRORROG skip create id_int=' . (int)$lastId
+                            . ' reasons=' . implode(',', $invalidReasons)
+                            . ' ini=' . (string)($prorrogacaoData['prorrog1_ini_pror'] ?? '')
+                            . ' fim=' . (string)($prorrogacaoData['prorrog1_fim_pror'] ?? '')
+                        );
+                        continue;
+                    }
                     $prorrogacao = new prorrogacao();
                     $prorrogacao->fk_internacao_pror = $lastId; // [FK:$lastId]
-                    $prorrogacao->fk_usuario_pror = $prorrogacaoData['fk_usuario_pror'];
-                    $prorrogacao->acomod1_pror = $prorrogacaoData['acomod1_pror'];
-                    $prorrogacao->prorrog1_ini_pror = $prorrogacaoData['prorrog1_ini_pror'];
-                    $prorrogacao->prorrog1_fim_pror = $prorrogacaoData['prorrog1_fim_pror'];
+                    $prorrogacao->fk_usuario_pror = $prorrogacaoData['fk_usuario_pror'] ?? $fk_usuario_int;
+                    $prorrogacao->acomod1_pror = $prorrogacaoData['acomod1_pror'] ?? null;
+                    $prorrogacao->prorrog1_ini_pror = $prorrogacaoData['prorrog1_ini_pror'] ?? null;
+                    $prorrogacao->prorrog1_fim_pror = $prorrogacaoData['prorrog1_fim_pror'] ?? null;
                     $prorrogacao->isol_1_pror = $prorrogacaoData['isol_1_pror'] ?? null;
-                    $prorrogacao->diarias_1 = $prorrogacaoData['diarias_1'];
+                    $prorrogacao->diarias_1 = $prorrogacaoData['diarias_1'] ?? null;
                     $prorrogacaoDao->create($prorrogacao);
                 }
                 persistAutoNegociacoesFromProrrogRows(
@@ -1387,6 +1433,16 @@ if ($type == "update") {
         $prorrogacoesArray = json_decode($prorrogacoesJson, true);
         if (is_array($prorrogacoesArray) && isset($prorrogacoesArray['prorrogations']) && is_array($prorrogacoesArray['prorrogations'])) {
             foreach ($prorrogacoesArray['prorrogations'] as $prorrogacaoData) {
+                $invalidReasons = internacaoProrrogInvalidReasons((array)$prorrogacaoData);
+                if ($invalidReasons) {
+                    internacaoCreateDebugLog(
+                        'PRORROG skip update id_int=' . (int)$id_internacao
+                        . ' reasons=' . implode(',', $invalidReasons)
+                        . ' ini=' . (string)($prorrogacaoData['prorrog1_ini_pror'] ?? '')
+                        . ' fim=' . (string)($prorrogacaoData['prorrog1_fim_pror'] ?? '')
+                    );
+                    continue;
+                }
                 $prorrogacao = new prorrogacao();
                 $prorrogacao->fk_internacao_pror = $id_internacao; // mantém UPDATE
                 $prorrogacao->acomod1_pror = $prorrogacaoData['acomod1_pror'] ?? null;
@@ -1404,6 +1460,20 @@ if ($type == "update") {
                 filter_var($fk_usuario_int, FILTER_VALIDATE_INT) ?: null
             );
         } else {
+            $fallbackProrrogRow = [
+                'acomod1_pror' => $acomod1_pror,
+                'prorrog1_ini_pror' => $prorrog1_ini_pror,
+                'prorrog1_fim_pror' => $prorrog1_fim_pror,
+            ];
+            $invalidReasons = internacaoProrrogInvalidReasons($fallbackProrrogRow);
+            if ($invalidReasons) {
+                internacaoCreateDebugLog(
+                    'PRORROG skip fallback id_int=' . (int)$id_internacao
+                    . ' reasons=' . implode(',', $invalidReasons)
+                    . ' ini=' . (string)$prorrog1_ini_pror
+                    . ' fim=' . (string)$prorrog1_fim_pror
+                );
+            } else {
             $prorrogacao = new prorrogacao();
             $prorrogacao->fk_internacao_pror = $id_internacao; // mantém UPDATE
             $prorrogacao->acomod1_pror = $acomod1_pror;
@@ -1424,6 +1494,7 @@ if ($type == "update") {
                 $negociacaoDao,
                 filter_var($fk_usuario_int, FILTER_VALIDATE_INT) ?: null
             );
+            }
         }
         if ($prorrogAltaPayload) {
             fullcare_upsert_prorrog_alta($conn, (int)$id_internacao, $prorrogAltaPayload);

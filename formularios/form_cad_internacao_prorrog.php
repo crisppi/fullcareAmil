@@ -202,6 +202,10 @@ $prorrogInitialRows = $prorrogEditRows ?: [[
     #container-prorrog .adicional-card .field-container {
         grid-template-columns: 1fr;
     }
+    .prorrog-alta-fields > .form-group.row {
+        grid-template-columns: 1fr !important;
+        max-width: none !important;
+    }
 }
 .custom-dialog {
     display: none;
@@ -279,10 +283,34 @@ $prorrogInitialRows = $prorrogEditRows ?: [[
     display: block;
 }
 .prorrog-alta-fields > .form-group.row {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 260px) minmax(260px, 320px);
+    gap: 14px 18px;
+    align-items: end;
     width: 100% !important;
+    max-width: 620px !important;
+    margin: 0 !important;
 }
 .prorrog-alta-fields > .form-group.row > .form-group[class*="col-"] {
-    min-width: 220px !important;
+    flex: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.prorrog-alta-fields .form-control,
+.prorrog-alta-fields .form-control-sm.form-control,
+.prorrog-alta-fields .bootstrap-select,
+.prorrog-alta-fields .bootstrap-select > .dropdown-toggle {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+.prorrog-alta-fields .bootstrap-select .filter-option-inner-inner {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .prorrog-ia-box {
     margin-top: 18px;
@@ -343,25 +371,31 @@ $prorrogInitialRows = $prorrogEditRows ?: [[
     gap: 8px;
     flex-wrap: wrap;
 }
-.prorrog-ia-box > .form-group.row {
+.prorrog-ia-context-row {
     display: block !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
-.prorrog-ia-box > .form-group.row > .form-group[class*="col-"] {
+.prorrog-ia-context-field {
+    display: block !important;
     width: 100% !important;
     min-width: 0 !important;
     max-width: 100% !important;
     flex: 0 0 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    margin-bottom: 0 !important;
 }
 .prorrog-ia-box textarea.form-control,
 #prorrog-ia-contexto {
     display: block;
     width: 100% !important;
-    max-width: none !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    min-height: 96px !important;
+    box-sizing: border-box !important;
 }
 .prorrog-ia-card {
     width: 100%;
@@ -600,9 +634,10 @@ if (isset($dados_alta) && is_array($dados_alta)) {
         <div class="prorrog-alta-fields" id="prorrog-alta-fields">
             <div class="form-group row">
                 <div class="form-group col-sm-3">
-                    <label class="control-label" for="prorrog_data_alta_alt">Data/Hora Alta</label>
-                    <input type="datetime-local" class="form-control-sm form-control" id="prorrog_data_alta_alt"
-                        name="prorrog_data_alta_alt" step="60">
+                    <label class="control-label" for="prorrog_data_alta_alt_display">Data/Hora Alta</label>
+                    <input type="hidden" id="prorrog_data_alta_alt" name="prorrog_data_alta_alt">
+                    <input type="text" class="form-control-sm form-control" id="prorrog_data_alta_alt_display"
+                        placeholder="dd/mm/aaaa hh:mm" autocomplete="off">
                 </div>
                 <div class="form-group col-sm-4">
                     <label class="control-label" for="prorrog_tipo_alta_alt">Motivo Alta</label>
@@ -636,8 +671,8 @@ if (isset($dados_alta) && is_array($dados_alta)) {
                 </button>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="form-group col-sm-12">
+        <div class="prorrog-ia-context-row">
+            <div class="prorrog-ia-context-field">
                 <label class="control-label" for="prorrog-ia-contexto">Contexto complementar</label>
                 <textarea class="form-control-sm form-control" id="prorrog-ia-contexto" rows="3" placeholder="Opcional: acrescente observações clínicas, plano de transição de cuidado, home care, barreiras de alta ou contexto assistencial relevante."></textarea>
                 <small style="display:block;margin-top:6px;color:#475569;font-weight:600;">
@@ -825,6 +860,54 @@ function formatDateToLocalDateTime(dateValue) {
     return `${base}T12:00`;
 }
 
+function formatLocalDateTimeToBR(value) {
+    const iso = normalizeProrrogAltaDateTime(value);
+    if (!iso) return '';
+    const [datePart, timePart = '12:00'] = iso.split('T');
+    const [yyyy, mm, dd] = datePart.split('-');
+    return `${dd}/${mm}/${yyyy} ${timePart.slice(0, 5)}`;
+}
+
+function normalizeProrrogAltaDateTime(value) {
+    const raw = (value || '').toString().trim().replace(',', ' ');
+    if (!raw) return '';
+
+    const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/);
+    if (isoMatch) {
+        return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}T${isoMatch[4] || '12'}:${isoMatch[5] || '00'}`;
+    }
+
+    const brMatch = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/);
+    if (brMatch) {
+        const hh = String(brMatch[4] || '12').padStart(2, '0');
+        const mi = String(brMatch[5] || '00').padStart(2, '0');
+        return `${brMatch[3]}-${brMatch[2]}-${brMatch[1]}T${hh}:${mi}`;
+    }
+
+    return '';
+}
+
+function syncProrrogAltaHiddenFromDisplay() {
+    const hidden = document.getElementById('prorrog_data_alta_alt');
+    const display = document.getElementById('prorrog_data_alta_alt_display');
+    if (!hidden || !display) return '';
+
+    const normalized = normalizeProrrogAltaDateTime(display.value);
+    hidden.value = normalized;
+    if (normalized) {
+        display.value = formatLocalDateTimeToBR(normalized);
+    }
+    return normalized;
+}
+
+function setProrrogAltaDateTime(value) {
+    const hidden = document.getElementById('prorrog_data_alta_alt');
+    const display = document.getElementById('prorrog_data_alta_alt_display');
+    const normalized = normalizeProrrogAltaDateTime(value);
+    if (hidden) hidden.value = normalized;
+    if (display) display.value = normalized ? formatLocalDateTimeToBR(normalized) : '';
+}
+
 function getSuggestedAltaDateFromProrrog() {
     const rows = Array.from(document.querySelectorAll('#fieldsContainer .field-container'));
     for (let i = rows.length - 1; i >= 0; i -= 1) {
@@ -843,11 +926,11 @@ function syncProrrogAltaBounds() {
 
     const internDate = getInternacaoDateForProrrog();
     const now = formatLocalDateTimeNow();
-    dataInput.max = now;
+    dataInput.dataset.max = now;
     if (internDate) {
-        dataInput.min = formatDateToLocalDateTime(internDate);
+        dataInput.dataset.min = formatDateToLocalDateTime(internDate);
     } else {
-        dataInput.removeAttribute('min');
+        delete dataInput.dataset.min;
     }
 }
 
@@ -857,6 +940,7 @@ function syncProrrogAltaToggle(flag) {
     const btnNao = document.getElementById('prorrog-alta-btn-nao');
     const btnSim = document.getElementById('prorrog-alta-btn-sim');
     const dataInput = document.getElementById('prorrog_data_alta_alt');
+    const dataDisplay = document.getElementById('prorrog_data_alta_alt_display');
     const motivoInput = document.getElementById('prorrog_tipo_alta_alt');
     const enabled = flag === 's';
 
@@ -865,13 +949,15 @@ function syncProrrogAltaToggle(flag) {
     if (btnNao) btnNao.classList.toggle('is-active', !enabled);
     if (btnSim) btnSim.classList.toggle('is-active', enabled);
     if (dataInput) {
-        dataInput.required = enabled;
         syncProrrogAltaBounds();
         if (!enabled) {
-            dataInput.value = '';
+            setProrrogAltaDateTime('');
         } else if (!dataInput.value) {
-            dataInput.value = getSuggestedAltaDateFromProrrog() || formatLocalDateTimeNow();
+            setProrrogAltaDateTime(getSuggestedAltaDateFromProrrog() || formatLocalDateTimeNow());
         }
+    }
+    if (dataDisplay) {
+        dataDisplay.required = enabled;
     }
     if (motivoInput) {
         motivoInput.required = enabled;
@@ -891,6 +977,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     syncProrrogAltaToggle(document.getElementById('prorrog_gerar_alta')?.value || 'n');
     syncProrrogAltaBounds();
+
+    const dataDisplay = document.getElementById('prorrog_data_alta_alt_display');
+    if (dataDisplay) {
+        dataDisplay.addEventListener('change', syncProrrogAltaHiddenFromDisplay);
+        dataDisplay.addEventListener('blur', syncProrrogAltaHiddenFromDisplay);
+    }
 });
 
 // Template de novas linhas (com "-" e "+")
@@ -1088,6 +1180,72 @@ function validateProrrogOverlaps() {
     return valid;
 }
 
+function validateProrrogRequiredRows() {
+    const selectProrrog = document.getElementById("select_prorrog");
+    if (!selectProrrog || selectProrrog.value !== "s") return true;
+
+    const rows = Array.from(document.querySelectorAll("#fieldsContainer .field-container"));
+    let valid = true;
+
+    rows.forEach((container) => {
+        const acomod = container.querySelector('[name="acomod1_pror"]')?.value || "";
+        const ini = container.querySelector('[name="prorrog1_ini_pror"]')?.value || "";
+        const fim = container.querySelector('[name="prorrog1_fim_pror"]')?.value || "";
+        const iniDate = parseProrrogDate(ini);
+        const fimDate = parseProrrogDate(fim);
+        let message = "";
+
+        if (!acomod) {
+            message = "Informe a acomodação da prorrogação.";
+        } else if (!isCompleteProrrogDate(ini)) {
+            message = "Informe a data inicial da prorrogação.";
+        } else if (!isCompleteProrrogDate(fim)) {
+            message = "Informe a data final da prorrogação.";
+        } else if (!iniDate || !fimDate || fimDate <= iniDate) {
+            message = "A data final precisa ser maior que a data inicial.";
+        }
+
+        if (message) {
+            setProrrogRowError(container, message);
+            valid = false;
+        }
+    });
+
+    return valid;
+}
+
+function validateProrrogAltaFields() {
+    const altaFlag = document.getElementById('prorrog_gerar_alta')?.value || 'n';
+    if (altaFlag !== 's') return true;
+
+    const hidden = document.getElementById('prorrog_data_alta_alt');
+    const display = document.getElementById('prorrog_data_alta_alt_display');
+    const motivo = document.getElementById('prorrog_tipo_alta_alt');
+    const normalized = syncProrrogAltaHiddenFromDisplay();
+
+    if (!normalized) {
+        if (display) display.focus();
+        openProrrogError("Informe a Data/Hora Alta no formato dd/mm/aaaa hh:mm.");
+        return false;
+    }
+
+    const min = hidden?.dataset?.min || '';
+    const max = hidden?.dataset?.max || '';
+    if ((min && normalized < min) || (max && normalized > max)) {
+        if (display) display.focus();
+        openProrrogError("A Data/Hora Alta precisa estar entre a data da internação e a data atual.");
+        return false;
+    }
+
+    if (!motivo || !motivo.value) {
+        if (motivo) motivo.focus();
+        openProrrogError("Informe o Motivo Alta.");
+        return false;
+    }
+
+    return true;
+}
+
 // Calcula diárias e valida datas
 function calculateDiarias(container) {
     const dataAtual = new Date().toISOString().split("T")[0];
@@ -1256,6 +1414,18 @@ document.getElementById("prorrogacoes-json").value = JSON.stringify(jsonData, nu
 document.addEventListener("submit", function(event) {
     const form = event.target;
     if (!form || !form.querySelector || !form.querySelector("#container-prorrog")) return;
+    if (!validateProrrogAltaFields()) {
+        event.preventDefault();
+        return;
+    }
+    generateProrJSON();
+    if (!validateProrrogRequiredRows()) {
+        event.preventDefault();
+        openProrrogError("Preencha acomodação, data inicial e data final da prorrogação antes de salvar.");
+        const firstError = form.querySelector("#container-prorrog .prorrog-alert[style*='block']");
+        if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+    }
     if (!validateProrrogOverlaps()) {
         event.preventDefault();
         openProrrogError("Existem prorrogações com período repetido ou sobreposto. Ajuste as datas antes de salvar.");

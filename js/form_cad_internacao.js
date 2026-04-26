@@ -2287,15 +2287,23 @@ $(document).ready(function() {
             }
         });
         const acomodacoesUnicas = Array.from(dedupMap.values());
+        const parseValorAcomod = (valor) => {
+            let raw = String(valor ?? '0').replace('R$', '').trim();
+            if (raw.includes(',')) {
+                raw = raw.replace(/\./g, '').replace(',', '.');
+            }
+            return parseFloat(raw) || 0;
+        };
 
         let options = '<option value="">Selecione a Acomodação</option>';
         acomodacoesUnicas.forEach(ac => {
-            const valorNum = parseFloat(String(ac.valor_aco ?? '0').replace(',', '.')) || 0;
+            const valorNum = parseValorAcomod(ac.valor_aco);
             options +=
                 `<option value="${ac.id_acomodacao}-${ac.acomodacao_aco}" data-valor="${valorNum}">${ac.acomodacao_aco}</option>`;
             const key = normKey(ac.acomodacao_aco);
             if (key) prorrogValorMap[key] = valorNum;
         });
+        window.__NEG_ACOMOD_VALOR_MAP = Object.assign({}, window.__NEG_ACOMOD_VALOR_MAP || {}, prorrogValorMap);
         $('select[name="troca_de"]').html(options);
         $('select[name="troca_para"]').html(options);
         $('input[name="saving"]').val('');
@@ -2305,7 +2313,7 @@ $(document).ready(function() {
         // Prorrogação: mantém valores alinhados às acomodações do hospital selecionado
         let prorrogOptions = '<option value=""></option>';
         acomodacoesUnicas.forEach(ac => {
-            const valorNum = parseFloat(String(ac.valor_aco ?? '0').replace(',', '.')) || 0;
+            const valorNum = parseValorAcomod(ac.valor_aco);
             prorrogOptions +=
                 `<option value="${ac.acomodacao_aco}" data-valor="${valorNum}">${ac.acomodacao_aco}</option>`;
         });

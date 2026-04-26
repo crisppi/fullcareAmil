@@ -124,7 +124,8 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
         $fimTs = min($fimTs, $internEndTs);
         $intervals[] = ['s' => $iniTs, 'e' => $fimTs];
     }
-    [$coveredDays, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $internStartTs, $internEndTs);
+    $coverageStartTs = $intervals ? min(array_column($intervals, 's')) : $internStartTs;
+    [$coveredDays, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $coverageStartTs, $internEndTs);
     if ($missingDays > 0) {
         $parts = array_map(fn($g) => $g[0] . ' → ' . $g[1], $gaps);
         $pr_pendente_label = $missingDays . ' dias | ' . implode(' • ', $parts);

@@ -125,6 +125,67 @@
 if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
     $dados_acomodacao = [];
 }
+
+if (!function_exists('negocNormAcomod')) {
+    function negocNormAcomod(string $value): string
+    {
+        $value = trim($value);
+        if (function_exists('mb_strtolower')) {
+            $value = mb_strtolower($value, 'UTF-8');
+        } else {
+            $value = strtolower($value);
+        }
+        $value = preg_replace('/^\d+\s*-\s*/', '', $value);
+        $value = str_replace(
+            ['á', 'à', 'â', 'ã', 'ä', 'é', 'è', 'ê', 'ë', 'í', 'ì', 'î', 'ï', 'ó', 'ò', 'ô', 'õ', 'ö', 'ú', 'ù', 'û', 'ü', 'ç'],
+            ['a', 'a', 'a', 'a', 'a', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'c'],
+            $value
+        );
+        return trim($value);
+    }
+}
+
+if (!function_exists('negocValorAcomod')) {
+    function negocValorAcomod(string $acomod, array $map): float
+    {
+        $norm = negocNormAcomod($acomod);
+        if (isset($map[$norm]) && is_numeric($map[$norm])) {
+            return (float)$map[$norm];
+        }
+        return 0.0;
+    }
+}
+
+if (!function_exists('negocParseValorAcomod')) {
+    function negocParseValorAcomod($valor): ?float
+    {
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+        if (is_numeric($valor)) {
+            return (float)$valor;
+        }
+        $valor = trim((string)$valor);
+        $valor = str_replace(['R$', ' '], '', $valor);
+        if (strpos($valor, ',') !== false) {
+            $valor = str_replace('.', '', $valor);
+            $valor = str_replace(',', '.', $valor);
+        }
+        return is_numeric($valor) ? (float)$valor : null;
+    }
+}
+
+$negocAcomodValorMap = [];
+if (isset($acomodacao) && is_array($acomodacao)) {
+    foreach ($acomodacao as $row) {
+        if (!is_array($row)) continue;
+        $nome = (string)($row['acomodacao_aco'] ?? $row['acomodacao'] ?? '');
+        $valor = negocParseValorAcomod($row['valor_aco'] ?? $row['valor'] ?? null);
+        if ($nome !== '' && $valor !== null) {
+            $negocAcomodValorMap[negocNormAcomod($nome)] = $valor;
+        }
+    }
+}
 ?>
 
 <div id="container-negoc" style="display:none; margin:5px">
@@ -184,7 +245,7 @@ if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
                         <option value=""> </option>
                         <?php sort($dados_acomodacao, SORT_ASC);
                         foreach ($dados_acomodacao as $acomd) { ?>
-                        <option value="<?= $acomd; ?>"><?= $acomd; ?></option>
+                        <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)negocValorAcomod((string)$acomd, $negocAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>"><?= $acomd; ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -195,7 +256,7 @@ if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
                         <option value=""> </option>
                         <?php sort($dados_acomodacao, SORT_ASC);
                         foreach ($dados_acomodacao as $acomd) { ?>
-                        <option value="<?= $acomd; ?>"><?= $acomd; ?></option>
+                        <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)negocValorAcomod((string)$acomd, $negocAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>"><?= $acomd; ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -227,6 +288,8 @@ if (!isset($dados_acomodacao) || !is_array($dados_acomodacao)) {
 </div>
 
 <script>
+window.__NEG_ACOMOD_VALOR_MAP = <?= json_encode($negocAcomodValorMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
 // ========= Helpers (JS) =========
 function jsNorm(s) {
     return (s || '')
@@ -329,8 +392,14 @@ function getNegotiationAcomodValue($select) {
     }
 
     const map = window.__NEG_ACOMOD_VALOR_MAP || {};
-    const byValue = String($select.val() || '').trim().toUpperCase();
-    const byText = String(selected.text() || '').trim().toUpperCase();
+    const normKey = (v) => (v || '')
+        .toString()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/^\d+\s*-\s*/, '')
+        .trim();
+    const byValue = normKey($select.val());
+    const byText = normKey(selected.text());
     const fromValue = parseFloat(map[byValue] ?? 'NaN');
     const fromText = parseFloat(map[byText] ?? 'NaN');
 
@@ -403,7 +472,7 @@ function addNegotiationField() {
           <option value=""> </option>
           <?php sort($dados_acomodacao, SORT_ASC);
             foreach ($dados_acomodacao as $acomd) { ?>
-            <option value="<?= $acomd; ?>"><?= $acomd; ?></option>
+            <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)negocValorAcomod((string)$acomd, $negocAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>"><?= $acomd; ?></option>
           <?php } ?>
         </select>
       </div>
@@ -414,7 +483,7 @@ function addNegotiationField() {
           <option value=""> </option>
           <?php sort($dados_acomodacao, SORT_ASC);
             foreach ($dados_acomodacao as $acomd) { ?>
-            <option value="<?= $acomd; ?>"><?= $acomd; ?></option>
+            <option value="<?= $acomd; ?>" data-valor="<?= htmlspecialchars((string)negocValorAcomod((string)$acomd, $negocAcomodValorMap), ENT_QUOTES, 'UTF-8'); ?>"><?= $acomd; ?></option>
           <?php } ?>
         </select>
       </div>

@@ -297,6 +297,41 @@ if (!function_exists('shouldPersistNegotiation')) {
         return $saving > 0;
     }
 }
+if (!function_exists('internacaoEditDateOnlyTs')) {
+    function internacaoEditDateOnlyTs($value): ?int
+    {
+        $value = trim((string)($value ?? ''));
+        if ($value === '') {
+            return null;
+        }
+        $ts = strtotime(substr($value, 0, 10));
+        return $ts ? (int)$ts : null;
+    }
+}
+if (!function_exists('internacaoEditProrrogInvalidReasons')) {
+    function internacaoEditProrrogInvalidReasons(array $row): array
+    {
+        $reasons = [];
+        $acomod = trim((string)($row['acomod'] ?? ''));
+        $ini = internacaoEditDateOnlyTs($row['ini'] ?? null);
+        $fim = internacaoEditDateOnlyTs($row['fim'] ?? null);
+
+        if ($acomod === '') {
+            $reasons[] = 'acomodacao_vazia';
+        }
+        if (!$ini) {
+            $reasons[] = 'data_inicial_invalida';
+        }
+        if (!$fim) {
+            $reasons[] = 'data_final_invalida';
+        }
+        if ($ini && $fim && $fim <= $ini) {
+            $reasons[] = 'periodo_invalido';
+        }
+
+        return $reasons;
+    }
+}
 
 /*──────── session/inputs mínimos ────────*/
 $idInternacao = (int) ($_POST['id_internacao'] ?? 0);
@@ -731,8 +766,35 @@ try {
         $existing    = $prorrogDao->selectInternacaoProrrog($idInt);
         $existingIds = array_map(fn($r) => (int) $r['id_prorrogacao'], $existing);
 
-        $prArray     = decodeArray($_POST['prorrogacoes_json'] ?? null); // sempre array
-        internacaoEditarDebugLog('PRORROG input id_int=' . (int)$idInt . ' rows=' . count($prArray));
+        $prArrayRaw  = decodeArray($_POST['prorrogacoes_json'] ?? null); // sempre array
+        internacaoEditarDebugLog('PRORROG input id_int=' . (int)$idInt . ' rows=' . count($prArrayRaw));
+
+        $prArray = [];
+        foreach ($prArrayRaw as $p) {
+            $idPror = !empty($p['id_prorrogacao']) ? (int)$p['id_prorrogacao'] : 0;
+            $isBlankNewRow = $idPror <= 0
+                && trim((string)($p['acomod'] ?? '')) === ''
+                && trim((string)($p['ini'] ?? '')) === ''
+                && trim((string)($p['fim'] ?? '')) === '';
+
+            if ($isBlankNewRow) {
+                continue;
+            }
+
+            $invalidReasons = internacaoEditProrrogInvalidReasons($p);
+            if ($invalidReasons) {
+                internacaoEditarDebugLog(
+                    'PRORROG skip invalid id_int=' . (int)$idInt
+                    . ' id_pror=' . $idPror
+                    . ' reasons=' . implode(',', $invalidReasons)
+                    . ' ini=' . (string)($p['ini'] ?? '')
+                    . ' fim=' . (string)($p['fim'] ?? '')
+                );
+                continue;
+            }
+
+            $prArray[] = $p;
+        }
 
         $postedIds = [];
         foreach ($prArray as $p) {
