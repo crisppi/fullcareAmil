@@ -542,3 +542,19 @@
 [2026-04-26 00:21:07] PRORROG create ok id_int=779 ini=2026-04-18 fim=2026-04-21
 [2026-04-26 00:21:07] PRORROG alta inline ok id_int=779
 [2026-04-26 00:21:07] COMMIT ok id_int=779
+[2026-04-26 00:46:14] START id_int=780 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-26 00:46:14] GESTAO skip id_int=780 select_gestao=n evento=n
+[2026-04-26 00:46:14] NEGOC fallback post rows=1 id_int=780
+[2026-04-26 00:46:14] PRORROG input id_int=780 rows=2
+[2026-04-26 00:46:14] PRORROG update ok id_int=780 id_pror=381
+[2026-04-26 00:46:15] PRORROG create ok id_int=780 ini=2026-04-16 fim=2026-04-21
+[2026-04-26 00:46:15] PRORROG alta inline ok id_int=780
+[2026-04-26 00:46:15] COMMIT ok id_int=780
+[2026-04-26 01:05:48] START id_int=781 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-26 01:05:48] GESTAO skip id_int=781 select_gestao=n evento=n
+[2026-04-26 01:05:48] NEGOC fallback post rows=1 id_int=781
+[2026-04-26 01:05:48] PRORROG input id_int=781 rows=2
+[2026-04-26 01:05:48] PRORROG create ok id_int=781 ini=2026-04-16 fim=2026-04-19
+[2026-04-26 01:05:48] PRORROG create ok id_int=781 ini=2026-04-19 fim=2026-04-21
+[2026-04-26 01:05:48] PRORROG alta inline ok id_int=781
+[2026-04-26 01:05:48] COMMIT ok id_int=781

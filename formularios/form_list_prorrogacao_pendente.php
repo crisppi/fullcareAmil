@@ -278,7 +278,8 @@ foreach ($internacoes as $intern) {
         ];
     }
 
-    [$coveredDays, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $startTs, $endTs);
+    $coverageStartTs = $intervals ? min(array_column($intervals, 's')) : $startTs;
+    [$coveredDays, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $coverageStartTs, $endTs);
     if ($missingDays <= 0) {
         continue;
     }

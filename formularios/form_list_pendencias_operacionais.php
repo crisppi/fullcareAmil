@@ -227,7 +227,8 @@ foreach ($internacoes as $row) {
                 ];
             }
 
-            [, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $dataInternTs, $endTs);
+            $coverageStartTs = $intervals ? min(array_column($intervals, 's')) : $dataInternTs;
+            [, $missingDays, $gaps] = computeCoverageAndGaps($intervals, $coverageStartTs, $endTs);
             if ($missingDays > 0) {
                 $parts = array_map(fn($g) => $g[0] . ' -> ' . $g[1], $gaps);
                 $detalhe = $missingDays . ' dias em aberto';

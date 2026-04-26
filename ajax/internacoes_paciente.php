@@ -232,7 +232,8 @@ try {
                 ];
             }
 
-            [, $missingDays, $gaps] = hubComputeCoverageAndGaps($intervals, $startTs, $endTs);
+            $coverageStartTs = $intervals ? min(array_column($intervals, 's')) : $startTs;
+            [, $missingDays, $gaps] = hubComputeCoverageAndGaps($intervals, $coverageStartTs, $endTs);
             if ($missingDays > 0) {
                 $prorrogPendentes = count($gaps);
                 $prorrogPendentesLabel = implode(' | ', array_map(static fn($g) => $g[0] . ' -> ' . $g[1], $gaps));
