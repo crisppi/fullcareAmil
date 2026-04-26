@@ -174,8 +174,9 @@ $prorrogAltaAtiva = $prorrogAltaDataValue !== '' || !empty($altaAtual['tipo_alta
     }
 
     .pror-row .w-btns>.btn-group {
-        display: flex;
+        display: inline-flex;
         gap: 8px;
+        width: auto;
     }
 }
 
@@ -204,6 +205,45 @@ $prorrogAltaAtiva = $prorrogAltaDataValue !== '' || !empty($altaAtual['tipo_alta
     text-align: center;
     font-weight: 700;
     background: #f1f3f5;
+}
+
+.pror-row .w-btns {
+    width: auto !important;
+    min-width: 92px !important;
+}
+
+.pror-row .w-btns .btn-group {
+    display: inline-flex;
+    gap: 8px;
+    width: auto;
+}
+
+.pror-row .w-btns .btn {
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px !important;
+    line-height: 1;
+    font-weight: 700;
+}
+
+.pror-row .pror-row-error {
+    display: none;
+    margin-top: 10px;
+    padding: 8px 10px;
+    border: 1px solid #f5c2c7;
+    border-radius: 6px;
+    background: #f8d7da;
+    color: #8b1e25;
+    font-size: .85rem;
+    line-height: 1.25;
 }
 
 /* Popup rápido */
@@ -426,6 +466,7 @@ $prorrogAltaAtiva = $prorrogAltaDataValue !== '' || !empty($altaAtual['tipo_alta
                     </div>
                 </div>
             </div>
+            <div class="pror-row-error" role="alert"></div>
         </div>
         <?php endforeach; ?>
     </div>
@@ -546,6 +587,57 @@ function parseDateOnly(value) {
     return Number.isNaN(fallback.getTime()) ? null : fallback;
 }
 
+function formatDateBR(value) {
+    const raw = (value || '').toString().trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+        const parts = raw.split('-');
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return raw;
+}
+
+function setProrRowError($row, message) {
+    const $err = $row.find('.pror-row-error');
+    if (!$err.length) return;
+    $err.text(message || '');
+    $err.toggle(!!message);
+}
+
+function validateProrrogOverlapsEdit() {
+    const rows = [];
+    $('#prorContainer .pror-row').each(function(index) {
+        const $row = $(this);
+        const $err = $row.find('.pror-row-error');
+        if ($err.data('overlap') === 1) {
+            $err.text('').hide().removeData('overlap');
+        }
+
+        const ini = $row.find('[name$="[ini]"]').val() || '';
+        const fim = $row.find('[name$="[fim]"]').val() || '';
+        const iniDate = parseDateOnly(ini);
+        const fimDate = parseDateOnly(fim);
+        if (!iniDate || !fimDate || fimDate <= iniDate) return;
+
+        rows.push({ index, $row, ini, fim, iniDate, fimDate });
+    });
+
+    let valid = true;
+    for (let i = 0; i < rows.length; i += 1) {
+        for (let j = i + 1; j < rows.length; j += 1) {
+            const a = rows[i];
+            const b = rows[j];
+            if (a.iniDate < b.fimDate && b.iniDate < a.fimDate) {
+                a.$row.find('.pror-row-error').data('overlap', 1);
+                b.$row.find('.pror-row-error').data('overlap', 1);
+                setProrRowError(a.$row, `Período já informado em outra linha (${formatDateBR(b.ini)} a ${formatDateBR(b.fim)}).`);
+                setProrRowError(b.$row, `Período já informado em outra linha (${formatDateBR(a.ini)} a ${formatDateBR(a.fim)}).`);
+                valid = false;
+            }
+        }
+    }
+    return valid;
+}
+
 function formatLocalDateTimeNow() {
     const now = new Date();
     now.setSeconds(0, 0);
@@ -659,6 +751,7 @@ function syncJson() {
         });
     });
     $('#prorrogacoes_json').val(JSON.stringify(linhas));
+    validateProrrogOverlapsEdit();
 }
 
 function recalcRow($row, changedName) {
@@ -722,8 +815,10 @@ function recalcRow($row, changedName) {
             return;
         }
         $dia.val(dias);
+        validateProrrogOverlapsEdit();
     } else {
         $dia.val('');
+        validateProrrogOverlapsEdit();
     }
     syncJson();
 }
@@ -826,5 +921,15 @@ $(function() {
     });
     syncJson();
     syncProrrogInlineAlta(document.getElementById('prorrog_gerar_alta')?.value || 'n');
+
+    $(document).on('submit', 'form', function(event) {
+        if (!$(this).find('#prorContainer').length) return;
+        if (!validateProrrogOverlapsEdit()) {
+            event.preventDefault();
+            openErrorDialog('Existem prorrogações com período repetido ou sobreposto. Ajuste as datas antes de salvar.');
+            const firstError = document.querySelector('#prorContainer .pror-row-error[style*="block"]');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
 });
 </script>

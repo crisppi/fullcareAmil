@@ -46,8 +46,44 @@
     margin-bottom: 0 !important;
 }
 
+#container-gestao .adicional-card > .form-group.row > #div_evento,
+#container-gestao .adicional-card > .form-group.row > #div_rel_alto_custo,
+#container-gestao .adicional-card > .form-group.row > #div_rel_home_care,
+#container-gestao .adicional-card > .form-group.row > #div_rel_opme,
+#container-gestao .adicional-card > .form-group.row > #div_rel_desospitalizacao {
+    grid-column: 1 / -1;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+}
+
 #container-gestao .adicional-card > .form-group.row > [style*="display:none"] {
     display: none !important;
+}
+
+#container-gestao #div_evento > .form-group.row {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    align-items: end;
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+#container-gestao #div_evento > .form-group.row > .form-group[class*="col-"],
+#container-gestao #div_evento #div_rel_evento {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    flex: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#container-gestao #div_evento #div_rel_evento {
+    grid-column: 1 / -1;
 }
 
 #container-gestao .adicional-card .form-control,
@@ -55,6 +91,11 @@
     width: 100% !important;
     min-height: 42px !important;
     height: 42px !important;
+}
+
+#container-gestao .adicional-card textarea.form-control {
+    min-height: 92px !important;
+    height: auto !important;
 }
 
 @media (max-width: 768px) {

@@ -54,3 +54,7 @@
 [2026-04-18 23:58:12] alta.create.ok {"id_internacao":748}
 [2026-04-18 23:58:12] internacao.updateAlta.ok {"id_internacao":748,"internado_int":"n"}
 [2026-04-18 23:58:12] transaction.commit {"id_internacao":748}
+[2026-04-26 00:06:30] payload {"id_internacao":773,"data_alta_alt":"2026-04-16","hora_alta_alt":"21:06","tipo_alta_alt":"Alta Melhorado","fk_usuario_alt":41}
+[2026-04-26 00:06:30] alta.create.ok {"id_internacao":773}
+[2026-04-26 00:06:30] internacao.updateAlta.ok {"id_internacao":773,"internado_int":"n"}
+[2026-04-26 00:06:30] transaction.commit {"id_internacao":773}

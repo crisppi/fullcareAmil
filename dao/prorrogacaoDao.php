@@ -43,6 +43,64 @@ class prorrogacaoDAO implements prorrogacaoDAOInterface
 
         return $prorrogacao;
     }
+
+    private function normalizeDateOnly($value): ?string
+    {
+        $value = trim((string)($value ?? ''));
+        if ($value === '') {
+            return null;
+        }
+        $ts = strtotime(substr($value, 0, 10));
+        return $ts ? date('Y-m-d', $ts) : null;
+    }
+
+    private function assertNoPeriodConflict(prorrogacao $prorrogacao, int $excludeId = 0): void
+    {
+        $fkInternacao = (int)($prorrogacao->fk_internacao_pror ?? 0);
+        $ini = $this->normalizeDateOnly($prorrogacao->prorrog1_ini_pror ?? null);
+        $fim = $this->normalizeDateOnly($prorrogacao->prorrog1_fim_pror ?? null);
+
+        if ($fkInternacao <= 0 || !$ini || !$fim) {
+            return;
+        }
+
+        if (strtotime($fim) <= strtotime($ini)) {
+            throw new RuntimeException('A data final da prorrogação precisa ser maior que a data inicial.');
+        }
+
+        $sql = "
+            SELECT id_prorrogacao, prorrog1_ini_pror, prorrog1_fim_pror
+            FROM tb_prorrogacao
+            WHERE fk_internacao_pror = :fk
+              AND prorrog1_ini_pror IS NOT NULL
+              AND prorrog1_fim_pror IS NOT NULL
+              AND DATE(prorrog1_ini_pror) < :fim
+              AND DATE(prorrog1_fim_pror) > :ini
+        ";
+
+        if ($excludeId > 0) {
+            $sql .= " AND id_prorrogacao <> :exclude_id";
+        }
+
+        $sql .= " LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':fk', $fkInternacao, PDO::PARAM_INT);
+        $stmt->bindValue(':ini', $ini);
+        $stmt->bindValue(':fim', $fim);
+        if ($excludeId > 0) {
+            $stmt->bindValue(':exclude_id', $excludeId, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        $conflict = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($conflict) {
+            $iniBr = date('d/m/Y', strtotime((string)$conflict['prorrog1_ini_pror']));
+            $fimBr = date('d/m/Y', strtotime((string)$conflict['prorrog1_fim_pror']));
+            throw new RuntimeException("Já existe prorrogação cadastrada no período {$iniBr} a {$fimBr}.");
+        }
+    }
+
     public function create(prorrogacao $prorrogacao)
     {
         if (($prorrogacao->fk_usuario_pror ?? null) !== null && (int)$prorrogacao->fk_usuario_pror > 0) {
@@ -53,6 +111,8 @@ class prorrogacaoDAO implements prorrogacaoDAOInterface
                 $prorrogacao->fk_usuario_pror = null;
             }
         }
+
+        $this->assertNoPeriodConflict($prorrogacao);
 
         $stmt = $this->conn->prepare("INSERT INTO tb_prorrogacao (
             fk_internacao_pror,
@@ -192,6 +252,8 @@ class prorrogacaoDAO implements prorrogacaoDAOInterface
                 $prorrogacao->fk_usuario_pror = null;
             }
         }
+
+        $this->assertNoPeriodConflict($prorrogacao, (int)($prorrogacao->id_prorrogacao ?? 0));
 
         $stmt = $this->conn->prepare("UPDATE tb_prorrogacao SET
         fk_internacao_pror = :fk_internacao_pror,

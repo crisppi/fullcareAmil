@@ -1027,6 +1027,67 @@ function parseProrrogDate(value) {
     return new Date(parts[0], parts[1] - 1, parts[2]);
 }
 
+function formatProrrogDateBR(value) {
+    const raw = String(value || '').trim();
+    if (!isCompleteProrrogDate(raw)) return raw;
+    const parts = raw.split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function setProrrogRowError(container, message) {
+    const errorMessage = container ? container.querySelector(".error-message") : null;
+    if (!errorMessage) return;
+    errorMessage.textContent = message || "";
+    errorMessage.style.display = message ? "block" : "none";
+}
+
+function validateProrrogOverlaps() {
+    const rows = Array.from(document.querySelectorAll("#fieldsContainer .field-container"));
+    const intervals = [];
+    let valid = true;
+
+    rows.forEach((container) => {
+        const errorMessage = container.querySelector(".error-message");
+        if (errorMessage && errorMessage.dataset.overlap === "1") {
+            errorMessage.textContent = "";
+            errorMessage.style.display = "none";
+            delete errorMessage.dataset.overlap;
+        }
+    });
+
+    rows.forEach((container, index) => {
+        const ini = container.querySelector('[name="prorrog1_ini_pror"]')?.value || "";
+        const fim = container.querySelector('[name="prorrog1_fim_pror"]')?.value || "";
+        if (!isCompleteProrrogDate(ini) || !isCompleteProrrogDate(fim)) return;
+
+        const iniDate = parseProrrogDate(ini);
+        const fimDate = parseProrrogDate(fim);
+        if (!iniDate || !fimDate || fimDate <= iniDate) return;
+
+        intervals.push({ index, container, ini, fim, iniDate, fimDate });
+    });
+
+    for (let i = 0; i < intervals.length; i += 1) {
+        for (let j = i + 1; j < intervals.length; j += 1) {
+            const a = intervals[i];
+            const b = intervals[j];
+            if (a.iniDate < b.fimDate && b.iniDate < a.fimDate) {
+                const msgA = `Período já informado em outra linha (${formatProrrogDateBR(b.ini)} a ${formatProrrogDateBR(b.fim)}).`;
+                const msgB = `Período já informado em outra linha (${formatProrrogDateBR(a.ini)} a ${formatProrrogDateBR(a.fim)}).`;
+                const errA = a.container.querySelector(".error-message");
+                const errB = b.container.querySelector(".error-message");
+                if (errA) errA.dataset.overlap = "1";
+                if (errB) errB.dataset.overlap = "1";
+                setProrrogRowError(a.container, msgA);
+                setProrrogRowError(b.container, msgB);
+                valid = false;
+            }
+        }
+    }
+
+    return valid;
+}
+
 // Calcula diárias e valida datas
 function calculateDiarias(container) {
     const dataAtual = new Date().toISOString().split("T")[0];
@@ -1079,9 +1140,11 @@ function calculateDiarias(container) {
         const diffTime = Math.abs(fim - inicio);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         diariasField.value = diffDays;
+        validateProrrogOverlaps();
         generateProrJSON();
     } else if (diariasField) {
         diariasField.value = "";
+        validateProrrogOverlaps();
     }
 }
 
@@ -1189,6 +1252,17 @@ function generateProrJSON() {
     };
 document.getElementById("prorrogacoes-json").value = JSON.stringify(jsonData, null, 2);
 }
+
+document.addEventListener("submit", function(event) {
+    const form = event.target;
+    if (!form || !form.querySelector || !form.querySelector("#container-prorrog")) return;
+    if (!validateProrrogOverlaps()) {
+        event.preventDefault();
+        openProrrogError("Existem prorrogações com período repetido ou sobreposto. Ajuste as datas antes de salvar.");
+        const firstError = form.querySelector("#container-prorrog .prorrog-alert[style*='block']");
+        if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+}, true);
 
 // Limpa todos os inputs (mantém só a primeira linha)
 function clearProrrogInputs() {
