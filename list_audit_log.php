@@ -25,6 +25,23 @@ function auditHighlightDetail($row): string
     $before = auditDecode($row->before_json ?? null);
     $data = $after ?: $before;
 
+    if (($row->entity_type ?? '') === 'login') {
+        $parts = [];
+        if (!empty($row->actor_user_id)) {
+            $parts[] = 'ID: ' . (int)$row->actor_user_id;
+        }
+        if (!empty($data['usuario_user'])) {
+            $parts[] = 'NOME: ' . (string)$data['usuario_user'];
+        }
+        if (!empty($data['email_user'])) {
+            $parts[] = 'EMAIL: ' . (string)$data['email_user'];
+        }
+        if (!empty($data['cargo_user'])) {
+            $parts[] = 'CARGO: ' . (string)$data['cargo_user'];
+        }
+        return $parts ? implode(' | ', $parts) : '--';
+    }
+
     $fields = [
         'paciente' => ['nome_pac', 'matricula_pac', 'cpf_pac'],
         'hospital' => ['nome_hosp', 'cidade_hosp', 'estado_hosp'],
@@ -186,7 +203,13 @@ try {
                             <td><?= auditE($row->action) ?></td>
                             <td><?= auditE($row->entity_type) ?></td>
                             <td><?= auditE($row->record_label ?: ('ID ' . (string)$row->entity_id)) ?></td>
-                            <td><?= auditE($row->actor_user_name ?: ('Usuário #' . (string)$row->actor_user_id)) ?></td>
+                            <td><?=
+                                auditE(
+                                    $row->actor_user_id
+                                        ? ('ID ' . (int)$row->actor_user_id . ' - ' . ($row->actor_user_name ?: ('Usuário #' . (string)$row->actor_user_id)))
+                                        : ($row->actor_user_name ?: '--')
+                                )
+                            ?></td>
                             <td><?= auditE(auditHighlightDetail($row)) ?></td>
                             <td><?= auditE($row->summary) ?></td>
                             <td>
