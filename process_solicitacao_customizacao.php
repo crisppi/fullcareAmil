@@ -28,6 +28,7 @@ require_once("db.php");
 require_once("models/message.php");
 require_once("models/solicitacao_customizacao.php");
 require_once("dao/solicitacaoCustomizacaoDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $dao = new SolicitacaoCustomizacaoDAO($conn, $BASE_URL);
@@ -256,6 +257,19 @@ if ($nome === '') {
 
 if ($type === 'create') {
     $id = $dao->create($solicitacao, $modulos, $tipos, $anexos);
+    $after = $dao->findById($id);
+    fullcareAuditLog($conn, [
+        'action' => 'create',
+        'entity_type' => 'solicitacao_customizacao',
+        'entity_id' => (int)$id,
+        'after' => $after,
+        'context' => [
+            'modulos' => $dao->findModulos($id),
+            'tipos' => $dao->findTipos($id),
+            'anexos' => $dao->findAnexos($id),
+        ],
+        'source' => 'process_solicitacao_customizacao.php',
+    ], $BASE_URL);
     $msg = 'Solicitação registrada com sucesso.';
     if ($uploadErrors) {
         $msg .= ' Alguns anexos não foram enviados: ' . implode(' ', $uploadErrors);
@@ -267,7 +281,23 @@ if ($type === 'create') {
 }
 
 if ($type === 'update' && $idSolicitacao) {
+    $before = $dao->findById($idSolicitacao);
     $dao->update($solicitacao, $modulos, $tipos, $anexos, $removerAnexos);
+    $after = $dao->findById($idSolicitacao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'solicitacao_customizacao',
+        'entity_id' => (int)$idSolicitacao,
+        'before' => $before,
+        'after' => $after,
+        'context' => [
+            'modulos' => $dao->findModulos($idSolicitacao),
+            'tipos' => $dao->findTipos($idSolicitacao),
+            'anexos' => $dao->findAnexos($idSolicitacao),
+            'remover_anexos' => $removerAnexos,
+        ],
+        'source' => 'process_solicitacao_customizacao.php',
+    ], $BASE_URL);
     $msg = 'Solicitação atualizada com sucesso.';
     if ($uploadErrors) {
         $msg .= ' Alguns anexos não foram enviados: ' . implode(' ', $uploadErrors);

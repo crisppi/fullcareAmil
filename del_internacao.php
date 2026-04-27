@@ -8,6 +8,7 @@ require_once("models/internacao.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/internacaoDao.php");
+require_once("utils/audit_logger.php");
 
 //$message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -29,7 +30,16 @@ if (!csrf_is_valid($csrf)) {
 $id_internacao = filter_input(INPUT_POST, "id_internacao", FILTER_VALIDATE_INT);
 $internacao = $internacaoDao->findById($id_internacao);
 if ($internacao) {
+    $internacaoAntesDelete = $internacao;
     $internacaoDao->destroy($id_internacao);
+    fullcareAuditLog($conn, [
+        'action' => 'delete',
+        'entity_type' => 'internacao',
+        'entity_id' => (int)$id_internacao,
+        'summary' => 'Internação excluída.',
+        'before' => $internacaoAntesDelete,
+        'source' => 'del_internacao.php',
+    ], $BASE_URL);
 }
 
 header('Location: ' . $BASE_URL . 'internacoes/lista', true, 303);

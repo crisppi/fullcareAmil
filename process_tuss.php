@@ -29,6 +29,7 @@ require_once("models/tuss.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/tussDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -90,7 +91,18 @@ if ($type === "create-vis") {
         $tuss->tuss_liberado_sn = $tuss_liberado_sn;
 
 
-        // $tussDao->create($tuss);
+        $tussDao->create($tuss);
+        $novoIdTuss = (int)$conn->lastInsertId();
+        $tussCriado = $novoIdTuss > 0 ? $tussDao->findById($novoIdTuss) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'tuss',
+            'entity_id' => $novoIdTuss > 0 ? $novoIdTuss : null,
+            'summary' => 'TUSS criado.',
+            'after' => $tussCriado ?: $tuss,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_tuss.php',
+        ], $BASE_URL);
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: tuss!", "error", "back");

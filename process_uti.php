@@ -28,6 +28,7 @@ require_once("models/uti.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/utiDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -93,6 +94,14 @@ if ($typeUTI == "createUTI") {
         $uti->justifique_uti = $justifique_uti;
 
         $utiDao->create($uti);
+        $idUti = (int)$conn->lastInsertId();
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'uti',
+            'entity_id' => $idUti > 0 ? $idUti : null,
+            'after' => array_merge(get_object_vars($uti), ['id_uti' => $idUti > 0 ? $idUti : null]),
+            'source' => 'process_uti.php',
+        ], $BASE_URL);
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: Uti!", "error", "back");

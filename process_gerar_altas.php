@@ -33,6 +33,7 @@ include_once("models/uti.php");
 include_once("dao/internacaoDao.php");
 include_once("dao/altaDao.php");
 include_once("dao/utiDao.php");
+include_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $redirectPage = "list_internacao_gerar_alta.php";
@@ -117,23 +118,52 @@ foreach ($selecionadas as $rawId) {
     $alta->fk_usuario_alt = $fkUsuarioAlt;
 
     try {
+        $beforeInternacao = $internacaoDao->findById($idInternacao);
         $altaDao->create($alta);
+        $idAlta = (int)$conn->lastInsertId();
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'alta',
+            'entity_id' => $idAlta > 0 ? $idAlta : null,
+            'after' => array_merge(get_object_vars($alta), ['id_alta' => $idAlta > 0 ? $idAlta : null]),
+            'source' => 'process_gerar_altas.php',
+        ], $BASE_URL);
 
         $internacao = new Internacao();
         $internacao->id_internacao = $idInternacao;
         $internacao->internado_int = "n";
         $internacaoDao->updateAlta($internacao);
+        $afterInternacao = $internacaoDao->findById($idInternacao);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'internacao',
+            'entity_id' => (int)$idInternacao,
+            'before' => $beforeInternacao,
+            'after' => $afterInternacao ?: $internacao,
+            'summary' => 'Internação atualizada para alta em lote.',
+            'source' => 'process_gerar_altas.php',
+        ], $BASE_URL);
 
         if ($utiFlag === 's') {
             $UTIData = $utiDao->findById($utiId);
             if (!$UTIData) {
                 $erros[] = "ID {$idInternacao}: UTI não encontrada para atualização.";
             } else {
+                $beforeUti = clone $UTIData;
                 $UTIData->data_alta_uti = $utiData;
                 $UTIData->fk_internacao_uti = $utiFk ?: $idInternacao;
                 $UTIData->internado_uti = "n";
                 $UTIData->id_uti = $utiId;
                 $utiDao->findAltaUpdate($UTIData);
+                fullcareAuditLog($conn, [
+                    'action' => 'update',
+                    'entity_type' => 'uti',
+                    'entity_id' => (int)$utiId,
+                    'before' => $beforeUti,
+                    'after' => $UTIData,
+                    'summary' => 'Alta de UTI gerada em lote.',
+                    'source' => 'process_gerar_altas.php',
+                ], $BASE_URL);
             }
         }
 

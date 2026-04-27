@@ -26,6 +26,7 @@ if (!defined("FLOW_LOGGER_AUTO_V1")) {
 require_once("globals.php");
 require_once("db.php");
 require_once("dao/capeanteDao.php");
+require_once("utils/audit_logger.php");
 
 // Instantiate capeanteDAO
 $capeanteDao = new capeanteDAO($conn, $BASE_URL);
@@ -38,11 +39,21 @@ if ($id) {
     $capeante = $capeanteDao->findById($id);
 
     if ($capeante) {
+        $before = clone $capeante;
         // Set the "impresso_cap" field to 's'
         $capeante->validacao_cap = 's';
 
         // Update the capeante in the database
         $capeanteDao->update($capeante);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'capeante',
+            'entity_id' => (int)$id,
+            'before' => $before,
+            'after' => $capeante,
+            'summary' => 'Capeante validado.',
+            'source' => 'process_validar_capeante.php',
+        ], $BASE_URL);
         echo "Record updated successfully.";
     } else {
         echo "Record not found.";

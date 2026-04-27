@@ -31,6 +31,7 @@ require_once("dao/usuarioDao.php");
 require_once("dao/negociacaoDao.php");
 include_once("models/internacao.php");
 require_once("dao/internacaoDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -81,6 +82,24 @@ if ($type === "create-negoc") {
 
                 if ($negociacaoDao->create($novaNegociacao)) {
                     $successCount++;
+                    $novoIdNegociacao = (int)$conn->lastInsertId();
+                    $negociacaoCriada = $novoIdNegociacao > 0 ? $negociacaoDao->findById($novoIdNegociacao) : null;
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'negociacao',
+                        'entity_id' => $novoIdNegociacao > 0 ? $novoIdNegociacao : null,
+                        'summary' => 'Negociação criada.',
+                        'after' => $negociacaoCriada ?: [
+                            'fk_id_int' => $fk_id_int,
+                            'fk_usuario_neg' => $fk_usuario_neg,
+                            'troca_de' => $trocaDe,
+                            'troca_para' => $trocaPara,
+                            'qtd' => $qtd,
+                            'saving' => $saving,
+                        ],
+                        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                        'source' => 'process_negociacao.php',
+                    ], $BASE_URL);
                 } else {
                     $errors[] = "Erro ao salvar negociação com troca_de: $trocaDe e troca_para: $trocaPara.";
                 }
@@ -108,6 +127,7 @@ if ($type === "create-negoc") {
     $valor_aco = filter_input(INPUT_POST, "valor_aco");
 
     $negociacao = $negociacaoDao->joinnegociacaoHospitalshow($id_negociacao);
+    $negociacaoAntes = is_array($negociacao) ? $negociacao : [];
 
     $negociacao['id_negociacao'] = $id_negociacao;
     $negociacao['fk_hospital'] = $fk_hospital;
@@ -115,6 +135,17 @@ if ($type === "create-negoc") {
     $negociacao['negociacao_aco'] = $negociacao_aco;
 
     $negociacaoDao->update($negociacao);
+    $negociacaoDepois = $negociacaoDao->findById((int)$id_negociacao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'negociacao',
+        'entity_id' => (int)$id_negociacao,
+        'summary' => 'Negociação atualizada.',
+        'before' => $negociacaoAntes,
+        'after' => $negociacaoDepois,
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_negociacao.php',
+    ], $BASE_URL);
 
     header('location: cad_internacao_niveis.php');
 }

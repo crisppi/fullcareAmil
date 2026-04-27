@@ -59,6 +59,7 @@ require_once ("dao/censoDao.php");
 
 require_once ("models/visita.php");
 require_once ("dao/visitaDao.php");
+require_once ("utils/audit_logger.php");
 
 // $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -282,11 +283,28 @@ if ($type === "create") {
             $internacaoDao->create($internacao);
             $censoDao->updateCenso($censo);
             $lastId = $internacaoDao->findLastId()['0']['id_intern'];
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'internacao',
+                'entity_id' => (int)$lastId,
+                'after' => array_merge(get_object_vars($internacao), ['id_internacao' => (int)$lastId]),
+                'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                'source' => 'process_censo_int.php',
+            ], $BASE_URL);
             $visita = new visita;
             $visita->fk_internacao_vis = $lastId;
             $visita->data_visita_vis = $data_intern_int;
             $visita->data_create = $data_intern_int;
             $visitaDao->create($visita);
+            $idVisita = method_exists($visitaDao, 'findLastId') ? (int)$visitaDao->findLastId() : (int)$conn->lastInsertId();
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'visita',
+                'entity_id' => $idVisita > 0 ? $idVisita : null,
+                'after' => array_merge(get_object_vars($visita), ['id_visita' => $idVisita > 0 ? $idVisita : null]),
+                'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                'source' => 'process_censo_int.php',
+            ], $BASE_URL);
 
             // lancar dados detalhes 
             if ($select_detalhes == "s") {
@@ -308,6 +326,15 @@ if ($type === "create") {
                 $detalhes->oportunidades_det = $oportunidades_det;
 
                 $detalhesDao->create($detalhes);
+                $idDetalhes = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'detalhes',
+                    'entity_id' => $idDetalhes > 0 ? $idDetalhes : null,
+                    'after' => array_merge(get_object_vars($detalhes), ['id_detalhes' => $idDetalhes > 0 ? $idDetalhes : null, 'fk_int_det' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
             }
             ;
             // lancar dados gestao 
@@ -335,6 +362,15 @@ if ($type === "create") {
                 $gestao->fk_usuario_ges = $fk_usuario_ges;
 
                 $gestaoDao->create($gestao);
+                $idGestao = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'gestao',
+                    'entity_id' => $idGestao > 0 ? $idGestao : null,
+                    'after' => array_merge(get_object_vars($gestao), ['id_gestao' => $idGestao > 0 ? $idGestao : null, 'fk_internacao_ges' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
             }
             ;
             // lancar dados UTI 
@@ -363,6 +399,15 @@ if ($type === "create") {
                 $uti->fk_user_uti = $fk_user_uti;
 
                 $utiDao->create($uti);
+                $idUti = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'uti',
+                    'entity_id' => $idUti > 0 ? $idUti : null,
+                    'after' => array_merge(get_object_vars($uti), ['id_uti' => $idUti > 0 ? $idUti : null, 'fk_internacao_uti' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
             }
             ;
             // lancar dados negociacao 
@@ -462,6 +507,15 @@ if ($type === "create") {
                 $negociacao->fk_usuario_neg = $fk_usuario_neg;
 
                 $negociacaoDao->create($negociacao);
+                $idNegociacao = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'negociacao',
+                    'entity_id' => $idNegociacao > 0 ? $idNegociacao : null,
+                    'after' => array_merge(get_object_vars($negociacao), ['id_negociacao' => $idNegociacao > 0 ? $idNegociacao : null, 'fk_id_int' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
             }
             ;
             // lancar dados prorrogacao 
@@ -486,6 +540,15 @@ if ($type === "create") {
                 $prorrogacao->prorrog3_ini_pror = $prorrog3_ini_pror;
 
                 $prorrogacaoDao->create($prorrogacao);
+                $idProrrogacao = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'prorrogacao',
+                    'entity_id' => $idProrrogacao > 0 ? $idProrrogacao : null,
+                    'after' => array_merge(get_object_vars($prorrogacao), ['id_prorrogacao' => $idProrrogacao > 0 ? $idProrrogacao : null, 'fk_internacao_pror' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
             }
             ;
             // lancar dados tuss 
@@ -502,6 +565,15 @@ if ($type === "create") {
                 $tuss->tuss_liberado_sn = $tuss_liberado_sn;
 
                 $tussDao->create($tuss);
+                $idTuss = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'tuss',
+                    'entity_id' => $idTuss > 0 ? $idTuss : null,
+                    'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                    'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 1],
+                    'source' => 'process_censo_int.php',
+                ], $BASE_URL);
 
                 if (($tuss_liberado_sn == "s") || ($tuss_liberado_sn == "n")) {
 
@@ -516,6 +588,15 @@ if ($type === "create") {
                     $tuss->bloco2 = $bloco2;
 
                     $tussDao->create($tuss);
+                    $idTuss = (int)$conn->lastInsertId();
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'tuss',
+                        'entity_id' => $idTuss > 0 ? $idTuss : null,
+                        'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                        'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 2],
+                        'source' => 'process_censo_int.php',
+                    ], $BASE_URL);
                 }
 
                 if (($tuss_liberado_sn2 == "s") || ($tuss_liberado_sn2 == "n")) {
@@ -531,6 +612,15 @@ if ($type === "create") {
                     $tuss->bloco3 = $bloco3;
 
                     $tussDao->create($tuss);
+                    $idTuss = (int)$conn->lastInsertId();
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'tuss',
+                        'entity_id' => $idTuss > 0 ? $idTuss : null,
+                        'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                        'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 3],
+                        'source' => 'process_censo_int.php',
+                    ], $BASE_URL);
                 }
                 if (($tuss_liberado_sn3 == "s") || ($tuss_liberado_sn3 == "n")) {
 
@@ -544,6 +634,15 @@ if ($type === "create") {
                     $tuss->tuss_liberado_sn = $tuss_liberado_sn4;
 
                     $tussDao->create($tuss);
+                    $idTuss = (int)$conn->lastInsertId();
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'tuss',
+                        'entity_id' => $idTuss > 0 ? $idTuss : null,
+                        'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                        'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 4],
+                        'source' => 'process_censo_int.php',
+                    ], $BASE_URL);
                 }
 
                 if (($tuss_liberado_sn4 == "s") || ($tuss_liberado_sn4 == "n")) {
@@ -558,6 +657,15 @@ if ($type === "create") {
                     $tuss->bloco5 = $bloco5;
 
                     $tussDao->create($tuss);
+                    $idTuss = (int)$conn->lastInsertId();
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'tuss',
+                        'entity_id' => $idTuss > 0 ? $idTuss : null,
+                        'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                        'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 5],
+                        'source' => 'process_censo_int.php',
+                    ], $BASE_URL);
                 }
 
                 if (($tuss_liberado_sn5 == "s") || ($tuss_liberado_sn5 == "n")) {
@@ -573,6 +681,15 @@ if ($type === "create") {
                     $tuss->tuss_liberado_sn = $tuss_liberado_sn6;
 
                     $tussDao->create($tuss);
+                    $idTuss = (int)$conn->lastInsertId();
+                    fullcareAuditLog($conn, [
+                        'action' => 'create',
+                        'entity_type' => 'tuss',
+                        'entity_id' => $idTuss > 0 ? $idTuss : null,
+                        'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTuss > 0 ? $idTuss : null, 'fk_int_tuss' => $lastId]),
+                        'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'bloco' => 6],
+                        'source' => 'process_censo_int.php',
+                    ], $BASE_URL);
                 }
             }
             ;
@@ -603,6 +720,15 @@ if ($type === "create") {
             $capeante->data_create_cap = $data_create_cap;
 
             $capeanteDao->create($capeante);
+            $idCapeante = (int)$conn->lastInsertId();
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'capeante',
+                'entity_id' => $idCapeante > 0 ? $idCapeante : null,
+                'after' => array_merge(get_object_vars($capeante), ['id_capeante' => $idCapeante > 0 ? $idCapeante : null]),
+                'context' => ['origin' => 'censo_int', 'id_censo' => $id_censo, 'fk_int_capeante' => $lastId],
+                'source' => 'process_censo_int.php',
+            ], $BASE_URL);
         }
         ;
     }

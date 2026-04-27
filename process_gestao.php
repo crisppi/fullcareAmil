@@ -7,6 +7,7 @@ require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/gestaoDao.php");
 require_once("utils/flow_logger.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -108,6 +109,17 @@ if ($type === "create") {
         $gestao->fk_user_ges = $fk_user_ges;
 
         $gestaoDao->create($gestao);
+        $novoIdGestao = (int)$conn->lastInsertId();
+        $gestaoCriada = $novoIdGestao > 0 ? $gestaoDao->findById($novoIdGestao) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'gestao',
+            'entity_id' => $novoIdGestao > 0 ? $novoIdGestao : null,
+            'summary' => 'Gestão criada.',
+            'after' => $gestaoCriada ?: $gestao,
+            'trace_id' => $flowCtx['trace_id'] ?? null,
+            'source' => 'process_gestao.php',
+        ], $BASE_URL);
         flowLog($flowCtx, 'create.finish', 'INFO', [
             'fk_internacao_ges' => $fk_internacao_ges,
             'fk_visita_ges' => $fk_visita_ges
@@ -129,6 +141,7 @@ if ($type === "create") {
     $valor_aco = filter_input(INPUT_POST, "valor_aco");
 
     $gestao = $gestaoDao->joingestaoHospitalshow($id_gestao);
+    $gestaoAntes = is_array($gestao) ? $gestao : [];
 
     $gestao['id_gestao'] = $id_gestao;
     $gestao['fk_hospital'] = $fk_hospital;
@@ -136,6 +149,17 @@ if ($type === "create") {
     $gestao['gestao_aco'] = $gestao_aco;
 
     $gestaoDao->update($gestao);
+    $gestaoDepois = $gestaoDao->findById((int)$id_gestao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'gestao',
+        'entity_id' => (int)$id_gestao,
+        'summary' => 'Gestão atualizada.',
+        'before' => $gestaoAntes,
+        'after' => $gestaoDepois,
+        'trace_id' => $flowCtx['trace_id'] ?? null,
+        'source' => 'process_gestao.php',
+    ], $BASE_URL);
     flowLog($flowCtx, 'update.finish', 'INFO', ['id_gestao' => $id_gestao]);
 
     header("location:list_gestao.php");
@@ -152,8 +176,17 @@ if ($type === "delete") {
 
     $gestao = $gestaoDao->joingestaoHospitalShow($id_gestao);
     if ($gestao) {
-
+        $gestaoAntesDelete = $gestao;
         $gestaoDao->destroy($id_gestao);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'gestao',
+            'entity_id' => (int)$id_gestao,
+            'summary' => 'Gestão excluída.',
+            'before' => $gestaoAntesDelete,
+            'trace_id' => $flowCtx['trace_id'] ?? null,
+            'source' => 'process_gestao.php',
+        ], $BASE_URL);
         flowLog($flowCtx, 'delete.finish', 'INFO', ['id_gestao' => $id_gestao]);
 
         header("location:list_gestao.php");

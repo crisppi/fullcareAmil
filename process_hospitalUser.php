@@ -31,6 +31,7 @@ require_once("db.php");                    // onde estiver $conn (ajuste se nece
 
 require_once("models/hospitalUser.php");
 require_once("dao/hospitalUserDao.php");
+require_once("utils/audit_logger.php");
 
 // Instancia o DAO
 $hospitalUserDao = new hospitalUserDAO($conn, $BASE_URL);
@@ -81,6 +82,17 @@ try {
 
         // persiste
         $hospitalUserDao->create($hu);
+        $novoIdHospitalUser = (int)$conn->lastInsertId();
+        $hospitalUserCriado = $novoIdHospitalUser > 0 ? $hospitalUserDao->findById($novoIdHospitalUser) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'hospital_user',
+            'entity_id' => $novoIdHospitalUser > 0 ? $novoIdHospitalUser : null,
+            'summary' => 'Vínculo hospital-usuário criado.',
+            'after' => $hospitalUserCriado ?: get_object_vars($hu),
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_hospitalUser.php',
+        ], $BASE_URL);
         header('Location: ' . $redirectUrl, true, 303);
         exit;
     } elseif ($type === 'update') {
@@ -108,7 +120,19 @@ try {
         }
 
         // persiste
+        $hospitalUserAntes = $hospitalUserDao->findById($hu->id_hospitalUser);
         $hospitalUserDao->update($hu);
+        $hospitalUserDepois = $hospitalUserDao->findById($hu->id_hospitalUser);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'hospital_user',
+            'entity_id' => (int)$hu->id_hospitalUser,
+            'summary' => 'Vínculo hospital-usuário atualizado.',
+            'before' => $hospitalUserAntes,
+            'after' => $hospitalUserDepois,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_hospitalUser.php',
+        ], $BASE_URL);
         header('Location: ' . $redirectUrl, true, 303);
         exit;
     }

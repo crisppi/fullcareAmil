@@ -39,6 +39,7 @@ require_once "dao/CapValoresDao.php";
 
 require_once "models/message.php";
 require_once "dao/usuarioDao.php";
+require_once "utils/audit_logger.php";
 
 $message     = new Message($BASE_URL);
 $capeanteDao = new capeanteDAO($conn, $BASE_URL);
@@ -423,6 +424,11 @@ $valor_glosa_total  = max(0.0, $valor_apresentado - $valor_final);
 /* ============================================================
  * MONTAGEM DO OBJETO capeante E PERSISTÊNCIA VIA DAO
  * ============================================================ */
+$beforeCapeante = null;
+if (!$isCreate && $id_capeante) {
+    $beforeCapeante = $capeanteDao->findById((int)$id_capeante);
+}
+
 $cap = new capeante();
 
 if ($type === 'create') {
@@ -503,8 +509,25 @@ if ($type === 'create') {
     $novoId = $cap->id_capeante ?? (int)$conn->lastInsertId();
     $id_capeante = (int)$novoId;
     $id_valor = $capValoresDao->ensureByCapeante((int)$id_capeante);
+    $afterCapeante = $capeanteDao->findById((int)$id_capeante);
+    fullcareAuditLog($conn, [
+        'action' => 'create',
+        'entity_type' => 'capeante',
+        'entity_id' => (int)$id_capeante,
+        'after' => $afterCapeante ?: array_merge(get_object_vars($cap), ['id_capeante' => (int)$id_capeante]),
+        'source' => 'process_rah.php',
+    ], $BASE_URL);
 } else {
     $capeanteDao->update($cap);
+    $afterCapeante = $capeanteDao->findById((int)$id_capeante);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'capeante',
+        'entity_id' => (int)$id_capeante,
+        'before' => $beforeCapeante,
+        'after' => $afterCapeante ?: $cap,
+        'source' => 'process_rah.php',
+    ], $BASE_URL);
 }
 
 /* Log final de totais */

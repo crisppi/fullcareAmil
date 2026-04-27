@@ -27,6 +27,7 @@ require_once("db.php");
 
 require_once("models/censo.php");
 require_once("dao/censoDao.php");
+require_once("utils/audit_logger.php");
 
 require_once("models/internacao.php");
 require_once("dao/internacaoDao.php");
@@ -73,6 +74,17 @@ if ($type === "create") {
             echo '0';
         }else {
             $censoDao->create($censo);
+            $novoIdCenso = (int)$conn->lastInsertId();
+            $censoCriado = $novoIdCenso > 0 ? $censoDao->findById($novoIdCenso) : null;
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'censo',
+                'entity_id' => $novoIdCenso > 0 ? $novoIdCenso : null,
+                'summary' => 'Censo criado.',
+                'after' => $censoCriado ?: $censo,
+                'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                'source' => 'process_censo.php',
+            ], $BASE_URL);
             echo '1';
         }
     };
@@ -80,6 +92,7 @@ if ($type === "create") {
 
 if ($type == "update") {
     // Receber os dados dos inputs
+    $id_censo = filter_input(INPUT_POST, "id_censo");
     $fk_hospital_censo = filter_input(INPUT_POST, "fk_hospital_censo");
     $fk_paciente_censo = filter_input(INPUT_POST, "fk_paciente_censo");
     $data_censo = filter_input(INPUT_POST, "data_censo");
@@ -106,7 +119,19 @@ if ($type == "update") {
         $censo->data_create_censo = $data_create_censo;
         $censo->id_censo = $id_censo;
         $censo->titular_censo = $titular_censo;
+        $censoAntes = $censoDao->findById((int)$id_censo);
         $censoDao->update($censo);
+        $censoDepois = $censoDao->findById((int)$id_censo);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'censo',
+            'entity_id' => (int)$id_censo,
+            'summary' => 'Censo atualizado.',
+            'before' => $censoAntes,
+            'after' => $censoDepois,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_censo.php',
+        ], $BASE_URL);
 
         // header("location:censo/lista");
     };

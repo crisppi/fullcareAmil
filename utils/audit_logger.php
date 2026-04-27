@@ -175,6 +175,142 @@ if (!function_exists('fullcareAuditSnapshot')) {
                 'nome_contato_est',
                 'nome_responsavel_est',
             ],
+            'seguradora' => [
+                'id_seguradora',
+                'seguradora_seg',
+                'cnpj_seg',
+                'cidade_seg',
+                'estado_seg',
+                'ativo_seg',
+                'fk_usuario_seg',
+            ],
+            'acomodacao' => [
+                'id_acomodacao',
+                'acomodacao_aco',
+                'valor_aco',
+                'fk_hospital',
+                'data_contrato_aco',
+                'fk_usuario_acomodacao',
+            ],
+            'antecedente' => [
+                'id_antecedente',
+                'antecedente_ant',
+                'fk_cid_10_ant',
+                'fk_usuario_ant',
+            ],
+            'hospital_user' => [
+                'id_hospitalUser',
+                'fk_usuario_hosp',
+                'fk_hospital_user',
+            ],
+            'patologia' => [
+                'id_patologia',
+                'patologia_pat',
+                'dias_pato',
+                'fk_cid_10_pat',
+                'fk_usuario_pat',
+            ],
+            'censo' => [
+                'id_censo',
+                'fk_paciente_censo',
+                'fk_hospital_censo',
+                'data_censo',
+                'senha_censo',
+                'acomodacao_censo',
+                'titular_censo',
+            ],
+            'gestao' => [
+                'id_gestao',
+                'fk_internacao_ges',
+                'fk_visita_ges',
+                'alto_custo_ges',
+                'evento_adverso_ges',
+                'opme_ges',
+                'home_care_ges',
+                'desospitalizacao_ges',
+                'fk_user_ges',
+            ],
+            'negociacao' => [
+                'id_negociacao',
+                'fk_id_int',
+                'troca_de',
+                'troca_para',
+                'qtd',
+                'saving',
+                'fk_usuario_neg',
+            ],
+            'prorrogacao' => [
+                'id_prorrogacao',
+                'fk_internacao_pror',
+                'fk_visita_pror',
+                'acomod1_pror',
+                'prorrog1_ini_pror',
+                'prorrog1_fim_pror',
+                'diarias_1',
+                'fk_usuario_pror',
+            ],
+            'tuss' => [
+                'id_tuss',
+                'fk_int_tuss',
+                'fk_usuario_tuss',
+                'tuss_solicitado',
+                'data_realizacao_tuss',
+                'qtd_tuss_solicitado',
+                'qtd_tuss_liberado',
+                'tuss_liberado_sn',
+            ],
+            'uti' => [
+                'id_uti',
+                'fk_internacao_uti',
+                'fk_visita_uti',
+                'data_internacao_uti',
+                'data_alta_uti',
+                'internado_uti',
+                'criterios_uti',
+                'especialidade_uti',
+                'fk_user_uti',
+            ],
+            'capeante' => [
+                'id_capeante',
+                'fk_int_capeante',
+                'parcial_capeante',
+                'parcial_num',
+                'data_inicial_capeante',
+                'data_final_capeante',
+                'valor_apresentado_capeante',
+                'valor_final_capeante',
+                'senha_finalizada',
+                'em_auditoria_cap',
+                'encerrado_cap',
+                'fk_user_cap',
+            ],
+            'imagem' => [
+                'id_imagem',
+                'fk_imagem',
+                'imagem_name_img',
+            ],
+            'solicitacao_customizacao' => [
+                'id_solicitacao',
+                'fk_usuario_solicitante',
+                'nome',
+                'empresa',
+                'email',
+                'prioridade',
+                'status',
+                'responsavel',
+                'versao_sistema',
+            ],
+            'detalhes' => [
+                'id_detalhes',
+                'fk_vis_det',
+                'fk_int_det',
+                'curativo_det',
+                'dieta_det',
+                'nivel_consc_det',
+                'oxig_det',
+                'atb_det',
+                'acamado_det',
+            ],
         ];
 
         $fields = $fieldsByEntity[$entityType] ?? [];
@@ -238,6 +374,34 @@ if (!function_exists('fullcareAuditRecordLabel')) {
             $label .= ' ' . (string)$source['nome_hosp'];
         } elseif ($entityType === 'estipulante' && !empty($source['nome_est'])) {
             $label .= ' ' . (string)$source['nome_est'];
+        } elseif ($entityType === 'seguradora' && !empty($source['seguradora_seg'])) {
+            $label .= ' ' . (string)$source['seguradora_seg'];
+        } elseif ($entityType === 'acomodacao' && !empty($source['acomodacao_aco'])) {
+            $label .= ' ' . (string)$source['acomodacao_aco'];
+        } elseif ($entityType === 'antecedente' && !empty($source['antecedente_ant'])) {
+            $label .= ' ' . (string)$source['antecedente_ant'];
+        } elseif ($entityType === 'hospital_user' && !empty($source['id_hospitalUser'])) {
+            $label .= ' #' . (string)$source['id_hospitalUser'];
+        } elseif ($entityType === 'patologia' && !empty($source['patologia_pat'])) {
+            $label .= ' ' . (string)$source['patologia_pat'];
+        } elseif ($entityType === 'censo' && !empty($source['senha_censo'])) {
+            $label .= ' #' . (string)$source['senha_censo'];
+        } elseif ($entityType === 'negociacao' && !empty($source['id_negociacao'])) {
+            $label .= ' #' . (string)$source['id_negociacao'];
+        } elseif ($entityType === 'prorrogacao' && !empty($source['id_prorrogacao'])) {
+            $label .= ' #' . (string)$source['id_prorrogacao'];
+        } elseif ($entityType === 'tuss' && !empty($source['tuss_solicitado'])) {
+            $label .= ' ' . (string)$source['tuss_solicitado'];
+        } elseif ($entityType === 'uti' && !empty($source['id_uti'])) {
+            $label .= ' #' . (string)$source['id_uti'];
+        } elseif ($entityType === 'capeante' && !empty($source['id_capeante'])) {
+            $label .= ' #' . (string)$source['id_capeante'];
+        } elseif ($entityType === 'imagem' && !empty($source['imagem_name_img'])) {
+            $label .= ' ' . (string)$source['imagem_name_img'];
+        } elseif ($entityType === 'solicitacao_customizacao' && !empty($source['nome'])) {
+            $label .= ' ' . (string)$source['nome'];
+        } elseif ($entityType === 'detalhes' && !empty($source['id_detalhes'])) {
+            $label .= ' #' . (string)$source['id_detalhes'];
         }
 
         if ($entityId) {
@@ -258,6 +422,21 @@ if (!function_exists('fullcareAuditEntityHeadline')) {
             'paciente' => $source['nome_pac'] ?? null,
             'hospital' => $source['nome_hosp'] ?? null,
             'estipulante' => $source['nome_est'] ?? null,
+            'seguradora' => $source['seguradora_seg'] ?? null,
+            'acomodacao' => $source['acomodacao_aco'] ?? null,
+            'antecedente' => $source['antecedente_ant'] ?? null,
+            'hospital_user' => $source['id_hospitalUser'] ?? null,
+            'patologia' => $source['patologia_pat'] ?? null,
+            'censo' => $source['senha_censo'] ?? null,
+            'gestao' => $source['id_gestao'] ?? null,
+            'negociacao' => $source['id_negociacao'] ?? null,
+            'prorrogacao' => $source['id_prorrogacao'] ?? null,
+            'tuss' => $source['tuss_solicitado'] ?? null,
+            'uti' => $source['id_uti'] ?? null,
+            'capeante' => $source['id_capeante'] ?? null,
+            'imagem' => $source['imagem_name_img'] ?? null,
+            'solicitacao_customizacao' => $source['nome'] ?? null,
+            'detalhes' => $source['id_detalhes'] ?? null,
             'internacao' => $source['senha_int'] ?? null,
             'visita' => $source['visita_no_vis'] ?? null,
         ];
@@ -272,6 +451,12 @@ if (!function_exists('fullcareAuditEntityHeadline')) {
         }
         if ($entityType === 'visita') {
             return 'Visita ' . $headline;
+        }
+        if ($entityType === 'censo') {
+            return 'Senha ' . $headline;
+        }
+        if (in_array($entityType, ['hospital_user', 'gestao', 'negociacao', 'prorrogacao', 'uti', 'capeante', 'detalhes'], true)) {
+            return 'ID ' . $headline;
         }
         return (string)$headline;
     }

@@ -31,6 +31,7 @@ require_once("dao/internacaoDao.php");
 
 require_once("models/uti.php");
 require_once("dao/utiDao.php");
+require_once("utils/audit_logger.php");
 
 // $userDao = new UserDAO($conn, $BASE_URL);
 $internacaoDao = new internacaoDAO($conn, $BASE_URL);
@@ -51,6 +52,7 @@ if ($type === "update") {
     $internado_uti = filter_input(INPUT_POST, "internado_uti");
     $id_uti = filter_input(INPUT_POST, "id_uti");
     $UTIData = $utiDao->findById($id_uti);
+    $before = $utiDao->findById($id_uti);
 
     $UTIData->data_alta_uti = $data_alta_uti;
     $UTIData->fk_internacao_uti = $fk_internacao_uti;
@@ -58,6 +60,14 @@ if ($type === "update") {
     $UTIData->id_uti = $id_uti;
 
     $utiDao->findAltaUpdate($UTIData);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'uti',
+        'entity_id' => (int)$id_uti,
+        'before' => $before,
+        'after' => $UTIData,
+        'source' => 'process_alta_UTI.php',
+    ], $BASE_URL);
 
     include_once('list_internacao_uti.php');
 }

@@ -31,6 +31,7 @@ require_once("dao/internacaoDao.php");
 
 require_once("models/uti.php");
 require_once("dao/utiDao.php");
+require_once("utils/audit_logger.php");
 
 // $userDao = new UserDAO($conn, $BASE_URL);
 $internacaoDao = new internacaoDAO($conn, $BASE_URL);
@@ -86,6 +87,14 @@ if ($type === "create") {
         $uti->data_create_uti = $data_create_int;
 
         $utiDao->create($uti);
+        $idUti = (int)$conn->lastInsertId();
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'uti',
+            'entity_id' => $idUti > 0 ? $idUti : null,
+            'after' => array_merge(get_object_vars($uti), ['id_uti' => $idUti > 0 ? $idUti : null]),
+            'source' => 'process_internacao_UTI.php',
+        ], $BASE_URL);
 
         header("location:internacoes/lista");
     } else {
@@ -116,6 +125,7 @@ if ($type === "create") {
     // $internacao = new internacao();
 
     $internacaoData = $internacaoDao->findById($id_internacao);
+    $before = $internacaoDao->findById($id_internacao);
 
     $internacaoData->id_internacao = $id_internacao;
     $internacaoData->fk_hospital_int = $fk_hospital_int;
@@ -136,6 +146,14 @@ if ($type === "create") {
     $internacaoData->data_create_int = $data_create_int;
 
     $internacaoDao->update($internacaoData);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'internacao',
+        'entity_id' => (int)$id_internacao,
+        'before' => $before,
+        'after' => $internacaoData,
+        'source' => 'process_internacao_UTI.php',
+    ], $BASE_URL);
 
     header("location:internacoes/lista");
 }

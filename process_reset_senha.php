@@ -25,6 +25,7 @@ if (!defined("FLOW_LOGGER_AUTO_V1")) {
 require_once("globals.php");
 require_once("db.php");
 require_once("dao/usuarioDao.php");
+require_once("utils/audit_logger.php");
 
 try {
     if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -83,6 +84,7 @@ try {
 
     // Busca o usuário pelo ID
     $usuario = $usuarioDAO->findById_user($id_user);
+    $before = $usuario ? clone $usuario : null;
 
     if (!$usuario) {
         throw new Exception("Usuário não encontrado para o ID fornecido: $id_user.");
@@ -93,6 +95,15 @@ try {
     $usuario->senha_user = $senha_user;
 
     $usuarioDAO->update($usuario);
+    fullcareAuditLog($conn, [
+        'action' => 'update.password',
+        'entity_type' => 'usuario',
+        'entity_id' => (int)$id_user,
+        'before' => $before,
+        'after' => $usuario,
+        'summary' => 'Senha resetada por administrador.',
+        'source' => 'process_reset_senha.php',
+    ], $BASE_URL);
 
     echo json_encode([
         'success' => true,

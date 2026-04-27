@@ -7,6 +7,7 @@ require_once("db.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/hospitalUserDao.php");
+require_once("utils/audit_logger.php");
 
 $userDao = new UserDAO($conn, $BASE_URL);
 $hospitalUserDao = new hospitalUserDAO($conn, $BASE_URL);
@@ -34,7 +35,16 @@ if (!csrf_is_valid($csrf)) {
 
 $id_hospitalUser = filter_input(INPUT_POST, "id_hospitalUser", FILTER_VALIDATE_INT);
 if ($id_hospitalUser) {
+    $hospitalUserAntesDelete = $hospitalUserDao->findById($id_hospitalUser);
     $hospitalUserDao->destroy($id_hospitalUser);
+    fullcareAuditLog($conn, [
+        'action' => 'delete',
+        'entity_type' => 'hospital_user',
+        'entity_id' => (int)$id_hospitalUser,
+        'summary' => 'Vínculo hospital-usuário excluído.',
+        'before' => $hospitalUserAntesDelete,
+        'source' => 'del_hosp_user.php',
+    ], $BASE_URL);
 }
 
 header('Location: ' . $redirectUrl, true, 303);

@@ -29,6 +29,7 @@ require_once("models/prorrogacao.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/prorrogacaoDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -63,6 +64,17 @@ if ($type === "create-pror") {
         $prorrogacao->fk_usuario_pror = $fk_usuario_pror;
 
         $prorrogacaoDao->create($prorrogacao);
+        $novoIdProrrogacao = (int)$conn->lastInsertId();
+        $prorrogacaoCriada = $novoIdProrrogacao > 0 ? $prorrogacaoDao->findById($novoIdProrrogacao) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'prorrogacao',
+            'entity_id' => $novoIdProrrogacao > 0 ? $novoIdProrrogacao : null,
+            'summary' => 'Prorrogação criada.',
+            'after' => $prorrogacaoCriada ?: $prorrogacao,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_prorrogacao.php',
+        ], $BASE_URL);
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: prorrogacao!", "error", "back");
@@ -98,6 +110,17 @@ if ($type === "create-vis") {
         
 
         $prorrogacaoDao->create($prorrogacao);
+        $novoIdProrrogacao = (int)$conn->lastInsertId();
+        $prorrogacaoCriada = $novoIdProrrogacao > 0 ? $prorrogacaoDao->findById($novoIdProrrogacao) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'prorrogacao',
+            'entity_id' => $novoIdProrrogacao > 0 ? $novoIdProrrogacao : null,
+            'summary' => 'Prorrogação criada.',
+            'after' => $prorrogacaoCriada ?: $prorrogacao,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_prorrogacao.php',
+        ], $BASE_URL);
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: prorrogacao!", "error", "back");

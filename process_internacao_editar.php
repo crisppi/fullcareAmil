@@ -46,6 +46,7 @@ require_once 'models/tuss.php';
 require_once 'dao/tussDao.php';
 require_once 'models/gestao.php';
 require_once 'dao/gestaoDao.php';
+require_once 'utils/audit_logger.php';
 require_once __DIR__ . '/app/prorrog_alta_helper.php';
 require_once __DIR__ . '/app/services/TextSecurityService.php';
 
@@ -463,7 +464,17 @@ try {
         $int->timer_int = max(0, $timerRaw);
     }
 
+    $beforeInternacao = clone $currentIntern;
     $internacaoDao->update($int);
+    $afterInternacao = $internacaoDao->findById($idInt);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'internacao',
+        'entity_id' => (int)$idInt,
+        'before' => $beforeInternacao,
+        'after' => $afterInternacao ?: $int,
+        'source' => 'process_internacao_editar.php',
+    ], $BASE_URL);
 
     /*──────── DETALHES ────────*/
     if (filter_input(INPUT_POST, 'select_detalhes') === 's') {
@@ -505,8 +516,25 @@ try {
         if (!$idDetalhes) {
             unset($d->id_detalhes);
             $detalhesDao->create($d);
+            $idDetalhesNovo = (int)$conn->lastInsertId();
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'detalhes',
+                'entity_id' => $idDetalhesNovo > 0 ? $idDetalhesNovo : null,
+                'after' => array_merge(get_object_vars($d), ['id_detalhes' => $idDetalhesNovo > 0 ? $idDetalhesNovo : null]),
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         } else {
+            $beforeDetalhes = $detalhesDao->findByIdDetalhes($idDetalhes);
             $detalhesDao->update($d);
+            fullcareAuditLog($conn, [
+                'action' => 'update',
+                'entity_type' => 'detalhes',
+                'entity_id' => (int)$idDetalhes,
+                'before' => $beforeDetalhes,
+                'after' => $d,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         }
     }
 
@@ -528,9 +556,26 @@ try {
         $u->internado_uti       = filter_input(INPUT_POST, 'internado_uti');
 
         if (!empty($u->id_uti)) {
+            $beforeUti = $utiDao->findById((int)$u->id_uti);
             $utiDao->update($u);
+            fullcareAuditLog($conn, [
+                'action' => 'update',
+                'entity_type' => 'uti',
+                'entity_id' => (int)$u->id_uti,
+                'before' => $beforeUti,
+                'after' => $u,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         } else {
             $utiDao->create($u);
+            $idUtiNovo = (int)$conn->lastInsertId();
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'uti',
+                'entity_id' => $idUtiNovo > 0 ? $idUtiNovo : null,
+                'after' => array_merge(get_object_vars($u), ['id_uti' => $idUtiNovo > 0 ? $idUtiNovo : null]),
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         }
     }
 
@@ -587,10 +632,27 @@ try {
         }
 
         if ($idGestao) {
+            $beforeGestao = $gestaoDao->findById((int)$idGestao);
             $gestaoDao->update($gestao);
+            fullcareAuditLog($conn, [
+                'action' => 'update',
+                'entity_type' => 'gestao',
+                'entity_id' => (int)$idGestao,
+                'before' => $beforeGestao,
+                'after' => $gestao,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
             internacaoEditarDebugLog('GESTAO update ok id_int=' . (int)$idInt . ' id_gestao=' . (int)$idGestao . ' evento=' . (string)$gestao->evento_adverso_ges);
         } else {
             $gestaoDao->create($gestao);
+            $idGestaoNovo = (int)$conn->lastInsertId();
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'gestao',
+                'entity_id' => $idGestaoNovo > 0 ? $idGestaoNovo : null,
+                'after' => array_merge(get_object_vars($gestao), ['id_gestao' => $idGestaoNovo > 0 ? $idGestaoNovo : null]),
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
             internacaoEditarDebugLog('GESTAO create ok id_int=' . (int)$idInt . ' evento=' . (string)$gestao->evento_adverso_ges);
         }
     } else {
@@ -600,6 +662,10 @@ try {
     /*──────── NEGOCIAÇÕES (UPDATE/CREATE/DELETE) ────────*/
     if (filter_input(INPUT_POST, 'select_negoc') === 's') {
         $existing    = $negDao->findByInternacao($idInt);
+        $existingById = [];
+        foreach ($existing as $row) {
+            $existingById[(int)$row['id_negociacao']] = $row;
+        }
         $existingIds = array_map(fn(array $r) => (int) $r['id_negociacao'], $existing);
 
         $negArray    = decodeArray($_POST['negociacoes_json'] ?? null);  // sempre array
@@ -725,7 +791,15 @@ try {
             array_values($deleteIds)
         ));
         foreach ($toDelete as $delId) {
+            $beforeNeg = $existingById[(int)$delId] ?? null;
             $negDao->destroy($delId);
+            fullcareAuditLog($conn, [
+                'action' => 'delete',
+                'entity_type' => 'negociacao',
+                'entity_id' => (int)$delId,
+                'before' => $beforeNeg,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
             error_log("[NEGOCIAÇÃO] Deletada ID $delId");
         }
 
@@ -754,9 +828,26 @@ try {
             $neg->tipo_negociacao = $nData['tipo_negociacao'] ?? '';
 
             if (!empty($neg->id_negociacao)) {
+                $beforeNeg = $existingById[(int)$neg->id_negociacao] ?? null;
                 $negDao->update($neg);
+                fullcareAuditLog($conn, [
+                    'action' => 'update',
+                    'entity_type' => 'negociacao',
+                    'entity_id' => (int)$neg->id_negociacao,
+                    'before' => $beforeNeg,
+                    'after' => $neg,
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
             } else {
                 $negDao->create($neg);
+                $idNegNovo = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'negociacao',
+                    'entity_id' => $idNegNovo > 0 ? $idNegNovo : null,
+                    'after' => array_merge(get_object_vars($neg), ['id_negociacao' => $idNegNovo > 0 ? $idNegNovo : null]),
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
             }
         }
     }
@@ -764,6 +855,10 @@ try {
     /*──────── PRORROGAÇÕES (UPDATE/CREATE/DELETE) ────────*/
     if (filter_input(INPUT_POST, 'select_prorrog') === 's') {
         $existing    = $prorrogDao->selectInternacaoProrrog($idInt);
+        $existingById = [];
+        foreach ($existing as $row) {
+            $existingById[(int)$row['id_prorrogacao']] = $row;
+        }
         $existingIds = array_map(fn($r) => (int) $r['id_prorrogacao'], $existing);
 
         $prArrayRaw  = decodeArray($_POST['prorrogacoes_json'] ?? null); // sempre array
@@ -803,7 +898,15 @@ try {
 
         $toDelete = array_diff($existingIds, $postedIds);
         foreach ($toDelete as $delId) {
+            $beforePror = $existingById[(int)$delId] ?? null;
             $prorrogDao->destroy($delId);
+            fullcareAuditLog($conn, [
+                'action' => 'delete',
+                'entity_type' => 'prorrogacao',
+                'entity_id' => (int)$delId,
+                'before' => $beforePror,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
             error_log("[PRORROGAÇÃO] Deletada ID $delId");
         }
 
@@ -811,7 +914,16 @@ try {
             if ((string)($negExist['tipo_negociacao'] ?? '') !== 'PRORROGACAO_AUTOMATICA') {
                 continue;
             }
-            $negDao->destroy((int)($negExist['id_negociacao'] ?? 0));
+            $idNegAuto = (int)($negExist['id_negociacao'] ?? 0);
+            $negDao->destroy($idNegAuto);
+            fullcareAuditLog($conn, [
+                'action' => 'delete',
+                'entity_type' => 'negociacao',
+                'entity_id' => $idNegAuto,
+                'before' => $negExist,
+                'summary' => 'Negociação automática de prorrogação removida.',
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         }
 
         foreach ($prArray as $p) {
@@ -833,10 +945,27 @@ try {
             $pr->diarias_1           = (int)($p['diarias'] ?? 0);
 
             if (!empty($pr->id_prorrogacao)) {
+                $beforePror = $existingById[(int)$pr->id_prorrogacao] ?? null;
                 $prorrogDao->update($pr);
+                fullcareAuditLog($conn, [
+                    'action' => 'update',
+                    'entity_type' => 'prorrogacao',
+                    'entity_id' => (int)$pr->id_prorrogacao,
+                    'before' => $beforePror,
+                    'after' => $pr,
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
                 internacaoEditarDebugLog('PRORROG update ok id_int=' . (int)$idInt . ' id_pror=' . (int)$pr->id_prorrogacao);
             } else {
                 $prorrogDao->create($pr);
+                $idProrNovo = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'prorrogacao',
+                    'entity_id' => $idProrNovo > 0 ? $idProrNovo : null,
+                    'after' => array_merge(get_object_vars($pr), ['id_prorrogacao' => $idProrNovo > 0 ? $idProrNovo : null]),
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
                 internacaoEditarDebugLog('PRORROG create ok id_int=' . (int)$idInt . ' ini=' . (string)$pr->prorrog1_ini_pror . ' fim=' . (string)$pr->prorrog1_fim_pror);
             }
 
@@ -861,6 +990,13 @@ try {
 
         // existentes
         $existentes  = $tussDao->findByIdIntern($idInternacao);
+        $existentesById = [];
+        foreach ($existentes as $row) {
+            $rowId = (int)($row['id_tuss'] ?? $row->id_tuss ?? 0);
+            if ($rowId > 0) {
+                $existentesById[$rowId] = $row;
+            }
+        }
         $existIds    = array_map(fn($r) => (int) ($r['id_tuss'] ?? $r->id_tuss), $existentes);
 
         // ids vindos no form
@@ -873,6 +1009,13 @@ try {
         $toDelete = array_diff($existIds, $incomingIds);
         foreach ($toDelete as $delId) {
             $tussDao->destroy($delId);
+            fullcareAuditLog($conn, [
+                'action' => 'delete',
+                'entity_type' => 'tuss',
+                'entity_id' => (int)$delId,
+                'before' => $existentesById[(int)$delId] ?? null,
+                'source' => 'process_internacao_editar.php',
+            ], $BASE_URL);
         }
 
         // create/update
@@ -893,9 +1036,26 @@ try {
             $tuss->glosa_tuss            = null;
 
             if (!empty($tuss->id_tuss)) {
+                $beforeTuss = $existentesById[(int)$tuss->id_tuss] ?? null;
                 $tussDao->update($tuss);
+                fullcareAuditLog($conn, [
+                    'action' => 'update',
+                    'entity_type' => 'tuss',
+                    'entity_id' => (int)$tuss->id_tuss,
+                    'before' => $beforeTuss,
+                    'after' => $tuss,
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
             } else {
                 $tussDao->create($tuss);
+                $idTussNovo = (int)$conn->lastInsertId();
+                fullcareAuditLog($conn, [
+                    'action' => 'create',
+                    'entity_type' => 'tuss',
+                    'entity_id' => $idTussNovo > 0 ? $idTussNovo : null,
+                    'after' => array_merge(get_object_vars($tuss), ['id_tuss' => $idTussNovo > 0 ? $idTussNovo : null]),
+                    'source' => 'process_internacao_editar.php',
+                ], $BASE_URL);
             }
         }
     }

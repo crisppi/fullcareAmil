@@ -29,6 +29,7 @@ require_once("models/patologia.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/patologiaDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -67,6 +68,17 @@ if ($type === "create") {
         $patologia->data_create_pat = $data_create_pat;
 
         $patologiaDao->create($patologia);
+        $novoIdPatologia = (int)$conn->lastInsertId();
+        $patologiaCriada = $novoIdPatologia > 0 ? $patologiaDao->findById($novoIdPatologia) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'patologia',
+            'entity_id' => $novoIdPatologia > 0 ? $novoIdPatologia : null,
+            'summary' => 'Patologia criada.',
+            'after' => $patologiaCriada ?: $patologia,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_patologia.php',
+        ], $BASE_URL);
         header('location:list_patologia.php');
     } else {
 
@@ -90,6 +102,7 @@ if ($type === "create") {
     $data_create_pat = filter_input(INPUT_POST, "data_create_pat");
 
     $patologiaData = $patologiaDao->findById($id_patologia);
+    $patologiaAntes = $patologiaData ? clone $patologiaData : null;
 
     $patologiaData->id_patologia = $id_patologia;
     $patologiaData->patologia_pat = $patologia_pat;
@@ -101,6 +114,17 @@ if ($type === "create") {
     $patologiaData->data_create_pat = $data_create_pat;
 
     $patologiaDao->update($patologiaData);
+    $patologiaDepois = $patologiaDao->findById((int)$id_patologia);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'patologia',
+        'entity_id' => (int)$id_patologia,
+        'summary' => 'Patologia atualizada.',
+        'before' => $patologiaAntes,
+        'after' => $patologiaDepois,
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_patologia.php',
+    ], $BASE_URL);
 
     include_once('list_patologia.php');
 }
@@ -115,8 +139,17 @@ if ($type === "delete") {
     $patologia = $patologiaDao->findById($id_patologia);
 
     if (3 < 4) {
-
+        $patologiaAntesDelete = clone $patologia;
         $patologiaDao->destroy($id_patologia);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'patologia',
+            'entity_id' => (int)$id_patologia,
+            'summary' => 'Patologia excluída.',
+            'before' => $patologiaAntesDelete,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_patologia.php',
+        ], $BASE_URL);
 
         header('location:list_patologia.php');
     } else {

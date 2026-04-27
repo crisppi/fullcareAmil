@@ -31,6 +31,7 @@ require_once("dao/capeanteDao.php");
 
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 
@@ -304,6 +305,15 @@ if ($type === "create") {
         $capeante->fk_id_aud_hosp = $fk_id_aud_hosp;
 
         $capeanteDao->create($capeante);
+        $idCapeante = (int)$conn->lastInsertId();
+        $after = $idCapeante > 0 ? $capeanteDao->findById($idCapeante) : array_merge(get_object_vars($capeante), ['id_capeante' => null]);
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'capeante',
+            'entity_id' => $idCapeante > 0 ? $idCapeante : null,
+            'after' => $after,
+            'source' => 'process_capeante.php',
+        ], $BASE_URL);
     }
     header('location: list_internacao_cap.php');
 }
@@ -384,6 +394,7 @@ if ($type === "update") {
     $fk_id_aud_hosp = filter_input(INPUT_POST, "fk_id_aud_hosp");
     $checkbox_imprimir = filter_input(INPUT_POST, "checkbox_imprimir");
 
+    $before = $capeanteDao->findById($id_capeante);
     $capeanteUpdate = new capeante();
     if (empty($data_digit_capeante)) {
         $message->setMessage("Data de digitação é obrigatória.", "error", "back");
@@ -469,6 +480,15 @@ if ($type === "update") {
         $capeanteUpdate->fk_id_aud_adm = $fk_id_aud_adm;
         $capeanteUpdate->fk_id_aud_hosp = $fk_id_aud_hosp;
         $capeanteDao->update($capeanteUpdate);
+        $after = $capeanteDao->findById($id_capeante);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'capeante',
+            'entity_id' => (int)$id_capeante,
+            'before' => $before,
+            'after' => $after ?: $capeanteUpdate,
+            'source' => 'process_capeante.php',
+        ], $BASE_URL);
     }
     if ($checkbox_imprimir == '1') {
         header('location: show_capeantePrt.php?id_capeante=' . $id_capeante);

@@ -29,6 +29,7 @@ require_once("models/acomodacao.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/acomodacaoDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -86,6 +87,17 @@ if ($type === "create") {
         $acomodacao->data_create_acomodacao = $data_create_acomodacao;
 
         $acomodacaoDao->create($acomodacao);
+        $novoIdAcomodacao = (int)$conn->lastInsertId();
+        $acomodacaoCriada = $novoIdAcomodacao > 0 ? $acomodacaoDao->findById($novoIdAcomodacao) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'acomodacao',
+            'entity_id' => $novoIdAcomodacao > 0 ? $novoIdAcomodacao : null,
+            'summary' => 'Acomodação criada.',
+            'after' => $acomodacaoCriada ?: get_object_vars($acomodacao),
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_acomodacao.php',
+        ], $BASE_URL);
         redirectAcomodacao($BASE_URL, $redirect_hospital_id ?: $fk_hospital);
     } else {
 
@@ -110,6 +122,7 @@ if ($type === "create") {
     $data_create_acomodacao = filter_input(INPUT_POST, "data_create_acomodacao");
 
     $acomodacao = $acomodacaoDao->joinAcomodacaoHospitalshow($id_acomodacao);
+    $acomodacaoAntes = is_array($acomodacao) ? $acomodacao : [];
 
     $acomodacao['id_acomodacao'] = $id_acomodacao;
     $acomodacao['fk_hospital'] = $fk_hospital;
@@ -120,6 +133,17 @@ if ($type === "create") {
     $acomodacao['data_create_acomodacao'] = $data_create_acomodacao;
     $acomodacao['data_contrato_aco'] = $data_contrato_aco;
     $acomodacaoDao->update($acomodacao);
+    $acomodacaoDepois = $acomodacaoDao->findById((int)$id_acomodacao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'acomodacao',
+        'entity_id' => (int)$id_acomodacao,
+        'summary' => 'Acomodação atualizada.',
+        'before' => $acomodacaoAntes,
+        'after' => $acomodacaoDepois,
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_acomodacao.php',
+    ], $BASE_URL);
 
     redirectAcomodacao($BASE_URL, $redirect_hospital_id ?: $fk_hospital);
 }
@@ -148,8 +172,17 @@ if ($typeDelete === "delete") {
 
     $acomodacao = $acomodacaoDao->joinAcomodacaoHospitalShow($id_acomodacao);
     if ($acomodacao) {
-
+        $acomodacaoAntesDelete = $acomodacao;
         $acomodacaoDao->destroy($id_acomodacao);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'acomodacao',
+            'entity_id' => (int)$id_acomodacao,
+            'summary' => 'Acomodação excluída.',
+            'before' => $acomodacaoAntesDelete,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_acomodacao.php',
+        ], $BASE_URL);
         $fk_hosp = isset($acomodacao['fk_hospital']) ? (int) $acomodacao['fk_hospital'] : 0;
         redirectAcomodacao($BASE_URL, $redirect_hospital_id ?: $fk_hosp);
     } else {

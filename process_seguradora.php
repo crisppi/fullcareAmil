@@ -33,6 +33,7 @@ require_once("models/usuario.php");
 require_once("dao/usuarioDao.php");
 
 require_once("models/message.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -292,6 +293,21 @@ if ($type === "create") {
             }
 
             insertSeguradoraRelatedRows($conn, $idNovo, $enderecos, $telefones, $contatos);
+            $seguradoraCriada = $idNovo > 0 ? $seguradoraDao->findById($idNovo) : null;
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'seguradora',
+                'entity_id' => $idNovo > 0 ? $idNovo : null,
+                'summary' => 'Seguradora criada.',
+                'after' => $seguradoraCriada ?: $seguradora,
+                'context' => [
+                    'enderecos' => count($enderecos),
+                    'telefones' => count($telefones),
+                    'contatos' => count($contatos),
+                ],
+                'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                'source' => 'process_seguradora.php',
+            ], $BASE_URL);
             header("Location: " . $BASE_URL . "seguradoras");
         }
 } else if ($type === "update") {
@@ -354,6 +370,7 @@ if ($type === "create") {
 
         $coord_rh_seg = filter_input(INPUT_POST, "coord_rh_seg", FILTER_SANITIZE_SPECIAL_CHARS);
         $seguradoraData = $seguradoraDao->findById($id_seguradora);
+        $seguradoraAntes = $seguradoraData ? clone $seguradoraData : null;
         $logo_seg = $arquivo !== null ? $arquivo : (string)($seguradoraData->logo_seg ?? '');
 
         $seguradoraData->id_seguradora = $id_seguradora;
@@ -444,6 +461,23 @@ if ($type === "create") {
             insertSeguradoraRelatedRows($conn, (int) $id_seguradora, $enderecos, $telefones, $contatos);
         }
 
+        $seguradoraDepois = $seguradoraDao->findById((int)$id_seguradora);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'seguradora',
+            'entity_id' => (int)$id_seguradora,
+            'summary' => 'Seguradora atualizada.',
+            'before' => $seguradoraAntes,
+            'after' => $seguradoraDepois,
+            'context' => [
+                'enderecos' => count($enderecos),
+                'telefones' => count($telefones),
+                'contatos' => count($contatos),
+            ],
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_seguradora.php',
+        ], $BASE_URL);
+
         header("Location: " . $BASE_URL . "seguradoras");
         exit;
 }
@@ -457,8 +491,17 @@ if ($type === "delete") {
     $seguradora = $seguradoraDao->findById($id_seguradora);
 
     if ($seguradora) {
-
+        $seguradoraAntesDelete = clone $seguradora;
         $seguradoraDao->destroy($id_seguradora);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'seguradora',
+            'entity_id' => (int)$id_seguradora,
+            'summary' => 'Seguradora excluída.',
+            'before' => $seguradoraAntesDelete,
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_seguradora.php',
+        ], $BASE_URL);
         header("Location: " . $BASE_URL . "seguradoras");
         exit;
     } else {
@@ -475,11 +518,23 @@ if ($type === "delUpdate") {
     $deletado_seg = 's';
 
     $seguradoraData = $seguradoraDao->findById($id_seguradora);
+    $seguradoraAntesSoftDelete = $seguradoraData ? clone $seguradoraData : null;
 
     $seguradoraData->id_seguradora = $id_seguradora;
     $seguradoraData->deletado_seg = $deletado_seg;
 
     $seguradoraDao->deletarUpdate($seguradoraData);
+    $seguradoraDepoisSoftDelete = $seguradoraDao->findById((int)$id_seguradora);
+    fullcareAuditLog($conn, [
+        'action' => 'soft_delete',
+        'entity_type' => 'seguradora',
+        'entity_id' => (int)$id_seguradora,
+        'summary' => 'Seguradora marcada como deletada.',
+        'before' => $seguradoraAntesSoftDelete,
+        'after' => $seguradoraDepoisSoftDelete,
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_seguradora.php',
+    ], $BASE_URL);
 
     header("Location: " . $BASE_URL . "seguradoras");
     exit;

@@ -36,6 +36,7 @@ require_once("models/usuario.php");
 require_once("dao/usuarioDao.php");
 
 require_once("models/message.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -101,5 +102,17 @@ if ($type === "create") {
 
 
         $imagemDao->create($imagem);
+        $idImagem = (int)$conn->lastInsertId();
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'imagem',
+            'entity_id' => $idImagem > 0 ? $idImagem : null,
+            'after' => [
+                'id_imagem' => $idImagem > 0 ? $idImagem : null,
+                'fk_imagem' => $imagem->fk_imagem,
+                'imagem_name_img' => $imagem->imagem_name_img,
+            ],
+            'source' => 'process_imagem.php',
+        ], $BASE_URL);
     }
 }

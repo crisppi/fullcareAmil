@@ -29,6 +29,7 @@ require_once("models/gestao.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/gestaoDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -90,6 +91,14 @@ if ($type === "create") {
     $gestao->fk_user_ges = $fk_user_ges;
 
     $gestaoDao->create($gestao);
+    $idGestao = (int)$conn->lastInsertId();
+    fullcareAuditLog($conn, [
+        'action' => 'create',
+        'entity_type' => 'gestao',
+        'entity_id' => $idGestao > 0 ? $idGestao : null,
+        'after' => array_merge(get_object_vars($gestao), ['id_gestao' => $idGestao > 0 ? $idGestao : null]),
+        'source' => 'process_evento_adverso.php',
+    ], $BASE_URL);
     header("location:internacoes/lista");
 } else if ($type === "update") {
     // Receber os dados dos inputs
@@ -126,6 +135,7 @@ if ($type === "create") {
     $fk_user_ges = filter_input(INPUT_POST, "fk_user_ges");
 
 
+    $before = $gestaoDao->findById($id_gestao);
     $gestao = new gestao();
 
     // Validação mínima de dados
@@ -154,6 +164,14 @@ if ($type === "create") {
 
     $gestao->fk_user_ges = $fk_user_ges;
     $gestaoDao->update($gestao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'gestao',
+        'entity_id' => (int)$id_gestao,
+        'before' => $before,
+        'after' => $gestao,
+        'source' => 'process_evento_adverso.php',
+    ], $BASE_URL);
 
     header("location:internacoes/lista");
 }
