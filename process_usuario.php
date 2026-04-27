@@ -28,6 +28,7 @@ require_once("db.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("app/passwordPolicy.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -262,6 +263,21 @@ if ($type === "create") {
             $usuario->fk_seguradora_user = $fk_seguradora_user;
 
             $userDao->create($usuario);
+            $novoIdUsuario = (int)$conn->lastInsertId();
+            $usuarioCriado = $novoIdUsuario > 0 ? $userDao->findById_user($novoIdUsuario) : null;
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'usuario',
+                'entity_id' => $novoIdUsuario > 0 ? $novoIdUsuario : null,
+                'summary' => 'Usuário criado.',
+                'after' => $usuarioCriado ?: $usuario,
+                'context' => [
+                    'cargo_user' => $cargo_user,
+                    'nivel_user' => $nivel_user,
+                ],
+                'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                'source' => 'process_usuario.php',
+            ], $BASE_URL);
             header("location:list_usuario.php");
         } else {
 
@@ -342,6 +358,7 @@ if ($type === "create") {
         $obs_user = filter_input(INPUT_POST, "obs_user");
 
         $usuarioData = $usuarioDao->findById_user($id_usuario);
+        $usuarioAntes = $usuarioData ? clone $usuarioData : null;
         $foto_usuario = $arquivo !== null ? $arquivo : (string)($usuarioData->foto_usuario ?? '');
 
         if ($senha_user_raw !== '') {
@@ -400,6 +417,20 @@ if ($type === "create") {
         $usuarioData->fk_seguradora_user = $fk_seguradora_user;
 
         $usuarioDao->update($usuarioData);
+        $usuarioDepois = $usuarioDao->findById_user((int)$id_usuario);
+        fullcareAuditLog($conn, [
+            'action' => 'update',
+            'entity_type' => 'usuario',
+            'entity_id' => (int)$id_usuario,
+            'summary' => 'Usuário atualizado.',
+            'before' => $usuarioAntes,
+            'after' => $usuarioDepois,
+            'context' => [
+                'alterou_senha' => $senha_user_raw !== '',
+            ],
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_usuario.php',
+        ], $BASE_URL);
 
         header("location:list_usuario.php");
 }
@@ -419,6 +450,7 @@ if ($type === "update-senha") {
         $message->setMessage("Usuário não encontrado.", "error", "back");
         exit;
     }
+    $usuarioAntesSenha = clone $usuarioData;
 
     if ($senha_usuario === '' || !password_verify($senha_usuario, (string)$usuarioData->senha_user)) {
         $message->setMessage("Senha atual incorreta.", "error", "back");
@@ -437,6 +469,20 @@ if ($type === "update-senha") {
     $usuarioData->senha_default_user = $senha_default_user;
 
     $usuarioDao->update($usuarioData);
+    $usuarioDepoisSenha = $usuarioDao->findById_user((int)$id_usuario);
+    fullcareAuditLog($conn, [
+        'action' => 'update.password',
+        'entity_type' => 'usuario',
+        'entity_id' => (int)$id_usuario,
+        'summary' => 'Senha do usuário atualizada.',
+        'before' => $usuarioAntesSenha,
+        'after' => $usuarioDepoisSenha,
+        'context' => [
+            'senha_default_user' => $senha_default_user,
+        ],
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_usuario.php',
+    ], $BASE_URL);
 
     header("Location: " . resolveUsuarioHomeUrl($BASE_URL, $usuarioData->cargo_user ?? '', $usuarioData->nivel_user ?? 0));
     exit;

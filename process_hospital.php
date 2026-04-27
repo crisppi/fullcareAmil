@@ -28,6 +28,7 @@ require_once("models/hospital.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/hospitalDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -385,6 +386,21 @@ if ($type === "create") {
                 }
             }
         }
+        $hospitalCriado = $id_hospital_novo > 0 ? $hospitalDao->findById($id_hospital_novo) : null;
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'hospital',
+            'entity_id' => $id_hospital_novo > 0 ? $id_hospital_novo : null,
+            'summary' => 'Hospital criado.',
+            'after' => $hospitalCriado ?: $hospital,
+            'context' => [
+                'enderecos' => count($enderecos),
+                'telefones' => count($telefones),
+                'contatos' => count($contatos),
+            ],
+            'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+            'source' => 'process_hospital.php',
+        ], $BASE_URL);
     }
     header("Location: " . $BASE_URL . "hospitais");
     exit;
@@ -428,6 +444,7 @@ if ($type === "update") {
     $id_hospital = filter_input(INPUT_POST, "id_hospital");
 
     $hospitalData = $hospitalDao->findById($id_hospital);
+    $hospitalAntes = $hospitalData ? clone $hospitalData : null;
 
     $hospitalData->id_hospital = $id_hospital;
     $hospitalData->nome_hosp = $nome_hosp;
@@ -610,6 +627,23 @@ if ($type === "update") {
         }
     }
 
+    $hospitalDepois = $hospitalDao->findById((int)$id_hospital);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'hospital',
+        'entity_id' => (int)$id_hospital,
+        'summary' => 'Hospital atualizado.',
+        'before' => $hospitalAntes,
+        'after' => $hospitalDepois,
+        'context' => [
+            'enderecos' => count($enderecos),
+            'telefones' => count($telefones),
+            'contatos' => count($contatos),
+        ],
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_hospital.php',
+    ], $BASE_URL);
+
     header("Location: " . $BASE_URL . "hospitais");
     exit;
 }
@@ -621,11 +655,22 @@ if ($type === "delUpdate") {
     $id_hospital = filter_input(INPUT_POST, "id_hospital");
     $deletado_hosp = 's';
     $hospitalData = $hospitalDao->findById($id_hospital);
+    $hospitalAntesSoftDelete = $hospitalData ? clone $hospitalData : null;
 
     $hospitalData->id_hospital = $id_hospital;
     $hospitalData->deletado_hosp = $deletado_hosp;
 
     $hospitalDao->deletarUpdate($hospitalData);
+    $hospitalDepoisSoftDelete = $hospitalDao->findById((int)$id_hospital);
+    fullcareAuditLog($conn, [
+        'action' => 'soft_delete',
+        'entity_type' => 'hospital',
+        'entity_id' => (int)$id_hospital,
+        'summary' => 'Hospital marcado como deletado.',
+        'before' => $hospitalAntesSoftDelete,
+        'after' => $hospitalDepoisSoftDelete,
+        'source' => 'process_hospital.php',
+    ], $BASE_URL);
 
     header("Location: " . $BASE_URL . "hospitais");
     exit;
@@ -640,8 +685,16 @@ if ($type === "delete") {
     $hospital = $hospitalDao->findById($id_hospital);
 
     if (3 < 4) {
-
+        $hospitalAntesDelete = $hospital ? clone $hospital : null;
         $hospitalDao->destroy($id_hospital);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'hospital',
+            'entity_id' => (int)$id_hospital,
+            'summary' => 'Hospital excluído.',
+            'before' => $hospitalAntesDelete,
+            'source' => 'process_hospital.php',
+        ], $BASE_URL);
 
         header("Location: " . $BASE_URL . "hospitais");
         exit;

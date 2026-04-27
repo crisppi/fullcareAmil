@@ -538,6 +538,12 @@ if (!empty($sessionIdUsuario)) {
                                                     class="bi bi-trophy"
                                                     style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
                                                 Performance equipes</a></li>
+                                        <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
+                                                    <i class="bi bi-journal-text"
+                                                        style="font-size: 1rem;margin-right:5px; color:#7c5023;"></i>
+                                                    Auditoria</a></li>
+                                        <?php } ?>
                                         <?php if ($sessionNivel > 3) { ?>
                                             <li class="nav-item">
                                                 <a class="dropdown-item" href="<?= $BASE_URL ?>admin_permissao.php">
@@ -958,6 +964,12 @@ if (!empty($sessionIdUsuario)) {
                                                 <i class="bi bi-clipboard-check"
                                                     style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
                                                 Altas</a></li>
+                                        <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
+                                                    <i class="bi bi-journal-text"
+                                                        style="font-size: 1rem;margin-right:5px; color:#7c5023;"></i>
+                                                    Auditoria</a></li>
+                                        <?php } ?>
                                     </ul>
                                 </li>
                             <?php } ?>

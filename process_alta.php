@@ -37,6 +37,7 @@ include_once("dao/altaDao.php");
 
 include_once("models/uti.php");
 include_once("dao/utiDao.php");
+include_once("utils/audit_logger.php");
 
 if (!function_exists('altaDebugLog')) {
     function altaDebugLog(string $message, array $context = []): void
@@ -97,6 +98,15 @@ if (isset($__flowCtxAuto) && function_exists('flowLog')) {
 
 if (!$id_internacao || !$data_alta_alt || !$tipo_alta_alt) {
     $message->setMessage("Preencha os campos obrigatórios da alta.", "error", "back");
+}
+
+$internacaoAntesAlta = null;
+if ($id_internacao) {
+    try {
+        $internacaoAntesAlta = $internacaoDao->findById($id_internacao);
+    } catch (Throwable $e) {
+        error_log('[AUDIT_LOG][ALTA][BEFORE] ' . $e->getMessage());
+    }
 }
 
 $alta->data_alta_alt = $data_alta_alt;
@@ -176,6 +186,33 @@ try {
             'status' => 'ok'
         ]);
     }
+    $internacaoDepoisAlta = null;
+    try {
+        $internacaoDepoisAlta = $internacaoDao->findById($id_internacao);
+    } catch (Throwable $e) {
+        error_log('[AUDIT_LOG][ALTA][AFTER] ' . $e->getMessage());
+    }
+    fullcareAuditLog($conn, [
+        'action' => 'create',
+        'entity_type' => 'alta',
+        'entity_id' => (int)$id_internacao,
+        'summary' => 'Alta registrada para a internação.',
+        'before' => $internacaoAntesAlta,
+        'after' => [
+            'fk_id_int_alt' => $id_internacao,
+            'data_alta_alt' => $data_alta_alt,
+            'hora_alta_alt' => $hora_alta_alt,
+            'tipo_alta_alt' => $tipo_alta_alt,
+            'fk_usuario_alt' => $fk_usuario_alt,
+            'internacao' => $internacaoDepoisAlta ? get_object_vars($internacaoDepoisAlta) : null,
+        ],
+        'context' => [
+            'alta_uti' => $alta_uti,
+            'id_uti' => $id_uti,
+        ],
+        'trace_id' => $__flowCtxAuto['trace_id'] ?? null,
+        'source' => 'process_alta.php',
+    ], $BASE_URL);
 } catch (Throwable $e) {
     if ($conn->inTransaction()) {
         $conn->rollBack();

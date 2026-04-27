@@ -29,6 +29,7 @@ require_once("models/estipulante.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/estipulanteDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL);
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -259,6 +260,21 @@ if ($type === "create") {
             }
 
             insertEstipulanteRelatedRows($conn, $idNovo, $enderecos, $telefones, $contatos);
+            $estipulanteCriado = $idNovo > 0 ? $estipulanteDao->findById($idNovo) : null;
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'estipulante',
+                'entity_id' => $idNovo > 0 ? $idNovo : null,
+                'summary' => 'Estipulante criado.',
+                'after' => $estipulanteCriado ?: $estipulante,
+                'context' => [
+                    'enderecos' => count($enderecos),
+                    'telefones' => count($telefones),
+                    'contatos' => count($contatos),
+                ],
+                'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                'source' => 'process_estipulante.php',
+            ], $BASE_URL);
         } else {
 
             $message->setMessage("Você precisa adicionar pelo menos: nome_est do estipulante!", "error", "back");
@@ -334,6 +350,7 @@ if ($type === "update") {
     $logo_est = $arquivo;
 
     $estipulanteData = $estipulanteDao->findById($id_estipulante);
+    $estipulanteAntes = $estipulanteData ? clone $estipulanteData : null;
 
     $estipulanteData->id_estipulante = $id_estipulante;
     $estipulanteData->nome_est = $nome_est;
@@ -426,6 +443,23 @@ if ($type === "update") {
         insertEstipulanteRelatedRows($conn, (int) $id_estipulante, $enderecos, $telefones, $contatos);
     }
 
+    $estipulanteDepois = $estipulanteDao->findById((int)$id_estipulante);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'estipulante',
+        'entity_id' => (int)$id_estipulante,
+        'summary' => 'Estipulante atualizado.',
+        'before' => $estipulanteAntes,
+        'after' => $estipulanteDepois,
+        'context' => [
+            'enderecos' => count($enderecos),
+            'telefones' => count($telefones),
+            'contatos' => count($contatos),
+        ],
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_estipulante.php',
+    ], $BASE_URL);
+
     header('Location: ' . $BASE_URL . 'estipulantes');
 }
 
@@ -437,11 +471,22 @@ if ($type === "delUpdate") {
     $id_estipulante = filter_input(INPUT_POST, "id_estipulante");
     $deletado_est = 's';
     $estipulanteData = $estipulanteDao->findById($id_estipulante);
+    $estipulanteAntesSoftDelete = $estipulanteData ? clone $estipulanteData : null;
 
     $estipulanteData->id_estipulante = $id_estipulante;
     $estipulanteData->deletado_est = $deletado_est;
 
     $estipulanteDao->deletarUpdate($estipulanteData);
+    $estipulanteDepoisSoftDelete = $estipulanteDao->findById((int)$id_estipulante);
+    fullcareAuditLog($conn, [
+        'action' => 'soft_delete',
+        'entity_type' => 'estipulante',
+        'entity_id' => (int)$id_estipulante,
+        'summary' => 'Estipulante marcado como deletado.',
+        'before' => $estipulanteAntesSoftDelete,
+        'after' => $estipulanteDepoisSoftDelete,
+        'source' => 'process_estipulante.php',
+    ], $BASE_URL);
     header('Location: ' . $BASE_URL . 'estipulantes');
 }
 
@@ -454,8 +499,16 @@ if ($type === "delete") {
     $estipulante = $estipulanteDao->findById($id_estipulante);
 
     if (3 < 4) {
-
+        $estipulanteAntesDelete = $estipulante ? clone $estipulante : null;
         $estipulanteDao->destroy($id_estipulante);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'estipulante',
+            'entity_id' => (int)$id_estipulante,
+            'summary' => 'Estipulante excluído.',
+            'before' => $estipulanteAntesDelete,
+            'source' => 'process_estipulante.php',
+        ], $BASE_URL);
 
         include_once('list_estipulante.php');
     } else {

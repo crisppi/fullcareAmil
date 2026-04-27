@@ -3,6 +3,8 @@
 // process_visita.php  (refatorado, sem alterar métodos existentes)
 // ======================================================================
 
+require_once(__DIR__ . '/utils/audit_logger.php');
+
 // Debug local opcional (somente quando APP_DEBUG=1 no ambiente)
 $__DEBUG = in_array(strtolower((string)getenv('APP_DEBUG')), ['1', 'true', 'on', 'yes'], true);
 if ($__DEBUG) {
@@ -824,6 +826,20 @@ if ($type === "delete") {
         $usuarioId = $_SESSION['id_usuario'] ?? null;
         $usuarioNome = $_SESSION['nome_user'] ?? ($_SESSION['email_user'] ?? null);
         $visitaDao->logAlteracao($visitaAtual, $novoEstado, $usuarioId ? (int)$usuarioId : null, $usuarioNome);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'visita',
+            'entity_id' => (int)$idVisitaDelete,
+            'summary' => 'Visita marcada como retificada.',
+            'before' => $visitaAtual,
+            'after' => $novoEstado,
+            'context' => [
+                'fk_internacao_vis' => $visitaAtual['fk_internacao_vis'] ?? null,
+                'retificado' => 1,
+            ],
+            'trace_id' => $flowCtx['trace_id'] ?? null,
+            'source' => 'process_visita.php',
+        ], $BASE_URL);
 
         $_SESSION['mensagem'] = "Visita removida com sucesso.";
         $_SESSION['mensagem_tipo'] = "success";
@@ -979,6 +995,20 @@ if ($type === "create") {
             $novoRegistro = array_merge($visitaEmEdicao, $dadosAtualizados);
             $usuarioNomeLog = $_SESSION['nome_user'] ?? ($_SESSION['email_user'] ?? null);
             $visitaDao->logAlteracao($visitaEmEdicao, $novoRegistro, $fk_usuario_vis, $usuarioNomeLog);
+            fullcareAuditLog($conn, [
+                'action' => 'update',
+                'entity_type' => 'visita',
+                'entity_id' => (int)$id_visita_edit,
+                'summary' => 'Visita atualizada.',
+                'before' => $visitaEmEdicao,
+                'after' => $novoRegistro,
+                'context' => [
+                    'fk_internacao_vis' => $fk_internacao_vis,
+                    'edit_mode' => true,
+                ],
+                'trace_id' => $flowCtx['trace_id'] ?? null,
+                'source' => 'process_visita.php',
+            ], $BASE_URL);
             processTussEntries($select_tuss ?? '', $tussJsonRaw, $id_visita_edit, $fk_internacao_vis, $tussDao, $resolvedUsuarioVis);
             processProrrogacoesEntries($select_prorrog ?? '', $prorrogacoesJsonRaw, $id_visita_edit, $fk_internacao_vis, $prorrogacaoDao, $conn, $resolvedUsuarioVis, true);
             $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(
@@ -1048,6 +1078,18 @@ if ($type === "create") {
     // ------------------- Persistência VISITA --------------------------
     try {
         $novoIdVisita = $visitaDao->create($visita);
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'visita',
+            'entity_id' => (int)$novoIdVisita,
+            'summary' => 'Visita criada.',
+            'after' => array_merge(get_object_vars($visita), ['id_visita' => $novoIdVisita]),
+            'context' => [
+                'fk_internacao_vis' => $fk_internacao_vis,
+            ],
+            'trace_id' => $flowCtx['trace_id'] ?? null,
+            'source' => 'process_visita.php',
+        ], $BASE_URL);
         processTussEntries($select_tuss ?? '', $tussJsonRaw, $novoIdVisita, $fk_internacao_vis, $tussDao, $resolvedUsuarioVis);
         processProrrogacoesEntries($select_prorrog ?? '', $prorrogacoesJsonRaw, $novoIdVisita, $fk_internacao_vis, $prorrogacaoDao, $conn, $resolvedUsuarioVis);
         $prorrogAltaPayload = fullcare_prorrog_alta_payload_from_post(

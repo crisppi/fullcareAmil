@@ -42,6 +42,7 @@ require_once("dao/internacaoAntecedenteDao.php");
 require_once("models/alta.php");
 require_once("dao/altaDao.php");
 require_once("utils/flow_logger.php");
+require_once("utils/audit_logger.php");
 require_once(__DIR__ . "/app/cuidadoContinuado.php");
 require_once(__DIR__ . "/app/prorrog_alta_helper.php");
 require_once(__DIR__ . "/app/services/TextSecurityService.php");
@@ -1159,6 +1160,21 @@ if ($type === "create") {
             'status' => 'ok',
             'id_internacao' => $lastId
         ]);
+        $registroCriadoInternacao = $internacaoDao->findById($lastId);
+        fullcareAuditLog($conn, [
+            'action' => 'create',
+            'entity_type' => 'internacao',
+            'entity_id' => (int)$lastId,
+            'summary' => 'Internação criada.',
+            'after' => $registroCriadoInternacao,
+            'context' => [
+                'type' => $type,
+                'fk_hospital_int' => $fk_hospital_int,
+                'fk_paciente_int' => $fk_paciente_int,
+            ],
+            'trace_id' => $flowCtx['trace_id'] ?? null,
+            'source' => 'process_internacao.php',
+        ], $BASE_URL);
         internacaoCreateDebugLog('END ok id=' . $lastId);
         echo "lancado internacao";
     }
@@ -1313,6 +1329,24 @@ if ($type == "update") {
     $internacao->hora_intern_int = $hora_intern_int;
     $internacao->id_internacao = $id_internacao;
     $internacaoDao->update($internacao);
+    $registroAtualizadoInternacao = $internacaoDao->findById((int)$id_internacao);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'internacao',
+        'entity_id' => (int)$id_internacao,
+        'summary' => 'Internação atualizada.',
+        'before' => $registroAtualInternacao,
+        'after' => $registroAtualizadoInternacao,
+        'context' => [
+            'type' => $type,
+            'select_uti' => $select_uti,
+            'select_prorrog' => $select_prorrog,
+            'select_negoc' => $select_negoc,
+            'select_tuss' => $select_tuss,
+        ],
+        'trace_id' => $flowCtx['trace_id'] ?? null,
+        'source' => 'process_internacao.php',
+    ], $BASE_URL);
     try {
         $cronicosAtualizados = cc_enqueue_chronic_candidates_from_text(
             $conn,

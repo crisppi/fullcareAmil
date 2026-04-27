@@ -145,6 +145,11 @@ require_once("templates/header.php");
                     Hospital</a>
             </li>
             <li>
+                <a href="list_audit_log.php" <?php if (!in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) && mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') !== 'crisppi@fullcare.com.br') { ?> style="pointer-events: none"
+                    ?<?php } ?>><i class="bi bi-journal-text"
+                        style="font-size: 1rem;margin-right:5px; color: rgb(120, 80, 35);"></i> Auditoria</a>
+            </li>
+            <li>
                 <a href="list_acomodacao.php" <?php if ($_SESSION['nivel'] < 4) { ?> style="pointer-events: none"
                     ?<?php } ?>><i class=" bi bi-clipboard-heart"
                         style="font-size: 1rem;margin-right:5px; color: rgb(145, 156, 55);"></i> Relação Acomodação</a>

@@ -2,6 +2,7 @@
 
 include_once("globals.php");
 require_once(__DIR__ . "/utils/flow_logger.php");
+require_once(__DIR__ . "/utils/audit_logger.php");
 require_once(__DIR__ . '/app/schemaEnsurer.php');
 
 ensure_user_login_security_columns($conn);
@@ -282,6 +283,20 @@ if (function_exists('flowLogStart') && function_exists('flowLog')) {
     flowLog($loginCtx, 'login.success', 'INFO', [
         'target' => str_replace($BASE_URL, '', $target),
     ]);
+    fullcareAuditLog($conn, [
+        'action' => 'login.success',
+        'entity_type' => 'login',
+        'entity_id' => (int)($_SESSION['id_usuario'] ?? 0),
+        'summary' => 'Login realizado com sucesso.',
+        'after' => $user,
+        'context' => [
+            'target' => str_replace($BASE_URL, '', $target),
+            'nivel' => (int)($_SESSION['nivel'] ?? 0),
+            'cargo' => (string)($_SESSION['cargo'] ?? ''),
+        ],
+        'trace_id' => $loginCtx['trace_id'] ?? null,
+        'source' => 'check_login.php',
+    ], $BASE_URL);
 }
 
 if (($user['senha_default_user'] ?? 'n') === 's') {

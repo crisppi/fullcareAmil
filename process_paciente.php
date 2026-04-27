@@ -29,6 +29,7 @@ require_once("models/paciente.php");
 require_once("models/message.php");
 require_once("dao/usuarioDao.php");
 require_once("dao/pacienteDao.php");
+require_once("utils/audit_logger.php");
 
 $message = new Message($BASE_URL); // <-- Objeto $message original (linha 11)
 $userDao = new UserDAO($conn, $BASE_URL);
@@ -236,6 +237,20 @@ if ($type === "create") {
         try {
             $pacienteDao->create($paciente);
             $novoId = (int)$conn->lastInsertId();
+            $pacienteCriado = $novoId > 0 ? $pacienteDao->findByIdSeg($novoId) : null;
+            fullcareAuditLog($conn, [
+                'action' => 'create',
+                'entity_type' => 'paciente',
+                'entity_id' => $novoId > 0 ? $novoId : null,
+                'summary' => 'Paciente criado.',
+                'after' => $pacienteCriado ?: $paciente,
+                'context' => [
+                    'fk_estipulante_pac' => $fk_estipulante_pac,
+                    'fk_seguradora_pac' => $fk_seguradora_pac,
+                ],
+                'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+                'source' => 'process_paciente.php',
+            ], $BASE_URL);
         } catch (Throwable $e) {
             error_log('[PACIENTE][CREATE][ERROR] ' . $e->getMessage());
             $_SESSION['msg'] = 'Não foi possível cadastrar o paciente: ' . $e->getMessage();
@@ -357,6 +372,7 @@ if ($type === "create") {
 
 
     $pacienteData = $pacienteDao->findByIdSeg($id_paciente);
+    $pacienteAntes = $pacienteData ? clone $pacienteData : null;
 
     $pacienteData->id_paciente = $id_paciente;
     $pacienteData->nome_pac = $nome_pac;
@@ -391,6 +407,21 @@ if ($type === "create") {
 
 
     $pacienteDao->update($pacienteData);
+    $pacienteDepois = $pacienteDao->findByIdSeg((int)$id_paciente);
+    fullcareAuditLog($conn, [
+        'action' => 'update',
+        'entity_type' => 'paciente',
+        'entity_id' => (int)$id_paciente,
+        'summary' => 'Paciente atualizado.',
+        'before' => $pacienteAntes,
+        'after' => $pacienteDepois,
+        'context' => [
+            'fk_estipulante_pac' => $fk_estipulante_pac,
+            'fk_seguradora_pac' => $fk_seguradora_pac,
+        ],
+        'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
+        'source' => 'process_paciente.php',
+    ], $BASE_URL);
 
     header("Location: " . $BASE_URL . "pacientes", true, 303);
     exit;
@@ -404,8 +435,16 @@ if ($type === "delete") {
     $paciente = $pacienteDao->findById($id_paciente);
 
     if ($paciente) {
-
+        $pacienteAntesDelete = $pacienteDao->findByIdSeg($id_paciente);
         $pacienteDao->destroy($id_paciente);
+        fullcareAuditLog($conn, [
+            'action' => 'delete',
+            'entity_type' => 'paciente',
+            'entity_id' => (int)$id_paciente,
+            'summary' => 'Paciente excluído.',
+            'before' => $pacienteAntesDelete,
+            'source' => 'process_paciente.php',
+        ], $BASE_URL);
 
         header("Location: " . $BASE_URL . "pacientes", true, 303);
         exit;
@@ -424,11 +463,22 @@ if ($type === "delUpdate") {
     $deletado_pac = 's';
 
     $pacienteData = $pacienteDao->findByIdSeg($id_paciente);
+    $pacienteAntesSoftDelete = $pacienteData ? clone $pacienteData : null;
 
     $pacienteData->id_paciente = $id_paciente;
     $pacienteData->deletado_pac = $deletado_pac;
 
     $pacienteDao->deletarUpdate($pacienteData);
+    $pacienteDepoisSoftDelete = $pacienteDao->findByIdSeg((int)$id_paciente);
+    fullcareAuditLog($conn, [
+        'action' => 'soft_delete',
+        'entity_type' => 'paciente',
+        'entity_id' => (int)$id_paciente,
+        'summary' => 'Paciente marcado como deletado.',
+        'before' => $pacienteAntesSoftDelete,
+        'after' => $pacienteDepoisSoftDelete,
+        'source' => 'process_paciente.php',
+    ], $BASE_URL);
 
     header("Location: " . $BASE_URL . "pacientes", true, 303);
     exit;
