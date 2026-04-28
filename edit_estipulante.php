@@ -208,10 +208,14 @@ if (empty($enderecosEstipulante) && !empty($estipulante->endereco_est)) {
     <div class="internacao-page__content">
 
     <form action="<?= $BASE_URL ?>process_estipulante.php" id="multi-step-form" method="POST"
-        enctype="multipart/form-data" class="needs-validation visible" novalidate>
+        enctype="multipart/form-data" class="needs-validation visible entity-form" novalidate>
         <div class="internacao-card internacao-card--general">
             <div class="internacao-card__header">
-                <div><p class="internacao-card__eyebrow">Dados do estipulante</p></div>
+                <div>
+                    <p class="internacao-card__eyebrow">Etapa 1</p>
+                    <h2 class="internacao-card__title">Dados do estipulante</h2>
+                </div>
+                <span class="internacao-card__tag internacao-card__tag--critical">Edição comercial</span>
             </div>
             <div class="internacao-card__body">
 
@@ -219,7 +223,15 @@ if (empty($enderecosEstipulante) && !empty($estipulante->endereco_est)) {
         <input type="hidden" name="id_estipulante" value="<?= $estipulante->id_estipulante ?>">
 
         <!-- Step 1: Informações Básicas -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação do estipulante</h3>
+                    <p class="entity-step-desc">Atualize os dados principais do estipulante mantendo a leitura consistente com o cadastro novo.</p>
+                </div>
+                <span class="entity-step-badge">Dados base</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cnpj_est">CNPJ</label>
@@ -236,8 +248,15 @@ if (empty($enderecosEstipulante) && !empty($estipulante->endereco_est)) {
         </div>
 
         <!-- Step 2: Endereço -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereço</h3>
+                    <p class="entity-step-desc">Revise o endereço principal e os complementares no mesmo padrão visual das demais entidades.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cep_est">CEP</label>
@@ -302,8 +321,15 @@ if (empty($enderecosEstipulante) && !empty($estipulante->endereco_est)) {
         </div>
 
         <!-- Step 3: Contato e Finalização -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato e anexos</h3>
+                    <p class="entity-step-desc">Consolide os contatos, responsáveis e arquivos antes de concluir a atualização.</p>
+                </div>
+                <span class="entity-step-badge">Fechamento</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_est">Email Principal</label>
@@ -388,14 +414,16 @@ if (empty($enderecosEstipulante) && !empty($estipulante->endereco_est)) {
                     <div class="notif-input oculto" id="notifImagem">Tamanho do arquivo inválido!</div>
                 </div>
             </div>
-            <hr>
-            <div class="d-flex align-items-center gap-2">
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Revise a rede de contatos antes de salvar. A exclusão permanece disponível nesta etapa final.</div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-check"></i> Atualizar
                 </button>
                 <button type="button" class="btn btn-danger" onclick="showConfirmDelete()">
                     Deletar <i class="fas fa-times"></i>
                 </button>
+                </div>
             </div>
         </div>
         <div class="modal fade confirm-delete-modal" id="modalConfirmDelete" tabindex="-1" aria-hidden="true" style="display:none;">

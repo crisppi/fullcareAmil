@@ -187,11 +187,15 @@ if (empty($enderecosSeguradora) && !empty($seguradora->endereco_seg)) {
         </div>
     </div>
     <div class="internacao-page__content">
-        <form class="container-fluid fundo_tela_cadastros" action="<?= $BASE_URL ?>process_seguradora.php"
+        <form class="container-fluid fundo_tela_cadastros visible entity-form" action="<?= $BASE_URL ?>process_seguradora.php"
             id="multi-step-form" method="POST" enctype="multipart/form-data">
             <div class="internacao-card internacao-card--general">
                 <div class="internacao-card__header">
-                    <div><p class="internacao-card__eyebrow">Dados da seguradora</p></div>
+                    <div>
+                        <p class="internacao-card__eyebrow">Etapa 1</p>
+                        <h2 class="internacao-card__title">Dados da seguradora</h2>
+                    </div>
+                    <span class="internacao-card__tag internacao-card__tag--critical">Edição contratual</span>
                 </div>
                 <div class="internacao-card__body">
             <input type="hidden" name="type" value="update">
@@ -199,7 +203,15 @@ if (empty($enderecosSeguradora) && !empty($seguradora->endereco_seg)) {
                 value="<?= $seguradora->id_seguradora ?>">
             <input type="hidden" name="deletado_seg" value="n">
             <!-- Step 1: Informações da Seguradora -->
-            <div id="step-1" class="step">
+            <div id="step-1" class="step entity-step-card">
+                <div class="entity-step-header">
+                    <div class="entity-step-copy">
+                        <div class="entity-step-kicker">Passo 1</div>
+                        <h3 class="entity-step-title">Identificação da seguradora</h3>
+                        <p class="entity-step-desc">Ajuste os dados de referência da operadora antes de revisar endereço, contatos e parâmetros.</p>
+                    </div>
+                    <span class="entity-step-badge">Dados base</span>
+                </div>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="seguradora_seg"><span style="color:red;">*</span> Seguradora</label>
@@ -217,8 +229,15 @@ if (empty($enderecosSeguradora) && !empty($seguradora->endereco_seg)) {
             </div>
 
             <!-- Step 2: Endereço -->
-            <div id="step-2" class="step">
-                <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+            <div id="step-2" class="step entity-step-card">
+                <div class="entity-step-header">
+                    <div class="entity-step-copy">
+                        <div class="entity-step-kicker">Passo 2</div>
+                        <h3 class="entity-step-title">Endereços</h3>
+                        <p class="entity-step-desc">Reorganize o endereço principal e os complementares com a mesma hierarquia usada no cadastro.</p>
+                    </div>
+                    <span class="entity-step-badge">Localização</span>
+                </div>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="cep_seg">CEP</label>
@@ -288,8 +307,15 @@ if (empty($enderecosSeguradora) && !empty($seguradora->endereco_seg)) {
             </div>
 
             <!-- Step 3: Contato e Informações Complementares -->
-            <div id="step-3" class="step">
-                <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+            <div id="step-3" class="step entity-step-card">
+                <div class="entity-step-header">
+                    <div class="entity-step-copy">
+                        <div class="entity-step-kicker">Passo 3</div>
+                        <h3 class="entity-step-title">Contato e operação</h3>
+                        <p class="entity-step-desc">Atualize responsáveis, contatos adicionais, regras operacionais e anexos da seguradora.</p>
+                    </div>
+                    <span class="entity-step-badge">Fechamento</span>
+                </div>
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label for="email01_seg">Email Principal</label>
@@ -421,14 +447,16 @@ if (empty($enderecosSeguradora) && !empty($seguradora->endereco_seg)) {
                     </div>
                     <?php endif; ?>
                 </div>
-                <hr>
-                <div class="d-flex align-items-center gap-2">
+                <div class="entity-actions-bar">
+                    <div class="entity-actions-copy">Revise contatos, logo e parâmetros operacionais antes de salvar ou excluir este registro.</div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check"></i> Atualizar
                     </button>
                     <button type="button" class="btn btn-danger" onclick="showConfirmDelete()">
                         Deletar <i class="fas fa-times"></i>
                     </button>
+                    </div>
                 </div>
             </div>
             <div class="modal fade confirm-delete-modal" id="modalConfirmDelete" tabindex="-1" aria-hidden="true" style="display:none;">

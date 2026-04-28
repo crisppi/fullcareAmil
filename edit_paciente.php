@@ -202,10 +202,14 @@ $telefone02_pac = !empty($paciente['0']['telefone02_pac']) ? formatPhone($pacien
     <div class="internacao-page__content">
 
     <form action="<?= $BASE_URL ?>process_paciente.php" id="multi-step-form" method="POST" enctype="multipart/form-data"
-        class="needs-validation visible">
+        class="needs-validation visible entity-form">
         <div class="internacao-card internacao-card--general">
             <div class="internacao-card__header">
-                <div><p class="internacao-card__eyebrow">Dados do paciente</p></div>
+                <div>
+                    <p class="internacao-card__eyebrow">Etapa 1</p>
+                    <h2 class="internacao-card__title">Dados do paciente</h2>
+                </div>
+                <span class="internacao-card__tag internacao-card__tag--critical">Edição cadastral</span>
             </div>
             <div class="internacao-card__body">
 
@@ -213,7 +217,15 @@ $telefone02_pac = !empty($paciente['0']['telefone02_pac']) ? formatPhone($pacien
         <input type="hidden" name="id_paciente" value="<?= $paciente['0']['id_paciente'] ?>">
 
         <!-- Step 1: Informações Pessoais -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação</h3>
+                    <p class="entity-step-desc">Atualize os dados principais do paciente, incluindo vínculo com seguradora e estipulante.</p>
+                </div>
+                <span class="entity-step-badge">Dados essenciais</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-4 mb-3">
                     <label for="cpf_pac">CPF</label>
@@ -364,8 +376,15 @@ $telefone02_pac = !empty($paciente['0']['telefone02_pac']) ? formatPhone($pacien
         </div>
 
         <!-- Step 2: Informações de Endereço -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereço</h3>
+                    <p class="entity-step-desc">Revisite CEP, endereço e complemento mantendo o padrão da ficha cadastral principal.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-3 mb-3">
                     <label for="cep_pac">CEP</label>
@@ -421,8 +440,15 @@ $telefone02_pac = !empty($paciente['0']['telefone02_pac']) ? formatPhone($pacien
         </div>
 
         <!-- Step 3: Informações de Contato -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato</h3>
+                    <p class="entity-step-desc">Finalize com emails, telefones e ações de manutenção do registro.</p>
+                </div>
+                <span class="entity-step-badge">Fechamento</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_pac">Email Principal</label>
@@ -456,14 +482,16 @@ $telefone02_pac = !empty($paciente['0']['telefone02_pac']) ? formatPhone($pacien
 
 
 
-            <hr>
-            <div class="d-flex align-items-center gap-2">
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Confirme os dados antes de atualizar. A exclusão continua disponível nesta mesma etapa.</div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-check"></i> Atualizar
                 </button>
                 <button type="button" class="btn btn-danger" onclick="showConfirmDelete()">
                     Deletar <i class="fas fa-times"></i>
                 </button>
+                </div>
             </div>
         </div>
 

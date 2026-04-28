@@ -266,12 +266,14 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
     </div>
     <div class="internacao-page__content">
     <form action="<?= $BASE_URL ?>process_hospital.php" id="multi-step-form" method="POST"
-        enctype="multipart/form-data" class="visible">
+        enctype="multipart/form-data" class="visible entity-form">
         <div class="internacao-card internacao-card--general">
             <div class="internacao-card__header">
                 <div>
-                    <p class="internacao-card__eyebrow">Dados do hospital</p>
+                    <p class="internacao-card__eyebrow">Etapa 1</p>
+                    <h2 class="internacao-card__title">Dados do hospital</h2>
                 </div>
+                <span class="internacao-card__tag internacao-card__tag--critical">Edição institucional</span>
             </div>
             <div class="internacao-card__body">
         <input type="hidden" name="type" value="update">
@@ -279,7 +281,15 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
             name="id_hospital">
 
         <!-- Step 1: Informações Básicas -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação do hospital</h3>
+                    <p class="entity-step-desc">Ajuste nome e CNPJ sem perder o padrão visual adotado no cadastro.</p>
+                </div>
+                <span class="entity-step-badge">Dados base</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cnpj_hosp">CNPJ</label>
@@ -297,8 +307,15 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
             <hr>
         </div>
         <!-- Step 2: Endereço e Localização -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereços</h3>
+                    <p class="entity-step-desc">Mantenha endereço principal e complementares organizados no mesmo bloco visual.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-4 mb-3">
                     <label for="cep_hosp">CEP</label>
@@ -441,8 +458,15 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
         </div>
 
         <!-- Step 3: Contato -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato operacional</h3>
+                    <p class="entity-step-desc">Reorganize os canais de contato, times e marcadores de atividade do hospital.</p>
+                </div>
+                <span class="entity-step-badge">Comunicação</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_hosp">Email Principal</label>
@@ -652,8 +676,15 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
         </div>
 
         <!-- Step 4: Coordenadas e Responsáveis -->
-        <div id="step-4" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados complementares</p>
+        <div id="step-4" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 4</div>
+                    <h3 class="entity-step-title">Dados complementares</h3>
+                    <p class="entity-step-desc">Centralize responsáveis, coordenadas e acomodações em uma etapa final mais consistente.</p>
+                </div>
+                <span class="entity-step-badge">Estrutura</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="coordenador_medico_hosp">Coordenador Médico</label>
@@ -756,14 +787,16 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
                 <div id="acomodacoesDeleteContainerEdit"></div>
             </div>
 
-            <hr>
-            <div class="d-flex align-items-center gap-2" style="margin: 15px 0">
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Revise acomodações e contatos antes de salvar. A ação de exclusão continua disponível na tela.</div>
+                <div class="d-flex align-items-center gap-2 flex-wrap" style="margin: 0">
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-check"></i> Atualizar
                 </button>
                 <button type="button" class="btn btn-danger" onclick="showConfirmDelete()">
                     Deletar <i class="fas fa-times"></i>
                 </button>
+                </div>
             </div>
         </div>
         <div class="modal fade confirm-delete-modal" id="modalConfirmDelete" tabindex="-1" aria-hidden="true" style="display:none;">
