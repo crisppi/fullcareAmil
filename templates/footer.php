@@ -38,25 +38,36 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 </footer>
 
 <style>
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 88px;
+}
+
 #myFooterSimple {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
     width: 100%;
-    margin-top: 20px;
-    background: linear-gradient(90deg, #2f1640 0%, #5e2363 52%, #2e92be 100%);
-    box-shadow: 0 -6px 18px rgba(26, 9, 39, 0.18);
+    background: linear-gradient(90deg, #f2ecfb 0%, #ebe5f7 52%, #e8f1fb 100%);
+    box-shadow: 0 -8px 22px rgba(95, 69, 148, 0.08);
 }
 
 #myFooterSimple .footer-simple-inner {
     position: relative;
 }
 
-#myFooterSimple .footer-simple-topline {
-    height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08));
-}
-
 #myFooterSimple .footer-simple-main {
-    min-height: 54px;
-    padding: 8px 14px;
+    min-height: 52px;
+    padding: 8px 18px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -76,7 +87,7 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 }
 
 #myFooterSimple .footer-simple-brand-text {
-    color: rgba(244, 238, 255, 0.92);
+    color: #6a5b84;
     font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -91,7 +102,7 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 }
 
 #myFooterSimple .footer-simple-links a {
-    color: rgba(246, 242, 255, 0.94);
+    color: #6a587f;
     text-decoration: none;
     font-size: 0.72rem;
     font-weight: 600;
@@ -99,9 +110,9 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 }
 
 #myFooterSimple .footer-simple-links a:hover {
-    color: #ffffff;
+    color: #4f3674;
     text-decoration: underline;
-    text-decoration-color: rgba(255, 255, 255, 0.55);
+    text-decoration-color: rgba(79, 54, 116, 0.32);
 }
 
 #myFooterSimple .footer-simple-meta {
@@ -113,7 +124,7 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 
 #myFooterSimple .footer-simple-copy,
 #myFooterSimple .footer-simple-version {
-    color: rgba(246, 242, 255, 0.95);
+    color: #746489;
     font-size: 0.66rem;
     font-weight: 600;
     letter-spacing: 0.03em;
@@ -121,6 +132,10 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 }
 
 @media (max-width: 920px) {
+    body {
+        padding-bottom: 104px;
+    }
+
     #myFooterSimple .footer-simple-main {
         flex-wrap: wrap;
         justify-content: center;
@@ -133,9 +148,13 @@ $canSeeBiLink = function_exists('fullcare_has_bi_access') ? fullcare_has_bi_acce
 }
 
 @media (max-width: 640px) {
+    body {
+        padding-bottom: 112px;
+    }
+
     #myFooterSimple .footer-simple-main {
-        min-height: 64px;
-        padding: 9px 10px;
+        min-height: 58px;
+        padding: 8px 10px;
         gap: 8px;
     }
 
