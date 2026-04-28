@@ -663,3 +663,24 @@
 [2026-04-26 01:47:25] PRORROG update ok id_int=730 id_pror=320
 [2026-04-26 01:47:26] PRORROG alta inline ok id_int=730
 [2026-04-26 01:47:26] COMMIT ok id_int=730
+[2026-04-28 23:22:05] START id_int=815 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-28 23:22:05] GESTAO skip id_int=815 select_gestao=n evento=n
+[2026-04-28 23:22:05] NEGOC fallback post rows=1 id_int=815
+[2026-04-28 23:22:05] PRORROG input id_int=815 rows=2
+[2026-04-28 23:22:05] PRORROG update ok id_int=815 id_pror=434
+[2026-04-28 23:22:05] PRORROG update ok id_int=815 id_pror=435
+[2026-04-28 23:22:05] COMMIT ok id_int=815
+[2026-04-28 23:24:18] START id_int=830 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-28 23:24:18] GESTAO skip id_int=830 select_gestao=n evento=n
+[2026-04-28 23:24:18] NEGOC fallback post rows=1 id_int=830
+[2026-04-28 23:24:18] PRORROG input id_int=830 rows=1
+[2026-04-28 23:24:18] PRORROG update ok id_int=830 id_pror=427
+[2026-04-28 23:24:18] PRORROG alta inline ok id_int=830
+[2026-04-28 23:24:18] COMMIT ok id_int=830
+[2026-04-28 23:28:57] START id_int=822 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-04-28 23:28:57] GESTAO skip id_int=822 select_gestao=n evento=n
+[2026-04-28 23:28:57] NEGOC fallback post rows=1 id_int=822
+[2026-04-28 23:28:58] PRORROG input id_int=822 rows=2
+[2026-04-28 23:28:58] PRORROG update ok id_int=822 id_pror=439
+[2026-04-28 23:28:58] PRORROG update ok id_int=822 id_pror=440
+[2026-04-28 23:28:58] COMMIT ok id_int=822
