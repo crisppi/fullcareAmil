@@ -285,18 +285,26 @@ try {
 .internacao-list-hero__actions {
     display: flex;
     align-items: center;
+    align-self: flex-end;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
+    padding-bottom: 4px;
 }
 
 .btn-list-top {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 44px;
     border: none;
     border-radius: 14px;
     padding: 0 18px;
     font-weight: 700;
     box-shadow: 0 12px 22px rgba(46, 27, 78, 0.12);
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .btn-list-top.btn-export {
@@ -692,6 +700,8 @@ try {
     .internacao-list-hero__actions {
         width: 100%;
         justify-content: flex-start;
+        align-self: auto;
+        padding-bottom: 0;
     }
 }
 </style>
