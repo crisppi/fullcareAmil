@@ -232,6 +232,94 @@ try {
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <style>
+.internacao-list-page {
+    padding: 8px 6px 20px;
+}
+
+.internacao-list-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 14px;
+}
+
+.internacao-list-hero__copy {
+    min-width: 0;
+}
+
+.internacao-list-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: #7b5a9a;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.internacao-list-kicker::before {
+    content: "";
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+}
+
+.internacao-list-title {
+    margin: 0;
+    color: #2d203d;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.internacao-list-subtitle {
+    margin: 6px 0 0;
+    color: #7b7b8d;
+    font-size: .95rem;
+}
+
+.internacao-list-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.btn-list-top {
+    min-height: 44px;
+    border: none;
+    border-radius: 14px;
+    padding: 0 18px;
+    font-weight: 700;
+    box-shadow: 0 12px 22px rgba(46, 27, 78, 0.12);
+}
+
+.btn-list-top.btn-export {
+    background: linear-gradient(135deg, #3d915b 0%, #58ab74 100%);
+}
+
+.btn-list-top.btn-new {
+    background: linear-gradient(135deg, #35bae1 0%, #5dc8ea 100%);
+}
+
+.complete-table {
+    border-radius: 22px;
+    border: 1px solid rgba(94, 35, 99, 0.10);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,244,253,0.96) 100%);
+    box-shadow: 0 16px 34px rgba(45, 18, 70, 0.08);
+    padding: 14px 14px 10px;
+    overflow: hidden;
+}
+
+.table-filters {
+    padding: 0;
+}
+
 /* Chips roxos para seleção de campos (modal export) */
 /* Pills lilás maiores, com ícones brancos */
 .export-pill {
@@ -323,18 +411,21 @@ try {
 }
 
 .filter-intel-wrapper {
-    border: 1px solid #ebe2f3;
-    border-radius: 14px;
-    padding: 12px 16px;
-    margin-bottom: 12px;
-    background: #fdfbff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid #e7dcf1;
+    border-radius: 20px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background:
+        radial-gradient(circle at top right, rgba(83, 196, 226, 0.10), transparent 26%),
+        linear-gradient(180deg, #fefcff 0%, #f8f3fd 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
 .filter-intel-wrapper h6 {
     font-weight: 800;
     color: #5e2363;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    font-size: 1rem;
 }
 
 .filter-intel-wrapper small {
@@ -365,6 +456,17 @@ try {
     gap: 6px;
 }
 
+.filter-intel-grid .input-group .form-control,
+.filter-intel-grid .input-group .btn {
+    min-height: 42px;
+    border-radius: 12px !important;
+}
+
+.filter-intel-grid .input-group .btn {
+    padding-inline: 16px;
+    font-weight: 700;
+}
+
 .smart-search-feedback {
     display: none;
     margin-top: 6px;
@@ -385,8 +487,8 @@ try {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin: 0 0 10px 16px;
-    padding: 6px 12px;
+    margin: 0 0 12px;
+    padding: 8px 14px;
     border-radius: 999px;
     font-size: 0.82rem;
     font-weight: 700;
@@ -436,7 +538,12 @@ try {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid #ece4f4;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
 
 .filter-inline-row > .filter-inline-field {
@@ -469,6 +576,22 @@ try {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+}
+
+.filter-inline-row .form-control,
+.filter-inline-row .form-control-sm,
+.filter-inline-row .btn {
+    min-height: 42px;
+    border-radius: 12px;
+}
+
+.filter-inline-row .form-control,
+.filter-inline-row .form-control-sm {
+    border-color: #ddd6e7;
+}
+
+.btn-filtro-buscar {
+    box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
 }
 
 @media (max-width: 1199.98px) {
@@ -512,6 +635,65 @@ try {
     font-size: .78rem;
     color: #a690b3;
 }
+
+#table-content {
+    margin-top: 12px !important;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #ebe3f3;
+    background: #fff;
+}
+
+#table-content .table {
+    margin-bottom: 0;
+}
+
+#table-content thead th {
+    padding-top: 14px;
+    padding-bottom: 14px;
+    background: linear-gradient(90deg, #5e2363 0%, #69407f 100%);
+    border-bottom: none;
+    color: #fff;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+#table-content tbody td {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    vertical-align: middle;
+    border-top: 1px solid #f1ebf7;
+}
+
+#table-content tbody tr:nth-child(even) {
+    background: #fbf8fe;
+}
+
+#table-content tbody tr:hover {
+    background: #f3ecfb !important;
+}
+
+.fc-list-action .dropdown-toggle {
+    border: 1px solid #dccceb;
+    border-radius: 12px;
+    min-width: 42px;
+    min-height: 38px;
+    background: #fff;
+}
+
+@media (max-width: 991.98px) {
+    .internacao-list-hero {
+        flex-direction: column;
+    }
+
+    .internacao-list-hero__actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -532,12 +714,14 @@ if (typeof jQuery !== 'undefined') {
 <!-- <script src="js/ajaxNav.js"></script> -->
 
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid" id='main-container'>
+<div class="container-fluid internacao-list-page" id='main-container'>
 
-    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
-        <h4 class="page-title" style="color: #3A3A3A;">
-            <?= $onlySemSenha ? 'Internações com senha pendente' : 'Listagem - Internação' ?>
-        </h4>
+    <div class="internacao-list-hero">
+        <div class="internacao-list-hero__copy">
+            <div class="internacao-list-kicker">Internações</div>
+            <h1 class="internacao-list-title"><?= $onlySemSenha ? 'Internações com senha pendente' : 'Listagem de internações' ?></h1>
+            <p class="internacao-list-subtitle">Filtre por hospital, paciente, seguradora, datas e atalhos de memória sem perder contexto da operação.</p>
+        </div>
 
         <?php
         // valores default para montagem de URL / filtros
@@ -551,22 +735,19 @@ if (typeof jQuery !== 'undefined') {
         $pesquisa_seguradora = $pesquisa_seguradora ?? '';
         ?>
 
-        <div class="d-flex">
+        <div class="internacao-list-hero__actions">
             <!-- Botão de Exportar para Excel (abre modal) -->
-            <a href="#" id="btn-exportar-excel" class="btn btn-success" style="border-radius:10px; margin-right: 10px;">
+            <a href="#" id="btn-exportar-excel" class="btn btn-success btn-list-top btn-export">
                 Exportar para Excel
             </a>
 
             <!-- Botão de Nova Internação -->
-            <a class="btn btn-success" href="<?= $BASE_URL ?>internacoes/nova"
-                style="border-radius:10px;background-color:#35bae1;font-family:var(--bs-font-sans-serif);box-shadow:0px 10px 15px -3px rgba(0,0,0,0.1);border:none">
+            <a class="btn btn-success btn-list-top btn-new" href="<?= $BASE_URL ?>internacoes/nova">
                 <i class="fas fa-plus" style="font-size:1rem;margin-right:5px;"></i>
                 Nova Internação
             </a>
         </div>
     </div>
-
-    <hr style="margin-top: 1px; margin-bottom: 10px;">
 
     <div class="complete-table">
         <?php if ($isGestorSeguradora): ?>
