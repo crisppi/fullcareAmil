@@ -54,122 +54,7 @@ $data_intern_int = filter_input(INPUT_GET, 'data_intern_int') ?: null;
 $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 
 ?>
-<!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid" id="main-container" style="margin-top:-5px">
-    <h4 class="page-title"> Capeantes - Senhas Finalizadas</h4>
-    <hr>
-    <div id="navbarToggleExternalContent">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <script src="./js/ajaxNav.js"></script>
-        <script src="js/scriptPdf.js" defer> </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
-            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <form action="" id="select-internacao-form" method="GET">
-
-            <div class="row">
-                <div class="form-group col-sm-3">
-                    <input class="form-control form-control-sm" style="margin-top:7px;font-size:.8em; color:#878787"
-                        type="text" name="pesquisa_nome" placeholder="Selecione o Hospital"
-                        value="<?= $pesquisa_nome ?>">
-                </div>
-                <div class="form-group col-sm-3">
-                    <input class="form-control form-control-sm" style="margin-top:7px;font-size:.8em; color:#878787"
-                        type="text" name="pesquisa_pac" placeholder="Selecione o Paciente" value="<?= $pesquisa_pac ?>">
-                </div>
-                <div class="form-group col-sm-2">
-                    <input class="form-control form-control-sm" style="margin-top:7px; font-size:.8em; color:#878787"
-                        type="text" name="senha_int" placeholder="Digite a Senha" value="<?= $pesquisa_pac ?>">
-                </div>
-                <div class="form-group col-sm-1" style="padding:2px !important">
-                    <input class="form-control form-control-sm" style="margin-top:7px; font-size:.8em; color:#878787"
-                        type="text" name="lote" placeholder="Digite o lote" value="<?= $lote ?>">
-                </div>
-                <div class="col-sm-1" style="padding:2px !important">
-                    <select class="form-control mb-3 form-control-sm" style="margin-top:7px;" id="limite" name="limite">
-                        <option value="">Reg por página</option>
-                        <option value="5" <?= $limite == '5' ? 'selected' : null ?>>Reg por pág = 5
-                        </option>
-                        <option value="10" <?= $limite == '10' ? 'selected' : null ?>>Reg por pág = 10
-                        </option>
-                        <option value="20" <?= $limite == '20' ? 'selected' : null ?>>Reg por pág = 20
-                        </option>
-                        <option value="50" <?= $limite == '50' ? 'selected' : null ?>>Reg por pág = 50
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group col-sm-2">
-                    <select class="form-control mb-3 form-control-sm"
-                        style="margin-top:7px;font-size:.8em; color:#878787" id="ordenar" name="ordenar">
-                        <option value="">Classificar por</option>
-                        <option value="id_internacao" <?= $ordenar == 'id_internacao' ? 'selected' : null ?>>Internação
-                        </option>
-                        <option value="nome_pac" <?= $ordenar == 'nome_pac' ? 'selected' : null ?>>Paciente</option>
-                        <option value="nome_hosp" <?= $ordenar == 'nome_hosp' ? 'selected' : null ?>>Hospital</option>
-                        <option value="data_intern_int" <?= $ordenar == 'data_intern_int' ? 'selected' : null ?>>Data
-                            Internação</option>
-                    </select>
-                </div>
-            </div>
-            <div style="margin-top:-24px; margin-bottom:14px;" class="form-group row">
-                <div class="form-group col-sm-1">
-                    <select class="form-control mb-3 form-control-sm"
-                        style="margin-top:7px;font-size:.8em; color:#878787" id="med_check" name="med_check">
-                        <option value="">Médico</option>
-                        <option value="s" <?= $med_check == 's' ? 'selected' : null ?>>Sim</option>
-                        <option value="n" <?= $med_check == 'n' ? 'selected' : null ?>>Não</option>
-                        <!-- <option value="" <?= ($med_check != 's' and $med_check != 'n') ? 'selected' : null ?>>Todos
-                        </option> -->
-                    </select>
-                </div>
-                <div class="form-group col-sm-1">
-                    <select class="form-control mb-3 form-control-sm"
-                        style="margin-top:7px;font-size:.8em; color:#878787" id="enf_check" name="enf_check">
-                        <option value="">Enferm</option>
-                        <option value="s" <?= $enf_check == 's' ? 'selected' : null ?>>Sim</option>
-                        <option value="n" <?= $enf_check == 'n' ? 'selected' : null ?>>Não</option>
-                        <!-- <option value="" <?= ($enf_check != 's' and $enf_check != 'n') ? 'selected' : null ?>>Todos
-                        </option> -->
-                    </select>
-                </div>
-                <div class="form-group col-sm-1">
-                    <select class="form-control mb-3 form-control-sm"
-                        style="margin-top:7px;font-size:.8em; color:#878787" id="adm_check" name="adm_check">
-                        <option value="">Adm</option>
-                        <option value="s" <?= $adm_check == 's' ? 'selected' : null ?>>Sim</option>
-                        <option value="n" <?= $adm_check == 'n' ? 'selected' : null ?>>Não</option>
-                        <!-- <option value="" <?= ($adm_check != 's' and $adm_check != 'n') ? 'selected' : null ?>>Todos -->
-                        </option>
-                    </select>
-                </div>
-                <div class="form-group col-sm-2">
-                    <input class="form-control form-control-sm" type="date"
-                        style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int"
-                        placeholder="Data Internação Min" value="<?= $data_intern_int ?>">
-                </div>
-                <div class="form-group col-sm-2">
-                    <input class="form-control form-control-sm" type="date"
-                        style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int_max"
-                        placeholder="Data Internação Max" value="<?= $data_intern_int_max ?>">
-                </div>
-                <div class="form-group col-sm-1 d-flex align-items-start gap-2">
-                    <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                        style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363"><span
-                            class="material-icons" style="margin-left:-3px;margin-top:-2px;">
-                            search
-                        </span></button>
-                    <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_internacao_senha_fin.php', ENT_QUOTES, 'UTF-8') ?>"
-                        class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
-                        style="margin-top:7px;" title="Limpar filtros" aria-label="Limpar filtros">
-                        <i class="bi bi-x-lg"></i>
-                    </a>
-                </div>
-        </form>
-    </div>
-</div>
-<!-- BASE DAS PESQUISAS -->
 <?php
-
 // validacao de lista de hospital por usuario (o nivel sera o filtro)
 if ($_SESSION['nivel'] == 3 or $_SESSION['nivel'] == 1) {
     $auditor = ($_SESSION['id_usuario']);
@@ -197,6 +82,124 @@ if (empty($data_intern_int_max)) {
 }
 // $buscaAtivo = in_array($buscaAtivo, ['s', 'n']) ?: "";
 
+?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<!-- FORMULARIO DE PESQUISAS -->
+<div class="container-fluid listagem-page" id="main-container">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Contas finalizadas</div>
+            <h1 class="listagem-title">Capeantes com senha finalizada</h1>
+            <p class="listagem-subtitle">Filtre contas concluídas com mais clareza para revisão, impressão e acompanhamento final.</p>
+        </div>
+    </div>
+    <div class="complete-table listagem-panel">
+        <div id="navbarToggleExternalContent" class="table-filters">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <script src="./js/ajaxNav.js"></script>
+            <script src="js/scriptPdf.js" defer> </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+                integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <form action="" id="select-internacao-form" method="GET">
+
+                <div class="row filter-inline-row">
+                    <div class="form-group col-sm-3">
+                        <input class="form-control form-control-sm" style="margin-top:7px;font-size:.8em; color:#878787"
+                            type="text" name="pesquisa_nome" placeholder="Selecione o Hospital"
+                            value="<?= $pesquisa_nome ?>">
+                    </div>
+                    <div class="form-group col-sm-3">
+                        <input class="form-control form-control-sm" style="margin-top:7px;font-size:.8em; color:#878787"
+                            type="text" name="pesquisa_pac" placeholder="Selecione o Paciente" value="<?= $pesquisa_pac ?>">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" style="margin-top:7px; font-size:.8em; color:#878787"
+                            type="text" name="senha_int" placeholder="Digite a Senha" value="<?= $pesquisa_pac ?>">
+                    </div>
+                    <div class="form-group col-sm-1" style="padding:2px !important">
+                        <input class="form-control form-control-sm" style="margin-top:7px; font-size:.8em; color:#878787"
+                            type="text" name="lote" placeholder="Digite o lote" value="<?= $lote ?>">
+                    </div>
+                    <div class="col-sm-1" style="padding:2px !important">
+                        <select class="form-control mb-3 form-control-sm" style="margin-top:7px;" id="limite" name="limite">
+                            <option value="">Reg por página</option>
+                            <option value="5" <?= $limite == '5' ? 'selected' : null ?>>Reg por pág = 5
+                            </option>
+                            <option value="10" <?= $limite == '10' ? 'selected' : null ?>>Reg por pág = 10
+                            </option>
+                            <option value="20" <?= $limite == '20' ? 'selected' : null ?>>Reg por pág = 20
+                            </option>
+                            <option value="50" <?= $limite == '50' ? 'selected' : null ?>>Reg por pág = 50
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <select class="form-control mb-3 form-control-sm"
+                            style="margin-top:7px;font-size:.8em; color:#878787" id="ordenar" name="ordenar">
+                            <option value="">Classificar por</option>
+                            <option value="id_internacao" <?= $ordenar == 'id_internacao' ? 'selected' : null ?>>Internação
+                            </option>
+                            <option value="nome_pac" <?= $ordenar == 'nome_pac' ? 'selected' : null ?>>Paciente</option>
+                            <option value="nome_hosp" <?= $ordenar == 'nome_hosp' ? 'selected' : null ?>>Hospital</option>
+                            <option value="data_intern_int" <?= $ordenar == 'data_intern_int' ? 'selected' : null ?>>Data
+                                Internação</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top:10px; margin-bottom:14px;" class="form-group row filter-inline-row">
+                    <div class="form-group col-sm-1">
+                        <select class="form-control mb-3 form-control-sm"
+                            style="margin-top:7px;font-size:.8em; color:#878787" id="med_check" name="med_check">
+                            <option value="">Médico</option>
+                            <option value="s" <?= $med_check == 's' ? 'selected' : null ?>>Sim</option>
+                            <option value="n" <?= $med_check == 'n' ? 'selected' : null ?>>Não</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <select class="form-control mb-3 form-control-sm"
+                            style="margin-top:7px;font-size:.8em; color:#878787" id="enf_check" name="enf_check">
+                            <option value="">Enferm</option>
+                            <option value="s" <?= $enf_check == 's' ? 'selected' : null ?>>Sim</option>
+                            <option value="n" <?= $enf_check == 'n' ? 'selected' : null ?>>Não</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-1">
+                        <select class="form-control mb-3 form-control-sm"
+                            style="margin-top:7px;font-size:.8em; color:#878787" id="adm_check" name="adm_check">
+                            <option value="">Adm</option>
+                            <option value="s" <?= $adm_check == 's' ? 'selected' : null ?>>Sim</option>
+                            <option value="n" <?= $adm_check == 'n' ? 'selected' : null ?>>Não</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="date"
+                            style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int"
+                            placeholder="Data Internação Min" value="<?= $data_intern_int ?>">
+                    </div>
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="date"
+                            style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int_max"
+                            placeholder="Data Internação Max" value="<?= $data_intern_int_max ?>">
+                    </div>
+                    <div class="form-group col-sm-1 d-flex align-items-start gap-2">
+                        <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
+                            style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363"><span
+                                class="material-icons" style="margin-left:-3px;margin-top:-2px;">
+                                search
+                            </span></button>
+                        <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_internacao_senha_fin.php', ENT_QUOTES, 'UTF-8') ?>"
+                            class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
+                            style="margin-top:7px;" title="Limpar filtros" aria-label="Limpar filtros">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+            </form>
+        </div>
+    </div>
+<!-- BASE DAS PESQUISAS -->
+<?php
+// legacy block removed below
 $condicoes = [
     strlen($pesquisa_nome) ? 'ho.nome_hosp LIKE "%' . $pesquisa_nome . '%"' : NULL,
     strlen($pesquisa_pac) ? 'pa.nome_pac LIKE "%' . $pesquisa_pac . '%"' : NULL,

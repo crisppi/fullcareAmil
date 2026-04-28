@@ -98,24 +98,21 @@ $where = $order = $obLimite = null;
 $user = $_SESSION['id_usuario'];
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid form_container" style="margin-top:12px;">
-    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
-        <h4 class="page-title" style="color: #3A3A3A;">Listagem - Internação</h4>
-        <div>
-            <a class="btn btn-success"
-                style="border-radius:10px;background-color: #35bae1;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);border:none"
-                href="censo/novo"><i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo
-                lançamento</a>
-
-            <a onclick="sendIdListToPHP()" id="submitInter" class="btn btn-success"
-                style="border-radius:10px;color:white;margin-left:10px;background-color: #5e2363;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);border:none"><i
-                    class="fa-solid fa-check" style='font-size: 1rem;margin-right:5px;'></i>Internar
-                selecionados</a>
+<div class="container-fluid form_container listagem-page" id="main-container">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Censo</div>
+            <h1 class="listagem-title">Listagem de censo</h1>
+            <p class="listagem-subtitle">Acompanhe lançamentos e mova pacientes do censo para internação com menos ruído visual.</p>
+        </div>
+        <div class="listagem-hero__actions">
+            <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo lançamento</a>
+            <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="fa-solid fa-check" style='font-size: 1rem;margin-right:5px;'></i>Internar selecionados</a>
         </div>
     </div>
-    <hr style="margin-top: 1px; margin-bottom: 10px;">
-    <div class="complete-table">
+    <div class="complete-table listagem-panel">
         <div id="navbarToggleExternalContent" class="table-filters">
             <div class="row">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -126,7 +123,7 @@ $user = $_SESSION['id_usuario'];
                     $pesquisa_pac = (string)listaCensoGetParam('pesquisa_pac', '');
                     $ordenar = (string)listaCensoGetParam('ordenar', '');
                     ?>
-                    <div class="row">
+                    <div class="row filter-inline-row">
                         <div class="form-group col-sm-2" style="padding:2px !important;padding-left:16px !important;">
                             <!-- <label>Pesquisa por Hospital</label> -->
                             <input class="form-control form-control-sm" type="text"
@@ -291,7 +288,7 @@ $user = $_SESSION['id_usuario'];
 
         <!-- TABELA DE REGISTROS -->
         <div>
-            <div style="margin-top:-10px" id="table-content">
+            <div style="margin-top:-10px" id="table-content" class="listagem-table-wrap">
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>

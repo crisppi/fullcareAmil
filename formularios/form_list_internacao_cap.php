@@ -317,21 +317,25 @@ if ($havePages) {
     $current_block = reset($block_pages)["bloco"] ?? 1;
 }
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid form_container" id='main-container' style="margin-top:5px;">
+<div class="container-fluid form_container listagem-page" id='main-container'>
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
-        <h4 class="page-title" style="color: #3A3A3A;">Listagem - Capeantes</h4>
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Capeantes</div>
+            <h1 class="listagem-title">Listagem de capeantes</h1>
+            <p class="listagem-subtitle">Controle contas abertas, auditoria, paradas e encerramentos com uma leitura mais limpa da operação.</p>
+        </div>
     </div>
-    <hr style="margin-top: 1px; margin-bottom: 10px;">
-    <div class="complete-table">
+    <div class="complete-table listagem-panel">
         <div id="navbarToggleExternalContent" class="table-filters">
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             <form id="select-internacao-form" method="GET" action="list_internacao_cap.php">
 
-                <div class="form-group row">
+                <div class="form-group row filter-inline-row">
                     <!-- SELECT de Hospital (sem duplicidade) -->
                     <div class="form-group col-sm-3" style="padding:2px !important;padding-left:16px !important;">
                         <select class="form-control form-control-sm"
@@ -390,7 +394,7 @@ if ($havePages) {
 
                 </div>
 
-                <div class="form-group row" style="margin-top:-15px; margin-bottom:14px;">
+                <div class="form-group row filter-inline-row" style="margin-top:10px; margin-bottom:14px;">
                     <div class="form-group col-sm-2" style="padding-left:16px !important;">
                         <select class="form-control form-control-sm"
                             style="margin-top:7px;font-size:.8em; color:#878787" id="ordenar" name="ordenar">
@@ -462,7 +466,7 @@ if ($havePages) {
         </div>
 
         <div>
-            <div id="table-content" style="margin-top:10px">
+            <div id="table-content" class="listagem-table-wrap" style="margin-top:10px">
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>

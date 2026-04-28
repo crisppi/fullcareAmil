@@ -55,10 +55,17 @@ $data_intern_int = filter_input(INPUT_GET, 'data_intern_int') ?: null;
 $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid" id="main-container" style="margin-top:-5px">
-    <h4 class="page-title"> Capeantes - Contas Finalizadas</h4>
-    <hr>
+<div class="container-fluid listagem-page" id="main-container">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Capeantes</div>
+            <h1 class="listagem-title">Contas finalizadas</h1>
+            <p class="listagem-subtitle">Organize contas encerradas com um topo mais limpo e filtros no mesmo padrão das demais listagens.</p>
+        </div>
+    </div>
+    <div class="complete-table listagem-panel">
     <div id="navbarToggleExternalContent">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <script src="./js/ajaxNav.js"></script>
@@ -80,7 +87,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
             $pesquisa_pac = filter_input(INPUT_GET, 'pesquisa_pac');
             $ordenar = filter_input(INPUT_GET, 'ordenar');
             ?>
-            <div class="form-group row">
+            <div class="form-group row filter-inline-row">
                 <div class="form-group col-sm-3" style="padding:2px !important;padding-left:16px !important;">
                     <input class="form-control form-control-sm" style="font-size:.8em; color:#878787" type="text"
                         name="pesquisa_nome" placeholder="Selecione o Hospital" value="<?= $pesquisa_nome ?>">
@@ -270,7 +277,7 @@ if ($qtdIntItens > $limite) {
 
 ?>
 <div>
-    <div id="table-content">
+    <div id="table-content" class="listagem-table-wrap">
         <table class="table table-sm table-striped  table-hover table-condensed">
             <thead>
                 <tr>

@@ -39,12 +39,17 @@ $internacao = new internacaoDAO($conn, $BASE_URL);
 $uti = new utiDAO($conn, $BASE_URL);
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container form_container" style="margin-top:12px;">
-    <div class="container">
-        <h4 class="page-title">Alta UTI</h4>
+<div class="container-fluid form_container listagem-page" id="main-container">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">UTI</div>
+            <h1 class="listagem-title">Altas de UTI</h1>
+            <p class="listagem-subtitle">Acompanhe saídas da UTI com o mesmo padrão visual das demais listas operacionais.</p>
+        </div>
     </div>
-    <hr>
+    <div class="complete-table listagem-panel">
     <div class="container" id="navbarToggleExternalContent">
         <div class="container">
 
@@ -58,7 +63,7 @@ $uti = new utiDAO($conn, $BASE_URL);
                 $data_intern_int = filter_input(INPUT_GET, 'data_intern_int') ?: null;
 
                 ?>
-                <div class="form-group row">
+                <div class="form-group row filter-inline-row">
                     <div class="form-group col-sm-3">
                         <input class="form-control form-control-sm" type="text"
                             style="margin-top:7px;font-size:.8em; color:#878787" name="pesquisa_nome"
@@ -183,7 +188,7 @@ $uti = new utiDAO($conn, $BASE_URL);
         }
         ?>
         <div class="container">
-            <div class="row" id="table-content">
+            <div class="row listagem-table-wrap" id="table-content">
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>

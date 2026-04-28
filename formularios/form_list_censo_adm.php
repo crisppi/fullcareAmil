@@ -46,10 +46,17 @@ $where = $order = $obLimite = null;
 $user = $_SESSION['id_usuario'];
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid" style="margin-top:-5px;">
-    <h4 class="page-title" style="color: #3A3A3A">Censo Hospitalar</h4>
-    <hr>
+<div class="container-fluid listagem-page" id="main-container">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Censo</div>
+            <h1 class="listagem-title">Censo hospitalar</h1>
+            <p class="listagem-subtitle">Consulte pacientes do censo com filtros mais limpos e leitura mais estável da grade.</p>
+        </div>
+    </div>
+    <div class="complete-table listagem-panel">
     <div class="container" id="navbarToggleExternalContent">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <div>
@@ -60,7 +67,7 @@ $user = $_SESSION['id_usuario'];
                 $pesquisa_pac = filter_input(INPUT_GET, 'pesquisa_pac', FILTER_SANITIZE_SPECIAL_CHARS);
                 $ordenar = filter_input(INPUT_GET, 'ordenar');
                 ?>
-                <div class="form-group row">
+                <div class="form-group row filter-inline-row">
                     <div class="form-group col-sm-3">
                         <!-- <label>Pesquisa por Hospital</label> -->
                         <input class="form-control form-control-sm" type="text"
@@ -196,7 +203,7 @@ $user = $_SESSION['id_usuario'];
 
         <!-- TABELA DE REGISTROS -->
         <div>
-            <div id="table-content">
+            <div id="table-content" class="listagem-table-wrap">
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>

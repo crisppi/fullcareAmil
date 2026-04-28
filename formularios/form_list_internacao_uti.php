@@ -101,12 +101,18 @@ $sortField = trim((string)listaUtiGetParam('sort_field', ''));
 $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid form_container" style="margin-top:-5px;" id='main-container'>
-    <h4 class="page-title">Internação UTI</h4>
-    <hr>
-    <div class="complete-table">
+<div class="container-fluid form_container listagem-page" id='main-container'>
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">UTI</div>
+            <h1 class="listagem-title">Internações em UTI</h1>
+            <p class="listagem-subtitle">Visualize rapidamente os pacientes em UTI com filtros enxutos e leitura mais estável da tabela.</p>
+        </div>
+    </div>
+    <div class="complete-table listagem-panel">
         <div id="navbarToggleExternalContent" class="table-filters">
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             <div class="row">
@@ -140,7 +146,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                         font-weight: bold;
                     }
                     </style>
-                    <div class="row">
+                    <div class="row filter-inline-row">
                         <div class="col-sm-3" style="padding:2px !important;padding-left:16px !important;">
                             <!-- <label>Pesquisa por Hospital</label> -->
                             <input class="form-control form-control-sm" type="text" name="pesquisa_nome"
@@ -311,7 +317,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
         ?>
 
         <div style="margin-top:10px;" id='container'>
-            <div id="table-content">
+            <div id="table-content" class="listagem-table-wrap">
 
                 <!-- <h6 class="page-title">Relatório de internações - UTI</h6> -->
                 <table class="table table-sm table-striped table-hover table-condensed">
