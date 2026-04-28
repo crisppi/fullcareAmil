@@ -1732,3 +1732,214 @@
                 flex-basis: 160px !important;
             }
         }
+
+        .entity-form .internacao-card__header {
+            align-items: center;
+        }
+
+        .entity-form .internacao-card__header > div {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .entity-form .internacao-card__title {
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #221433;
+        }
+
+        .entity-form .internacao-card__tag {
+            margin-left: auto;
+        }
+
+        .entity-form .internacao-card__body {
+            display: grid;
+            gap: 18px;
+        }
+
+        .entity-step-card {
+            position: relative;
+            padding: 22px 24px;
+            border-radius: 22px;
+            border: 1px solid rgba(94, 35, 99, 0.12);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 244, 253, 0.94) 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 14px 28px rgba(45, 18, 70, 0.08);
+        }
+
+        .entity-step-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 6px;
+            border-radius: 22px 0 0 22px;
+            background: linear-gradient(180deg, #5e2363 0%, #7cc7c1 100%);
+        }
+
+        .entity-step-card hr {
+            display: none;
+        }
+
+        .entity-step-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .entity-step-copy {
+            min-width: 0;
+        }
+
+        .entity-step-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #6f4f90;
+        }
+
+        .entity-step-kicker::before {
+            content: "";
+            width: 18px;
+            height: 2px;
+            border-radius: 999px;
+            background: currentColor;
+        }
+
+        .entity-step-title {
+            margin: 0;
+            font-size: 1.12rem;
+            font-weight: 700;
+            color: #26163b;
+        }
+
+        .entity-step-desc {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: .9rem;
+            line-height: 1.5;
+        }
+
+        .entity-step-badge {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(94, 35, 99, 0.14);
+            background: rgba(94, 35, 99, 0.08);
+            color: #5e2363;
+            font-size: .76rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .entity-form .row {
+            row-gap: 4px;
+        }
+
+        .entity-form .form-group label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #3b2b4b;
+        }
+
+        .entity-form .form-control,
+        .entity-form .form-control-sm {
+            min-height: 44px;
+            border-radius: 12px;
+            border-color: #d6d4df;
+            box-shadow: none;
+        }
+
+        .entity-form textarea.form-control {
+            min-height: 120px;
+        }
+
+        .entity-form .inline-manager-card,
+        .entity-form #acomodacao-inline-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(242,236,249,0.92) 100%);
+            border: 1px solid rgba(94, 35, 99, 0.12);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
+        }
+
+        .entity-form .table-responsive table {
+            margin-bottom: 0;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .entity-form .table-responsive thead th {
+            background: #f5effa;
+            color: #4a345f;
+            border-bottom-width: 1px;
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .entity-form .table-responsive tbody td {
+            vertical-align: middle;
+        }
+
+        .entity-actions-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 6px;
+            padding: 18px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(94, 35, 99, 0.10);
+            background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(238,230,248,0.94) 100%);
+            box-shadow: 0 16px 30px rgba(45, 18, 70, 0.08);
+        }
+
+        .entity-actions-copy {
+            color: #6b7280;
+            font-size: .9rem;
+            line-height: 1.5;
+        }
+
+        .entity-actions-bar .btn {
+            min-height: 46px;
+            border-radius: 14px;
+            padding-inline: 22px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 991.98px) {
+            .entity-step-header,
+            .entity-actions-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .entity-form .internacao-card__tag {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .entity-step-card {
+                padding: 18px 18px 18px 20px;
+            }
+
+            .entity-actions-bar {
+                padding: 16px;
+            }
+
+            .entity-actions-bar .btn {
+                width: 100%;
+            }
+        }

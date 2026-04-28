@@ -100,19 +100,29 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     </div>
     <div class="internacao-page__content">
         <form action="<?= $BASE_URL ?>process_hospital.php" id="multi-step-form" method="POST" enctype="multipart/form-data"
-            class="needs-validation visible" novalidate>
+            class="needs-validation visible entity-form" novalidate>
             <div class="internacao-card internacao-card--general">
                 <div class="internacao-card__header">
                     <div>
-                        <p class="internacao-card__eyebrow">Dados do hospital</p>
+                        <p class="internacao-card__eyebrow">Etapa 1</p>
+                        <h2 class="internacao-card__title">Dados do hospital</h2>
                     </div>
+                    <span class="internacao-card__tag internacao-card__tag--critical">Cadastro institucional</span>
                 </div>
                 <div class="internacao-card__body">
         <input type="hidden" name="type" value="create">
         <input type="hidden" name="deletado_hosp" value="n">
 
         <!-- Step 1: Informações Básicas -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação do hospital</h3>
+                    <p class="entity-step-desc">Defina o registro principal da instituição antes de configurar endereço, contatos e acomodações.</p>
+                </div>
+                <span class="entity-step-badge">Dados base</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cnpj_hosp">CNPJ</label>
@@ -131,8 +141,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 2: Endereço e Localização -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereços</h3>
+                    <p class="entity-step-desc">Cadastre o endereço principal e, se necessário, mantenha filiais ou endereços de cobrança no mesmo fluxo.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-4 mb-3">
                     <label for="cep_hosp">CEP</label>
@@ -246,8 +263,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 3: Contato -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato operacional</h3>
+                    <p class="entity-step-desc">Organize emails, telefones e contatos-chave para facilitar auditoria, faturamento e rotina assistencial.</p>
+                </div>
+                <span class="entity-step-badge">Comunicação</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-3 mb-3">
                     <label for="email01_hosp">Email Principal</label>
@@ -390,8 +414,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 4: Coordenadas e Responsáveis -->
-        <div id="step-4" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados complementares</p>
+        <div id="step-4" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 4</div>
+                    <h3 class="entity-step-title">Dados complementares</h3>
+                    <p class="entity-step-desc">Finalize com responsáveis, coordenadas e acomodações negociadas da instituição.</p>
+                </div>
+                <span class="entity-step-badge">Estrutura</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-4 mb-3">
                     <label for="coordenador_medico_hosp">Coordenador Médico</label>
@@ -473,10 +504,12 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div id="acomodacoesHiddenContainer"></div>
             </div>
 
-            <hr>
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Cadastrar
-            </button>
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Confirme os dados principais e a lista de acomodações antes de salvar o hospital.</div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> Cadastrar
+                </button>
+            </div>
         </div>
                 </div>
             </div>

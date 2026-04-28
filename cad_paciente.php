@@ -134,13 +134,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     </div>
     <div class="internacao-page__content">
         <form action="<?= $BASE_URL ?>process_paciente.php" id="multi-step-form" method="POST" enctype="multipart/form-data"
-            class="needs-validation visible">
+            class="needs-validation visible entity-form">
 
             <div class="internacao-card internacao-card--general">
                 <div class="internacao-card__header">
                     <div>
-                        <p class="internacao-card__eyebrow">Dados do paciente</p>
+                        <p class="internacao-card__eyebrow">Etapa 1</p>
+                        <h2 class="internacao-card__title">Dados do paciente</h2>
                     </div>
+                    <span class="internacao-card__tag internacao-card__tag--critical">Cadastro base</span>
                 </div>
                 <div class="internacao-card__body">
 
@@ -149,7 +151,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                     <input type="hidden" name="confirmar_homonimo_pac" id="confirmar_homonimo_pac" value="0">
 
         <!-- Step 1: Personal Information -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação</h3>
+                    <p class="entity-step-desc">Preencha os dados principais do beneficiário antes de seguir para endereço e contato.</p>
+                </div>
+                <span class="entity-step-badge">Dados essenciais</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-2 mb-3">
                     <label for="cpf_pac">CPF</label>
@@ -266,8 +276,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 2: Address Information -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereço</h3>
+                    <p class="entity-step-desc">Use o CEP para completar os campos automaticamente e ajuste apenas o que for necessário.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-3 mb-3">
                     <label for="cep_pac">CEP</label>
@@ -321,8 +338,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 3: Contact & Other Information -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato e observações</h3>
+                    <p class="entity-step-desc">Finalize com os canais de contato e registre qualquer contexto importante para o time assistencial.</p>
+                </div>
+                <span class="entity-step-badge">Fechamento</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_pac">Email Principal</label>
@@ -358,10 +382,12 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <label for="obs_pac">Observações</label>
                 <textarea rows="5" class="form-control" id="obs_pac" name="obs_pac"></textarea>
             </div>
-            <hr>
-            <button type="submit" class="btn btn-success" id="finalizar_etapa1" name="finalizar_etapa1">
-                <i class="fas fa-check"></i> Cadastrar
-            </button>
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Revise matrícula, seguradora e estipulante antes de concluir o cadastro.</div>
+                <button type="submit" class="btn btn-success" id="finalizar_etapa1" name="finalizar_etapa1">
+                    <i class="fas fa-check"></i> Cadastrar
+                </button>
+            </div>
                 </div>
             </div>
         </form>

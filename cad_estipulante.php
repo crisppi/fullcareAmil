@@ -103,12 +103,14 @@ if (empty($id_estipulante)) {
     </div>
     <div class="internacao-page__content">
     <form action="<?= $BASE_URL ?>process_estipulante.php" id="multi-step-form" method="POST"
-        enctype="multipart/form-data" class="needs-validation visible" novalidate>
+        enctype="multipart/form-data" class="needs-validation visible entity-form" novalidate>
         <div class="internacao-card internacao-card--general">
             <div class="internacao-card__header">
                 <div>
-                    <p class="internacao-card__eyebrow">Dados do estipulante</p>
+                    <p class="internacao-card__eyebrow">Etapa 1</p>
+                    <h2 class="internacao-card__title">Dados do estipulante</h2>
                 </div>
+                <span class="internacao-card__tag internacao-card__tag--critical">Cadastro comercial</span>
             </div>
             <div class="internacao-card__body">
 
@@ -116,7 +118,15 @@ if (empty($id_estipulante)) {
         <input type="hidden" name="deletado_est" value="n">
 
         <!-- Step 1: Informações Básicas -->
-        <div id="step-1" class="step">
+        <div id="step-1" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 1</div>
+                    <h3 class="entity-step-title">Identificação do estipulante</h3>
+                    <p class="entity-step-desc">Cadastre o nome e o CNPJ de referência antes de seguir para endereço e contatos operacionais.</p>
+                </div>
+                <span class="entity-step-badge">Dados base</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cnpj_est">CNPJ</label>
@@ -133,8 +143,15 @@ if (empty($id_estipulante)) {
         </div>
 
         <!-- Step 2: Endereço -->
-        <div id="step-2" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de endereço</p>
+        <div id="step-2" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 2</div>
+                    <h3 class="entity-step-title">Endereço</h3>
+                    <p class="entity-step-desc">Mantenha o endereço principal e endereços adicionais no mesmo padrão visual dos outros cadastros.</p>
+                </div>
+                <span class="entity-step-badge">Localização</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="cep_est">CEP</label>
@@ -193,8 +210,15 @@ if (empty($id_estipulante)) {
         </div>
 
         <!-- Step 3: Contato e Finalização -->
-        <div id="step-3" class="step">
-            <p class="internacao-card__eyebrow mb-3">Dados de contato</p>
+        <div id="step-3" class="step entity-step-card">
+            <div class="entity-step-header">
+                <div class="entity-step-copy">
+                    <div class="entity-step-kicker">Passo 3</div>
+                    <h3 class="entity-step-title">Contato e anexos</h3>
+                    <p class="entity-step-desc">Feche o cadastro com responsáveis, telefones adicionais, contatos auxiliares e logo institucional.</p>
+                </div>
+                <span class="entity-step-badge">Fechamento</span>
+            </div>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_est">Email Principal</label>
@@ -268,10 +292,12 @@ if (empty($id_estipulante)) {
                     <div class="notif-input oculto" id="notifImagem">Tamanho do arquivo inválido!</div>
                 </div>
             </div>
-            <hr>
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i> Cadastrar
-            </button>
+            <div class="entity-actions-bar">
+                <div class="entity-actions-copy">Revise os responsáveis e a rede de contatos antes de cadastrar o estipulante.</div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> Cadastrar
+                </button>
+            </div>
         </div>
             </div>
         </div>
