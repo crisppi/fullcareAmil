@@ -16,6 +16,27 @@
             border: 1px solid #5e2363 !important;
         }
 
+        .select-purple,
+        .detail-select,
+        #relatorio-detalhado {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 42px !important;
+            background-repeat: no-repeat !important;
+            background-position: right 14px center !important;
+            background-size: 16px 16px !important;
+        }
+
+        .select-purple,
+        .select-purple:focus,
+        .detail-select,
+        .detail-select:focus,
+        #relatorio-detalhado,
+        #relatorio-detalhado:focus {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>") !important;
+        }
+
         .bootstrap-select .dropdown-toggle.select-purple,
         .bootstrap-select .dropdown-toggle.select-purple .filter-option,
         .bootstrap-select .dropdown-toggle.select-purple .filter-option-inner,
@@ -575,37 +596,59 @@
         }
 
         .internacao-page__hero {
-            background: linear-gradient(135deg, #5a2f78, #a06bd4);
+            background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
             color: #fff;
-            border-radius: 28px;
-            padding: 20px 24px;
-            box-shadow: 0 20px 40px rgba(24, 0, 30, 0.25);
+            border-radius: 24px;
+            padding: 22px 24px;
+            box-shadow: 0 16px 34px rgba(37, 18, 54, 0.22);
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
             justify-content: space-between;
             gap: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .internacao-page__hero-main {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 760px;
+        }
+
+        .internacao-page__eyebrow {
+            margin: 0;
+            font-size: .76rem;
+            font-weight: 800;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.78);
         }
 
         .internacao-page__hero h1 {
-            margin: 0 0 6px;
-            font-size: 1.7rem;
+            margin: 0;
+            font-size: 2rem;
             letter-spacing: .02em;
             color: #fff;
+            font-weight: 800;
         }
 
-        .internacao-page__hero p {
+        .internacao-page__summary {
             margin: 0;
-            color: rgba(255, 255, 255, 0.9);
-            max-width: 480px;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 760px;
+            font-size: .96rem;
+            line-height: 1.5;
         }
 
         .internacao-page__tag {
-            background: rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.14);
             color: #f7efff;
-            padding: 6px 14px;
+            padding: 7px 14px;
             border-radius: 999px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: .78rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            align-self: flex-start;
         }
 
         .internacao-page__content {
@@ -616,11 +659,11 @@
         }
 
         .internacao-card {
-            background: #f5f5f9;
-            border-radius: 18px;
+            background: linear-gradient(180deg, #f8f7fc 0%, #f3f4f8 100%);
+            border-radius: 22px;
             padding: 18px 18px 22px;
-            border: 1px solid #ebe1f5;
-            box-shadow: 0 12px 24px rgba(45, 18, 70, .08);
+            border: 1px solid #e6e1ef;
+            box-shadow: 0 10px 26px rgba(37, 18, 54, .08);
             margin: 0;
             width: 100%;
         }
@@ -631,39 +674,58 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(111, 69, 162, 0.10);
+        }
+
+        .internacao-card__title-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
         .internacao-card__eyebrow {
             text-transform: uppercase;
             letter-spacing: .18em;
-            font-size: .78rem;
+            font-size: .72rem;
             margin: 0;
-            font-weight: 700;
+            font-weight: 800;
             line-height: 1.2;
-            color: #4b5563;
+            color: #6e4a96;
         }
 
         .internacao-card__title {
             margin: 2px 0 0;
-            font-size: 1.2rem;
-            color: #2e114c;
-            font-weight: 600;
+            font-size: 1.22rem;
+            color: #2a1b43;
+            font-weight: 800;
         }
 
         .internacao-card__tag {
-            background: #f8eefc;
-            color: #5e2363;
-            padding: 4px 12px;
+            background: #f1ebfb;
+            color: #5c3687;
+            padding: 6px 12px;
             border-radius: 999px;
-            font-weight: 600;
-            font-size: .75rem;
+            font-weight: 700;
+            font-size: .74rem;
+            border: 1px solid #e2d4f6;
+        }
+
+        .internacao-card__tag--critical {
+            background: #fff3e8;
+            color: #a04d12;
+            border-color: #f2d1b6;
         }
 
         .clinical-text-field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
+            padding: 12px 14px 10px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.54);
+            border: 1px solid rgba(111, 69, 162, 0.10);
         }
 
         .clinical-text-field__head {
@@ -676,6 +738,8 @@
 
         .clinical-text-field__head label {
             margin: 0;
+            font-weight: 700;
+            color: #33224d;
         }
 
         .clinical-text-field__actions {
@@ -684,6 +748,15 @@
             justify-content: flex-end;
             gap: 8px;
             flex-wrap: wrap;
+        }
+
+        .clinical-text-field__actions .btn,
+        .auditoria-action-btn {
+            min-height: 34px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: .82rem;
+            font-weight: 700;
         }
 
         .auditoria-actions {
@@ -942,26 +1015,30 @@
         }
 
         .internacao-card--general {
-            border-color: #ebe1f5;
-            background: #f5f5f9;
+            border-color: #e1d9ee;
+            background: linear-gradient(180deg, #f8f7fc 0%, #f4f6fb 100%);
         }
 
         .internacao-head-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: start;
+            display: grid !important;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 14px 12px !important;
+            align-items: start !important;
             margin-top: 0;
         }
 
         .internacao-head-grid > .form-group {
-            flex: 1 1 160px;
             min-width: 0;
             margin-bottom: 0 !important;
             padding-left: 0;
             padding-right: 0;
             display: flex;
             flex-direction: column;
+            padding: 10px 12px 12px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(111, 69, 162, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
         }
 
         .internacao-head-grid > .form-group > label,
@@ -979,19 +1056,29 @@
 
         .internacao-head-grid > .hospital-col,
         .internacao-head-grid > .patient-col {
-            flex: 2.2 1 300px;
+            grid-column: span 4;
+            min-width: 0;
+            width: 100%;
+            max-width: none;
+            flex: none;
         }
 
         .internacao-head-grid > .essential-medium {
-            flex: 1.25 1 190px;
+            grid-column: span 2;
+            min-width: 0;
         }
 
         .internacao-head-grid > .essential-small {
-            flex: 0.9 1 140px;
+            grid-column: span 4;
+            min-width: 0;
         }
 
         .internacao-head-grid .essential-full {
-            flex: 1 1 100%;
+            grid-column: 1 / -1;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
         }
 
         .internacao-head-grid .hospital-select-wrapper {
@@ -1009,23 +1096,44 @@
             display: none;
         }
 
+        .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle,
+        .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle,
+        .internacao-head-grid > .hospital-col select,
+        .internacao-head-grid > .patient-col select {
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+        }
+
         @media (max-width: 991.98px) {
+            .internacao-head-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .internacao-head-grid > .hospital-col,
-            .internacao-head-grid > .patient-col,
-            .internacao-head-grid > .essential-medium,
-            .internacao-head-grid > .essential-small,
-            .internacao-head-grid > .form-group {
-                flex-basis: calc(50% - 6px);
+            .internacao-head-grid > .patient-col {
+                grid-column: span 2;
             }
         }
 
         @media (max-width: 575.98px) {
+            .internacao-page__hero {
+                padding: 18px;
+                border-radius: 20px;
+            }
+
+            .internacao-page__hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .internacao-head-grid {
+                grid-template-columns: 1fr;
+            }
+
             .internacao-head-grid > .hospital-col,
             .internacao-head-grid > .patient-col,
             .internacao-head-grid > .essential-medium,
-            .internacao-head-grid > .essential-small,
-            .internacao-head-grid > .form-group {
-                flex-basis: 100%;
+            .internacao-head-grid > .essential-small {
+                grid-column: span 1;
             }
         }
 
@@ -1033,11 +1141,11 @@
         .internacao-card--notes,
         .detalhes-card,
         .tabelas-adicionais-card {
-            border-color: #ebe1f5;
+            border-color: #e2dceb;
             border-width: 1px;
             border-style: solid;
-            background: #f5f5f9;
-            box-shadow: 0 12px 24px rgba(45, 18, 70, .08);
+            background: linear-gradient(180deg, #f8f7fc 0%, #f4f5fa 100%);
+            box-shadow: 0 10px 24px rgba(37, 18, 54, .07);
         }
 
         .internacao-card--fields .internacao-card__body {
@@ -1107,20 +1215,6 @@
             max-width: 260px;
         }
 
-        #relatorio-detalhado {
-            min-width: 180px;
-            background-color: #fff;
-            border: 1px solid #4caf50;
-            color: #2d114c;
-            font-weight: 700;
-            box-shadow: none;
-        }
-
-        #relatorio-detalhado:focus {
-            box-shadow: 0 0 0 .2rem rgba(76, 175, 80, .25);
-            border-color: #2e7d32;
-        }
-
         .detalhes-card__title {
             display: flex;
             align-items: center;
@@ -1139,21 +1233,78 @@
 
         .tabelas-adicionais-card {
             border-radius: 22px;
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 12px 24px rgba(15, 23, 42, .06);
+            background: linear-gradient(180deg, #f7f8fb 0%, #f2f4f7 100%);
+            border: 1px solid #d9dce4;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, .06);
             padding: 12px 20px 10px;
             margin-top: 24px;
             clear: both;
         }
 
-        .tabelas-adicionais-card .form-group {
+        .patient-inline-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-top: 8px;
+        }
+
+        .patient-inline-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eef3ff;
+            border: 1px solid #d5def8;
+            color: #315cbd;
+            font-size: .78rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .patient-inline-link .edit-icon {
+            color: inherit !important;
+            margin-bottom: 0 !important;
+        }
+
+        .patient-inline-link:hover {
+            color: #244a9f;
+            text-decoration: none;
+            background: #e6edff;
+        }
+
+        .internacao-card label,
+        .tabelas-adicionais-card label,
+        .detalhes-card label {
+            font-weight: 700;
+            color: #4a4b57;
+        }
+
+        .internacao-card .form-control,
+        .internacao-card .bootstrap-select > .dropdown-toggle,
+        .tabelas-adicionais-card .form-control,
+        .detalhes-card .form-control {
+            border-radius: 12px !important;
+            border-color: #d8dbe5 !important;
+            box-shadow: none !important;
+            background-color: #fff !important;
+        }
+
+        .internacao-card .form-control:focus,
+        .internacao-card .bootstrap-select > .dropdown-toggle:focus,
+        .tabelas-adicionais-card .form-control:focus,
+        .detalhes-card .form-control:focus {
+            border-color: #8b66b2 !important;
+            box-shadow: 0 0 0 0.18rem rgba(111, 69, 162, 0.12) !important;
+        }
+
+        .tabelas-selects > .form-group {
             flex: 0 0 150px;
             max-width: 150px;
         }
 
         @media (max-width: 992px) {
-            .tabelas-adicionais-card .form-group {
+            .tabelas-selects > .form-group {
                 flex: 0 0 45%;
                 max-width: 100%;
             }
@@ -1161,31 +1312,35 @@
 
         .tabelas-adicionais-card__header {
             display: flex;
-            align-items: center;
-            margin-bottom: 18px;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(111, 69, 162, 0.10);
+        }
+
+        .tabelas-adicionais-card__eyebrow {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: .18em;
+            font-size: .72rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #6e4a96;
         }
 
         .tabelas-adicionais-card__title {
-            display: flex;
-            align-items: center;
-            margin: 0;
-            color: #111827;
-            font-weight: 600;
-        }
-
-        .tabelas-adicionais-card__marker {
-            width: 6px;
-            height: 26px;
-            border-radius: 10px;
-            margin-right: 12px;
-            background: linear-gradient(180deg, #6b7280, #9ca3af);
+            margin: 2px 0 0;
+            font-size: 1.22rem;
+            font-weight: 800;
+            color: #2a1b43;
         }
 
         .tabelas-selects {
             display: flex;
             flex-wrap: wrap;
             align-items: flex-end;
-            gap: 8px;
+            gap: 12px;
         }
 
         .tabelas-selects .tabelas-col {
@@ -1201,6 +1356,64 @@
             padding-top: 10px !important;
             padding-bottom: 10px !important;
             line-height: 1.2 !important;
+        }
+
+        .tabelas-selects > .tabelas-col {
+            padding: 10px 0 0;
+        }
+
+        .tabelas-selects > .tabelas-col:first-child {
+            flex-basis: 220px;
+            max-width: 220px;
+        }
+
+        .tabelas-selects > .tabelas-col label {
+            margin-bottom: 8px !important;
+            font-size: .96rem;
+            font-weight: 800 !important;
+            color: #3f4654 !important;
+        }
+
+        .tabelas-selects > .tabelas-col .form-control,
+        .tabelas-selects > .tabelas-col .detail-select,
+        .tabelas-selects > .tabelas-col .select-purple {
+            border-radius: 14px !important;
+            font-weight: 800 !important;
+            transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+        }
+
+        .tabelas-selects > .tabelas-col .form-control:hover,
+        .tabelas-selects > .tabelas-col .detail-select:hover,
+        .tabelas-selects > .tabelas-col .select-purple:hover {
+            transform: translateY(-1px);
+        }
+
+        .tabelas-selects > .tabelas-col #relatorio-detalhado,
+        .tabelas-selects > .tabelas-col .detail-select {
+            background: linear-gradient(180deg, #ecfff1 0%, #dcfce7 100%) !important;
+            border: 1px solid #7ccf95 !important;
+            color: #14532d !important;
+            box-shadow: 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+        }
+
+        .tabelas-selects > .tabelas-col #relatorio-detalhado:focus,
+        .tabelas-selects > .tabelas-col .detail-select:focus {
+            border-color: #3ea76a !important;
+            box-shadow: 0 0 0 .18rem rgba(62, 167, 106, 0.18), 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+        }
+
+        .tabelas-selects > .tabelas-col .select-purple,
+        .tabelas-selects > .tabelas-col select[id^="select_"] {
+            background: linear-gradient(180deg, #f4ecff 0%, #eadbff 100%) !important;
+            border: 1px solid #b89ae7 !important;
+            color: #512b81 !important;
+            box-shadow: 0 8px 16px rgba(111, 69, 162, 0.14) !important;
+        }
+
+        .tabelas-selects > .tabelas-col .select-purple:focus,
+        .tabelas-selects > .tabelas-col select[id^="select_"]:focus {
+            border-color: #8450bf !important;
+            box-shadow: 0 0 0 .18rem rgba(132, 80, 191, 0.18), 0 8px 16px rgba(111, 69, 162, 0.14) !important;
         }
 
         /* Padronização completa das tabelas adicionais (Internação) */

@@ -319,6 +319,7 @@
             || trim((string)($row['fim'] ?? '')) !== '';
     }));
     $activeEditSection = strtolower(trim((string)($_GET['section'] ?? '')));
+    $forceGestaoSection = ($activeEditSection === 'gestao');
     $forceProrrogSection = ($activeEditSection === 'prorrog');
     $forceNegocSection = ($activeEditSection === 'negoc');
     $hasNegocReg = !empty(array_filter($negociacoesInt ?? [], static function ($row) {
@@ -344,6 +345,50 @@
     <link href="<?= $BASE_URL ?>css/style.css" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/form_cad_internacao.css?v=<?= filemtime(__DIR__ . '/../css/form_cad_internacao.css') ?>" rel="stylesheet">
     <style>
+        .edit-head-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 14px 12px;
+            align-items: start;
+            width: 100%;
+        }
+
+        .edit-head-grid .form-group {
+            min-width: 0;
+            margin-bottom: 0 !important;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 12px 12px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(111, 69, 162, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+        }
+
+        .edit-head-grid .form-group label {
+            min-height: 28px;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 4px !important;
+        }
+
+        .edit-head-hospital,
+        .edit-head-patient {
+            grid-column: span 3;
+        }
+
+        .edit-head-medium {
+            grid-column: span 2;
+        }
+
+        .edit-head-small {
+            grid-column: span 1;
+        }
+
+        .edit-head-launch {
+            grid-column: span 3;
+        }
+
         .edit-primary-row {
             display: grid;
             grid-template-columns: 1.1fr 1fr 1.5fr 1.5fr 1.7fr 0.8fr 1.2fr 1.2fr;
@@ -368,6 +413,8 @@
             width: 100%;
         }
 
+        .edit-head-grid .form-control,
+        .edit-head-grid .form-control-sm,
         .edit-primary-row .form-control,
         .edit-primary-row .form-control-sm,
         .edit-top-row .form-control,
@@ -503,6 +550,7 @@
         }
 
         @media (max-width: 991.98px) {
+            .edit-head-grid,
             .edit-primary-row,
             .edit-secondary-row,
             .edit-alta-row,
@@ -511,9 +559,21 @@
             #tabelas-adicionais-paineis-edit #container-uti[style*="block"] .form-group.row {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+
+            .edit-head-hospital,
+            .edit-head-patient {
+                grid-column: span 2;
+            }
+
+            .edit-head-medium,
+            .edit-head-small,
+            .edit-head-launch {
+                grid-column: span 1;
+            }
         }
 
         @media (max-width: 575.98px) {
+            .edit-head-grid,
             .edit-primary-row,
             .edit-secondary-row,
             .edit-alta-row,
@@ -521,6 +581,14 @@
             #tabelas-adicionais-paineis-edit #container-uti[style*="block"] > .form-group.row,
             #tabelas-adicionais-paineis-edit #container-uti[style*="block"] .form-group.row {
                 grid-template-columns: 1fr;
+            }
+
+            .edit-head-hospital,
+            .edit-head-patient,
+            .edit-head-medium,
+            .edit-head-small,
+            .edit-head-launch {
+                grid-column: span 1;
             }
         }
     </style>
@@ -536,9 +604,11 @@
         <div class="internacao-page__content">
             <div class="internacao-card internacao-card--general">
                 <div class="internacao-card__header">
-                    <div>
-                        <p class="internacao-card__eyebrow">Dados essenciais</p>
+                    <div class="internacao-card__title-wrap">
+                        <p class="internacao-card__eyebrow">Etapa 1</p>
+                        <h2 class="internacao-card__title">Dados da internação</h2>
                     </div>
+                    <span class="internacao-card__tag internacao-card__tag--critical">Campos principais</span>
                 </div>
                 <div class="internacao-card__body">
                     <form class="visible" action="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/process_internacao_editar.php', ENT_QUOTES, 'UTF-8') ?>" id="myForm" method="POST"
@@ -552,10 +622,10 @@
                 <input type="hidden" value="n" id="censo_int" name="censo_int">
                 <?php $responsavelInternacao = (int)($intern['fk_usuario_int'] ?? 0); ?>
                 <input type="hidden" value="<?= $responsavelInternacao > 0 ? $responsavelInternacao : (int)($_SESSION["id_usuario"] ?? 0) ?>" id="fk_usuario_int" name="fk_usuario_int">
-                <div class="form-group row align-items-end edit-top-row">
+                <div class="edit-head-grid">
 
                     <!-- Hospital (Somente leitura) -->
-                    <div class="form-group col-sm-3 mb-2">
+                    <div class="form-group edit-head-hospital">
                         <label class="control-label">Hospital</label>
                         <input type="text" class="form-control form-control-sm" readonly value="<?php
                                                                                                 foreach ($hospitals as $hospital) {
@@ -569,7 +639,7 @@
                     </div>
 
                     <!-- Paciente (Somente leitura) -->
-                    <div class="form-group col-sm-3 mb-2">
+                    <div class="form-group edit-head-patient">
                         <label class="control-label">Paciente</label>
                         <input type="text" class="form-control form-control-sm" readonly value="<?php
                                                                                                 foreach ($pacientes as $paciente) {
@@ -583,7 +653,7 @@
                     </div>
 
                     <!-- Data Internação -->
-                    <div class="form-group col-sm-2 mb-2">
+                    <div class="form-group edit-head-medium">
                         <label class="control-label" for="data_intern_int">
                             <span style="color: red;">*</span> Data Internação
                         </label>
@@ -592,13 +662,13 @@
                     </div>
 
                     <!-- Hora -->
-                    <div class="form-group col-sm-1 mb-2">
+                    <div class="form-group edit-head-small">
                         <label class="control-label" for="hora_intern_int">Hora</label>
                         <input type="time" class="form-control form-control-sm" id="hora_intern_int"
                             name="hora_intern_int" value="<?= date('H:i', strtotime($intern['hora_intern_int'])); ?>">
                     </div>
 
-                    <div class="form-group col-sm-2 mb-2">
+                    <div class="form-group edit-head-launch">
                         <label class="control-label" for="data_lancamento_int">Data lançamento</label>
                         <input type="datetime-local" class="form-control form-control-sm" id="data_lancamento_int"
                             name="data_lancamento_int" value="<?= $dataLancamentoAtual ?>" readonly tabindex="-1"
@@ -996,8 +1066,8 @@
                                 <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial<?= savedIndicator($hasGestaoReg, 'Existem dados salvos em Gestão Assistencial') ?></label>
                                 <select class="input-lg-fullcare form-control select-purple" id="select_gestao" name="select_gestao">
                                     <option value="">Selecione</option>
-                                    <option value="s">Sim</option>
-                                    <option value="n" selected>Não</option>
+                                    <option value="s" <?= $forceGestaoSection ? 'selected' : '' ?>>Sim</option>
+                                    <option value="n" <?= !$forceGestaoSection ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
                             <div class="form-group tabelas-col">
@@ -1486,7 +1556,15 @@
                 });
             }
 
-            if (activeEditSection !== 'negoc' && activeEditSection !== 'prorrog') {
+            if (activeEditSection === 'gestao') {
+                var selectGestao = document.getElementById('select_gestao');
+                if (selectGestao) {
+                    selectGestao.value = 's';
+                }
+                showOnlyAdditional('select_gestao');
+            }
+
+            if (activeEditSection !== 'negoc' && activeEditSection !== 'prorrog' && activeEditSection !== 'gestao') {
                 var initiallyOpen = additionalSections.find(function(section) {
                     var selectEl = document.getElementById(section.selectId);
                     return selectEl && selectEl.value === 's';

@@ -263,8 +263,10 @@
 
     <div class="internacao-page">
         <div class="internacao-page__hero">
-            <div>
+            <div class="internacao-page__hero-main">
+                <p class="internacao-page__eyebrow">Fluxo assistencial</p>
                 <h1>Cadastrar internação</h1>
+                <p class="internacao-page__summary">Preencha primeiro os dados críticos da internação e depois complemente as informações clínicas e operacionais.</p>
             </div>
             <span class="internacao-page__tag">Campos obrigatórios em destaque</span>
         </div>
@@ -273,15 +275,17 @@
                 enctype="multipart/form-data">
                 <div class="internacao-card internacao-card--general">
                     <div class="internacao-card__header">
-                        <div>
+                        <div class="internacao-card__title-wrap">
+                            <p class="internacao-card__eyebrow">Etapa 1</p>
                             <h2 class="internacao-card__title">Dados da internação</h2>
                         </div>
+                        <span class="internacao-card__tag internacao-card__tag--critical">Campos principais</span>
                     </div>
                     <div class="internacao-card__body">
-                        <div class="internacao-head-row internacao-head-grid" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;">
+                        <div class="internacao-head-row internacao-head-grid">
                             <input type="hidden" value="" name="fk_hospital_int" id="fk_hospital_int">
 
-                            <div class="form-group hospital-col" style="flex:2.2 1 300px;min-width:260px;">
+                            <div class="form-group hospital-col">
                                 <div class="d-flex align-items-center justify-content-between mb-1">
                                     <label class="control-label mb-0" for="hospital_selected">
                                         <span style="color:red;">*</span> Hospital
@@ -311,7 +315,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group patient-col" style="flex:2.2 1 300px;min-width:260px;">
+                            <div class="form-group patient-col">
                                 <div class="d-flex align-items-center justify-content-between mb-1">
                                     <label class="control-label mb-0" for="fk_paciente_int">
                                         <span style="color:red;">*</span> Paciente
@@ -382,10 +386,10 @@
                                     }
                                     ?>
                                 </select>
-                                <div style="display:flex;justify-content:space-between;align-items:center;">
-                                    <a style="font-size:.8em;margin-left:7px;color:blue;"
+                                <div class="patient-inline-actions">
+                                    <a class="patient-inline-link"
                                         href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/novo', ENT_QUOTES, 'UTF-8') ?>">
-                                        <i style="color:blue;margin-bottom:7px;" class="far fa-edit edit-icon"></i> Novo Paciente
+                                        <i class="far fa-edit edit-icon"></i> Novo Paciente
                                     </a>
                                 </div>
                                 <div id="patientCareProgramAlert" class="patient-care-program-alert" style="display:none;" role="status" aria-live="polite"></div>
@@ -420,7 +424,7 @@
                                 })();
                             </script>
 
-                            <div class="form-group essential-medium" style="flex:1.2 1 180px;min-width:160px;">
+                            <div class="form-group essential-medium">
                                 <label class="control-label" for="matricula_paciente_display">Matrícula</label>
                                 <input type="text" class="form-control input-lg-fullcare" id="matricula_paciente_display"
                                     placeholder="Digite para pesquisar por matrícula" list="matricula_list"
@@ -434,7 +438,7 @@
                                 </datalist>
                             </div>
 
-                            <div class="form-group essential-medium" style="flex:1.2 1 180px;min-width:160px;">
+                            <div class="form-group essential-medium">
                                 <label class="control-label" for="data_intern_int_dt"><span style="color:red;">*</span> Data
                                     Internação</label>
                                 <input type="datetime-local" class="form-control input-lg-fullcare" id="data_intern_int_dt" required
@@ -443,20 +447,20 @@
                                 <input type="hidden" id="hora_intern_int" name="hora_intern_int" value="">
                             </div>
 
-                            <div class="form-group essential-small" style="flex:0.9 1 140px;min-width:130px;">
+                            <div class="form-group essential-small">
                                 <label class="control-label" for="data_lancamento_int">Data lançamento</label>
                                 <input type="datetime-local" class="form-control input-lg-fullcare" id="data_lancamento_int"
                                     name="data_lancamento_int" value="<?= $agoraLanc ?>">
                             </div>
 
-                            <div class="form-group essential-small" style="flex:0.9 1 140px;min-width:130px;">
+                            <div class="form-group essential-small">
                                 <label for="data_visita_int">Data Visita</label>
                                 <input type="date" value='<?= $dataAtual; ?>' class="form-control input-lg-fullcare" id="data_visita_int"
                                     name="data_visita_int">
                                 <p id="error-message" style="color:red;display:none;font-size:.6em;"></p>
                             </div>
 
-                            <div class="form-group essential-small" style="flex:0.8 1 120px;min-width:110px;">
+                            <div class="form-group essential-small">
                                 <label class="control-label" for="internado_int">Internado</label>
                                 <select class="input-lg-fullcare form-control" id="internado_int" name="internado_int">
                                     <option value="s">Sim</option>
@@ -590,9 +594,11 @@
 
                 <div class="internacao-card internacao-card--fields">
                     <div class="internacao-card__header">
-                        <div>
+                        <div class="internacao-card__title-wrap">
+                            <p class="internacao-card__eyebrow">Etapa 2</p>
                             <h3 class="internacao-card__title">Dados assistenciais</h3>
                         </div>
+                        <span class="internacao-card__tag">Classificação clínica</span>
                     </div>
                     <div class="internacao-card__body">
                         <div class="row">
@@ -782,9 +788,11 @@
 
         <div class="internacao-card internacao-card--notes">
             <div class="internacao-card__header">
-                <div>
+                <div class="internacao-card__title-wrap">
+                    <p class="internacao-card__eyebrow">Etapa 3</p>
                     <h3 class="internacao-card__title">Relatórios e observações</h3>
                 </div>
+                <span class="internacao-card__tag">Registro clínico</span>
             </div>
             <div class="internacao-card__body">
                 <div class="clinical-text-field">
@@ -913,11 +921,11 @@
         </div>
 
             <div class="tabelas-adicionais-card">
-                <div class="tabelas-adicionais-card__header">
-                    <h4 class="tabelas-adicionais-card__title">
-                        <span class="tabelas-adicionais-card__marker"></span>
-                        Tabelas Adicionais
-                    </h4>
+                <div class="tabelas-adicionais-card__header" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(111,69,162,.10);">
+                    <div>
+                        <p class="tabelas-adicionais-card__eyebrow" style="margin:0;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:800;line-height:1.2;color:#6e4a96;">Tabelas adicionais</p>
+                        <h3 class="tabelas-adicionais-card__title" style="margin:2px 0 0;font-size:1.22rem;font-weight:800;color:#2a1b43;">Complementos da visita</h3>
+                    </div>
                 </div>
 
             <div class="tabelas-selects d-flex flex-wrap justify-content-between align-items-end">

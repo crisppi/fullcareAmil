@@ -140,38 +140,38 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
         <div class="visita-card visita-card--general">
             <div class="visita-card__header">
                 <div>
-                    <p class="visita-card__eyebrow">Dados essenciais</p>
+                    <p class="visita-card__eyebrow">Etapa 1</p>
                     <h2 class="visita-card__title">Dados da visita</h2>
                 </div>
                     <span class="visita-card__tag" id="visita-main-tag">Informações principais</span>
             </div>
             <div class="visita-card__body">
         <div class="form-group row visita-dados-row">
-            <div id="view-contact-container" style="align-items:center">
-                <hr>
-                <span style="font-weight: 500; margin:0px 5px 0px 5px ">Reg Int:</span>
-                <span
-                    style="font-weight: 800; margin:0px 50px 0px 5px "><?= $internacaoList['0']['id_internacao'] ?></span>
-
-                <!-- <span style="font-weight: 500; margin:0px 5px 0px 10px ">Reg Visita:</span>
-                <span style="font-weight: 800; margin:0px 50px 0px 5px "><?= $visitaMax['0']['id_visita'] + 1 ?></span> -->
-
-                <span class="card-title bold" style="font-weight: 500; margin:0px 5px 0px 20px">Hospital:</span>
-                <span class="card-title bold"
-                    style=" font-weight: 800; margin:0px 10px 0px 0px"><?= $internacaoList['0']['nome_hosp'] ?></span>
-                <span style="font-weight: 500; margin:0px 5px 0px 30px">Paciente:</span>
-                <span style=" font-weight: 800; margin:0px 10px 0px 0px"><?= $internacaoList['0']['nome_pac'] ?></span>
-                <span style="font-weight: 500; margin:0px 5px 0px 30px">Data internação:</span>
-                <span
-                    style="font-weight: 800; margin:0px 80px 0px 0px"><?= date("d/m/Y", strtotime($internacaoList['0']['data_intern_int'])); ?></span>
-                <span style="font-weight: 500; margin:0px 5px 0px 10px">Visita No.</span>
-                <input type="text" readonly
-                    style="text-align:center; font-weight:800; border: .5px solid #666666; background-color: #e0e0e0; width: 60px; border-radius: 5px;"
-                    value="<?= $contarVis + 1 ?>" id="visita_no_vis" name="visita_no_vis">
-
-                <hr>
+            <div class="visita-summary-grid">
+                <div class="visita-summary-card visita-summary-card--small">
+                    <span class="visita-summary-card__label">Reg Int</span>
+                    <strong class="visita-summary-card__value"><?= $internacaoList['0']['id_internacao'] ?></strong>
+                </div>
+                <div class="visita-summary-card visita-summary-card--wide">
+                    <span class="visita-summary-card__label">Hospital</span>
+                    <strong class="visita-summary-card__value"><?= $internacaoList['0']['nome_hosp'] ?></strong>
+                </div>
+                <div class="visita-summary-card visita-summary-card--wide">
+                    <span class="visita-summary-card__label">Paciente</span>
+                    <strong class="visita-summary-card__value"><?= $internacaoList['0']['nome_pac'] ?></strong>
+                </div>
+                <div class="visita-summary-card visita-summary-card--medium">
+                    <span class="visita-summary-card__label">Data internação</span>
+                    <strong class="visita-summary-card__value"><?= date("d/m/Y", strtotime($internacaoList['0']['data_intern_int'])); ?></strong>
+                </div>
+                <div class="visita-summary-card visita-summary-card--small">
+                    <span class="visita-summary-card__label">Visita No.</span>
+                    <input type="text" readonly class="visita-summary-card__input"
+                        value="<?= $contarVis + 1 ?>" id="visita_no_vis" name="visita_no_vis">
+                </div>
             </div>
-            <div class="form-group col-sm-2">
+            <div class="visita-head-grid">
+            <div class="form-group visita-head-field visita-head-field--small">
                 <?php
                 // Alterado de 'd-m-Y' para 'Y-m-d' para funcionar nos inputs type="date"
                 $agora = date('Y-m-d');
@@ -185,13 +185,13 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                 <p id="data-visita-error" style="color: red; display: none;">Data Inválida</p>
             </div>
 
-            <div class="form-group col-sm-3 visita-field">
+            <div class="form-group visita-head-field visita-head-field--small visita-field">
                 <label for="data_lancamento_vis">Data do lançamento</label>
                 <input type="date" value="<?= $agoraLanc; ?>" class="form-control"
                     id="data_lancamento_vis" name="data_lancamento_vis">
             </div>
 
-            <div class="form-group col-sm-3">
+            <div class="form-group visita-head-field visita-head-field--wide">
                 <label for="retificou">Retificar Visita</label>
                 <div class="visita-inline-clear">
                     <select class="form-control" id="retificou" name="retificou">
@@ -216,6 +216,7 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                     </select>
                     <button type="button" class="visita-inline-clear__btn" data-clear-select="retificou" aria-label="Limpar visita retificada">&times;</button>
                 </div>
+            </div>
             </div>
 
             <!-- Campo de antecedentes removido conforme solicitação -->
@@ -303,11 +304,13 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                     </div>
                 </div>
                 <div class="visita-card__body">
-                    <div>
-                        <label for="rel_visita_vis">Relatório de Auditoria</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_visita_vis">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_visita_vis">Organizar com IA</button>
+                    <div class="clinical-text-field">
+                        <div class="clinical-text-field__head">
+                            <label for="rel_visita_vis">Relatório de Auditoria</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_visita_vis">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_visita_vis">Organizar com IA</button>
+                            </div>
                         </div>
                         <div id="cronicos-relatorio-alert"
                             style="display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:linear-gradient(135deg,#fff3cd,#ffe3a3);border:1px solid #f0c36d;color:#6a4a00;box-shadow:0 8px 20px rgba(240,195,109,.18);"
@@ -329,11 +332,13 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <small class="text-muted" data-counter-for="rel_visita_vis">0/5000</small>
                         </div>
                     </div>
-                    <div>
-                        <label for="acoes_int_vis">Ações da Auditoria</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int_vis">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int_vis">Organizar com IA</button>
+                    <div class="clinical-text-field">
+                        <div class="clinical-text-field__head">
+                            <label for="acoes_int_vis">Ações da Auditoria</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int_vis">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int_vis">Organizar com IA</button>
+                            </div>
                         </div>
                         <textarea type="textarea" style="resize:none" rows="2" onclick="aumentarTextAcoes()"
                             class="form-control" id="acoes_int_vis" name="acoes_int_vis" autocomplete="off"
@@ -342,11 +347,13 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                             <small class="text-muted" data-counter-for="acoes_int_vis">0/5000</small>
                         </div>
                     </div>
-                    <div>
-                        <label for="programacao_enf">Programação Terapêutica</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_enf">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_enf">Organizar com IA</button>
+                    <div class="clinical-text-field">
+                        <div class="clinical-text-field__head">
+                            <label for="programacao_enf">Programação Terapêutica</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_enf">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_enf">Organizar com IA</button>
+                            </div>
                         </div>
                         <textarea type="textarea" style="resize:none" rows="2"
                             onclick="aumentarTextProgVis()" class="form-control" id="programacao_enf"
@@ -412,17 +419,17 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                     name="internacao_ativa_int">
             </div>
             <div class="visita-card visita-card--tabelas">
-                <div class="visita-card__header">
+                <div class="visita-card__header tabelas-adicionais-card__header" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(111,69,162,.10);">
                     <div>
-                        <p class="visita-card__eyebrow">Tabelas adicionais</p>
-                        <h3 class="visita-card__title">Complementos da visita</h3>
+                        <p class="visita-card__eyebrow tabelas-adicionais-card__eyebrow" style="margin:0;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:800;line-height:1.2;color:#6e4a96;">Tabelas adicionais</p>
+                        <h3 class="visita-card__title tabelas-adicionais-card__title" style="margin:2px 0 0;font-size:1.22rem;font-weight:800;color:#2a1b43;">Complementos da visita</h3>
                     </div>
                 </div>
                 <div class="visita-card__body">
                     <div class="form-group row d-flex justify-content-center align-items-end tabelas-selects">
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="relatorio-detalhado">Relatório detalhado</label>
-                            <select class="form-control select-purple" id="relatorio-detalhado" name="relatorio-detalhado">
+                            <select class="input-lg-fullcare form-control detail-select" id="relatorio-detalhado" name="relatorio-detalhado">
                                 <option value="">Selecione</option>
                                 <option value="s">Sim</option>
                                 <option value="n">Não</option>
@@ -430,35 +437,35 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                         </div>
                         <?php if ($_SESSION['cargo'] === 'Med_auditor' || ($_SESSION['cargo'] === 'Diretoria')) { ?>
 
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="select_tuss">Tuss</label>
-                            <select class="form-control select-purple" id="select_tuss" name="select_tuss">
+                            <select class="input-lg-fullcare form-control select-purple" id="select_tuss" name="select_tuss">
                                 <option value="">Selecione</option>
                                 <option value="s" <?= (($editAdditionalSelects['tuss'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="select_prorrog">Prorrogação</label>
-                            <select class="form-control select-purple" id="select_prorrog" name="select_prorrog">
+                            <select class="input-lg-fullcare form-control select-purple" id="select_prorrog" name="select_prorrog">
                                 <option value="">Selecione</option>
                                 <option value="s" <?= (($editAdditionalSelects['prorrog'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
                         <?php }; ?>
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="select_gestao">Gestão Assistencial</label>
 
-                            <select class="form-control select-purple" id="select_gestao" name="select_gestao">
+                            <select class="input-lg-fullcare form-control select-purple" id="select_gestao" name="select_gestao">
                                 <option value="">Selecione</option>
                                 <option value="s" <?= (($editAdditionalSelects['gestao'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
                             </select>
                         </div>
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="select_uti">UTI</label>
-                            <select class="form-control select-purple" id="select_uti" name="select_uti">
+                            <select class="input-lg-fullcare form-control select-purple" id="select_uti" name="select_uti">
                                 <option value="">Selecione</option>
                                 <option value="s" <?= (($editAdditionalSelects['uti'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
@@ -466,9 +473,9 @@ $contarVis = $queryVis[0]['numero_de_id_visita'];
                         </div>
                         <?php if ($_SESSION['cargo'] === 'Med_auditor' || ($_SESSION['cargo'] === 'Diretoria')) { ?>
 
-                        <div class="form-group col-sm-2">
+                        <div class="form-group tabelas-col">
                             <label class="control-label" for="select_negoc">Negociações</label>
-                            <select class="form-control select-purple" id="select_negoc" name="select_negoc">
+                            <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
                                 <option value="">Selecione</option>
                                 <option value="s" <?= (($editAdditionalSelects['negoc'] ?? '') === 's') ? 'selected' : '' ?>>Sim</option>
                                 <option value="n">Não</option>
@@ -1072,28 +1079,30 @@ function aumentarTextProgramacao() {
 }
 
 .visita-hero {
-    background: linear-gradient(135deg, #1f5d99, #58a9ff);
+    background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
     color: #fff;
-    border-radius: 28px;
-    padding: 20px 24px;
-    box-shadow: 0 20px 40px rgba(24, 0, 30, 0.25);
+    border-radius: 24px;
+    padding: 22px 24px;
+    box-shadow: 0 16px 34px rgba(37, 18, 54, 0.22);
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .visita-hero h1 {
-    margin: 0 0 6px;
-    font-size: 1.7rem;
+    margin: 0;
+    font-size: 2rem;
     letter-spacing: .02em;
     color: #fff;
+    font-weight: 800;
 }
 
 .visita-hero p {
     margin: 0;
-    color: rgba(255, 255, 255, 0.9);
-    max-width: 460px;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 760px;
 }
 
 .visita-hero__actions {
@@ -1105,12 +1114,13 @@ function aumentarTextProgramacao() {
 }
 
 .visita-hero__tag {
-    background: rgba(255, 255, 255, 0.18);
-    color: #eef6ff;
-    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #f7efff;
+    padding: 7px 14px;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: .78rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .btn-visita-historico {
@@ -1125,10 +1135,10 @@ function aumentarTextProgramacao() {
 }
 
 .visita-card {
-    background: #f5f5f9;
-    border: 1px solid #ebe1f5;
-    border-radius: 18px;
-    box-shadow: 0 12px 24px rgba(45, 18, 70, .08);
+    background: linear-gradient(180deg, #f8f7fc 0%, #f3f4f8 100%);
+    border: 1px solid #e6e1ef;
+    border-radius: 22px;
+    box-shadow: 0 10px 26px rgba(37, 18, 54, .08);
     padding: 18px 18px 22px;
 }
 
@@ -1137,33 +1147,36 @@ function aumentarTextProgramacao() {
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(111, 69, 162, 0.10);
 }
 
 .visita-card__eyebrow {
     text-transform: uppercase;
     letter-spacing: .18em;
-    font-size: .78rem;
+    font-size: .72rem;
     margin: 0;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.2;
-    color: #4b5563;
+    color: #6e4a96;
 }
 
 .visita-card__title {
     margin: 2px 0 0;
-    font-size: 1.2rem;
-    color: #2e114c;
-    font-weight: 600;
+    font-size: 1.22rem;
+    color: #2a1b43;
+    font-weight: 800;
 }
 
 .visita-card__tag {
-    background: #f8eefc;
-    color: #5e2363;
-    padding: 4px 12px;
+    background: #f1ebfb;
+    color: #5c3687;
+    padding: 6px 12px;
     border-radius: 999px;
-    font-weight: 600;
-    font-size: .75rem;
+    font-weight: 700;
+    font-size: .74rem;
+    border: 1px solid #e2d4f6;
 }
 
 .visita-card__body {
@@ -1179,6 +1192,116 @@ function aumentarTextProgramacao() {
 
 .visita-dados-row {
     margin: 0;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px 12px;
+    align-items: start;
+}
+
+.visita-summary-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px 12px;
+}
+
+.visita-head-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 14px 12px;
+}
+
+.visita-summary-card,
+.visita-head-field {
+    min-width: 0;
+    margin-bottom: 0 !important;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px 12px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 243, 255, 0.92) 100%);
+    border: 1px solid rgba(111, 69, 162, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 8px 18px rgba(111, 69, 162, 0.08);
+}
+
+.visita-card--general {
+    border-color: #e1d9ee;
+    background: linear-gradient(180deg, #f8f7fc 0%, #f4f6fb 100%);
+}
+
+.visita-card--central,
+.visita-card--auditoria,
+.visita-card--tabelas {
+    border-color: #e2dceb;
+    border-width: 1px;
+    border-style: solid;
+    background: linear-gradient(180deg, #f8f7fc 0%, #f4f5fa 100%);
+    box-shadow: 0 10px 24px rgba(37, 18, 54, .07);
+}
+
+.visita-summary-card--small,
+.visita-head-field--small {
+    grid-column: span 2;
+}
+
+.visita-summary-card--medium {
+    grid-column: span 2;
+}
+
+.visita-summary-card--wide {
+    grid-column: span 3;
+}
+
+.visita-head-field--wide {
+    grid-column: span 6;
+}
+
+.visita-head-field--small {
+    grid-column: span 3;
+}
+
+.visita-summary-card__label,
+.visita-head-field label {
+    min-height: 28px;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 4px !important;
+    font-weight: 700;
+    color: #54496a;
+}
+
+.visita-summary-card__value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2a1b43;
+    line-height: 1.35;
+    letter-spacing: -.01em;
+}
+
+.visita-summary-card__input {
+    width: 100%;
+    min-height: 42px;
+    height: 42px;
+    border: 1px solid #d9d0eb;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #2a1b43;
+    text-align: center;
+    font-weight: 800;
+    box-shadow: inset 0 1px 2px rgba(111, 69, 162, 0.05);
+}
+
+.visita-head-field .form-control,
+.visita-head-field .form-select,
+.visita-head-field select {
+    min-height: 42px !important;
+    height: 42px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    line-height: 24px !important;
+    box-sizing: border-box !important;
 }
 
 .visita-detalhe-select {
@@ -1197,21 +1320,76 @@ function aumentarTextProgramacao() {
     width: 500px;
 }
 
+.clinical-text-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px 10px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.54);
+    border: 1px solid rgba(111, 69, 162, 0.10);
+}
+
+.clinical-text-field__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.clinical-text-field__head label {
+    margin: 0;
+    font-weight: 700;
+    color: #33224d;
+}
+
+.clinical-text-field__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.clinical-text-field__actions .btn {
+    min-height: 34px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.clinical-text-field .form-control {
+    border-radius: 12px !important;
+    border-color: #d8dbe5 !important;
+    box-shadow: none !important;
+    background-color: #fff !important;
+}
+
+.clinical-text-field .form-control:focus {
+    border-color: #8b66b2 !important;
+    box-shadow: 0 0 0 0.18rem rgba(111, 69, 162, 0.12) !important;
+}
+
 .auditoria-action-btn {
     min-height: 36px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: .82rem;
 }
 
 .ia-highlight-box {
     margin-top: 2px;
     padding: 14px;
-    border-radius: 16px;
-    border: 1px solid #bfdbfe;
+    border-radius: 18px;
+    border: 1px solid #d7e3ff;
     background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 48%, #f8fafc 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 14px 30px rgba(37,99,235,.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 12px 26px rgba(37,99,235,.08);
 }
 
 .ia-highlight-box__header {
@@ -1394,17 +1572,56 @@ function aumentarTextProgramacao() {
 
 .visita-card--tabelas {
     margin-top: -12px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #f7f8fb 0%, #f2f4f7 100%);
+    border: 1px solid #d9dce4;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, .06);
+}
+
+.tabelas-adicionais-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(111, 69, 162, 0.10);
+}
+
+.tabelas-adicionais-card__eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    font-size: .72rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #6e4a96;
+}
+
+.tabelas-adicionais-card__title {
+    margin: 2px 0 0;
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #2a1b43;
 }
 
 .tabelas-selects {
+    display: flex;
     gap: 14px;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: flex-end;
 }
 
 .tabelas-selects .form-group {
     flex: 1 1 0;
-    min-width: 150px;
+    min-width: 190px;
+    max-width: none;
+    margin-bottom: 0;
+    padding-top: 10px;
+}
+
+.tabelas-selects .tabelas-col {
+    flex: 1 1 0;
     max-width: none;
 }
 
@@ -1415,6 +1632,73 @@ function aumentarTextProgramacao() {
     padding-top: 10px !important;
     padding-bottom: 10px !important;
     line-height: 1.2 !important;
+    padding-right: 42px !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 16px 16px !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>") !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    opacity: 1 !important;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.visita-card--tabelas .detail-select,
+.visita-card--tabelas .detail-select:focus {
+    background: linear-gradient(180deg, #ecfff1 0%, #dcfce7 100%) !important;
+    background-color: #dcfce7 !important;
+    border: 1px solid #7ccf95 !important;
+    color: #14532d !important;
+    box-shadow: 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+}
+
+.visita-card--tabelas .detail-select option[value=""] {
+    color: #14532d !important;
+}
+
+.visita-card--tabelas .detail-select option {
+    background-color: #14532d !important;
+    color: #fff !important;
+}
+
+.visita-card--tabelas .select-purple,
+.visita-card--tabelas .select-purple:focus,
+.visita-card--tabelas select[id^="select_"],
+.visita-card--tabelas select[id^="select_"]:focus {
+    background: linear-gradient(180deg, #f4ecff 0%, #eadbff 100%) !important;
+    background-color: #eadbff !important;
+    border: 1px solid #b89ae7 !important;
+    color: #512b81 !important;
+    box-shadow: 0 8px 16px rgba(111, 69, 162, 0.14) !important;
+}
+
+.visita-card--tabelas .select-purple option[value=""],
+.visita-card--tabelas select[id^="select_"] option[value=""] {
+    color: #512b81 !important;
+}
+
+.visita-card--tabelas .select-purple option,
+.visita-card--tabelas select[id^="select_"] option {
+    background-color: #5e2363 !important;
+    color: #fff !important;
+}
+
+.visita-card--tabelas .tabelas-selects .form-control:hover,
+.visita-card--tabelas .tabelas-selects .select-purple:hover {
+    transform: translateY(-1px);
+}
+
+.visita-card--tabelas #relatorio-detalhado:focus {
+    border-color: #3ea76a !important;
+    box-shadow: 0 0 0 .18rem rgba(62, 167, 106, 0.18), 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+}
+
+.visita-card--tabelas .select-purple:focus,
+.visita-card--tabelas select[id^="select_"]:focus {
+    border-color: #8450bf !important;
+    box-shadow: 0 0 0 .18rem rgba(132, 80, 191, 0.18), 0 8px 16px rgba(111, 69, 162, 0.14) !important;
 }
 
 .tabelas-detalhes-block {
@@ -1442,9 +1726,10 @@ function aumentarTextProgramacao() {
     min-height: 20px;
     display: flex;
     align-items: flex-end;
-    margin-bottom: 6px;
-    font-weight: 600;
+    margin-bottom: 8px;
+    font-weight: 800;
     line-height: 1.15;
+    color: #3f4654;
 }
 
 .visita-card--tabelas .adicional-card .form-group[class*="col-"],
@@ -1463,6 +1748,30 @@ function aumentarTextProgramacao() {
     padding: 8px 12px;
     font-size: .98rem;
     line-height: 1.25;
+}
+
+@media (max-width: 991.98px) {
+    .visita-dados-row,
+    .visita-summary-grid,
+    .visita-head-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .visita-summary-card--small,
+    .visita-summary-card--medium,
+    .visita-summary-card--wide,
+    .visita-head-field--small,
+    .visita-head-field--wide {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .visita-dados-row,
+    .visita-summary-grid,
+    .visita-head-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .visita-card--tabelas .adicional-card textarea.form-control,
@@ -1726,6 +2035,10 @@ document.addEventListener("DOMContentLoaded", function() {
 function updateVisitaSelectPlaceholders() {
     const selects = document.querySelectorAll('#add-visita-form select');
     selects.forEach((selectEl) => {
+        if (selectEl.closest('.visita-card--tabelas')) {
+            selectEl.classList.remove('select-placeholder');
+            return;
+        }
         const empty = !selectEl.value;
         selectEl.classList.toggle('select-placeholder', empty);
     });

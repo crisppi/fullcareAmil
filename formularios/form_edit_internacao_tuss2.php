@@ -1,56 +1,95 @@
 <style>
-/* ====== Layout TUSS com GRID (>=768px) ====== */
 @media (min-width: 768px) {
     .tuss-field .form-inline {
         display: grid;
-        grid-template-columns:
-            minmax(420px, 1fr)
-            /* Descrição TUSS cresce e preenche */
-            160px
-            /* Data */
-            110px
-            /* Qtd Sol. */
-            110px
-            /* Qtd Lib. */
-            90px
-            /* OK? */
-            110px;
-        /* Botões */
+        grid-template-columns: minmax(320px, 520px) 138px 82px 82px 78px 98px;
         column-gap: 12px;
-        align-items: end;
+        align-items: start;
+        justify-content: start;
+        width: auto;
     }
 
-    /* Zera espaçamentos internos dos grupos (Grid já controla o gap) */
     .tuss-field .form-group {
+        margin: 0 !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-width: 0;
+    }
+
+    .tuss-field .w-desc {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .tuss-field .w-date {
+        width: 138px;
+    }
+
+    .tuss-field .w-qty {
+        width: 82px;
+    }
+
+    .tuss-field .w-ok {
+        width: 78px;
+    }
+
+    .tuss-field .w-btns {
+        width: 98px;
+    }
+
+    .tuss-field .bootstrap-select {
+        display: block !important;
+        width: 100% !important;
         margin: 0 !important;
     }
 
-    /* Ajuda a manter a descrição confortável em telas largas */
-    .tuss-field .w-desc {
-        min-width: 420px;
-    }
-
-    /* Garante que o bootstrap-select ocupe 100% da célula */
-    .tuss-field .bootstrap-select,
-    .tuss-field .bootstrap-select>.dropdown-toggle {
+    .tuss-field .bootstrap-select > .dropdown-toggle,
+    .tuss-field .form-control {
         width: 100% !important;
+        margin: 0 !important;
+        vertical-align: top;
     }
 
-    /* Altura consistente dos controles */
-    .tuss-field .form-control,
-    .tuss-field .bootstrap-select>.dropdown-toggle {
-        height: calc(1.5em + .5rem + 2px);
-        padding-top: .25rem;
-        padding-bottom: .25rem;
-        font-size: .875rem;
-        /* equivalente ao .form-control-sm */
-        line-height: 1.5;
+    .tuss-field .bootstrap-select > .dropdown-toggle,
+    .tuss-field .form-control {
+        min-height: 42px !important;
+        height: 42px !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        line-height: 1.5 !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
     }
 
-    /* Botões compactos alinhados */
-    .tuss-field .w-btns>div {
+    .tuss-field input.form-control {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .tuss-field select.form-control {
+        padding-right: 28px !important;
+    }
+
+    .tuss-field .bootstrap-select > .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0 !important;
+    }
+
+    .tuss-field .bootstrap-select > .dropdown-toggle .filter-option,
+    .tuss-field .bootstrap-select > .dropdown-toggle .filter-option-inner,
+    .tuss-field .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+        line-height: 24px !important;
+    }
+
+    .tuss-field .w-btns > div {
         display: flex;
         gap: 8px;
+        height: 42px;
+        align-items: center;
+        margin-top: 0;
     }
 }
 
@@ -66,8 +105,11 @@
 /* Labels compactos */
 .tuss-field label {
     font-size: .8rem;
-    margin-bottom: .2rem;
+    margin: 0;
     display: block;
+    min-height: 20px;
+    margin-bottom: 8px;
+    line-height: 1.2;
 }
 </style>
 

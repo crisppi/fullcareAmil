@@ -34,10 +34,12 @@ function showIf(?string $cur): string
 {
     return ($cur ?? '') === 's' ? 'block' : 'none';
 }
+
+$showGestaoContainer = isset($activeEditSection) && $activeEditSection === 'gestao';
 ?>
 
 <!-- --------------------- HTML / BOOTSTRAP --------------------------- -->
-<div id="container-gestao">
+<div id="container-gestao" style="display:<?= $showGestaoContainer ? 'block' : 'none' ?>; margin:5px;">
 
     <!-- FK internação -->
     <input type="hidden" name="fk_internacao_ges" value="<?= $intern['id_internacao'] ?>">
