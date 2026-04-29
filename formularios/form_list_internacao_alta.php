@@ -245,11 +245,11 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 14px;
+        padding: 3px 12px;
         border-radius: 999px;
         background-color: #5e2363;
         color: #ffffff;
-        font-size: 0.85rem;
+        font-size: 0.74rem;
         border: none;
         cursor: pointer;
         margin: 4px 6px 4px 0;
@@ -263,7 +263,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
     }
 
     .export-pill i {
-        font-size: 0.8rem;
+        font-size: 0.72rem;
     }
 
     .export-pill-toolbar {
@@ -275,30 +275,116 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
     }
 
     .export-pill-toolbar button {
-        font-size: 0.8rem;
-        padding: 2px 10px;
+        font-size: 0.72rem;
+        padding: 2px 9px;
         border-radius: 999px;
     }
 
+    .listagem-page {
+        padding: 4px 4px 14px;
+    }
+
+    .listagem-title {
+        font-size: .96rem;
+        line-height: 1.05;
+    }
+
+    .listagem-subtitle {
+        font-size: .66rem;
+        line-height: 1.25;
+    }
+
+    .listagem-btn-top {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: .7rem;
+        gap: 6px;
+    }
+
+    .listagem-btn-top i {
+        font-size: .72rem;
+    }
+
+    .listagem-panel {
+        padding: 8px 8px 6px;
+    }
+
+    .filter-inline-row {
+        padding: 5px 6px;
+        row-gap: 4px;
+    }
+
+    .filter-inline-row > [class*="col-"] {
+        padding: 2px !important;
+    }
+
+    .filter-inline-row > :first-child {
+        padding-left: 8px !important;
+    }
+
+    .filter-inline-row .form-control,
+    .filter-inline-row .btn,
+    .filter-inline-row .bootstrap-select > .dropdown-toggle {
+        min-height: 32px;
+        height: 32px;
+        font-size: .72rem;
+        line-height: 1.2;
+        border-radius: 11px;
+        margin-top: 0 !important;
+    }
+
+    .filter-inline-row .form-control::placeholder {
+        font-size: .72rem;
+        color: #c4c4c4;
+    }
+
+    .filter-inline-row input[type="date"]::-webkit-datetime-edit,
+    .filter-inline-row input[type="date"]::-webkit-datetime-edit-text,
+    .filter-inline-row input[type="date"]::-webkit-datetime-edit-month-field,
+    .filter-inline-row input[type="date"]::-webkit-datetime-edit-day-field,
+    .filter-inline-row input[type="date"]::-webkit-datetime-edit-year-field {
+        font-size: .72rem;
+    }
+
+    .filter-inline-row .btn-filtro-buscar {
+        width: 32px;
+        min-width: 32px;
+        padding: 0;
+        background-color: #5e2363;
+        border-color: #5e2363;
+    }
+
+    .filter-inline-row .btn-filtro-limpar-icon {
+        min-width: 32px;
+        padding: 0;
+    }
+
+    .filter-inline-row .material-icons {
+        font-size: 16px;
+        line-height: 1;
+        margin: 0;
+    }
+
     .tabela-altas thead th {
-        padding: 0.8rem 0.95rem;
-        font-size: 0.82rem;
+        padding: 7px 10px;
+        font-size: .54rem;
+        letter-spacing: .08em;
     }
 
     .tabela-altas tbody td,
     .tabela-altas tbody th {
-        padding: 0.78rem 0.95rem;
-        font-size: 0.82rem;
+        padding: 6px 10px;
+        font-size: .7rem;
         vertical-align: middle;
     }
     .scope-badge {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        margin: 0 0 8px 16px;
-        padding: 6px 12px;
+        margin: 0 0 6px 8px;
+        padding: 4px 10px;
         border-radius: 999px;
-        font-size: .82rem;
+        font-size: .68rem;
         font-weight: 700;
         background: #f3edff;
         border: 1px solid #d6c5f7;
@@ -310,20 +396,26 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
     }
 
     .alta-list-header .listagem-hero__copy {
-        display: flex;
-        align-items: center;
+        display: block;
     }
 
     .alta-list-header .listagem-hero__actions .btn {
         text-decoration: none;
     }
+
+    .tabela-altas .btn-outline-primary {
+        min-height: 28px;
+        padding: 4px 8px;
+        font-size: .68rem;
+    }
 </style>
 
-<div class="container-fluid form_container listagem-page" id="main-container" style="margin-top:-25px;">
+<div class="container-fluid form_container listagem-page" id="main-container">
 
     <div class="listagem-hero alta-list-header">
         <div class="listagem-hero__copy">
-            <h4 class="page-title">Alta Hospitalar</h4>
+            <div class="listagem-kicker">Altas</div>
+            <h1 class="listagem-title">Alta hospitalar</h1>
         </div>
 
         <div class="listagem-hero__actions">
@@ -344,23 +436,23 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                 <form action="" id="select-internacao-form" method="GET">
                     <div class="row filter-inline-row">
                         <div class="col-sm-2" style="padding:2px !important;padding-left:16px !important;">
-                            <input class="form-control form-control-sm" style="margin-top:7px;" type="text"
+                            <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_nome" placeholder="Selecione o Hospital"
                                 value="<?= htmlspecialchars((string)$pesquisa_nome) ?>">
                         </div>
                         <div class="col-sm-2" style="padding:2px !important">
-                            <input class="form-control form-control-sm" style="margin-top:7px;" type="text"
+                            <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_pac" placeholder="Selecione o Paciente"
                                 value="<?= htmlspecialchars((string)$pesquisa_pac) ?>">
                         </div>
                         <div class="col-sm-2" style="padding:2px !important">
-                            <input class="form-control form-control-sm" style="margin-top:7px;" type="text"
+                            <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_matricula" placeholder="Matrícula"
                                 value="<?= htmlspecialchars((string)$pesquisa_matricula) ?>">
                         </div>
 
                         <div class="col-sm-1" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm" style="margin-top:7px;" id="limite"
+                            <select class="form-control mb-3 form-control-sm" id="limite"
                                 name="limite">
                                 <option value="">Reg por página</option>
                                 <option value="5" <?= $limite == 5  ? 'selected' : null ?>>Reg por pág = 5</option>
@@ -371,7 +463,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                         </div>
 
                         <div class="col-sm-2" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm" style="margin-top:7px;" id="ordenar"
+                            <select class="form-control mb-3 form-control-sm" id="ordenar"
                                 name="ordenar">
                                 <option value="">Classificar por</option>
                                 <option value="id_internacao" <?= $ordenar == 'id_internacao' ? 'selected' : null ?>>
@@ -390,23 +482,22 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                         </div>
 
                         <div class="col-sm-1" style="padding:2px !important">
-                            <input class="form-control form-control-sm" type="date" style="margin-top:7px;"
+                            <input class="form-control form-control-sm" type="date"
                                 name="data_alta" placeholder="Data Alta Min"
                                 value="<?= htmlspecialchars((string)$data_alta) ?>">
                         </div>
 
                         <div class="col-sm-1" style="padding:2px !important">
-                            <input class="form-control form-control-sm" type="date" style="margin-top:7px;"
+                            <input class="form-control form-control-sm" type="date"
                                 name="data_alta_max" placeholder="Data Alta Max"
                                 value="<?= htmlspecialchars((string)$data_alta_max) ?>">
                         </div>
 
                         <div class="col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
-                            <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                                style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363">
-                                <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
+                            <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon">
+                                <span class="material-icons">search</span>
                             </button>
-                            <a class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon" style="margin-top:7px;"
+                            <a class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                                 href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/' . ($somenteListaAltas ? 'listas/altas' : 'internacoes/reverter-alta'), ENT_QUOTES, 'UTF-8') ?>">
                                 <i class="bi bi-x-lg"></i>
                             </a>
@@ -437,7 +528,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                     </thead>
                     <tbody>
                         <?php foreach ($query as $intern): ?>
-                            <tr style="font-size:15px">
+                            <tr>
                                 <td scope="row" class="col-id">
                                     <?= htmlspecialchars((string)$intern["fk_id_int_alt"]) ?>
                                 </td>
@@ -473,7 +564,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
 
                         <?php if ($qtdIntItens == 0): ?>
                             <tr>
-                                <td colspan="<?= !$somenteListaAltas ? 8 : 7 ?>" scope="row" class="col-id" style="font-size:15px">
+                                <td colspan="<?= !$somenteListaAltas ? 8 : 7 ?>" scope="row" class="col-id">
                                     Sem registros para os filtros aplicados.<?= $isSeguradoraRole ? ' Você está visualizando somente dados da sua seguradora.' : '' ?>
                                 </td>
                             </tr>

@@ -312,13 +312,14 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
         }
     }
     ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
     <!-- FORMULARIO DE PESQUISAS -->
-    <div class="container-fluid form_container" id='main-container' style="margin-top:-5px;">
+    <div class="container-fluid form_container listagem-page" id='main-container' style="margin-top:-5px;">
 
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
         <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
-            <h4 class="page-title" style="color: #3A3A3A;">
+            <h4 class="page-title" style="color: #3A3A3A; font-size:.96rem; margin-bottom:6px;">
                 <?php
                 if ($rahListContext === 'senhas') {
                     echo 'Senhas Finalizadas';
@@ -332,6 +333,15 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
         </div>
 
         <style>
+        .listagem-page { padding: 4px 4px 14px; }
+        .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
+        .form-group.row > [class*="col-"], .form-group.row > .form-group { padding:2px !important; }
+        .form-group.row > :first-child { padding-left:8px !important; }
+        .form-group.row .form-control, .form-group.row .btn { min-height:32px; height:32px; font-size:.72rem; line-height:1.2; border-radius:11px; margin-top:0 !important; }
+        .form-group.row .form-control::placeholder { font-size:.72rem; color:#c4c4c4; }
+        .form-group.row .material-icons { font-size:16px; line-height:1; margin:0; }
+        #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
+        #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
         .filter-date-col {
             flex: 0 0 150px;
             width: 150px;
@@ -584,7 +594,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                         </thead>
                         <tbody>
                             <?php foreach ($__render_rows as $intern): extract($intern); ?>
-                            <tr style="font-size:13px">
+                            <tr>
                                 <td scope="row" class="col-id"><b><?= $intern["id_internacao"]; ?></b></td>
                                 <td scope="row" class="col-id">
                                     <div class="small mb-1"><strong>#<?= $intern["id_capeante"]; ?></strong></div>
@@ -673,7 +683,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
 
                             <?php if ($__render_count === 0): ?>
                             <tr>
-                                <td colspan="<?= $tableColspan ?>" scope="row" class="col-id" style='font-size:15px'>
+                                <td colspan="<?= $tableColspan ?>" scope="row" class="col-id">
                                     Não foram encontrados registros
                                 </td>
                             </tr>
@@ -731,7 +741,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                         </thead>
                         <tbody>
                             <?php foreach ($__render_rows as $intern): extract($intern); ?>
-                            <tr style="font-size:13px">
+                            <tr>
                                 <td scope="row" class="col-id"><b><?= $intern["id_internacao"]; ?></b></td>
                                 <td scope="row" class="col-id">
                                     <div class="small mb-1"><strong>#<?= $intern["id_capeante"]; ?></strong></div>
@@ -860,7 +870,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
 
                             <?php if ($__render_count === 0): ?>
                             <tr>
-                                <td colspan="<?= $tableColspan ?>" scope="row" class="col-id" style='font-size:15px'>
+                                <td colspan="<?= $tableColspan ?>" scope="row" class="col-id">
                                     Não foram encontrados registros
                                 </td>
                             </tr>

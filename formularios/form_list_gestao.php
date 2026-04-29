@@ -88,13 +88,24 @@ $limite = filter_input(INPUT_GET, 'limite_pag') ? filter_input(INPUT_GET, 'limit
 $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar') : '';
 
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid form_container" id='main-container' style="margin-top:12px;">
+<div class="container-fluid form_container listagem-page" id='main-container' style="margin-top:4px;">
     <script src="./js/ajaxNav.js"></script>
-    <h4 class="page-title">Gestão Assistencial</h4>
+    <h4 class="page-title" style="font-size:.96rem;margin-bottom:6px;">Gestão Assistencial</h4>
     <hr>
     <style>
+    .listagem-page {
+        padding: 4px 4px 14px;
+    }
+    .complete-table {
+        padding: 8px 8px 6px;
+        border-radius: 16px;
+        border: 1px solid #eee8f6;
+        background: #fff;
+        box-shadow: 0 10px 28px -22px rgba(89, 46, 131, .28);
+    }
     .gestao-filter-bar {
         display: flex;
         gap: 6px;
@@ -124,17 +135,52 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
     }
     .gestao-filter-bar .form-control,
     .gestao-filter-bar .btn {
-        height: 40px !important;
-        min-height: 40px;
-        margin-top: 7px !important;
-        font-size: .95rem;
+        height: 32px !important;
+        min-height: 32px;
+        margin-top: 0 !important;
+        font-size: .72rem;
+        line-height: 1.2;
+        border-radius: 11px;
     }
     .gestao-filter-bar .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         line-height: 1;
-        padding: 0 12px;
+        padding: 0 10px;
+    }
+    .gestao-filter-bar .form-control::placeholder {
+        font-size: .72rem;
+        color: #c4c4c4;
+    }
+    .gestao-filter-bar .material-icons {
+        font-size: 16px !important;
+        line-height: 1;
+        vertical-align: middle;
+    }
+    .scope-badge {
+        margin: 0 0 6px 0;
+        padding: 4px 10px;
+        font-size: .68rem;
+    }
+    #table-content thead th {
+        padding: 7px 10px;
+        font-size: .54rem;
+        letter-spacing: .08em;
+    }
+    #table-content tbody td,
+    #table-content tbody th {
+        padding: 6px 10px;
+        font-size: .7rem;
+        vertical-align: middle;
+    }
+    #table-content .dropdown-toggle,
+    #table-content .btn-default {
+        font-size: .68rem !important;
+    }
+    #table-content .dropdown-menu .btn i {
+        font-size: .78rem !important;
+        margin-right: 4px !important;
     }
     @media (max-width: 1199px) {
         .gestao-filter-bar {
@@ -150,19 +196,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
             min-width: 180px;
         }
     }
-    .scope-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0 0 8px 0;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: .82rem;
-        font-weight: 700;
-        background: #f3edff;
-        border: 1px solid #d6c5f7;
-        color: #5e2363;
-    }
+    .scope-badge { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; font-weight: 700; background: #f3edff; border: 1px solid #d6c5f7; color: #5e2363; }
     </style>
     <div class="complete-table">
         <?php if ($isSeguradoraRole): ?>
@@ -185,8 +219,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
 
                 <div class="gestao-filter-bar">
                     <div class="filter-item wide">
-                        <select class="form-control mb-2 form-control-sm" id="pesqGestao" name="pesqGestao"
-                            style="font-size:.8em; color:#878787">
+                        <select class="form-control mb-2 form-control-sm" id="pesqGestao" name="pesqGestao">
                             <option value="">Selecione a Gestão</option>
                             <option value="home_care" <?= $pesqGestao == 'home_care' ? 'selected' : null ?>>Home care
                             </option>
@@ -197,27 +230,26 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                         </select>
                     </div>
                     <div class="filter-item wide">
-                        <input style="font-size:.8em; color:#878787" class="form-control form-control-sm"
+                        <input class="form-control form-control-sm"
                             type="text" name="pesquisa_nome" placeholder="Selecione o Hospital"
                             value="<?= $pesquisa_nome ?>">
                     </div>
                     <div class="filter-item wide">
-                        <input style="font-size:.8em; color:#878787" class="form-control form-control-sm"
+                        <input class="form-control form-control-sm"
                             type="text" name="pesquisa_pac" placeholder="Selecione o Paciente"
                             value="<?= $pesquisa_pac ?>">
                     </div>
                     <div class="filter-item wide">
-                        <input style="font-size:.8em; color:#878787" class="form-control form-control-sm"
+                        <input class="form-control form-control-sm"
                             type="text" name="pesquisa_matricula" placeholder="Matrícula"
                             value="<?= htmlspecialchars((string)$pesquisa_matricula) ?>">
                     </div>
                     <div class="filter-item compact">
-                        <input style="font-size:.8em; color:#878787" class="form-control form-control-sm"
+                        <input class="form-control form-control-sm"
                             type="text" name="senha_int" placeholder="Senha" value="<?= $senha_int ?>">
                     </div>
                     <div class="filter-item compact">
-                        <select class="form-control form-control-sm placeholder"
-                            style="font-size:.8em; color:#878787" id="pesqInternado"
+                        <select class="form-control form-control-sm placeholder" id="pesqInternado"
                             name="pesqInternado">
                             <option value="">Internados</option>
                             <option value="s" <?= $pesqInternado == 's' ? 'selected' : null ?>>Sim</option>
@@ -235,19 +267,17 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                         </select>
                     </div>
                     <div class="filter-item compact">
-                        <input class="form-control form-control-sm" type="date"
-                            style="font-size:.8em; color:#878787" name="data_intern_int"
+                        <input class="form-control form-control-sm" type="date" name="data_intern_int"
                             placeholder="Data Internação Min" value="<?= $data_intern_int ?>">
                     </div>
                     <div class="filter-item compact">
-                        <input class="form-control form-control-sm" type="date"
-                            style="font-size:.8em; color:#878787" name="data_intern_int_max"
+                        <input class="form-control form-control-sm" type="date" name="data_intern_int_max"
                             placeholder="Data Internação Max" value="<?= $data_intern_int_max ?>">
                     </div>
                     <div class="filter-item search-btn">
                         <button type="submit" class="btn btn-primary w-100"
                             style="background-color:#5e2363;border-color:#5e2363">
-                            <span class="material-icons" style="font-size:1rem;vertical-align:middle;">search</span>
+                            <span class="material-icons">search</span>
                         </button>
                     </div>
                     <div class="filter-item clear-btn">
@@ -449,7 +479,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                             foreach ($query as $intern):
                                 extract($query);
                             ?>
-                            <tr style="font-size:13px">
+                            <tr>
                                 <td scope="row" class="col-id">
                                     <?= $intern["id_internacao"] ?>
                                 </td>
@@ -532,10 +562,10 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                                             <i class="bi bi-stack"></i>
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                                            <button style="font-size:.9rem;" class="btn btn-default"
+                                            <button class="btn btn-default"
                                                 onclick="edit('<?= $BASE_URL ?>show_gestao.php?id_gestao=<?= $intern['id_gestao'] ?>')"><i
                                                     class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>
+                                                    style="color: rgb(27,156, 55);"></i>
                                                 Ver</button>
                                         </ul>
                                     </div>
@@ -544,7 +574,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                             <?php endforeach; ?>
                             <?php if ($qtdIntItens == 0): ?>
                             <tr>
-                                <td colspan="12" scope="row" class="col-id" style='font-size:15px'>
+                                <td colspan="12" scope="row" class="col-id">
                                     Sem registros para os filtros aplicados.<?= $isSeguradoraRole ? ' Você está visualizando somente dados da sua seguradora.' : '' ?>
                                 </td>
                             </tr>

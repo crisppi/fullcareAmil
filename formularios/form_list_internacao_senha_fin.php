@@ -84,6 +84,21 @@ if (empty($data_intern_int_max)) {
 
 ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<style>
+    .listagem-page { padding: 4px 4px 14px; }
+    .listagem-title { font-size: .96rem; line-height: 1.05; }
+    .listagem-panel { padding: 8px 8px 6px; }
+    .filter-inline-row { padding: 5px 6px; row-gap: 4px; }
+    .filter-inline-row > [class*="col-"], .filter-inline-row > .form-group { padding:2px !important; }
+    .filter-inline-row > :first-child { padding-left:8px !important; }
+    .filter-inline-row .form-control, .filter-inline-row .btn { min-height:32px; height:32px; font-size:.72rem; line-height:1.2; border-radius:11px; margin-top:0 !important; }
+    .filter-inline-row .form-control::placeholder { font-size:.72rem; color:#c4c4c4; }
+    .filter-inline-row .btn-filtro-buscar { width:32px; min-width:32px; padding:0; background-color:#5e2363; border-color:#5e2363; }
+    .filter-inline-row .btn-filtro-limpar-icon { min-width:32px; padding:0; }
+    .filter-inline-row .material-icons { font-size:16px; line-height:1; margin:0; }
+    #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
+    #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
+</style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid listagem-page" id="main-container">
     <div class="listagem-hero">
@@ -275,7 +290,7 @@ if ($qtdIntItens > $limite) {
                     extract($intern);
 
                 ?>
-                <tr style="font-size:13px">
+                        <tr>
                     <td scope="row" class="col-id">
                         <?= $intern["id_internacao"]; ?>
                     </td>
@@ -329,7 +344,7 @@ if ($qtdIntItens > $limite) {
                 <?php endforeach; ?>
                 <?php if ($qtdIntItens == 0) : ?>
                 <tr>
-                    <td colspan="11" scope="row" class="col-id" style='font-size:15px'>
+                    <td colspan="11" scope="row" class="col-id">
                         Não foram encontrados registros
                     </td>
                 </tr>

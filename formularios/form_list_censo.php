@@ -99,17 +99,139 @@ $user = $_SESSION['id_usuario'];
 
 ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<style>
+    .listagem-page {
+        padding: 4px 4px 14px;
+    }
+
+    .listagem-title {
+        font-size: .96rem;
+        line-height: 1.05;
+    }
+
+    .listagem-subtitle {
+        font-size: .66rem;
+        line-height: 1.25;
+        max-width: 42rem;
+    }
+
+    .listagem-btn-top {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: .7rem;
+        gap: 6px;
+    }
+
+    .listagem-btn-top i {
+        font-size: .72rem;
+        margin-right: 0;
+    }
+
+    .listagem-panel {
+        padding: 8px 8px 6px;
+    }
+
+    .filter-inline-row {
+        padding: 5px 6px;
+        row-gap: 4px;
+    }
+
+    .filter-inline-row > [class*="col-"],
+    .filter-inline-row > .form-group {
+        padding: 2px !important;
+    }
+
+    .filter-inline-row > :first-child {
+        padding-left: 8px !important;
+    }
+
+    .filter-inline-row .form-control,
+    .filter-inline-row .btn,
+    .filter-inline-row .bootstrap-select > .dropdown-toggle {
+        min-height: 32px;
+        height: 32px;
+        font-size: .72rem;
+        line-height: 1.2;
+        border-radius: 11px;
+        margin-top: 0 !important;
+    }
+
+    .filter-inline-row .form-control::placeholder {
+        font-size: .72rem;
+        color: #c4c4c4;
+    }
+
+    .filter-inline-row .btn-filtro-buscar {
+        width: 32px;
+        min-width: 32px;
+        padding: 0;
+        background-color: #5e2363;
+        border-color: #5e2363;
+    }
+
+    .filter-inline-row .btn-filtro-limpar-icon {
+        min-width: 32px;
+        padding: 0;
+    }
+
+    .filter-inline-row .material-icons {
+        font-size: 16px;
+        line-height: 1;
+        margin: 0;
+    }
+
+    #table-content {
+        margin-top: -4px;
+    }
+
+    #table-content thead th {
+        padding: 7px 10px;
+        font-size: .54rem;
+        letter-spacing: .08em;
+    }
+
+    #table-content tbody td,
+    #table-content tbody th {
+        padding: 6px 10px;
+        font-size: .7rem;
+        vertical-align: middle;
+    }
+
+    #table-content .dropdown-toggle {
+        min-width: 32px;
+        min-height: 28px;
+        padding: 4px 8px;
+        font-size: .68rem;
+    }
+
+    #table-content .dropdown-menu .btn {
+        font-size: .72rem !important;
+    }
+
+    #table-content .dropdown-menu .btn i {
+        font-size: .78rem !important;
+        margin-right: 4px !important;
+    }
+
+    .listagem-panel .pagination {
+        margin-top: 10px !important;
+    }
+
+    .listagem-panel .pagination .page-link,
+    .listagem-panel p[style*="text-align:right"] {
+        font-size: .72rem;
+    }
+</style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid form_container listagem-page" id="main-container">
     <div class="listagem-hero">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Censo</div>
             <h1 class="listagem-title">Listagem de censo</h1>
-            <p class="listagem-subtitle">Acompanhe lançamentos e mova pacientes do censo para internação com menos ruído visual.</p>
         </div>
         <div class="listagem-hero__actions">
-            <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo lançamento</a>
-            <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="fa-solid fa-check" style='font-size: 1rem;margin-right:5px;'></i>Internar selecionados</a>
+            <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="fa-solid fa-plus"></i>Novo lançamento</a>
+            <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="fa-solid fa-check"></i>Internar selecionados</a>
         </div>
     </div>
     <div class="complete-table listagem-panel">
@@ -125,21 +247,18 @@ $user = $_SESSION['id_usuario'];
                     ?>
                     <div class="row filter-inline-row">
                         <div class="form-group col-sm-2" style="padding:2px !important;padding-left:16px !important;">
-                            <!-- <label>Pesquisa por Hospital</label> -->
                             <input class="form-control form-control-sm" type="text"
-                                style="margin-top:7px; color:#878787" name="pesquisa_nome"
+                                name="pesquisa_nome"
                                 placeholder="Selecione o Hospital" value="<?= $pesquisa_nome ?>">
                         </div>
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <!-- <label>Pesquisa por Paciente</label> -->
                             <input class="form-control form-control-sm" type="text"
-                                style="margin-top:7px; color:#878787" name="pesquisa_pac"
+                                name="pesquisa_pac"
                                 placeholder="Selecione o Paciente" value="<?= $pesquisa_pac ?>">
                         </div>
 
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <!-- <label>Internados</label> -->
-                            <select class="form-control mb-3 form-control-sm" style="margin-top:7px; color:#878787"
+                            <select class="form-control mb-3 form-control-sm"
                                 id="pesqInternado" name="pesqInternado">
                                 <option value="">Busca por Internados</option>
                                 <option value="s" <?= $pesqInternado == 's' ? 'selected' : null ?>>Sim</option>
@@ -147,7 +266,7 @@ $user = $_SESSION['id_usuario'];
                             </select>
                         </div>
                         <div class="col-sm-1" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm" style="margin-top:7px;" id="limite"
+                            <select class="form-control mb-3 form-control-sm" id="limite"
                                 name="limite">
                                 <option value="">Reg por página</option>
                                 <option value="5" <?= $limite == '5' ? 'selected' : null ?>>Reg por pág = 5
@@ -161,8 +280,7 @@ $user = $_SESSION['id_usuario'];
                             </select>
                         </div>
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <!-- <label>Classificar</label> -->
-                            <select class="form-control mb-3 form-control-sm" style="margin-top:7px; color:#878787"
+                            <select class="form-control mb-3 form-control-sm"
                                 id="ordenar" name="ordenar">
                                 <option value="">Classificar por</option>
                                 <option value="id_censo" <?= $ordenar == 'id_censo' ? 'selected' : null ?>>Internação
@@ -178,14 +296,13 @@ $user = $_SESSION['id_usuario'];
                             </select>
                         </div>
                         <div class="form-group col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
-                            <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                                style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363"><span
-                                    class="material-icons" style="margin-left:-3px;margin-top:-2px;">
+                            <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"><span
+                                    class="material-icons">
                                     search
                                 </span></button>
                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/censo/lista', ENT_QUOTES, 'UTF-8') ?>"
                                 class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
-                                style="margin-top:7px;" title="Limpar filtros" aria-label="Limpar filtros">
+                                title="Limpar filtros" aria-label="Limpar filtros">
                                 <i class="bi bi-x-lg"></i>
                             </a>
                         </div>
@@ -288,8 +405,8 @@ $user = $_SESSION['id_usuario'];
 
         <!-- TABELA DE REGISTROS -->
         <div>
-            <div style="margin-top:-10px" id="table-content" class="listagem-table-wrap">
-                <table class="table table-sm table-striped  table-hover table-condensed">
+            <div id="table-content" class="listagem-table-wrap">
+                <table class="table table-sm table-striped  table-hover table-condensed censo-list-table">
                     <thead>
                         <tr>
                             <th scope="col">Id-Int</th>
@@ -311,7 +428,7 @@ $user = $_SESSION['id_usuario'];
                         foreach ($query as $intern):
                             extract($query);
                         ?>
-                        <tr style="font-size:15px">
+                        <tr>
                             <td scope="row" class="col-id">
                                 <?= $intern["id_censo"] ?>
                             </td>
@@ -354,18 +471,18 @@ $user = $_SESSION['id_usuario'];
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="btn btn-default"
                                                 onclick="openModal('<?= $BASE_URL ?>show_censo_adm.php?id_censo=<?= $intern['id_censo'] ?>')"
                                                 data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                    style="color: rgb(27,156, 55);"></i>Ver</button>
                                         </li>
                                         <li>
                                             <form class="d-inline-block delete-form" action="process_censo_int.php"
                                                 method="get">
                                                 <input type="hidden" name="type" value="create">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
-                                                <button class="btn btn-default" style="font-size: .9rem;"><i
-                                                        style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
+                                                <button class="btn btn-default"><i
+                                                        style="color: rgb(67, 125, 525);"
                                                         class="bi bi-door-open"></i>Internar</button>
                                             </form>
                                         </li>
@@ -375,8 +492,8 @@ $user = $_SESSION['id_usuario'];
                                                 <input type="hidden" name="type" value="delete">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
                                                 <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                                                <button class="btn btn-default" style="font-size: .9rem;"><i
-                                                        style="font-size: 1rem;margin-right:5px; color: red;"
+                                                <button class="btn btn-default"><i
+                                                        style="color: red;"
                                                         class="bi bi-x-circle-fill"></i>Deletar</button>
                                             </form>
                                         </li>
@@ -395,7 +512,7 @@ $user = $_SESSION['id_usuario'];
                         <?php endforeach; ?>
                         <?php if ($qtdIntItens == 0): ?>
                         <tr>
-                            <td colspan="15" scope="row" class="col-id" style='font-size:15px'>
+                            <td colspan="15" scope="row" class="col-id">
                                 Não foram encontrados registros
                             </td>
                         </tr>

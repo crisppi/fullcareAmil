@@ -48,10 +48,11 @@ $totalPages = $qtdItens > 0 ? (int)ceil($qtdItens / $limite) : 1;
 $dadosAlta = $dados_alta ?? [];
 sort($dadosAlta);
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
-<div class="container-fluid form_container" id="main-container" style="margin-top:-20px;">
+<div class="container-fluid form_container listagem-page" id="main-container" style="margin-top:-4px;">
     <div class="d-flex justify-content-between align-items-center">
-        <h4 class="page-title">Gerar altas</h4>
+        <h4 class="page-title" style="font-size:.96rem;margin-bottom:6px;">Gerar altas</h4>
     </div>
     <hr>
 
@@ -92,11 +93,19 @@ sort($dadosAlta);
     </div>
 
     <style>
+        .listagem-page { padding: 4px 4px 14px; }
+        #main-container .card { border-radius: 16px; border:1px solid #eee8f6; box-shadow: 0 10px 28px -22px rgba(89,46,131,.28); }
+        #main-container .form-label { font-size: .66rem; margin-bottom: 4px; }
+        #main-container .form-control,
+        #main-container .form-select,
+        #main-container .btn { min-height: 32px; height: 32px; font-size: .72rem; line-height: 1.2; }
+        #main-container .form-control::placeholder { font-size: .72rem; color:#c4c4c4; }
+        #main-container .btn-lg { min-height: 32px; padding: 6px 12px !important; font-size: .72rem; }
         .gerar-alta-card {
             position: relative;
             border-radius: 20px;
-            padding: 1.3rem 1.6rem 1.6rem 2.2rem;
-            margin-bottom: 1rem;
+            padding: .85rem 1rem 1rem 1.45rem;
+            margin-bottom: .65rem;
             background: #fff;
             border: 1px solid #efe7f6;
             box-shadow: 0 12px 35px -22px rgba(97, 35, 133, 0.6);
@@ -104,15 +113,15 @@ sort($dadosAlta);
         .gerar-alta-card::before {
             content: "";
             position: absolute;
-            left: 0.8rem;
-            top: 1.2rem;
-            bottom: 1.2rem;
+            left: 0.55rem;
+            top: .8rem;
+            bottom: .8rem;
             width: 4px;
             border-radius: 10px;
             background: linear-gradient(180deg, #7b2dbf, #c35c91);
         }
         .gerar-alta-card .tag {
-            font-size: 0.72rem;
+            font-size: 0.62rem;
             letter-spacing: .08em;
             text-transform: uppercase;
             color: #8b8ca5;
@@ -120,30 +129,31 @@ sort($dadosAlta);
         .gerar-alta-card .summary-title {
             font-weight: 600;
             color: #2c2742;
-            font-size: 1rem;
+            font-size: .82rem;
         }
         .gerar-alta-card .info-pill {
             background: #f9f3ff;
             border-radius: 999px;
-            padding: .35rem 1rem;
+            padding: .2rem .7rem;
             font-weight: 600;
             color: #72318f;
+            font-size: .68rem;
         }
         .gerar-alta-card .shadow-field {
             background: #f9fafc;
             border-radius: 14px;
-            padding: .85rem 1rem;
+            padding: .5rem .75rem;
             border: 1px solid #eef0f4;
             height: 100%;
         }
         .gerar-alta-card hr {
-            margin: 1.2rem 0;
+            margin: .8rem 0;
             opacity: .12;
             border-color: #7b2dbf;
         }
         @media (max-width: 991px) {
             .gerar-alta-card {
-                padding: 1rem 1.2rem;
+                padding: .8rem 1rem;
             }
         }
     </style>
