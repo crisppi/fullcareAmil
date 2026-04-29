@@ -372,7 +372,7 @@ body.bi-theme,
 .bi-sidebar .bi-panel h3,
 .bi-sidebar .bi-panel h4,
 .bi-sidebar .bi-panel h5 {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   margin-bottom: 6px;
 }
 
@@ -389,7 +389,7 @@ body.bi-theme,
 .bi-sidebar .bi-filter-pill,
 .bi-sidebar .bi-filter-card select,
 .bi-sidebar .bi-filter-card input {
-  font-size: 0.74rem;
+  font-size: 0.7rem;
 }
 
 .bi-main {

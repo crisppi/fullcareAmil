@@ -50,7 +50,7 @@
     display: block;
     margin-bottom: 6px;
     color: #5d6f8d;
-    font-size: 0.68rem;
+    font-size: 0.64rem;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -79,7 +79,7 @@
     outline: none;
     background: transparent;
     color: #22324f;
-    font-size: 0.82rem;
+    font-size: 0.76rem;
 }
 
 .bi-navegacao .bi-nav-search-input::placeholder {
@@ -89,11 +89,11 @@
 .bi-navegacao .bi-nav-search-meta {
     margin-top: 6px;
     color: #7b88a0;
-    font-size: 0.7rem;
+    font-size: 0.66rem;
 }
 
 .bi-navegacao .bi-title {
-    font-size: 0.92rem;
+    font-size: 0.86rem;
     color: #233a63;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -133,7 +133,7 @@
     color: #ffffff;
     padding: 10px 16px;
     border-radius: 14px;
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 700;
@@ -149,7 +149,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.72rem;
+    font-size: 0.66rem;
     font-weight: 700;
     color: #2a3752;
     border: 1px solid rgba(106, 120, 152, 0.25);
@@ -175,7 +175,7 @@
     border: 1px solid rgba(132, 149, 182, 0.12);
     background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
     color: #24314c;
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     font-weight: 600;
     text-decoration: none;
     box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);

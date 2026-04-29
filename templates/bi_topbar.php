@@ -268,7 +268,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.72rem;
+    font-size: 0.64rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(225, 241, 255, 0.62);
@@ -279,7 +279,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     margin-top: 8px;
     color: #f1f8ff;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.86rem;
     line-height: 1.35;
 }
 
@@ -300,7 +300,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     border: 1px solid rgba(77, 104, 228, 0.9);
     color: #ffffff;
     text-decoration: none;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -355,7 +355,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 
 .bi-sidebar-search-box i {
     color: rgba(237, 244, 255, 0.62);
-    font-size: 0.86rem;
+    font-size: 0.76rem;
 }
 
 .bi-sidebar-search-input {
@@ -364,7 +364,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     outline: none;
     background: transparent;
     color: #edf4ff;
-    font-size: 0.86rem;
+    font-size: 0.76rem;
 }
 
 .bi-sidebar-search-input::placeholder {
@@ -375,7 +375,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     min-height: 16px;
     margin-top: 6px;
     color: rgba(237, 244, 255, 0.5);
-    font-size: 0.74rem;
+    font-size: 0.66rem;
     text-align: center;
 }
 
@@ -419,7 +419,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     gap: 10px;
     padding: 12px 14px;
     color: #f6fbff;
-    font-size: 0.92rem;
+    font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.01em;
     transition: background .15s ease, color .15s ease;
@@ -450,7 +450,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 
 .bi-sidebar-chevron {
     margin-left: auto;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: rgba(237, 247, 255, 0.54);
     transition: transform .15s ease;
 }
@@ -475,7 +475,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     border-radius: 12px;
     color: rgba(214, 227, 239, 0.9);
     text-decoration: none;
-    font-size: 0.84rem;
+    font-size: 0.74rem;
     font-weight: 500;
     line-height: 1.25;
     border: 1px solid rgba(255, 255, 255, 0.03);
@@ -507,7 +507,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     border-radius: 12px;
     padding: 10px 12px;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    font-size: 0.9rem;
+    font-size: 0.76rem;
     color: #f1f8ff;
     background: rgba(255, 255, 255, 0.08);
 }
