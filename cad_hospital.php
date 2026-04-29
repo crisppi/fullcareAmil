@@ -505,8 +505,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
             </div>
 
             <div class="entity-actions-bar">
-                <div class="entity-actions-copy">Confirme os dados principais e a lista de acomodações antes de salvar o hospital.</div>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-check"></i> Cadastrar
                 </button>
             </div>

@@ -213,6 +213,9 @@
       tr.classList.add('row-int');
       tr.dataset.idInt = iid;
       tr.tabIndex = 0;
+      const primaryActionButton = isAlta
+        ? `<button class="btn btn-sm btn-outline-secondary" data-action="editar-int" data-id-int="${esc(iid)}">Editar</button>`
+        : `<button class="btn btn-sm btn-outline-primary" data-action="ver-int" data-id-int="${esc(iid)}">Lançar</button>`;
 
       tr.innerHTML = `
         <td>${esc(iid)}</td>
@@ -228,7 +231,7 @@
           ${prorPend > 0 ? `<div class="text-danger small fw-semibold">Pendente${prorPendLabel ? ` (${esc(prorPendLabel)})` : ''}</div>` : ''}
         </td>
         <td class="text-center">
-          <button class="btn btn-sm btn-outline-primary" data-action="ver-int" data-id-int="${esc(iid)}">Lançar</button>
+          ${primaryActionButton}
           ${isAlta ? '' : `
             <button class="btn btn-sm btn-outline-secondary" data-action="editar-int" data-id-int="${esc(iid)}">Editar</button>
             <button class="btn btn-sm btn-outline-info" data-action="alta-int" data-id-int="${esc(iid)}">Alta</button>
@@ -288,8 +291,8 @@
     on(table, 'click', 'tbody tr', (e, tr) => {
       // Se clicou em controles/botões, não intercepta
       if (e.target.closest('a,button,[data-action],input,select,textarea,label,i')) return;
-      const verBtn = tr.querySelector('[data-action="ver-int"]');
-      if (verBtn) verBtn.click();
+      const primaryBtn = tr.querySelector('[data-action="ver-int"], [data-action="editar-int"]');
+      if (primaryBtn) primaryBtn.click();
     });
 
     // Enter na linha → agir como "Ver"
@@ -297,8 +300,8 @@
       if (e.key !== 'Enter') return;
       const tr = e.target.closest('tbody tr.row-int');
       if (!tr) return;
-      const verBtn = tr.querySelector('[data-action="ver-int"]');
-      if (verBtn) verBtn.click();
+      const primaryBtn = tr.querySelector('[data-action="ver-int"], [data-action="editar-int"]');
+      if (primaryBtn) primaryBtn.click();
     });
   };
 

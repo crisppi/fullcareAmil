@@ -47,7 +47,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 88px;
+    padding-bottom: 84px;
 }
 
 #myFooterSimple {
@@ -59,16 +59,29 @@ body {
     width: 100%;
     background: linear-gradient(90deg, #f2ecfb 0%, #ebe5f7 52%, #e8f1fb 100%);
     box-shadow: 0 -8px 22px rgba(95, 69, 148, 0.08);
+    border-top: 1px solid rgba(116, 100, 137, 0.14);
 }
 
 #myFooterSimple .footer-simple-inner {
     position: relative;
 }
 
+#myFooterSimple::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -14px;
+    height: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(225, 218, 242, 0.6) 100%);
+    pointer-events: none;
+}
+
 #myFooterSimple .footer-simple-main {
-    min-height: 52px;
-    padding: 8px 18px;
-    display: flex;
+    min-height: 44px;
+    padding: 6px 18px;
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
     align-items: center;
     gap: 16px;
 }
@@ -78,17 +91,18 @@ body {
     align-items: center;
     gap: 8px;
     text-decoration: none;
+    justify-self: start;
 }
 
 #myFooterSimple .footer-simple-brand img {
-    width: 64px;
+    width: 50px;
     max-width: 100%;
     height: auto;
 }
 
 #myFooterSimple .footer-simple-brand-text {
     color: #6a5b84;
-    font-size: 0.7rem;
+    font-size: 0.64rem;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -98,13 +112,13 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    margin: 0 auto;
+    justify-self: center;
 }
 
 #myFooterSimple .footer-simple-links a {
     color: #6a587f;
     text-decoration: none;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.02em;
 }
@@ -116,16 +130,16 @@ body {
 }
 
 #myFooterSimple .footer-simple-meta {
-    margin-left: auto;
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    justify-self: end;
 }
 
 #myFooterSimple .footer-simple-copy,
 #myFooterSimple .footer-simple-version {
     color: #746489;
-    font-size: 0.66rem;
+    font-size: 0.62rem;
     font-weight: 600;
     letter-spacing: 0.03em;
     white-space: nowrap;
@@ -133,43 +147,50 @@ body {
 
 @media (max-width: 920px) {
     body {
-        padding-bottom: 104px;
+        padding-bottom: 96px;
     }
 
     #myFooterSimple .footer-simple-main {
         flex-wrap: wrap;
+        display: flex;
         justify-content: center;
         row-gap: 6px;
     }
 
+    #myFooterSimple .footer-simple-brand,
+    #myFooterSimple .footer-simple-links,
     #myFooterSimple .footer-simple-meta {
-        margin-left: 0;
+        justify-self: auto;
+    }
+
+    #myFooterSimple .footer-simple-meta {
+        justify-self: center;
     }
 }
 
 @media (max-width: 640px) {
     body {
-        padding-bottom: 112px;
+        padding-bottom: 98px;
     }
 
     #myFooterSimple .footer-simple-main {
-        min-height: 58px;
-        padding: 8px 10px;
+        min-height: 52px;
+        padding: 7px 10px;
         gap: 8px;
     }
 
     #myFooterSimple .footer-simple-brand img {
-        width: 56px;
+        width: 44px;
     }
 
     #myFooterSimple .footer-simple-brand-text,
     #myFooterSimple .footer-simple-links a,
     #myFooterSimple .footer-simple-copy {
-        font-size: 0.6rem;
+        font-size: 0.56rem;
     }
 
     #myFooterSimple .footer-simple-version {
-        font-size: 0.58rem;
+        font-size: 0.54rem;
     }
 }
 </style>

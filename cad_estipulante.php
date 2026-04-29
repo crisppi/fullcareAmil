@@ -293,8 +293,7 @@ if (empty($id_estipulante)) {
                 </div>
             </div>
             <div class="entity-actions-bar">
-                <div class="entity-actions-copy">Revise os responsáveis e a rede de contatos antes de cadastrar o estipulante.</div>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-primary">
                     <i class="fas fa-check"></i> Cadastrar
                 </button>
             </div>

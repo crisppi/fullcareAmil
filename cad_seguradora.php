@@ -304,8 +304,7 @@ $id_seguradora = filter_input(INPUT_GET, "id_seguradora");
                             </div>
                         </div>
                         <div class="entity-actions-bar">
-                            <div class="entity-actions-copy">Revise contatos, logo e parâmetros operacionais antes de concluir o cadastro da seguradora.</div>
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-check"></i> Cadastrar
                             </button>
                         </div>

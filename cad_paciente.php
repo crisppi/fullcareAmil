@@ -383,8 +383,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <textarea rows="5" class="form-control" id="obs_pac" name="obs_pac"></textarea>
             </div>
             <div class="entity-actions-bar">
-                <div class="entity-actions-copy">Revise matrícula, seguradora e estipulante antes de concluir o cadastro.</div>
-                <button type="submit" class="btn btn-success" id="finalizar_etapa1" name="finalizar_etapa1">
+                <button type="submit" class="btn btn-primary" id="finalizar_etapa1" name="finalizar_etapa1">
                     <i class="fas fa-check"></i> Cadastrar
                 </button>
             </div>

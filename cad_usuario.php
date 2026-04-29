@@ -32,6 +32,7 @@ if (empty($id_usuario)) {
     }
 }
 ?>
+<link rel="stylesheet" href="css/form_cad_internacao.css">
 <div id="main-container" class="container form_container" style="margin-top:16px;">
     <div class="row">
         <h4 class="page-title" style="margin-top:18px;margin-bottom:10px">Cadastrar</h4>
@@ -269,11 +270,9 @@ if (empty($id_usuario)) {
                     </div>
                 </div>
             </div>
-
-
-            <br>
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
-            <br>
+            <div class="entity-actions-bar">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
     </div>
     </form>
 </div>
