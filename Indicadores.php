@@ -227,7 +227,7 @@ $idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0
         </div>
     </div>
 
-    <form class="bi-panel bi-filters" method="get">
+    <form class="bi-panel bi-filters bi-filters-wrap" method="get">
         <div class="bi-filter">
             <label>Internado</label>
             <select name="internado">

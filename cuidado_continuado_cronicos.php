@@ -90,15 +90,15 @@ function cc_action_label(string $action): string
 <script src="js/timeout.js"></script>
 <style>
     .cc-module-shell {
-        padding: 36px 20px 32px;
+        padding: 18px 12px 20px;
         background: #f6f8fc;
         min-height: 100vh;
     }
     .cc-module-hero {
         background: linear-gradient(135deg, #6b2230, #b6475f 60%, #f2b8c6);
         color: #fff;
-        border-radius: 22px;
-        padding: 20px 24px;
+        border-radius: 18px;
+        padding: 14px 16px;
     }
     .cc-module-hero h1,
     .cc-module-hero h2,
@@ -106,12 +106,74 @@ function cc_action_label(string $action): string
     .cc-module-hero div {
         color: #fff !important;
     }
+    .cc-module-hero .small {
+        font-size: .62rem !important;
+    }
+    .cc-module-hero h1 {
+        font-size: 1rem !important;
+        margin-top: .35rem !important;
+        margin-bottom: .35rem !important;
+    }
+    .cc-module-hero p {
+        font-size: .74rem;
+        line-height: 1.4;
+    }
+    .cc-module-hero .btn {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: .72rem;
+    }
     .cc-quick-form textarea {
         min-height: 42px;
     }
     .cc-mini-note {
-        font-size: .82rem;
+        font-size: .68rem;
         color: #6b7280;
+    }
+    .cc-module-shell .card {
+        border-radius: 16px;
+    }
+    .cc-module-shell .card-body {
+        padding: 14px;
+    }
+    .cc-module-shell .text-muted.small,
+    .cc-module-shell .small {
+        font-size: .68rem !important;
+    }
+    .cc-module-shell .fs-3 {
+        font-size: 1.35rem !important;
+    }
+    .cc-module-shell .form-label {
+        font-size: .68rem;
+        margin-bottom: 4px;
+    }
+    .cc-module-shell .form-control,
+    .cc-module-shell .form-select,
+    .cc-module-shell .btn {
+        min-height: 32px;
+        height: 32px;
+        font-size: .72rem;
+        line-height: 1.2;
+    }
+    .cc-module-shell .form-control::placeholder {
+        font-size: .72rem;
+        color: #c4c4c4;
+    }
+    .cc-module-shell .btn.btn-sm {
+        min-height: 30px;
+        font-size: .68rem;
+        padding: 5px 10px;
+    }
+    .cc-module-shell .table thead th {
+        font-size: .56rem;
+        letter-spacing: .08em;
+        padding: 7px 8px;
+        text-transform: uppercase;
+    }
+    .cc-module-shell .table tbody td {
+        font-size: .72rem;
+        padding: 6px 8px;
+        vertical-align: middle;
     }
 </style>
 

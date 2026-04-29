@@ -289,53 +289,92 @@ $urlBase = $self . '?' . $urlParams;
     <meta charset="utf-8">
     <title>Internações - Rota do Paciente</title>
     <style>
+        .filters-row {
+            display: flex;
+            align-items: end;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-flex-1 {
+            flex: 1 1 180px;
+        }
+
+        .filter-flex-2 {
+            flex: 2 1 280px;
+        }
+
+        .filter-btn {
+            flex: 0 0 40px;
+        }
+
+        .form-label.small {
+            font-size: .66rem !important;
+        }
+
+        #filtros-form .form-control,
+        #filtros-form .form-select {
+            min-height: 32px;
+            height: 32px;
+            font-size: .72rem;
+            line-height: 1.2;
+        }
+
+        #filtros-form .form-control::placeholder {
+            font-size: .72rem;
+            color: #c4c4c4;
+        }
+
         .ciclos-wrap {
             display: flex;
             align-items: center;
             justify-content: center;
             /* CENTRALIZADO */
             flex-wrap: wrap;
-            gap: .35rem;
+            gap: .25rem;
         }
 
         .ciclo-chip {
             display: inline-flex;
             align-items: center;
-            gap: .4rem;
-            padding: .25rem .5rem;
+            gap: .3rem;
+            padding: .18rem .4rem;
             border-radius: 999px;
             background: #f1f3f5;
             border: 1px solid #e3e6e8;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
         }
 
         .ciclo-chip .dias {
             font-weight: 700;
-            padding: .1rem .35rem;
+            padding: .05rem .28rem;
             border-radius: 6px;
             background: #fff;
             border: 1px solid #dcdcdc;
+            font-size: 10px;
         }
 
         .ciclo-chip .periodo {
             font-weight: 500;
             opacity: .8;
-            margin-left: .25rem;
+            margin-left: .15rem;
+            font-size: 10px;
         }
 
         .ciclo-sep {
-            margin: 0 .15rem;
+            margin: 0 .05rem;
             opacity: .6;
+            font-size: .8rem;
         }
 
         .total-badge {
-            font-size: 12px;
+            font-size: 10px;
             background: #eef9f0;
             border: 1px solid #d5f0da;
             color: #1f7a2e;
             border-radius: 6px;
-            padding: .15rem .4rem;
+            padding: .1rem .35rem;
             font-weight: 700;
         }
 
@@ -391,13 +430,26 @@ $urlBase = $self . '?' . $urlParams;
             border-color: #cfd8dc;
             color: #37474f;
         }
+
+        .table thead th {
+            font-size: .56rem;
+            letter-spacing: .08em;
+            padding: 7px 8px;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            font-size: .74rem;
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container-fluid" style="margin-top:12px;">
-        <h4 class="page-title m-0 mb-3 text-center" style="color:#3A3A3A;">Internações - Rota do Paciente</h4>
+    <div class="container-fluid" style="margin-top:8px;">
+        <h4 class="page-title m-0 mb-2 text-center" style="color:#3A3A3A;font-size:1rem;">Internações - Rota do Paciente</h4>
 
         <form action="<?= e($actionUrl) ?>" id="filtros-form" method="GET">
             <div class="filters-row pb-1">

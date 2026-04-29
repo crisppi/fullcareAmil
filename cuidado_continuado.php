@@ -18,13 +18,13 @@ function cc_card(string $title, string $value, string $subtitle, string $accent)
     <div class="col-12 col-md-6 col-xl-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <span class="badge rounded-pill" style="background: <?= htmlspecialchars($accent) ?>1a; color: <?= htmlspecialchars($accent) ?>;">
+                <span class="badge rounded-pill cc-kpi-badge" style="background: <?= htmlspecialchars($accent) ?>1a; color: <?= htmlspecialchars($accent) ?>;">
                     <?= htmlspecialchars($title) ?>
                 </span>
-                <div class="mt-3" style="font-size:2rem;font-weight:700;color:#24324a;line-height:1;">
+                <div class="mt-2 cc-kpi-value" style="font-weight:700;color:#24324a;line-height:1;">
                     <?= htmlspecialchars($value) ?>
                 </div>
-                <div class="mt-2 text-muted small"><?= htmlspecialchars($subtitle) ?></div>
+                <div class="mt-1 text-muted small cc-kpi-subtitle"><?= htmlspecialchars($subtitle) ?></div>
             </div>
         </div>
     </div>
@@ -46,16 +46,16 @@ function cc_fmt_datetime_dash(?string $value): string
 <script src="js/timeout.js"></script>
 <style>
     .cc-shell {
-        padding: 36px 20px 32px;
+        padding: 18px 12px 20px;
         background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 180px);
         min-height: 100vh;
     }
     .cc-hero {
         background: linear-gradient(135deg, #0f3d63, #1d6a96 58%, #71c2cb);
         color: #fff;
-        border-radius: 22px;
-        padding: 22px 24px;
-        box-shadow: 0 18px 45px rgba(15, 61, 99, 0.18);
+        border-radius: 18px;
+        padding: 14px 16px;
+        box-shadow: 0 14px 34px rgba(15, 61, 99, 0.16);
     }
     .cc-hero h1,
     .cc-hero h2,
@@ -63,20 +63,85 @@ function cc_fmt_datetime_dash(?string $value): string
     .cc-hero div {
         color: #fff !important;
     }
+    .cc-hero .small {
+        font-size: .62rem !important;
+    }
+    .cc-hero h1 {
+        font-size: 1rem !important;
+        margin-top: .35rem !important;
+        margin-bottom: .35rem !important;
+    }
+    .cc-hero p {
+        font-size: .74rem;
+        line-height: 1.4;
+    }
+    .cc-hero .btn {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: .72rem;
+    }
     .cc-link-card {
         display: block;
         text-decoration: none;
         color: inherit;
         background: #fff;
-        border-radius: 18px;
-        padding: 22px;
+        border-radius: 16px;
+        padding: 14px;
         height: 100%;
-        box-shadow: 0 14px 34px rgba(36, 50, 74, 0.08);
+        box-shadow: 0 10px 26px rgba(36, 50, 74, 0.08);
         border: 1px solid rgba(15, 61, 99, 0.08);
     }
     .cc-link-card:hover {
         color: inherit;
         transform: translateY(-1px);
+    }
+    .cc-shell .card {
+        border-radius: 16px;
+    }
+    .cc-shell .card-body {
+        padding: 14px;
+    }
+    .cc-shell .h4,
+    .cc-shell .h5,
+    .cc-shell h2,
+    .cc-shell h3 {
+        font-size: .9rem !important;
+    }
+    .cc-shell .text-muted.small,
+    .cc-shell .small {
+        font-size: .68rem !important;
+    }
+    .cc-shell .fs-5,
+    .cc-kpi-value {
+        font-size: 1.4rem !important;
+    }
+    .cc-kpi-badge {
+        font-size: .64rem;
+        padding: .28rem .55rem;
+    }
+    .cc-kpi-subtitle {
+        font-size: .66rem !important;
+    }
+    .cc-shell .btn.btn-sm {
+        min-height: 30px;
+        font-size: .68rem;
+        padding: 5px 10px;
+    }
+    .cc-shell .table thead th {
+        font-size: .56rem;
+        letter-spacing: .08em;
+        padding: 7px 8px;
+        text-transform: uppercase;
+    }
+    .cc-shell .table tbody td {
+        font-size: .72rem;
+        padding: 6px 8px;
+        vertical-align: middle;
+    }
+    .cc-shell .list-group-item {
+        font-size: .72rem;
+        padding-top: .45rem;
+        padding-bottom: .45rem;
     }
 </style>
 

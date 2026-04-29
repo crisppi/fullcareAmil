@@ -83,15 +83,15 @@ function mp_action_label(string $action): string
 <script src="js/timeout.js"></script>
 <style>
     .mp-shell {
-        padding: 36px 20px 32px;
+        padding: 18px 12px 20px;
         background: #f7faf5;
         min-height: 100vh;
     }
     .mp-hero {
         background: linear-gradient(135deg, #1b6a43, #3ba56b 58%, #c9e7b5);
         color: #fff;
-        border-radius: 22px;
-        padding: 20px 24px;
+        border-radius: 18px;
+        padding: 14px 16px;
     }
     .mp-hero h1,
     .mp-hero h2,
@@ -99,9 +99,71 @@ function mp_action_label(string $action): string
     .mp-hero div {
         color: #fff !important;
     }
+    .mp-hero .small {
+        font-size: .62rem !important;
+    }
+    .mp-hero h1 {
+        font-size: 1rem !important;
+        margin-top: .35rem !important;
+        margin-bottom: .35rem !important;
+    }
+    .mp-hero p {
+        font-size: .74rem;
+        line-height: 1.4;
+    }
+    .mp-hero .btn {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: .72rem;
+    }
     .mp-mini-note {
-        font-size: .82rem;
+        font-size: .68rem;
         color: #6b7280;
+    }
+    .mp-shell .card {
+        border-radius: 16px;
+    }
+    .mp-shell .card-body {
+        padding: 14px;
+    }
+    .mp-shell .text-muted.small,
+    .mp-shell .small {
+        font-size: .68rem !important;
+    }
+    .mp-shell .fs-3 {
+        font-size: 1.35rem !important;
+    }
+    .mp-shell .form-label {
+        font-size: .68rem;
+        margin-bottom: 4px;
+    }
+    .mp-shell .form-control,
+    .mp-shell .form-select,
+    .mp-shell .btn {
+        min-height: 32px;
+        height: 32px;
+        font-size: .72rem;
+        line-height: 1.2;
+    }
+    .mp-shell .form-control::placeholder {
+        font-size: .72rem;
+        color: #c4c4c4;
+    }
+    .mp-shell .btn.btn-sm {
+        min-height: 30px;
+        font-size: .68rem;
+        padding: 5px 10px;
+    }
+    .mp-shell .table thead th {
+        font-size: .56rem;
+        letter-spacing: .08em;
+        padding: 7px 8px;
+        text-transform: uppercase;
+    }
+    .mp-shell .table tbody td {
+        font-size: .72rem;
+        padding: 6px 8px;
+        vertical-align: middle;
     }
 </style>
 

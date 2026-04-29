@@ -12,7 +12,7 @@
   --bi-selected: #ffd78a;
   --bi-selected-bg: rgba(255, 220, 120, 0.2);
   --bi-selected-shadow: 0 0 0 2px rgba(255, 220, 120, 0.25);
-  --bi-title-offset: 64px;
+  --bi-title-offset: 48px;
 }
 
 body.bi-theme,
@@ -31,8 +31,8 @@ body.bi-theme,
 .bi-wrapper {
   width: 100%;
   max-width: none;
-  margin: 12px 0 60px;
-  padding: 0 24px;
+  margin: 8px 0 44px;
+  padding: 0 18px;
 }
 
 .bi-theme .bi-wrapper {
@@ -49,22 +49,22 @@ body.bi-theme,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .bi-header-actions {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .bi-nav-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   color: var(--bi-text);
@@ -90,7 +90,7 @@ body.bi-theme,
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  font-size: clamp(0.98rem, 1.8vw, 1.34rem);
   margin: 0;
   color: var(--bi-text);
 }
@@ -105,30 +105,31 @@ body.bi-theme,
 .bi-panel {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
   border: 1px solid var(--bi-border);
-  border-radius: 16px;
+  border-radius: 12px;
   box-shadow: var(--bi-shadow);
-  padding: 16px 18px;
+  padding: 12px 14px;
 }
 
 .bi-panel + .bi-panel {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .bi-panel h3,
 .bi-panel h4,
 .bi-panel h5 {
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   font-weight: 600;
   color: var(--bi-text);
+  font-size: 0.9rem;
 }
 
 .bi-panel.bi-filters {
   display: flex !important;
-  flex-wrap: nowrap !important;
-  gap: 12px;
+  flex-wrap: wrap !important;
+  gap: 8px;
   align-items: flex-end;
-  overflow-x: auto;
-  padding-bottom: 6px;
+  overflow-x: visible;
+  padding-bottom: 4px;
 }
 
 .bi-panel.bi-filters::-webkit-scrollbar {
@@ -141,11 +142,11 @@ body.bi-theme,
 }
 
 .bi-filter label {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--bi-muted);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   display: block;
   background-image: none !important;
 }
@@ -192,21 +193,21 @@ body.bi-theme,
 }
 
 .bi-panel.bi-filters .bi-filter {
-  min-width: 170px;
-  flex: 0 0 170px !important;
+  min-width: 150px;
+  flex: 1 1 150px !important;
 }
 
 .bi-filter input,
 .bi-filter select {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--bi-border);
   background: var(--bi-panel-strong);
   color: var(--bi-text);
-  padding: 10px 12px;
-  min-height: 44px;
+  padding: 7px 10px;
+  min-height: 36px;
   line-height: 1.2;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
 }
 
 .bi-filter.is-selected select,
@@ -242,10 +243,11 @@ body.bi-theme,
 
 .bi-panel.bi-filters .bi-actions {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   align-items: end;
   flex-wrap: wrap;
   flex: 0 0 auto !important;
+  margin-left: auto;
 }
 
 .bi-panel.bi-filters {
@@ -254,14 +256,14 @@ body.bi-theme,
 
 @media (max-width: 1200px) {
   .bi-panel.bi-filters {
-    flex-wrap: nowrap !important;
-    overflow-x: auto;
+    flex-wrap: wrap !important;
+    overflow-x: visible;
   }
 }
 
 .bi-panel.bi-filters.bi-filters-wrap {
   display: grid !important;
-  grid-template-columns: repeat(6, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   align-items: end;
   overflow-x: visible;
 }
@@ -272,35 +274,36 @@ body.bi-theme,
 }
 
 .bi-panel.bi-filters.bi-filters-wrap .bi-actions {
+  grid-column: 1 / -1;
   justify-self: end;
   max-width: 100%;
 }
 
 .bi-panel.bi-filters.bi-filters-compact {
-  grid-template-columns: repeat(5, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
 }
 
 @media (max-width: 1400px) {
   .bi-panel.bi-filters.bi-filters-compact {
-    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   }
 }
 
 @media (max-width: 1200px) {
   .bi-panel.bi-filters.bi-filters-wrap {
-    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 
 @media (max-width: 992px) {
   .bi-panel.bi-filters.bi-filters-wrap {
-    grid-template-columns: repeat(3, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
   .bi-panel.bi-filters.bi-filters-wrap {
-    grid-template-columns: repeat(2, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
 
@@ -311,12 +314,13 @@ body.bi-theme,
 }
 
 .bi-btn {
-  border-radius: 10px;
-  padding: 8px 16px;
+  border-radius: 8px;
+  padding: 6px 12px;
   border: none;
   background: linear-gradient(135deg, var(--bi-accent), var(--bi-accent-2));
   color: #fff;
   font-weight: 600;
+  font-size: 0.8rem;
   letter-spacing: 0.02em;
 }
 
@@ -334,7 +338,7 @@ body.bi-theme,
 .bi-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
   align-items: stretch;
   justify-content: flex-start;
@@ -356,13 +360,36 @@ body.bi-theme,
 
 .bi-layout {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: flex-start;
 }
 
 .bi-sidebar {
-  flex: 0 0 240px;
-  max-width: 240px;
+  flex: 0 0 220px;
+  max-width: 220px;
+}
+
+.bi-sidebar .bi-panel h3,
+.bi-sidebar .bi-panel h4,
+.bi-sidebar .bi-panel h5 {
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+.bi-sidebar .bi-filter-card-header {
+  font-size: 0.6rem;
+  padding: 5px 9px;
+}
+
+.bi-sidebar .bi-filter-card-body {
+  padding: 7px 9px 9px;
+}
+
+.bi-sidebar .bi-filter-btn,
+.bi-sidebar .bi-filter-pill,
+.bi-sidebar .bi-filter-card select,
+.bi-sidebar .bi-filter-card input {
+  font-size: 0.74rem;
 }
 
 .bi-main {
@@ -373,7 +400,7 @@ body.bi-theme,
 .bi-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .bi-stack::before {
@@ -384,13 +411,13 @@ body.bi-theme,
 .bi-filter-card {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid var(--bi-border);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .bi-filter-card-header {
-  padding: 8px 12px;
-  font-size: 0.7rem;
+  padding: 6px 10px;
+  font-size: 0.64rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #f8f1ff;
@@ -398,14 +425,14 @@ body.bi-theme,
 }
 
 .bi-filter-card-body {
-  padding: 10px 12px 12px;
+  padding: 8px 10px 10px;
 }
 
 .bi-filter-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .bi-filter-card select,
@@ -414,8 +441,9 @@ body.bi-theme,
   background: rgba(11, 18, 40, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #f4f7ff;
-  border-radius: 8px;
-  padding: 8px 10px;
+  border-radius: 7px;
+  padding: 6px 9px;
+  font-size: 0.8rem;
 }
 
 .bi-filter-card .bi-filter-btn {
@@ -424,9 +452,10 @@ body.bi-theme,
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 8px;
+  padding: 8px 10px;
   font-weight: 600;
+  font-size: 0.78rem;
   background: linear-gradient(135deg, #8152a3, #5a2b63);
   color: #fff;
   cursor: pointer;
@@ -439,22 +468,22 @@ body.bi-theme,
 }
 
 .bi-filter-card .bi-filter-btn + .bi-filter-btn {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .bi-filter-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .bi-filter-pill {
-  padding: 10px 12px;
-  border-radius: 12px;
+  padding: 7px 10px;
+  border-radius: 10px;
   background: rgba(231, 238, 247, 0.85);
   color: #23314d;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.76rem;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.4);
 }
@@ -567,13 +596,13 @@ button.bi-filter-pill.active {
 
 .bi-kpis {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .bi-kpi-grid {
   display: grid;
-  gap: 12px;
+  gap: 8px;
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
@@ -587,10 +616,10 @@ button.bi-filter-pill.active {
 }
 
 .bi-kpis.kpi-tight {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   justify-items: stretch;
-  gap: 10px;
-  margin: 8px 0 14px;
+  gap: 8px;
+  margin: 6px 0 10px;
 }
 
 .bi-kpis.kpi-tight .bi-kpi {
@@ -598,7 +627,7 @@ button.bi-filter-pill.active {
 }
 
 .bi-kpis.kpi-slim {
-  margin: 4px 0 10px;
+  margin: 2px 0 8px;
 }
 
 .bi-kpis.kpi-grid-4 {
@@ -607,7 +636,7 @@ button.bi-filter-pill.active {
 }
 
 .bi-kpi.kpi-compact {
-  max-width: 180px;
+  max-width: 164px;
   width: 100%;
 }
 
@@ -638,8 +667,8 @@ button.bi-filter-pill.active {
 .bi-kpi {
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid var(--bi-border);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border-radius: 11px;
+  padding: 9px 11px;
   text-align: center;
 }
 
@@ -694,20 +723,20 @@ button.bi-filter-pill.active {
   color: var(--bi-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.65rem;
+  font-size: 0.58rem;
 }
 
 .bi-kpi strong {
   display: block;
-  font-size: 1.2rem;
-  margin-top: 6px;
+  font-size: 1rem;
+  margin-top: 4px;
 }
 
 .bi-kpis.kpi-auditor-v2 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
   align-items: stretch;
 }
 
@@ -715,39 +744,39 @@ button.bi-filter-pill.active {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
+  gap: 10px;
   align-items: stretch;
 }
 
 .bi-kpis.kpi-auditor-v2 .bi-kpi.kpi-card-v2 {
-  flex: 1 1 260px;
-  max-width: 320px;
-  width: min(320px, 100%);
-  min-height: 144px;
-  padding: 14px 16px;
-  border-radius: 16px;
+  flex: 1 1 220px;
+  max-width: 280px;
+  width: min(280px, 100%);
+  min-height: 118px;
+  padding: 11px 13px;
+  border-radius: 13px;
   text-align: left;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 22px rgba(6, 23, 44, 0.34);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .bi-kpis.kpi-dashboard-v2 .bi-kpi.kpi-card-v2 {
-  flex: 1 1 260px;
-  max-width: 320px;
-  width: min(320px, 100%);
-  min-height: 136px;
-  padding: 14px 16px;
-  border-radius: 16px;
+  flex: 1 1 220px;
+  max-width: 280px;
+  width: min(280px, 100%);
+  min-height: 112px;
+  padding: 11px 13px;
+  border-radius: 13px;
   text-align: left;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 10px 22px rgba(6, 23, 44, 0.34);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -799,32 +828,32 @@ button.bi-filter-pill.active {
 .kpi-card-v2-head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .kpi-card-v2-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.12);
   color: #7be3ff;
   border: 1px solid rgba(255, 255, 255, 0.24);
-  font-size: 1.05rem;
+  font-size: 0.92rem;
 }
 
 .bi-kpi.kpi-card-v2 .kpi-card-v2-head small {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: 0.64rem;
   color: rgba(228, 241, 255, 0.82);
   letter-spacing: 0.1em;
 }
 
 .bi-kpi.kpi-card-v2 strong {
   margin-top: 0;
-  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-size: clamp(1.24rem, 2vw, 1.7rem);
   line-height: 1.05;
   color: #ffffff;
   letter-spacing: 0.01em;
@@ -833,9 +862,9 @@ button.bi-filter-pill.active {
 .kpi-trend {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
 }
 
 .kpi-trend i {
@@ -901,24 +930,24 @@ button.bi-filter-pill.active {
 
 .bi-kpi.with-badge {
   position: relative;
-  padding-right: 56px;
+  padding-right: 48px;
 }
 
 .bi-kpi.with-badge .bi-kpi-badge {
   position: absolute;
-  top: 10px;
-  right: 12px;
+  top: 8px;
+  right: 10px;
   background: rgba(255, 255, 255, 0.9);
   color: #223245;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 4px 8px;
+  padding: 3px 7px;
   letter-spacing: 0.03em;
 }
 
 .bi-kpi-big {
-  font-size: 2.2rem;
+  font-size: 1.72rem;
   line-height: 1.1;
 }
 
@@ -931,43 +960,43 @@ button.bi-filter-pill.active {
 .bi-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .bi-list-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.95rem;
-  padding: 6px 8px;
-  border-radius: 10px;
+  font-size: 0.82rem;
+  padding: 5px 7px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .bi-chart {
-  min-height: 220px;
+  min-height: 180px;
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .bi-chart.compact {
-  min-height: 180px;
+  min-height: 148px;
 }
 
 .bi-chart.ie-chart-sm {
-  min-height: 240px;
-  height: 240px;
+  min-height: 200px;
+  height: 200px;
 }
 
 .bi-chart.ie-chart-md {
-  min-height: 240px;
-  height: 240px;
+  min-height: 205px;
+  height: 205px;
 }
 
 .bi-chart.ie-chart-lg {
-  min-height: 260px;
-  height: 260px;
+  min-height: 220px;
+  height: 220px;
 }
 
 .bi-chart canvas {
@@ -990,13 +1019,13 @@ button.bi-filter-pill.active {
   }
 
   .bi-chart.ie-chart-md {
-    min-height: 220px;
-    height: 220px;
+    min-height: 190px;
+    height: 190px;
   }
 
   .bi-chart.ie-chart-lg {
-    min-height: 240px;
-    height: 240px;
+    min-height: 205px;
+    height: 205px;
   }
 }
 
@@ -1041,18 +1070,19 @@ table.bi-table::after,
 }
 
 .bi-table th {
-  font-size: 0.75rem;
+  font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--bi-muted);
   background: rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid var(--bi-border);
-  padding: 10px 12px;
+  padding: 7px 9px;
   text-align: left;
 }
 
 .bi-table td {
-  padding: 10px 12px;
+  padding: 7px 9px;
+  font-size: 0.8rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   vertical-align: top;
 }
@@ -1089,22 +1119,23 @@ table.bi-table::after,
 }
 
 .bi-report p {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   color: #243746;
+  font-size: 0.84rem;
 }
 
 .bi-report-meta {
-  margin-bottom: 12px;
-  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
   color: #405363;
 }
 
 .bi-report-section + .bi-report-section {
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .bi-report-list {
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   color: #2a3d4c;
 }
 
@@ -1113,39 +1144,41 @@ table.bi-table::after,
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.08em;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  font-size: 0.8rem;
 }
 
 .bi-nav-grid {
   display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .bi-obitos-hero {
   background: linear-gradient(135deg, rgba(18, 115, 176, 0.95), rgba(63, 120, 175, 0.95));
-  border-radius: 16px;
-  padding: 18px 18px 14px;
+  border-radius: 13px;
+  padding: 13px 14px 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 12px 24px rgba(12, 32, 52, 0.2);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .bi-obitos-header h1 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.06rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #ffffff;
 }
 
 .bi-obitos-header p {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
 }
 
 .bi-obitos-filters {
-  margin-top: 12px;
+  margin-top: 8px;
   background: transparent;
   border-radius: 0;
   border: none;
@@ -1155,7 +1188,7 @@ table.bi-table::after,
 .bi-obitos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  gap: 8px;
 }
 
 .bi-obitos-grid .bi-obitos-action {
@@ -1164,20 +1197,20 @@ table.bi-table::after,
 
 .bi-obitos-grid .bi-obitos-action-buttons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: flex-start;
 }
 
 .bi-obitos-grid .bi-obitos-action .bi-btn {
   width: auto;
-  min-width: 120px;
+  min-width: 104px;
 }
 
 .bi-obitos-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .bi-obitos-kpis {

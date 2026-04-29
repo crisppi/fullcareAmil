@@ -50,6 +50,14 @@ body {
     padding-bottom: 84px;
 }
 
+body.bi-theme {
+    padding-bottom: 0;
+}
+
+body.bi-theme #myFooterSimple {
+    display: none !important;
+}
+
 #myFooterSimple {
     position: fixed;
     left: 0;
