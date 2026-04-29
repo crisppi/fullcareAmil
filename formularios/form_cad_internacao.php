@@ -266,7 +266,6 @@
             <div class="internacao-page__hero-main">
                 <p class="internacao-page__eyebrow">Fluxo assistencial</p>
                 <h1>Cadastrar internação</h1>
-                <p class="internacao-page__summary">Preencha primeiro os dados críticos da internação e depois complemente as informações clínicas e operacionais.</p>
             </div>
             <span class="internacao-page__tag">Campos obrigatórios em destaque</span>
         </div>
@@ -921,10 +920,10 @@
         </div>
 
             <div class="tabelas-adicionais-card">
-                <div class="tabelas-adicionais-card__header" style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(111,69,162,.10);">
+                <div class="tabelas-adicionais-card__header">
                     <div>
-                        <p class="tabelas-adicionais-card__eyebrow" style="margin:0;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:800;line-height:1.2;color:#6e4a96;">Tabelas adicionais</p>
-                        <h3 class="tabelas-adicionais-card__title" style="margin:2px 0 0;font-size:1.22rem;font-weight:800;color:#2a1b43;">Complementos da visita</h3>
+                        <p class="tabelas-adicionais-card__eyebrow">Tabelas adicionais</p>
+                        <h3 class="tabelas-adicionais-card__title">Complementos da visita</h3>
                     </div>
                 </div>
 

@@ -166,19 +166,19 @@
         #origem_int,
         #senha_int,
         #num_atendimento_int {
-            min-height: 44px;
-            height: 44px;
+            min-height: 42px;
+            height: 42px;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="fk_cid_int"] {
-            min-height: 44px !important;
-            height: 44px !important;
-            padding-top: 9px !important;
-            padding-bottom: 9px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner-inner {
-            line-height: 26px !important;
+            line-height: 24px !important;
         }
 
         /* Padroniza altura da faixa de Dados Essenciais */
@@ -189,28 +189,28 @@
         #internado_int,
         #data_alta_alt,
         #tipo_alta_alt {
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
         }
 
         #data_alta_alt,
         #tipo_alta_alt {
-            padding-top: 9px;
-            padding-bottom: 9px;
-            line-height: 26px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            line-height: 24px;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="hospital_selected"],
         .bootstrap-select>.dropdown-toggle[data-id="fk_paciente_int"] {
-            min-height: 44px !important;
-            height: 44px !important;
-            padding-top: 9px !important;
-            padding-bottom: 9px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner-inner,
         .bootstrap-select>.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner-inner {
-            line-height: 26px !important;
+            line-height: 24px !important;
         }
 
         .hospital-col label {
@@ -410,9 +410,9 @@
         }
 
         .patient-select-btn {
-            min-height: 44px !important;
-            height: 44px !important;
-            padding: 9px 10px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            padding: 8px 10px !important;
             border: 1px solid #ced4da !important;
             border-color: #ced4da !important;
             border-radius: 6px !important;
@@ -461,11 +461,11 @@
         #fk_paciente_int {
             display: block !important;
             width: 100% !important;
-            min-height: 44px !important;
-            height: 44px !important;
-            line-height: 26px !important;
-            padding-top: 9px !important;
-            padding-bottom: 9px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            line-height: 24px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
             border-radius: 6px !important;
             box-sizing: border-box !important;
             border: none !important;
@@ -493,8 +493,8 @@
         .patient-col .bootstrap-select {
             width: 100% !important;
             display: block !important;
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
         }
 
         /* Cadastro central (internacao): remove halo azul dos selects de responsavel */
@@ -572,8 +572,8 @@
         #cadastro-central-wrapper #box_resp_med .bootstrap-select,
         #cadastro-central-wrapper #box_resp_enf .bootstrap-select {
             width: 100% !important;
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
             margin: 0 !important;
             padding: 0 !important;
             vertical-align: top !important;
@@ -581,52 +581,53 @@
 
         #cadastro-central-wrapper #box_resp_med .bootstrap-select > .dropdown-toggle,
         #cadastro-central-wrapper #box_resp_enf .bootstrap-select > .dropdown-toggle {
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
             margin: 0 !important;
-            padding-top: 9px !important;
-            padding-bottom: 9px !important;
-            line-height: 26px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+            line-height: 24px !important;
         }
 
         .internacao-page {
             width: 100%;
             margin: 0;
             padding: 0 0 40px;
+            font-size: .88rem;
         }
 
         .internacao-page__hero {
             background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
             color: #fff;
             border-radius: 24px;
-            padding: 22px 24px;
-            box-shadow: 0 16px 34px rgba(37, 18, 54, 0.22);
+            padding: 16px 22px;
+            box-shadow: 0 12px 26px rgba(37, 18, 54, 0.18);
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: space-between;
-            gap: 16px;
+            gap: 14px;
             border: 1px solid rgba(255, 255, 255, 0.16);
         }
 
         .internacao-page__hero-main {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             max-width: 760px;
         }
 
         .internacao-page__eyebrow {
             margin: 0;
-            font-size: .76rem;
+            font-size: .6rem;
             font-weight: 800;
-            letter-spacing: .16em;
+            letter-spacing: .14em;
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.78);
         }
 
         .internacao-page__hero h1 {
             margin: 0;
-            font-size: 2rem;
+            font-size: 1.38rem;
             letter-spacing: .02em;
             color: #fff;
             font-weight: 800;
@@ -636,32 +637,32 @@
             margin: 0;
             color: rgba(255, 255, 255, 0.88);
             max-width: 760px;
-            font-size: .96rem;
-            line-height: 1.5;
+            font-size: .8rem;
+            line-height: 1.35;
         }
 
         .internacao-page__tag {
             background: rgba(255, 255, 255, 0.14);
             color: #f7efff;
-            padding: 7px 14px;
+            padding: 6px 12px;
             border-radius: 999px;
             font-weight: 700;
-            font-size: .78rem;
+            font-size: .6rem;
             border: 1px solid rgba(255, 255, 255, 0.14);
             align-self: flex-start;
         }
 
         .internacao-page__content {
-            margin-top: 18px;
+            margin-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
         .internacao-card {
             background: linear-gradient(180deg, #f8f7fc 0%, #f3f4f8 100%);
             border-radius: 22px;
-            padding: 18px 18px 22px;
+            padding: 12px 14px 14px;
             border: 1px solid #e6e1ef;
             box-shadow: 0 10px 26px rgba(37, 18, 54, .08);
             margin: 0;
@@ -673,31 +674,31 @@
             align-items: flex-start;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
             border-bottom: 1px solid rgba(111, 69, 162, 0.10);
         }
 
         .internacao-card__title-wrap {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
         }
 
         .internacao-card__eyebrow {
             text-transform: uppercase;
             letter-spacing: .18em;
-            font-size: .72rem;
+            font-size: .52rem;
             margin: 0;
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.1;
             color: #6e4a96;
         }
 
         .internacao-card__title {
-            margin: 2px 0 0;
-            font-size: 1.22rem;
+            margin: 0;
+            font-size: .84rem;
             color: #2a1b43;
             font-weight: 800;
         }
@@ -705,10 +706,10 @@
         .internacao-card__tag {
             background: #f1ebfb;
             color: #5c3687;
-            padding: 6px 12px;
+            padding: 4px 9px;
             border-radius: 999px;
             font-weight: 700;
-            font-size: .74rem;
+            font-size: .56rem;
             border: 1px solid #e2d4f6;
         }
 
@@ -721,8 +722,8 @@
         .clinical-text-field {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            padding: 12px 14px 10px;
+            gap: 6px;
+            padding: 10px 12px 8px;
             border-radius: 16px;
             background: rgba(255, 255, 255, 0.54);
             border: 1px solid rgba(111, 69, 162, 0.10);
@@ -755,7 +756,7 @@
             min-height: 34px;
             padding: 6px 12px;
             border-radius: 999px;
-            font-size: .82rem;
+            font-size: .74rem;
             font-weight: 700;
         }
 
@@ -777,7 +778,7 @@
 
         .ia-highlight-box {
             margin-top: 2px;
-            padding: 14px;
+            padding: 10px 12px;
             border-radius: 16px;
             border: 1px solid #bfdbfe;
             background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 48%, #f8fafc 100%);
@@ -788,21 +789,21 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 14px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .ia-highlight-box__title-wrap {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .ia-highlight-box__eyebrow {
             margin: 0 0 2px;
-            font-size: .72rem;
+            font-size: .58rem;
             font-weight: 800;
             letter-spacing: .14em;
             text-transform: uppercase;
@@ -811,7 +812,7 @@
 
         .ia-highlight-box__title {
             margin: 0;
-            font-size: 1.15rem;
+            font-size: .92rem;
             font-weight: 800;
             color: #0f172a;
         }
@@ -825,16 +826,16 @@
             border-radius: 12px;
             background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
             overflow: hidden;
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.10);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
         }
 
         .parecer-ia-card__header {
-            min-height: 44px;
+            min-height: 38px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            padding: 8px 12px;
+            gap: 10px;
+            padding: 6px 10px;
             background: linear-gradient(135deg, #dbeafe 0%, #eef2ff 50%, #ecfeff 100%);
             border-bottom: 1px solid #c7d2fe;
         }
@@ -842,13 +843,13 @@
         .parecer-ia-title-wrap {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .parecer-ia-card__header h4 {
             margin: 0;
-            font-size: 1rem;
+            font-size: .82rem;
             font-weight: 700;
             color: #111827;
         }
@@ -857,23 +858,23 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            min-height: 28px;
-            padding: 4px 10px;
+            min-height: 24px;
+            padding: 3px 8px;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.78);
             border: 1px solid rgba(99, 102, 241, 0.22);
             color: #1d4ed8;
-            font-size: .76rem;
+            font-size: .64rem;
             font-weight: 800;
             letter-spacing: .03em;
             text-transform: uppercase;
         }
 
         .parecer-ia-toggle {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            border-radius: 7px;
             background: #fff;
             color: #374151;
             display: inline-flex;
@@ -882,15 +883,15 @@
         }
 
         .parecer-ia-card__body {
-            padding: 12px;
+            padding: 10px;
         }
 
         .parecer-ia-status {
-            margin: 10px 12px 0;
-            padding: 8px 10px;
+            margin: 8px 10px 0;
+            padding: 6px 8px;
             border-radius: 8px;
             font-weight: 700;
-            font-size: .88rem;
+            font-size: .76rem;
         }
 
         .parecer-ia-status--info {
@@ -909,23 +910,23 @@
         }
 
         .parecer-ia-result-head {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .parecer-ia-chip-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .parecer-ia-badge {
             display: inline-flex;
             align-items: center;
-            min-height: 28px;
-            padding: 4px 10px;
+            min-height: 24px;
+            padding: 3px 8px;
             border-radius: 999px;
-            font-size: .78rem;
+            font-size: .66rem;
             font-weight: 800;
             letter-spacing: .04em;
         }
@@ -993,7 +994,7 @@
         .internacao-card__body {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 10px;
             padding: 0;
         }
 
@@ -1021,8 +1022,8 @@
 
         .internacao-head-grid {
             display: grid !important;
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            gap: 14px 12px !important;
+            grid-template-columns: repeat(18, minmax(0, 1fr));
+            gap: 8px 8px !important;
             align-items: start !important;
             margin-top: 0;
         }
@@ -1034,24 +1035,24 @@
             padding-right: 0;
             display: flex;
             flex-direction: column;
-            padding: 10px 12px 12px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.58);
-            border: 1px solid rgba(111, 69, 162, 0.08);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
         }
 
         .internacao-head-grid > .form-group > label,
         .internacao-head-grid > .hospital-col > .d-flex.mb-1,
         .internacao-head-grid > .patient-col > .d-flex.mb-1 {
-            min-height: 28px;
+            min-height: auto;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 4px !important;
+            margin-bottom: 2px !important;
         }
 
         .internacao-head-grid > .form-group > label {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .internacao-head-grid > .hospital-col,
@@ -1069,7 +1070,7 @@
         }
 
         .internacao-head-grid > .essential-small {
-            grid-column: span 4;
+            grid-column: span 2;
             min-width: 0;
         }
 
@@ -1079,6 +1080,11 @@
             border: none;
             box-shadow: none;
             padding: 0;
+        }
+
+        .internacao-head-grid > .hospital-col .d-flex.mb-1,
+        .internacao-head-grid > .patient-col .d-flex.mb-1 {
+            margin-bottom: 2px !important;
         }
 
         .internacao-head-grid .hospital-select-wrapper {
@@ -1100,8 +1106,27 @@
         .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle,
         .internacao-head-grid > .hospital-col select,
         .internacao-head-grid > .patient-col select {
-            font-size: 1rem !important;
+            font-size: .84rem !important;
             font-weight: 600 !important;
+        }
+
+        @media (max-width: 1399.98px) {
+            .internacao-head-grid {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            .internacao-head-grid > .hospital-col,
+            .internacao-head-grid > .patient-col {
+                grid-column: span 4;
+            }
+
+            .internacao-head-grid > .essential-medium {
+                grid-column: span 2;
+            }
+
+            .internacao-head-grid > .essential-small {
+                grid-column: span 4;
+            }
         }
 
         @media (max-width: 991.98px) {
@@ -1117,12 +1142,12 @@
 
         @media (max-width: 575.98px) {
             .internacao-page__hero {
-                padding: 18px;
+                padding: 16px;
                 border-radius: 20px;
             }
 
             .internacao-page__hero h1 {
-                font-size: 1.6rem;
+                font-size: 1.12rem;
             }
 
             .internacao-head-grid {
@@ -1149,7 +1174,7 @@
         }
 
         .internacao-card--fields .internacao-card__body {
-            gap: 14px;
+            gap: 10px;
         }
 
         .internacao-card--fields .internacao-card__body .row,
@@ -1158,12 +1183,12 @@
         }
 
         .internacao-card--fields .form-group {
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .internacao-card--fields .form-group.row {
-            margin-top: 4px;
-            margin-bottom: 4px;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
 
         .internacao-card--fields .form-check {
@@ -1186,21 +1211,21 @@
             background: #f3f4f6;
             border: 1px solid #d1d5db;
             box-shadow: 0 12px 24px rgba(15, 23, 42, .06);
-            padding: 12px 20px 6px;
+            padding: 10px 16px 4px;
             margin: 0;
         }
 
         .detalhes-card__header {
             display: flex;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .detalhes-card__controls {
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
-            gap: 18px;
+            gap: 12px;
             margin-bottom: 4px;
             flex-wrap: wrap;
         }
@@ -1236,9 +1261,35 @@
             background: linear-gradient(180deg, #f7f8fb 0%, #f2f4f7 100%);
             border: 1px solid #d9dce4;
             box-shadow: 0 10px 22px rgba(15, 23, 42, .06);
-            padding: 12px 20px 10px;
-            margin-top: 24px;
+            padding: 10px 16px 8px;
+            margin-top: 16px;
             clear: both;
+        }
+
+        .tabelas-adicionais-card__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(111, 69, 162, .10);
+        }
+
+        .tabelas-adicionais-card__eyebrow {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: .18em;
+            font-size: .58rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #6e4a96;
+        }
+
+        .tabelas-adicionais-card__title {
+            margin: 0;
+            font-size: .92rem;
+            font-weight: 800;
+            color: #2a1b43;
         }
 
         .patient-inline-actions {
@@ -1314,8 +1365,8 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
             border-bottom: 1px solid rgba(111, 69, 162, 0.10);
         }
 
@@ -1323,15 +1374,15 @@
             margin: 0;
             text-transform: uppercase;
             letter-spacing: .18em;
-            font-size: .72rem;
+            font-size: .58rem;
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.1;
             color: #6e4a96;
         }
 
         .tabelas-adicionais-card__title {
-            margin: 2px 0 0;
-            font-size: 1.22rem;
+            margin: 0;
+            font-size: .92rem;
             font-weight: 800;
             color: #2a1b43;
         }
@@ -1340,7 +1391,28 @@
             display: flex;
             flex-wrap: wrap;
             align-items: flex-end;
-            gap: 12px;
+            gap: 8px;
+        }
+
+        .tabelas-selects .form-group {
+            margin-bottom: 0;
+        }
+
+        .tabelas-selects .control-label,
+        .tabelas-selects label {
+            font-size: .74rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 4px !important;
+            line-height: 1.15;
+        }
+
+        .tabelas-selects .form-control,
+        .tabelas-selects .detail-select,
+        .tabelas-selects .select-purple,
+        .tabelas-selects .bootstrap-select > .dropdown-toggle,
+        .tabelas-selects .bootstrap-select > .dropdown-toggle .filter-option,
+        .tabelas-selects .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+            font-size: .82rem !important;
         }
 
         .tabelas-selects .tabelas-col {
@@ -1442,9 +1514,9 @@
         .tabelas-adicionais-card .adicional-card .form-control-sm.form-control,
         #detalhes-card-wrapper .form-control,
         #detalhes-card-wrapper .form-control-sm.form-control {
-            min-height: 44px !important;
-            height: 44px !important;
-            padding: 9px 12px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            padding: 8px 12px !important;
             font-size: .98rem;
             line-height: 1.25;
         }
@@ -1459,8 +1531,8 @@
         .tabelas-adicionais-card .adicional-card .bootstrap-select,
         .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle {
             width: 100% !important;
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
         }
 
         .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle .filter-option {
@@ -1470,10 +1542,10 @@
 
         .tabelas-adicionais-card .adicional-card .btn-add,
         .tabelas-adicionais-card .adicional-card .btn-remove {
-            min-height: 44px;
-            height: 44px;
-            min-width: 44px;
-            padding: 9px 12px;
+            min-height: 42px;
+            height: 42px;
+            min-width: 42px;
+            padding: 8px 12px;
         }
 
         .tabelas-adicionais-card .adicional-card .form-group[style*="margin-top:25px"],
@@ -1611,9 +1683,9 @@
         #container-negoc .form-control-sm.form-control,
         #detalhes-card-wrapper .form-control,
         #detalhes-card-wrapper .form-control-sm.form-control {
-            min-height: 44px !important;
-            height: 44px !important;
-            padding: 9px 12px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            padding: 8px 12px !important;
             font-size: .98rem;
         }
 
@@ -1637,8 +1709,8 @@
         #container-uti .bootstrap-select>.dropdown-toggle,
         #container-negoc .bootstrap-select>.dropdown-toggle {
             width: 100% !important;
-            min-height: 44px !important;
-            height: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
         }
 
         #container-tuss .bootstrap-select,
@@ -1653,9 +1725,9 @@
         #container-prorrog .btn-remove,
         #container-negoc .btn-add,
         #container-negoc .btn-remove {
-            min-height: 44px !important;
-            height: 44px !important;
-            min-width: 44px !important;
+            min-height: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
         }
 
         /* Placeholder mais claro em todos inputs/textarea */
@@ -1663,12 +1735,14 @@
         textarea::placeholder {
             color: #c4c4c4 !important;
             opacity: 1;
+            font-size: .8rem;
         }
 
         /* Placeholder do search do bootstrap-select */
         .bootstrap-select .dropdown-menu .bs-searchbox input::placeholder {
             color: #c4c4c4 !important;
             opacity: 1;
+            font-size: .8rem;
         }
 
         /* Texto “placeholder” dos selects (bootstrap-select e nativo) */
@@ -1677,6 +1751,7 @@
         .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner {
             color: #c4c4c4 !important;
             font-weight: 500;
+            font-size: .8rem !important;
         }
 
         .bootstrap-select>.dropdown-toggle.select-placeholder,
@@ -1684,6 +1759,7 @@
         .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner {
             color: #c4c4c4 !important;
             font-weight: 500;
+            font-size: .8rem !important;
         }
 
         select:required:invalid {
@@ -1756,12 +1832,12 @@
 
         .entity-form .internacao-card__body {
             display: grid;
-            gap: 18px;
+            gap: 12px;
         }
 
         .entity-step-card {
             position: relative;
-            padding: 22px 24px;
+            padding: 14px 16px;
             border-radius: 22px;
             border: 1px solid rgba(94, 35, 99, 0.12);
             background:
@@ -1788,8 +1864,8 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 14px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .entity-step-copy {
@@ -1800,8 +1876,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
-            font-size: .75rem;
+            margin-bottom: 4px;
+            font-size: .54rem;
             font-weight: 800;
             letter-spacing: .08em;
             text-transform: uppercase;
@@ -1818,7 +1894,7 @@
 
         .entity-step-title {
             margin: 0;
-            font-size: 1.12rem;
+            font-size: .84rem;
             font-weight: 700;
             color: #26163b;
         }
@@ -1826,8 +1902,8 @@
         .entity-step-desc {
             margin: 4px 0 0;
             color: #6b7280;
-            font-size: .9rem;
-            line-height: 1.5;
+            font-size: .76rem;
+            line-height: 1.4;
         }
 
         .entity-step-badge {
@@ -1837,27 +1913,35 @@
             border: 1px solid rgba(94, 35, 99, 0.14);
             background: rgba(94, 35, 99, 0.08);
             color: #5e2363;
-            font-size: .76rem;
+            font-size: .6rem;
             font-weight: 700;
             white-space: nowrap;
         }
 
         .entity-form .row {
-            row-gap: 4px;
+            row-gap: 2px;
         }
 
         .entity-form .form-group label {
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 600;
             color: #3b2b4b;
+            font-size: .74rem;
         }
 
         .entity-form .form-control,
         .entity-form .form-control-sm {
-            min-height: 44px;
+            min-height: 42px;
             border-radius: 12px;
             border-color: #d6d4df;
             box-shadow: none;
+            font-size: .82rem;
+        }
+
+        .entity-form .bootstrap-select > .dropdown-toggle,
+        .entity-form .bootstrap-select > .dropdown-toggle .filter-option,
+        .entity-form .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+            font-size: .82rem !important;
         }
 
         .entity-form textarea.form-control {
@@ -1869,7 +1953,7 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(242,236,249,0.92) 100%);
             border: 1px solid rgba(94, 35, 99, 0.12);
             border-radius: 18px;
-            padding: 18px;
+            padding: 14px;
             box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
         }
 
