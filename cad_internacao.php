@@ -130,7 +130,7 @@ $tussGeral = $tuss->findAll();
 
 ?>
 
-<div id="main-container" style="background-color: #f0f2f4ff;padding: 20px;">
+<div id="main-container" style="background-color: #f0f2f4ff;padding: 12px 10px;">
     <!-- FORMULARIO INTERNACAO -->
     <?php include_once('formularios/form_cad_internacao.php'); ?>
 

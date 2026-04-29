@@ -235,7 +235,7 @@ if (!empty($sessionIdUsuario)) {
             display: flex;
             align-items: center;
             flex-wrap: nowrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .navbar .navbar-brand {
@@ -243,14 +243,14 @@ if (!empty($sessionIdUsuario)) {
             align-items: center;
             line-height: 1;
             flex: 0 1 auto !important;
-            max-width: 180px;
-            margin-right: 6px;
+            max-width: 165px;
+            margin-right: 4px;
             visibility: visible !important;
             opacity: 1 !important;
         }
 
         .navbar .navbar-brand .logo-novo {
-            height: 40px !important;
+            height: 34px !important;
             width: auto !important;
             max-height: none !important;
             min-height: 0 !important;
@@ -264,45 +264,45 @@ if (!empty($sessionIdUsuario)) {
 
         @media (max-width: 1199.98px) {
             .navbar .navbar-brand .logo-novo {
-                height: 36px !important;
+                height: 31px !important;
             }
         }
 
         @media (max-width: 575.98px) {
             .navbar .navbar-brand .logo-novo {
-                height: 32px !important;
+                height: 28px !important;
             }
         }
 
         .navbar .navbar-brand .logo-conex {
-            height: 24px !important;
-            max-width: 105px;
+            height: 20px !important;
+            max-width: 92px;
         }
 
         @media (max-width: 1199.98px) {
             .navbar .navbar-brand .logo-conex {
-                height: 22px !important;
-                max-width: 96px;
+                height: 18px !important;
+                max-width: 84px;
             }
         }
 
         @media (max-width: 575.98px) {
             .navbar .navbar-brand .logo-conex {
-                height: 20px !important;
-                max-width: 88px;
+                height: 17px !important;
+                max-width: 76px;
             }
         }
 
         .navbar .navbar-brand .brand-divider {
             width: 1px;
-            height: 34px;
+            height: 28px;
             background: rgba(94, 35, 99, 0.35);
         }
 
         .navbar .navbar-brand .logo-seguradora {
-            height: 40px;
+            height: 34px;
             width: auto;
-            max-width: 110px;
+            max-width: 96px;
             object-fit: contain;
             display: block;
             flex: 0 1 auto;
@@ -310,19 +310,19 @@ if (!empty($sessionIdUsuario)) {
 
         @media (max-width: 1199.98px) {
             .navbar .navbar-brand .logo-seguradora {
-                height: 34px;
-                max-width: 96px;
+                height: 29px;
+                max-width: 84px;
             }
         }
 
         @media (max-width: 575.98px) {
             .navbar .navbar-brand .brand-divider {
-                height: 30px;
+                height: 24px;
             }
 
             .navbar .navbar-brand .logo-seguradora {
-                height: 28px;
-                max-width: 82px;
+                height: 24px;
+                max-width: 72px;
             }
         }
 
@@ -333,32 +333,33 @@ if (!empty($sessionIdUsuario)) {
 
         .navbar-nav.navbar-nav-scroll {
             flex-wrap: nowrap;
-            gap: 2px;
+            gap: 0;
             min-width: 0;
         }
 
         .navbar-nav.navbar-nav-scroll .nav-link {
             white-space: nowrap;
-            padding: 0.45rem 0.45rem;
-            font-size: 0.94rem;
+            padding: 0.32rem 0.36rem;
+            font-size: 0.84rem;
+            line-height: 1.1;
         }
 
         #navbarGestorListas {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             white-space: nowrap;
         }
 
         .header-actions {
             margin-left: auto !important;
             margin-right: 0 !important;
-            gap: 0.5rem !important;
+            gap: 0.35rem !important;
             flex: 0 0 auto;
         }
 
         .header-actions #global-patient-search {
-            min-width: 220px;
+            min-width: 200px;
             flex: 0 0 auto;
         }
 
@@ -366,6 +367,8 @@ if (!empty($sessionIdUsuario)) {
             border: 1px solid rgba(94, 35, 99, 0.28) !important;
             background: #fff;
             color: #5e2363;
+            font-size: 0.82rem;
+            padding: 0.32rem 0.5rem;
         }
 
         .header-action-btn:hover {
@@ -376,21 +379,22 @@ if (!empty($sessionIdUsuario)) {
         .header-chat-launcher {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.25rem;
         }
 
         .header-zoom-actions {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.25rem;
         }
 
         .header-zoom-actions .btn {
-            padding: 0.35rem 0.55rem;
+            padding: 0.28rem 0.45rem;
+            font-size: 0.8rem;
         }
 
         .header-chat-launcher .chat-unread-badge {
-            font-size: 0.65rem;
+            font-size: 0.58rem;
         }
 
         #search-results-dropdown {
@@ -418,8 +422,8 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .account-user-caret {
-            font-size: 0.9rem;
-            margin-left: 6px;
+            font-size: 0.8rem;
+            margin-left: 4px;
             color: #6b7280;
             vertical-align: middle;
         }

@@ -165,6 +165,8 @@ li {
     margin: 1px 6px;
     padding: 6px 12px;
     font-weight: 400;
+    font-size: 0.84rem;
+    line-height: 1.2;
 }
 
 .navbar .dropdown-menu .dropdown-item:hover,
@@ -253,7 +255,7 @@ li {
 
 .bi-dropdown.bi-mega .bi-submenu > .dropdown-item::after {
     content: "›";
-    font-size: 1rem;
+    font-size: 0.84rem;
     line-height: 1;
     opacity: 0.6;
 }
@@ -261,11 +263,11 @@ li {
 .bi-dropdown.bi-mega .bi-submenu-list {
     list-style: none;
     margin: 0;
-    padding: 8px 10px;
+    padding: 6px 8px;
     border-left: 1px solid rgba(0, 0, 0, 0.08);
     display: none;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     position: absolute;
     top: 0;
     left: calc(100% + 8px);
@@ -291,8 +293,8 @@ li {
 
 .bi-dropdown.bi-mega .dropdown-item {
     white-space: normal;
-    padding-left: 0.4rem;
-    padding-right: 0.4rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
 }
 
 @media (max-width: 1200px) {

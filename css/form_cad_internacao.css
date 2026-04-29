@@ -592,7 +592,7 @@
         .internacao-page {
             width: 100%;
             margin: 0;
-            padding: 0 0 40px;
+            padding: 0 0 28px;
             font-size: .88rem;
         }
 
@@ -600,25 +600,25 @@
             background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
             color: #fff;
             border-radius: 24px;
-            padding: 16px 22px;
-            box-shadow: 0 12px 26px rgba(37, 18, 54, 0.18);
+            padding: 8px 14px;
+            box-shadow: 0 8px 16px rgba(37, 18, 54, 0.12);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            gap: 8px;
             border: 1px solid rgba(255, 255, 255, 0.16);
         }
 
         .internacao-page__hero-main {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 1px;
             max-width: 760px;
         }
 
         .internacao-page__eyebrow {
             margin: 0;
-            font-size: .6rem;
+            font-size: .54rem;
             font-weight: 800;
             letter-spacing: .14em;
             text-transform: uppercase;
@@ -627,7 +627,7 @@
 
         .internacao-page__hero h1 {
             margin: 0;
-            font-size: 1.38rem;
+            font-size: 1.08rem;
             letter-spacing: .02em;
             color: #fff;
             font-weight: 800;
@@ -644,10 +644,10 @@
         .internacao-page__tag {
             background: rgba(255, 255, 255, 0.14);
             color: #f7efff;
-            padding: 6px 12px;
+            padding: 3px 8px;
             border-radius: 999px;
             font-weight: 700;
-            font-size: .6rem;
+            font-size: .54rem;
             border: 1px solid rgba(255, 255, 255, 0.14);
             align-self: flex-start;
         }
@@ -698,7 +698,7 @@
 
         .internacao-card__title {
             margin: 0;
-            font-size: .84rem;
+            font-size: .76rem;
             color: #2a1b43;
             font-weight: 800;
         }
@@ -722,9 +722,9 @@
         .clinical-text-field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            padding: 10px 12px 8px;
-            border-radius: 16px;
+            gap: 4px;
+            padding: 8px 10px 6px;
+            border-radius: 14px;
             background: rgba(255, 255, 255, 0.54);
             border: 1px solid rgba(111, 69, 162, 0.10);
         }
@@ -733,7 +733,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -741,20 +741,21 @@
             margin: 0;
             font-weight: 700;
             color: #33224d;
+            font-size: .78rem;
         }
 
         .clinical-text-field__actions {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .clinical-text-field__actions .btn,
         .auditoria-action-btn {
-            min-height: 34px;
-            padding: 6px 12px;
+            min-height: 30px;
+            padding: 4px 10px;
             border-radius: 999px;
             font-size: .74rem;
             font-weight: 700;
@@ -769,7 +770,7 @@
         }
 
         .auditoria-action-btn {
-            min-height: 36px;
+            min-height: 32px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -812,7 +813,7 @@
 
         .ia-highlight-box__title {
             margin: 0;
-            font-size: .92rem;
+            font-size: .82rem;
             font-weight: 800;
             color: #0f172a;
         }
@@ -849,7 +850,7 @@
 
         .parecer-ia-card__header h4 {
             margin: 0;
-            font-size: .82rem;
+            font-size: .74rem;
             font-weight: 700;
             color: #111827;
         }
@@ -1142,12 +1143,12 @@
 
         @media (max-width: 575.98px) {
             .internacao-page__hero {
-                padding: 16px;
+                padding: 12px;
                 border-radius: 20px;
             }
 
             .internacao-page__hero h1 {
-                font-size: 1.12rem;
+                font-size: .98rem;
             }
 
             .internacao-head-grid {
@@ -1204,6 +1205,65 @@
             margin-left: 0 !important;
             font-weight: 600;
             color: #374151;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > .form-group {
+            min-width: 0;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > .col-sm-2 {
+            flex: 0 0 18%;
+            max-width: 18%;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > #div-oxig.col-sm-1 {
+            flex: 0 0 9%;
+            max-width: 9%;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > .col-sm-3:last-child {
+            flex: 0 0 19%;
+            max-width: 19%;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child .d-flex.flex-wrap.align-items-center {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: flex-start !important;
+            gap: 10px;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child .form-check {
+            margin: 0 !important;
+            gap: 3px;
+        }
+
+        #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child .form-check label {
+            font-size: .68rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 1399.98px) {
+            #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child {
+                flex-wrap: wrap;
+            }
+
+            #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > .col-sm-2,
+            #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > #div-oxig.col-sm-1,
+            #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child > .col-sm-3:last-child {
+                flex: 0 0 auto;
+                max-width: 100%;
+            }
+
+            #detalhes-card-wrapper #div-detalhado > .form-group.row:first-child .d-flex.flex-wrap.align-items-center {
+                flex-wrap: wrap !important;
+            }
         }
 
         .detalhes-card {
@@ -1287,7 +1347,7 @@
 
         .tabelas-adicionais-card__title {
             margin: 0;
-            font-size: .92rem;
+            font-size: .82rem;
             font-weight: 800;
             color: #2a1b43;
         }
@@ -1440,10 +1500,11 @@
         }
 
         .tabelas-selects > .tabelas-col label {
-            margin-bottom: 8px !important;
-            font-size: .96rem;
-            font-weight: 800 !important;
+            margin-bottom: 4px !important;
+            font-size: .74rem !important;
+            font-weight: 600 !important;
             color: #3f4654 !important;
+            line-height: 1.15;
         }
 
         .tabelas-selects > .tabelas-col .form-control,
@@ -1500,11 +1561,12 @@
         .tabelas-adicionais-card .tabelas-col label,
         .tabelas-adicionais-card .adicional-card label,
         #detalhes-card-wrapper label {
-            min-height: 20px;
+            min-height: 18px;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 600;
+            font-size: .74rem !important;
             line-height: 1.15;
         }
 
@@ -1517,7 +1579,7 @@
             min-height: 42px !important;
             height: 42px !important;
             padding: 8px 12px !important;
-            font-size: .98rem;
+            font-size: .82rem !important;
             line-height: 1.25;
         }
 
@@ -1664,10 +1726,11 @@
         #container-uti label,
         #container-negoc label,
         #detalhes-card-wrapper label {
-            min-height: 20px;
+            min-height: 18px;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            font-size: .74rem !important;
             line-height: 1.15;
         }
 
@@ -1686,7 +1749,29 @@
             min-height: 42px !important;
             height: 42px !important;
             padding: 8px 12px !important;
-            font-size: .98rem;
+            font-size: .82rem !important;
+        }
+
+        .tabelas-adicionais-card input::placeholder,
+        .tabelas-adicionais-card textarea::placeholder,
+        #detalhes-card-wrapper input::placeholder,
+        #detalhes-card-wrapper textarea::placeholder {
+            font-size: .74rem !important;
+        }
+
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.bs-placeholder,
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option,
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner,
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.select-placeholder,
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option,
+        .tabelas-adicionais-card .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.bs-placeholder,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.select-placeholder,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option,
+        #detalhes-card-wrapper .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner {
+            font-size: .74rem !important;
         }
 
         #container-tuss textarea.form-control,
@@ -1821,7 +1906,7 @@
 
         .entity-form .internacao-card__title {
             margin: 0;
-            font-size: 1.35rem;
+            font-size: .76rem;
             font-weight: 700;
             color: #221433;
         }
@@ -1894,7 +1979,7 @@
 
         .entity-step-title {
             margin: 0;
-            font-size: .84rem;
+            font-size: .76rem;
             font-weight: 700;
             color: #26163b;
         }
@@ -1945,7 +2030,7 @@
         }
 
         .entity-form textarea.form-control {
-            min-height: 120px;
+            min-height: 84px;
         }
 
         .entity-form .inline-manager-card,
