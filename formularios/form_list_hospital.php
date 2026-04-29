@@ -93,25 +93,27 @@
     }
     ?>
 
+    <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+
     <!--filtro evento-->
-    <div class="container-fluid form_container" style="margin-top:-5px;">
-        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0;">
-            <h4 class="page-title">Hospitais</h4>
-            <div style="margin-left: auto; display:flex; gap:10px; align-items:center;">
+    <div class="container-fluid form_container listagem-page" style="margin-top:18px;">
+        <div class="listagem-hero">
+            <div class="listagem-hero__copy">
+                <div class="listagem-kicker">Cadastros</div>
+                <h1 class="listagem-title">Hospitais</h1>
+                <p class="listagem-subtitle">Gerencie hospitais, acomodações e vínculos operacionais com mais respiro visual.</p>
+            </div>
+            <div class="listagem-hero__actions">
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_hospitalUser.php', ENT_QUOTES, 'UTF-8') ?>"
-                    class="btn btn-outline-secondary btn-sm"
-                    style="border-radius:10px;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.08);">
+                    class="btn listagem-btn-top listagem-btn-top--purple">
                     <i class="bi bi-diagram-3" style="font-size: 1rem;margin-right:5px;"></i>Usuários por Hospital
                 </a>
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/novo', ENT_QUOTES, 'UTF-8') ?>"
-                    class="btn btn-success styled"
-                    style="border-radius:10px;background-color: #35bae1;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);border:none">
+                    class="btn listagem-btn-top listagem-btn-top--blue">
                     <i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo Hospital
                 </a>
             </div>
         </div>
-
-        <hr style="margin-top: 5px; margin-bottom: 10px;">
         <div class="complete-table">
             <div id="navbarToggleExternalContent" class="table-filters">
 

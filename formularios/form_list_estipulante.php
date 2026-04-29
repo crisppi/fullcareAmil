@@ -83,23 +83,26 @@ if ($qtdIntItens > $limite) {
     $current_block = reset($block_pages)["bloco"];
 }
 ?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
 <!--tabela evento-->
-<div class="container-fluid  form_container" style="margin-top:-5px;">
+<div class="container-fluid form_container listagem-page" style="margin-top:18px;">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="./scripts/cadastro/general.js"></script>
-    <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0;">
-        <h4 class="page-title">Estipulantes</h4>
-        <div style="margin-left: auto;">
+    <div class="listagem-hero">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Cadastros</div>
+            <h1 class="listagem-title">Estipulantes</h1>
+            <p class="listagem-subtitle">Acesse estipulantes com um título mais forte e melhor separado do header.</p>
+        </div>
+        <div class="listagem-hero__actions">
             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/estipulantes/novo', ENT_QUOTES, 'UTF-8') ?>"
-                class="btn btn-success styled"
-                style="border-radius:10px;background-color: #35bae1;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);border:none">
+                class="btn listagem-btn-top listagem-btn-top--blue">
                 <i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo Estipulante
             </a>
         </div>
     </div>
-    <hr style="margin-top: 5px; margin-bottom: 10px;">
 
     <div class="complete-table">
         <div id="navbarToggleExternalContent" class="table-filters">

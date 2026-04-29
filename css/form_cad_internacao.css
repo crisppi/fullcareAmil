@@ -166,19 +166,19 @@
         #origem_int,
         #senha_int,
         #num_atendimento_int {
-            min-height: 42px;
-            height: 42px;
+            min-height: 44px;
+            height: 44px;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="fk_cid_int"] {
-            min-height: 42px !important;
-            height: 42px !important;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            padding-top: 9px !important;
+            padding-bottom: 9px !important;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner-inner {
-            line-height: 24px !important;
+            line-height: 26px !important;
         }
 
         /* Padroniza altura da faixa de Dados Essenciais */
@@ -189,28 +189,28 @@
         #internado_int,
         #data_alta_alt,
         #tipo_alta_alt {
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
         }
 
         #data_alta_alt,
         #tipo_alta_alt {
-            padding-top: 8px;
-            padding-bottom: 8px;
-            line-height: 24px;
+            padding-top: 9px;
+            padding-bottom: 9px;
+            line-height: 26px;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="hospital_selected"],
         .bootstrap-select>.dropdown-toggle[data-id="fk_paciente_int"] {
-            min-height: 42px !important;
-            height: 42px !important;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            padding-top: 9px !important;
+            padding-bottom: 9px !important;
         }
 
         .bootstrap-select>.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner-inner,
         .bootstrap-select>.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner-inner {
-            line-height: 24px !important;
+            line-height: 26px !important;
         }
 
         .hospital-col label {
@@ -410,9 +410,9 @@
         }
 
         .patient-select-btn {
-            min-height: 42px !important;
-            height: 42px !important;
-            padding: 8px 10px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            padding: 9px 10px !important;
             border: 1px solid #ced4da !important;
             border-color: #ced4da !important;
             border-radius: 6px !important;
@@ -461,11 +461,11 @@
         #fk_paciente_int {
             display: block !important;
             width: 100% !important;
-            min-height: 42px !important;
-            height: 42px !important;
-            line-height: 24px !important;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            line-height: 26px !important;
+            padding-top: 9px !important;
+            padding-bottom: 9px !important;
             border-radius: 6px !important;
             box-sizing: border-box !important;
             border: none !important;
@@ -493,8 +493,8 @@
         .patient-col .bootstrap-select {
             width: 100% !important;
             display: block !important;
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
         }
 
         /* Cadastro central (internacao): remove halo azul dos selects de responsavel */
@@ -572,8 +572,8 @@
         #cadastro-central-wrapper #box_resp_med .bootstrap-select,
         #cadastro-central-wrapper #box_resp_enf .bootstrap-select {
             width: 100% !important;
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
             margin: 0 !important;
             padding: 0 !important;
             vertical-align: top !important;
@@ -581,12 +581,12 @@
 
         #cadastro-central-wrapper #box_resp_med .bootstrap-select > .dropdown-toggle,
         #cadastro-central-wrapper #box_resp_enf .bootstrap-select > .dropdown-toggle {
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
             margin: 0 !important;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-            line-height: 24px !important;
+            padding-top: 9px !important;
+            padding-bottom: 9px !important;
+            line-height: 26px !important;
         }
 
         .internacao-page {
@@ -1442,9 +1442,9 @@
         .tabelas-adicionais-card .adicional-card .form-control-sm.form-control,
         #detalhes-card-wrapper .form-control,
         #detalhes-card-wrapper .form-control-sm.form-control {
-            min-height: 42px !important;
-            height: 42px !important;
-            padding: 8px 12px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            padding: 9px 12px !important;
             font-size: .98rem;
             line-height: 1.25;
         }
@@ -1459,8 +1459,8 @@
         .tabelas-adicionais-card .adicional-card .bootstrap-select,
         .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle {
             width: 100% !important;
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
         }
 
         .tabelas-adicionais-card .adicional-card .bootstrap-select>.dropdown-toggle .filter-option {
@@ -1470,10 +1470,10 @@
 
         .tabelas-adicionais-card .adicional-card .btn-add,
         .tabelas-adicionais-card .adicional-card .btn-remove {
-            min-height: 42px;
-            height: 42px;
-            min-width: 42px;
-            padding: 8px 12px;
+            min-height: 44px;
+            height: 44px;
+            min-width: 44px;
+            padding: 9px 12px;
         }
 
         .tabelas-adicionais-card .adicional-card .form-group[style*="margin-top:25px"],
@@ -1611,9 +1611,9 @@
         #container-negoc .form-control-sm.form-control,
         #detalhes-card-wrapper .form-control,
         #detalhes-card-wrapper .form-control-sm.form-control {
-            min-height: 42px !important;
-            height: 42px !important;
-            padding: 8px 12px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            padding: 9px 12px !important;
             font-size: .98rem;
         }
 
@@ -1637,8 +1637,8 @@
         #container-uti .bootstrap-select>.dropdown-toggle,
         #container-negoc .bootstrap-select>.dropdown-toggle {
             width: 100% !important;
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
         }
 
         #container-tuss .bootstrap-select,
@@ -1653,9 +1653,9 @@
         #container-prorrog .btn-remove,
         #container-negoc .btn-add,
         #container-negoc .btn-remove {
-            min-height: 42px !important;
-            height: 42px !important;
-            min-width: 42px !important;
+            min-height: 44px !important;
+            height: 44px !important;
+            min-width: 44px !important;
         }
 
         /* Placeholder mais claro em todos inputs/textarea */

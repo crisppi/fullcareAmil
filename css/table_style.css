@@ -64,6 +64,22 @@
     margin-left: 10px;
 }
 
+.table-filters .form-control,
+.table-filters .form-control-sm,
+.table-filters .bootstrap-select > .dropdown-toggle,
+.table-filters select.form-control,
+.table-filters select.form-control-sm {
+    min-height: 42px;
+    height: 42px;
+}
+
+.table-filters .form-control,
+.table-filters .form-control-sm,
+.table-filters .bootstrap-select > .dropdown-toggle {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
 .table-counter {
     margin-right: 10px;
 }
@@ -120,7 +136,7 @@
 
 .btn-filtro-limpar-icon {
     width: 42px;
-    height: 32px;
+    height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
