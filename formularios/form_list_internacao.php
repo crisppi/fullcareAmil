@@ -233,15 +233,16 @@ try {
 
 <style>
 .internacao-list-page {
-    padding: 8px 6px 20px;
+    padding: 4px 4px 14px;
 }
 
 .internacao-list-hero {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 18px;
-    margin-bottom: 14px;
+    gap: 6px;
+    margin-bottom: 4px;
+    padding-left: 8px;
 }
 
 .internacao-list-hero__copy {
@@ -252,9 +253,9 @@ try {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 6px;
+    margin-bottom: 1px;
     color: #7b5a9a;
-    font-size: .76rem;
+    font-size: .5rem;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -271,37 +272,38 @@ try {
 .internacao-list-title {
     margin: 0;
     color: #2d203d;
-    font-size: 2rem;
+    font-size: .96rem;
     font-weight: 800;
     letter-spacing: -.03em;
 }
 
 .internacao-list-subtitle {
-    margin: 6px 0 0;
+    margin: 1px 0 0;
     color: #7b7b8d;
-    font-size: .95rem;
+    font-size: .66rem;
 }
 
 .internacao-list-hero__actions {
     display: flex;
     align-items: center;
     align-self: flex-end;
-    gap: 10px;
+    gap: 6px;
     flex-wrap: wrap;
     justify-content: flex-end;
-    padding-bottom: 4px;
+    padding-bottom: 2px;
 }
 
 .btn-list-top {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px;
+    min-height: 32px;
     border: none;
-    border-radius: 14px;
-    padding: 0 18px;
+    border-radius: 10px;
+    padding: 0 10px;
     font-weight: 700;
-    box-shadow: 0 12px 22px rgba(46, 27, 78, 0.12);
+    font-size: .7rem;
+    box-shadow: 0 8px 16px rgba(46, 27, 78, 0.10);
     line-height: 1;
     text-align: center;
     white-space: nowrap;
@@ -316,11 +318,11 @@ try {
 }
 
 .complete-table {
-    border-radius: 22px;
+    border-radius: 18px;
     border: 1px solid rgba(94, 35, 99, 0.10);
     background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,244,253,0.96) 100%);
-    box-shadow: 0 16px 34px rgba(45, 18, 70, 0.08);
-    padding: 14px 14px 10px;
+    box-shadow: 0 10px 22px rgba(45, 18, 70, 0.06);
+    padding: 8px 8px 6px;
     overflow: hidden;
 }
 
@@ -378,7 +380,7 @@ try {
 
 .th-sortable .sort-icons a {
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     color: #ffffff;
     margin-left: 2px;
     opacity: 0.7;
@@ -420,9 +422,9 @@ try {
 
 .filter-intel-wrapper {
     border: 1px solid #e7dcf1;
-    border-radius: 20px;
-    padding: 16px 18px;
-    margin-bottom: 14px;
+    border-radius: 14px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
     background:
         radial-gradient(circle at top right, rgba(83, 196, 226, 0.10), transparent 26%),
         linear-gradient(180deg, #fefcff 0%, #f8f3fd 100%);
@@ -432,19 +434,20 @@ try {
 .filter-intel-wrapper h6 {
     font-weight: 800;
     color: #5e2363;
-    margin-bottom: 8px;
-    font-size: 1rem;
+    margin-bottom: 3px;
+    font-size: .68rem;
 }
 
 .filter-intel-wrapper small {
     color: #7a6b84;
     display: block;
+    font-size: .62rem;
 }
 
 .filter-intel-grid {
     display: flex;
     flex-wrap: nowrap;
-    gap: 12px;
+    gap: 5px;
     align-items: center;
 }
 
@@ -454,7 +457,7 @@ try {
 }
 
 .filter-intel-grid label {
-    font-size: .82rem;
+    font-size: .62rem;
     font-weight: 700;
     color: #7a6b84;
 }
@@ -462,25 +465,37 @@ try {
 .filter-intel-grid .input-group {
     display: flex;
     gap: 6px;
+    align-items: stretch;
 }
 
 .filter-intel-grid .input-group .form-control,
 .filter-intel-grid .input-group .btn {
-    min-height: 42px;
-    border-radius: 12px !important;
+    min-height: 32px;
+    height: 32px;
+    border-radius: 9px !important;
+    font-size: .72rem;
+    line-height: 1.1;
+    box-sizing: border-box;
 }
 
 .filter-intel-grid .input-group .btn {
-    padding-inline: 16px;
+    padding-inline: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
     font-weight: 700;
+}
+
+.filter-intel-grid .input-group .form-control {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .smart-search-feedback {
     display: none;
     margin-top: 6px;
     border-radius: 8px;
-    padding: 6px 10px;
-    font-size: .78rem;
+    padding: 5px 8px;
+    font-size: .72rem;
     font-weight: 600;
 }
 
@@ -495,10 +510,10 @@ try {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin: 0 0 12px;
-    padding: 8px 14px;
+    margin: 0 0 4px;
+    padding: 4px 7px;
     border-radius: 999px;
-    font-size: 0.82rem;
+    font-size: 0.62rem;
     font-weight: 700;
     background: #f3edff;
     border: 1px solid #d6c5f7;
@@ -528,12 +543,12 @@ try {
 
 .filter-memory-actions button {
     border-radius: 999px;
-    font-size: .82rem;
+    font-size: .64rem;
     font-weight: 600;
     border: 1px solid #bfa3d1;
     background: #fff;
     color: #5e2363;
-    padding: 6px 14px;
+    padding: 3px 7px;
     transition: all .15s ease;
 }
 
@@ -546,9 +561,9 @@ try {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 8px;
-    padding: 12px 14px;
-    border-radius: 18px;
+    gap: 5px;
+    padding: 5px 6px;
+    border-radius: 10px;
     background: #fff;
     border: 1px solid #ece4f4;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
@@ -589,13 +604,76 @@ try {
 .filter-inline-row .form-control,
 .filter-inline-row .form-control-sm,
 .filter-inline-row .btn {
-    min-height: 42px;
-    border-radius: 12px;
+    min-height: 32px;
+    height: 32px;
+    border-radius: 9px;
+    font-size: .72rem;
+    line-height: 1.1;
 }
 
 .filter-inline-row .form-control,
 .filter-inline-row .form-control-sm {
     border-color: #ddd6e7;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.filter-inline-row .bootstrap-select,
+.filter-inline-row .bootstrap-select > .dropdown-toggle,
+.filter-inline-row select.form-control,
+.filter-inline-row input.form-control,
+.filter-inline-row .btn-filtro-limpar-icon,
+.filter-inline-row .btn-filtro-buscar {
+    min-height: 32px !important;
+    height: 32px !important;
+}
+
+.filter-inline-row .bootstrap-select > .dropdown-toggle,
+.filter-inline-row select.form-control,
+.filter-inline-row input.form-control {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option,
+.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option-inner,
+.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+    line-height: 20px !important;
+    font-size: .72rem !important;
+}
+
+.filter-inline-row input[type="date"]::placeholder,
+.filter-inline-row input[type="text"]::placeholder,
+.filter-inline-row input[type="search"]::placeholder {
+    font-size: .72rem !important;
+    color: #c4c4c4 !important;
+    opacity: 1;
+}
+
+.filter-inline-row input[type="date"] {
+    color: #c4c4c4;
+}
+
+.filter-inline-row input[type="date"]::-webkit-datetime-edit,
+.filter-inline-row input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+.filter-inline-row input[type="date"]::-webkit-datetime-edit-text,
+.filter-inline-row input[type="date"]::-webkit-datetime-edit-month-field,
+.filter-inline-row input[type="date"]::-webkit-datetime-edit-day-field,
+.filter-inline-row input[type="date"]::-webkit-datetime-edit-year-field {
+    font-size: .72rem !important;
+}
+
+.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit,
+.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-text,
+.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-month-field,
+.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-day-field,
+.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-year-field {
+    color: #c4c4c4 !important;
+}
+
+.filter-inline-row input[type="date"]:focus,
+.filter-inline-row input[type="date"]:valid {
+    color: #212529;
 }
 
 .btn-filtro-buscar {
@@ -609,10 +687,10 @@ try {
 }
 
 .filter-favorites {
-    margin-top: 10px;
+    margin-top: 6px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
 }
 
 .filter-favorite-chip {
@@ -620,8 +698,8 @@ try {
     align-items: center;
     gap: 6px;
     border-radius: 999px;
-    padding: 4px 12px;
-    font-size: .78rem;
+    padding: 3px 8px;
+    font-size: .66rem;
     font-weight: 600;
     border: 1px solid #ffcad9;
     color: #a03a5e;
@@ -640,13 +718,13 @@ try {
 }
 
 .filter-empty-hint {
-    font-size: .78rem;
+    font-size: .66rem;
     color: #a690b3;
 }
 
 #table-content {
-    margin-top: 12px !important;
-    border-radius: 18px;
+    margin-top: 8px !important;
+    border-radius: 14px;
     overflow: hidden;
     border: 1px solid #ebe3f3;
     background: #fff;
@@ -657,12 +735,12 @@ try {
 }
 
 #table-content thead th {
-    padding-top: 14px;
-    padding-bottom: 14px;
+    padding-top: 7px;
+    padding-bottom: 7px;
     background: linear-gradient(90deg, #5e2363 0%, #69407f 100%);
     border-bottom: none;
     color: #fff;
-    font-size: .76rem;
+    font-size: .54rem;
     font-weight: 800;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -670,8 +748,9 @@ try {
 }
 
 #table-content tbody td {
-    padding-top: 13px;
-    padding-bottom: 13px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    font-size: .7rem;
     vertical-align: middle;
     border-top: 1px solid #f1ebf7;
 }
@@ -686,10 +765,11 @@ try {
 
 .fc-list-action .dropdown-toggle {
     border: 1px solid #dccceb;
-    border-radius: 12px;
-    min-width: 42px;
-    min-height: 38px;
+    border-radius: 10px;
+    min-width: 32px;
+    min-height: 28px;
     background: #fff;
+    font-size: .68rem;
 }
 
 @media (max-width: 991.98px) {
@@ -730,7 +810,6 @@ if (typeof jQuery !== 'undefined') {
         <div class="internacao-list-hero__copy">
             <div class="internacao-list-kicker">Internações</div>
             <h1 class="internacao-list-title"><?= $onlySemSenha ? 'Internações com senha pendente' : 'Listagem de internações' ?></h1>
-            <p class="internacao-list-subtitle">Filtre por hospital, paciente, seguradora, datas e atalhos de memória sem perder contexto da operação.</p>
         </div>
 
         <?php
@@ -1184,7 +1263,7 @@ if (typeof jQuery !== 'undefined') {
                             $diasIntern     = $dataIntern->diff($atual);
                             $countVisitas   = (int)($resumoVisita['total_visitas'] ?? 0);
                         ?>
-                        <tr style="font-size:13px">
+                        <tr>
                             <td scope="row" class="col-id">
                                 <?= $intern["id_internacao"] ?>
                             </td>
@@ -1390,7 +1469,7 @@ if (typeof jQuery !== 'undefined') {
 
                         <?php if ($qtdIntItens == 0): ?>
                         <tr>
-                            <td colspan="14" scope="row" class="col-id" style="font-size:15px">
+                            <td colspan="14" scope="row" class="col-id" style="font-size:.82rem">
                                 Sem registros para os filtros aplicados.<?= $isGestorSeguradora ? ' Você está visualizando somente dados da sua seguradora.' : '' ?>
                             </td>
                         </tr>
@@ -1500,7 +1579,7 @@ if (typeof jQuery !== 'undefined') {
                     </div>
 
                     <div class="table-counter">
-                        <p style="margin-bottom:25px;font-size:1em; font-weight:600;
+                        <p style="margin-bottom:18px;font-size:.82rem; font-weight:600;
                                   font-family:var(--bs-font-sans-serif); text-align:right">
                             <?= "Total: " . (int)$qtdIntItens ?>
                         </p>
