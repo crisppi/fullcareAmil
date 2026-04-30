@@ -515,14 +515,16 @@ if (!empty($sessionIdUsuario)) {
                                         Menu
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarMenuDropdown">
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>menu_app.php"><i
                                                     class="bi bi-speedometer2"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(255, 25, 55);"></i>
                                                 Dashboard</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard_operacional.php"><i
-                                                    class="bi bi-activity"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(94, 35, 99);"></i>
-                                                Dashboard operacional</a></li>
+                                        <?php if ($isDiretoria) { ?>
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard_operacional.php"><i
+                                                        class="bi bi-activity"
+                                                        style="font-size: 1rem;margin-right:5px; color: rgb(94, 35, 99);"></i>
+                                                    Dashboard operacional</a></li>
+                                        <?php } ?>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>manual.html"><i class="bi bi-person"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(255, 25, 55);"></i>
                                                 Manual</a></li>
@@ -538,10 +540,12 @@ if (!empty($sessionIdUsuario)) {
                                                     Solicitações (Lista)
                                                 </a></li>
                                         <?php } ?>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/performance-equipes"><i
-                                                    class="bi bi-trophy"
-                                                    style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
-                                                Performance equipes</a></li>
+                                        <?php if ($isDiretoria) { ?>
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/performance-equipes"><i
+                                                        class="bi bi-trophy"
+                                                        style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
+                                                    Performance equipes</a></li>
+                                        <?php } ?>
                                         <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
                                             <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
                                                     <i class="bi bi-journal-text"

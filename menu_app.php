@@ -544,6 +544,29 @@ if (!is_array($uti_nao_pertinente)) {
     dashCacheSet($cacheBase . '_uti_nao_pertinente', $uti_nao_pertinente);
 }
 
+// Eventos adversos abertos
+$eventos_adversos_abertos = dashCacheGet($cacheBase . '_eventos_adversos_abertos', 60);
+if (!is_int($eventos_adversos_abertos)) {
+    $eventos_adversos_abertos = 0;
+    try {
+        $sqlEventosAdversos = "
+            SELECT COUNT(DISTINCT i.id_internacao) AS total
+            FROM tb_internacao i
+            INNER JOIN tb_gestao g ON g.fk_internacao_ges = i.id_internacao
+            WHERE " . ($where_gerais ? $where_gerais . " AND " : "") . "
+                  LOWER(COALESCE(g.evento_adverso_ges, '')) = 's'
+              AND (g.evento_encerrar_ges IS NULL OR LOWER(g.evento_encerrar_ges) <> 's')
+        ";
+        $stmtEventosAdversos = $conn->prepare($sqlEventosAdversos);
+        $stmtEventosAdversos->execute();
+        $eventos_adversos_abertos = (int)($stmtEventosAdversos->fetchColumn() ?: 0);
+    } catch (Throwable $e) {
+        error_log('[MENU_APP][EVENTOS_ADVERSOS] ' . $e->getMessage());
+        $eventos_adversos_abertos = 0;
+    }
+    dashCacheSet($cacheBase . '_eventos_adversos_abertos', $eventos_adversos_abertos);
+}
+
 // Score baixo
 $score_baixo = dashCacheGet($cacheBase . '_score_baixo', 60);
 if (!is_array($score_baixo)) {
@@ -615,7 +638,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
 .kpi-grid-container {
     display: grid;
-    grid-template-columns: repeat(3, minmax(210px, 1fr));
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 12px;
     width: 100%;
 }
@@ -768,7 +791,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
 @media (max-width: 1200px) {
     .kpi-grid-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
@@ -1145,6 +1168,160 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 }
 </style>
 
+<style>
+    .header_div {
+        border-radius: 22px;
+        padding: 12px 18px;
+        margin: 4px 0 2px;
+        font-size: .88rem;
+    }
+
+    .scope-badge {
+        margin-bottom: 8px;
+        padding: 5px 10px;
+        font-size: .72rem;
+    }
+
+    .grid-container {
+        margin-bottom: 8px;
+    }
+
+    .kpi-grid-container {
+        gap: 10px;
+        grid-template-columns: repeat(5, minmax(180px, 1fr));
+    }
+
+    .grid-item {
+        min-height: 104px;
+        border-radius: 14px;
+        box-shadow: 0 6px 14px rgba(39, 24, 58, 0.08);
+    }
+
+    .title-item {
+        top: 8px;
+        left: 12px;
+        right: 12px;
+        min-height: 34px;
+        width: calc(100% - 24px);
+        font-size: .78rem;
+    }
+
+    .reint-helper,
+    .kpi-helper {
+        top: 40px;
+        left: 12px;
+        right: 12px;
+        font-size: .66rem;
+    }
+
+    .icon-item {
+        width: 28px;
+        height: 28px;
+        font-size: .82rem;
+    }
+
+    .badge-item {
+        min-height: 38px;
+        font-size: .96rem;
+        min-width: 84px;
+        padding: 5px 10px;
+    }
+
+    .reint-mini-btn,
+    .longa-mini-btn {
+        min-width: 82px;
+        height: 36px;
+        font-size: .68rem;
+    }
+
+    .reint-mini-btn b,
+    .longa-mini-btn b {
+        font-size: .96rem;
+    }
+
+    .select-shell {
+        border-radius: 14px;
+        padding: 3px 4px 3px 10px;
+    }
+
+    .select-hospital {
+        font-size: .82rem;
+        padding: .45rem .35rem;
+    }
+
+    .button-item {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+
+    .user-patient-strip {
+        margin: 8px 0 10px;
+        padding: 10px;
+    }
+
+    .user-patient-title {
+        font-size: .78rem;
+    }
+
+    .user-hospital-btn {
+        min-height: 48px;
+        padding: 9px 10px;
+        font-size: .78rem;
+    }
+
+    .user-patient-card {
+        min-height: 72px;
+        padding: 8px 10px;
+    }
+
+    .user-patient-card .lbl {
+        font-size: .64rem;
+    }
+
+    .user-patient-card .val {
+        font-size: 1.32rem;
+    }
+
+    #main-container .table,
+    #main-container table {
+        font-size: .8rem;
+    }
+
+    #main-container .table th,
+    #main-container .table td,
+    #main-container table th,
+    #main-container table td {
+        padding-top: .45rem;
+        padding-bottom: .45rem;
+    }
+
+    #dash-visitas-atraso .table,
+    #dash-longa-perm .table {
+        font-size: .68rem !important;
+    }
+
+    #dash-visitas-atraso .table thead th,
+    #dash-longa-perm .table thead th {
+        font-size: .52rem !important;
+        font-weight: 500 !important;
+        letter-spacing: .04em;
+    }
+
+    #dash-visitas-atraso .table tbody td,
+    #dash-longa-perm .table tbody td,
+    #dash-visitas-atraso .table tbody td *,
+    #dash-longa-perm .table tbody td * {
+        font-size: .68rem !important;
+        font-weight: 400 !important;
+    }
+
+    #dash-visitas-atraso .table tbody td:nth-child(4),
+    #dash-longa-perm .table tbody td:nth-child(4) {
+        white-space: nowrap;
+    }
+</style>
+
 <script src="js/timeout.js"></script>
 
 <div id='main-container'>
@@ -1297,6 +1474,12 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 <div class="title-item"><i class="bi bi-heart"></i> UTI Não Pertinente</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="badge-item badge-critical"><?= $uti_nao_pertinente[0] ?? 0 ?></div>
+            </div>
+
+            <div class="grid-item grid-item-kpi kpi-critical">
+                <div class="title-item"><i class="bi bi-exclamation-triangle"></i> Eventos Adversos</div>
+                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="badge-item badge-critical"><?= (int)$eventos_adversos_abertos ?></div>
             </div>
         </div>
     </div>

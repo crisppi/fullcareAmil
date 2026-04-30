@@ -1193,6 +1193,92 @@ function perfTimerClock($seconds)
     }
 </style>
 
+<style>
+    .performance-wrapper {
+        margin: 14px 0 40px;
+        padding: 0 18px;
+    }
+
+    .perf-hero {
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 16px;
+    }
+
+    .perf-hero h1 {
+        font-size: clamp(1.36rem, 2.2vw, 1.9rem);
+    }
+
+    .perf-hero p,
+    .perf-range-info {
+        font-size: .84rem;
+    }
+
+    .perf-grid,
+    .perf-sections {
+        gap: 14px;
+    }
+
+    .perf-grid {
+        margin-bottom: 18px;
+    }
+
+    .personal-grid {
+        margin-bottom: 14px;
+    }
+
+    .perf-card,
+    .perf-panel {
+        border-radius: 14px;
+        padding: 14px;
+    }
+
+    .perf-card h3 {
+        font-size: .76rem;
+        margin-bottom: 6px;
+    }
+
+    .perf-card strong,
+    .personal-card strong {
+        font-size: 1.5rem;
+    }
+
+    .perf-card span,
+    .personal-card span,
+    .adm-card em,
+    .monthly-bar span,
+    .monthly-bar small,
+    .perf-filter label,
+    .perf-filter input,
+    .perf-filter button {
+        font-size: .74rem;
+    }
+
+    .perf-card .card-pill,
+    .badge-score {
+        font-size: .7rem;
+        padding: 3px 8px;
+    }
+
+    .perf-panel h2 {
+        font-size: .94rem;
+        margin-bottom: 12px;
+    }
+
+    .perf-table {
+        font-size: .8rem;
+    }
+
+    .perf-table th,
+    .perf-table td {
+        padding: 7px 6px;
+    }
+
+    .perf-table th {
+        font-size: .64rem;
+    }
+</style>
+
 <?php
 ?>
 

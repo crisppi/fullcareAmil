@@ -163,42 +163,159 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 }
 ?>
 
+<style>
+    #dash-visitas-atraso-content .table,
+    #dash-longa-perm-content .table {
+        margin-top: 6px !important;
+        font-size: 0.68rem !important;
+        table-layout: fixed;
+    }
+
+    #dash-visitas-atraso-content .table thead th,
+    #dash-longa-perm-content .table thead th {
+        padding: 6px 8px !important;
+        font-size: 0.52rem !important;
+        letter-spacing: 0.04em;
+        font-weight: 500 !important;
+    }
+
+    #dash-visitas-atraso-content .table tbody td,
+    #dash-longa-perm-content .table tbody td {
+        padding: 6px 8px !important;
+        font-size: 0.68rem !important;
+        font-weight: 400 !important;
+        vertical-align: middle;
+    }
+
+    #dash-visitas-atraso-content .table tbody tr,
+    #dash-longa-perm-content .table tbody tr,
+    #dash-visitas-atraso-content .table tbody tr td,
+    #dash-longa-perm-content .table tbody tr td {
+        font-weight: 400 !important;
+    }
+
+    #dash-visitas-atraso-content .table tbody td a,
+    #dash-longa-perm-content .table tbody td a,
+    #dash-visitas-atraso-content .table tbody td span,
+    #dash-longa-perm-content .table tbody td span {
+        font-size: 0.68rem !important;
+        font-weight: 400 !important;
+    }
+
+    #dash-visitas-atraso-content .table tbody td.fw-semibold,
+    #dash-visitas-atraso-content .table tbody td.fw-bold,
+    #dash-longa-perm-content .table tbody td.fw-semibold,
+    #dash-longa-perm-content .table tbody td.fw-bold,
+    #dash-visitas-atraso-content .table tbody td strong,
+    #dash-longa-perm-content .table tbody td strong {
+        font-weight: 400 !important;
+    }
+
+    #dash-visitas-atraso-content .sort-icons a,
+    #dash-longa-perm-content .sort-icons a {
+        font-size: 0.54rem !important;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(1),
+    #dash-longa-perm-content .table th:nth-child(1),
+    #dash-visitas-atraso-content .table td:nth-child(1),
+    #dash-longa-perm-content .table td:nth-child(1) {
+        width: 5%;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(2),
+    #dash-longa-perm-content .table th:nth-child(2),
+    #dash-visitas-atraso-content .table td:nth-child(2),
+    #dash-longa-perm-content .table td:nth-child(2) {
+        width: 15%;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(3),
+    #dash-longa-perm-content .table th:nth-child(3),
+    #dash-visitas-atraso-content .table td:nth-child(3),
+    #dash-longa-perm-content .table td:nth-child(3) {
+        width: 11%;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(4),
+    #dash-visitas-atraso-content .table td:nth-child(4) {
+        width: 32%;
+    }
+
+    #dash-longa-perm-content .table th:nth-child(4),
+    #dash-longa-perm-content .table td:nth-child(4) {
+        width: 24%;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(5),
+    #dash-longa-perm-content .table th:nth-child(5),
+    #dash-visitas-atraso-content .table td:nth-child(5),
+    #dash-longa-perm-content .table td:nth-child(5) {
+        width: 13%;
+    }
+
+    #dash-visitas-atraso-content .table th:nth-child(6),
+    #dash-visitas-atraso-content .table td:nth-child(6) {
+        width: 16%;
+    }
+
+    #dash-longa-perm-content .table th:nth-child(6),
+    #dash-longa-perm-content .table td:nth-child(6) {
+        width: 13%;
+    }
+
+    #dash-longa-perm-content .table th:nth-child(7),
+    #dash-longa-perm-content .table td:nth-child(7) {
+        width: 16%;
+    }
+
+    #dash-visitas-atraso-content .table td:nth-child(4),
+    #dash-longa-perm-content .table td:nth-child(4) {
+        white-space: nowrap;
+    }
+
+    #dash-visitas-atraso-content .table td:nth-child(4) i,
+    #dash-longa-perm-content .table td:nth-child(4) i {
+        font-size: 0.82rem !important;
+    }
+</style>
+
 <div id="dash-visitas-atraso-content">
     <div class="dash-table-scroll">
-    <table style="margin-top:10px;" class="table table-sm table-striped table-hover table-condensed dash-sortable">
+    <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
         <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">
             <tr>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="number">Id Int
+                <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Hospital
+                <th scope="col" style="width:15%" class="th-sortable" data-sort-type="text">Hospital
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Seguradora
+                <th scope="col" style="width:11%" class="th-sortable" data-sort-type="text">Seguradora
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Paciente
+                <th scope="col" style="width:32%" class="th-sortable" data-sort-type="text">Paciente
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="date">Ultima Visita
+                <th scope="col" style="width:13%" class="th-sortable" data-sort-type="date">Ultima Visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="number">Dias última visita
+                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="number">Dias última visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
@@ -226,15 +343,15 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                 $classeDiasVisita = '';
                 if ($diasUltimaVisita !== null && $limiteDiasVisita > 0) {
                     if ($diasUltimaVisita >= $limiteDiasVisita) {
-                        $classeDiasVisita = 'text-danger fw-semibold';
+                        $classeDiasVisita = 'text-danger';
                     } elseif ($diasUltimaVisita === ($limiteDiasVisita - 1)) {
-                        $classeDiasVisita = 'text-warning fw-semibold';
+                        $classeDiasVisita = 'text-warning';
                     } else {
-                        $classeDiasVisita = 'text-success fw-semibold';
+                        $classeDiasVisita = 'text-success';
                     }
                 }
                 ?>
-            <tr style="font-size:15px">
+            <tr>
                 <td scope="row"><?= (int)($intern["id_internacao"] ?? 0) ?></td>
                 <td scope="row">
                     <?= htmlspecialchars($intern["nome_hosp"] ?? '', ENT_QUOTES, 'UTF-8') ?>
@@ -245,8 +362,8 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                 <td scope="row">
                     <a
                         href="<?= $BASE_URL ?>cad_visita.php?id_internacao=<?= (int)($intern["id_internacao"] ?? 0) ?>">
-                        <i class="bi bi-box-arrow-in-right fw-bold"
-                            style="margin-right:8px; font-size:1.2em;"></i>
+                        <i class="bi bi-box-arrow-in-right"
+                            style="margin-right:6px; font-size:1em;"></i>
                     </a>
                     <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </td>
@@ -259,7 +376,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 
             <?php if (count($dados_visitas_atraso_list) == 0): ?>
             <tr>
-                <td colspan="6" scope="row" class="col-id" style='font-size:15px'>
+                <td colspan="6" scope="row" class="col-id" style='font-size:.8rem'>
                     Não foram encontrados registros
                 </td>
             </tr>
@@ -271,46 +388,46 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 
 <div id="dash-longa-perm-content">
     <div class="dash-table-scroll">
-    <table style="margin-top:10px;" class="table table-sm table-striped table-hover table-condensed dash-sortable">
+    <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
         <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">
             <tr>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="number">Id Int
+                <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Hospital
+                <th scope="col" style="width:15%" class="th-sortable" data-sort-type="text">Hospital
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Seguradora
+                <th scope="col" style="width:11%" class="th-sortable" data-sort-type="text">Seguradora
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="text">Paciente
+                <th scope="col" style="width:24%" class="th-sortable" data-sort-type="text">Paciente
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="date">Data Internação
+                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="date">Data Internação
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="date">Última visita
+                <th scope="col" style="width:13%" class="th-sortable" data-sort-type="date">Última visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:3%" class="th-sortable" data-sort-type="number">Dias Internacao
+                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="number">Dias Internacao
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc" class="active">▼</a>
@@ -343,7 +460,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                 }
                 $diasInternacao = diasDesdeData($intern["data_intern_int"] ?? null);
                 ?>
-            <tr style="font-size:15px">
+            <tr>
                 <td scope="row"><?= (int)($intern["id_internacao"] ?? 0) ?></td>
                 <td scope="row">
                     <?= htmlspecialchars($intern["nome_hosp"] ?? '', ENT_QUOTES, 'UTF-8') ?>
@@ -355,13 +472,13 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                     <a
                         href="<?= $BASE_URL ?>show_internacao.php?id_internacao=<?= (int)($intern["id_internacao"] ?? 0) ?>">
                         <i class="bi bi-box-arrow-right"
-                            style="color:green; margin-right:8px; font-size:1.2em;"></i>
+                            style="color:green; margin-right:6px; font-size:1em;"></i>
                     </a>
                     <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </td>
                 <td scope="row"><?= $formattedDate ?></td>
                 <td scope="row"><?= $ultimaVisitaData ?? '—' ?></td>
-                <td scope="row" class="text-danger fw-semibold">
+                <td scope="row" class="text-danger">
                     <?= $diasInternacao !== null ? $diasInternacao . ' dias' : '—' ?>
                 </td>
             </tr>
@@ -369,7 +486,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 
             <?php if (count($longa_perm_list) == 0): ?>
             <tr>
-                <td colspan="7" scope="row" class="col-id" style='font-size:15px'>
+                <td colspan="7" scope="row" class="col-id" style='font-size:.8rem'>
                     Não foram encontrados registros
                 </td>
             </tr>

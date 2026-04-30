@@ -83,7 +83,7 @@ $canSeeUsuariosCadastroHeaderFull = $isDiretoriaHeaderFull && in_array($sessionN
                                 Menu
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-                                <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard"><i
+                                <li><a class="dropdown-item" href="<?= $BASE_URL ?>menu_app.php"><i
                                             class="bi bi-person"
                                             style="font-size: 1rem;margin-right:5px; color: rgb(255, 25, 55);"></i>
                                         Status</a></li>

@@ -132,12 +132,17 @@ $user = $_SESSION['id_usuario'];
     }
 
     .filter-inline-row {
+        display: flex;
+        align-items: stretch;
+        flex-wrap: wrap;
         padding: 5px 6px;
         row-gap: 4px;
     }
 
     .filter-inline-row > [class*="col-"],
     .filter-inline-row > .form-group {
+        display: flex;
+        align-items: stretch;
         padding: 2px !important;
     }
 
@@ -148,17 +153,27 @@ $user = $_SESSION['id_usuario'];
     .filter-inline-row .form-control,
     .filter-inline-row .btn,
     .filter-inline-row .bootstrap-select > .dropdown-toggle {
-        min-height: 32px;
-        height: 32px;
+        min-height: 32px !important;
+        height: 32px !important;
         font-size: .72rem;
         line-height: 1.2;
         border-radius: 11px;
         margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .filter-inline-row .form-control {
+        padding-top: 0;
+        padding-bottom: 0;
     }
 
     .filter-inline-row .form-control::placeholder {
         font-size: .72rem;
         color: #c4c4c4;
+    }
+
+    .filter-inline-row select.form-control {
+        padding-right: 28px;
     }
 
     .filter-inline-row .btn-filtro-buscar {
@@ -170,8 +185,14 @@ $user = $_SESSION['id_usuario'];
     }
 
     .filter-inline-row .btn-filtro-limpar-icon {
+        height: 32px !important;
         min-width: 32px;
         padding: 0;
+    }
+
+    .filter-inline-row .filter-actions {
+        gap: 8px;
+        justify-content: flex-start;
     }
 
     .filter-inline-row .material-icons {
@@ -258,7 +279,7 @@ $user = $_SESSION['id_usuario'];
                         </div>
 
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm"
+                            <select class="form-control form-control-sm"
                                 id="pesqInternado" name="pesqInternado">
                                 <option value="">Busca por Internados</option>
                                 <option value="s" <?= $pesqInternado == 's' ? 'selected' : null ?>>Sim</option>
@@ -266,7 +287,7 @@ $user = $_SESSION['id_usuario'];
                             </select>
                         </div>
                         <div class="col-sm-1" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm" id="limite"
+                            <select class="form-control form-control-sm" id="limite"
                                 name="limite">
                                 <option value="">Reg por página</option>
                                 <option value="5" <?= $limite == '5' ? 'selected' : null ?>>Reg por pág = 5
@@ -280,7 +301,7 @@ $user = $_SESSION['id_usuario'];
                             </select>
                         </div>
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <select class="form-control mb-3 form-control-sm"
+                            <select class="form-control form-control-sm"
                                 id="ordenar" name="ordenar">
                                 <option value="">Classificar por</option>
                                 <option value="id_censo" <?= $ordenar == 'id_censo' ? 'selected' : null ?>>Internação
@@ -295,7 +316,7 @@ $user = $_SESSION['id_usuario'];
                                     Internação</option>
                             </select>
                         </div>
-                        <div class="form-group col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                        <div class="form-group col-sm-1 d-flex align-items-stretch filter-actions" style="padding:2px !important">
                             <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"><span
                                     class="material-icons">
                                     search

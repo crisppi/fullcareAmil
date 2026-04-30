@@ -221,15 +221,15 @@ if (!is_array($prioridades)) {
 .dashboard-wrapper {
     width: 100%;
     max-width: none;
-    margin: 24px 0 60px;
-    padding: 0 24px;
+    margin: 14px 0 40px;
+    padding: 0 18px;
 }
 .dash-hero {
     background: linear-gradient(120deg, #fff6fb, #fbe1f2 60%, #f3cee6);
     color: #3b1d4f;
-    border-radius: 18px;
-    padding: 32px;
-    margin-bottom: 26px;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
     border: 1px solid rgba(94, 35, 99, .12);
     box-shadow: 0 20px 45px rgba(94, 35, 99, .15);
 }
@@ -237,29 +237,30 @@ if (!is_array($prioridades)) {
     font-weight: 800;
     letter-spacing: .02em;
     margin-bottom: 8px;
-    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-size: clamp(1.34rem, 2.2vw, 1.9rem);
 }
 .dash-hero p {
     margin: 0;
     opacity: .85;
+    font-size: .84rem;
 }
 .dash-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 14px;
+    gap: 10px;
 }
 .dash-card {
     text-decoration: none;
 }
 .dash-card .dash-value {
     margin-top: 0;
-    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+    font-size: clamp(1.18rem, 1.8vw, 1.56rem);
     line-height: 1.05;
 }
 .dash-card .dash-desc {
     margin: 0;
     color: rgba(228, 241, 255, 0.85);
-    font-size: .86rem;
+    font-size: .74rem;
     min-height: 2.3em;
 }
 .dash-card .dash-link {
@@ -267,7 +268,7 @@ if (!is_array($prioridades)) {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: .85rem;
+    font-size: .74rem;
     color: #cfe8ff;
     font-weight: 600;
 }
@@ -276,14 +277,14 @@ if (!is_array($prioridades)) {
     border-color: rgba(255, 168, 168, 0.46);
 }
 .dash-table-card {
-    margin-top: 40px;
-    border-radius: 18px;
+    margin-top: 24px;
+    border-radius: 14px;
     border: 1px solid rgba(94, 35, 99, .1);
     background: #fff;
     box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
 }
 .dash-table-card h4 {
-    padding: 18px 24px;
+    padding: 12px 16px;
     margin: 0;
     border-bottom: 1px solid rgba(94, 35, 99, .1);
     font-weight: 800;
@@ -291,6 +292,7 @@ if (!is_array($prioridades)) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: .92rem;
 }
 .dash-table-card table {
     width: 100%;
@@ -298,8 +300,8 @@ if (!is_array($prioridades)) {
 }
 .dash-table-card th,
 .dash-table-card td {
-    padding: 14px 18px;
-    font-size: .95rem;
+    padding: 9px 12px;
+    font-size: .82rem;
     text-align: left;
 }
 .dash-table-card th {
@@ -317,10 +319,10 @@ if (!is_array($prioridades)) {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 999px;
     font-weight: 700;
-    font-size: .85rem;
+    font-size: .74rem;
     color: #fff;
     background: linear-gradient(120deg, #5e2363, #a23ec3);
 }
@@ -370,7 +372,7 @@ if (!is_array($prioridades)) {
     <div class="dash-table-card">
         <h4>
             Score de prioridade por paciente
-            <small style="font-size:.85rem;color:#7a6a86;">Fórmula: dias internado (x1.2) + valor apresentado (÷1000) + eventos (x5)</small>
+            <small style="font-size:.74rem;color:#7a6a86;">Fórmula: dias internado (x1.2) + valor apresentado (÷1000) + eventos (x5)</small>
         </h4>
         <div class="table-responsive">
             <table>
@@ -388,7 +390,7 @@ if (!is_array($prioridades)) {
                 <tbody>
                     <?php if (!$prioridades): ?>
                     <tr>
-                        <td colspan="7" style="text-align:center;color:#7a6a86;padding:30px;">
+                        <td colspan="7" style="text-align:center;color:#7a6a86;padding:20px;font-size:.82rem;">
                             Nenhum paciente priorizado no momento.
                         </td>
                     </tr>

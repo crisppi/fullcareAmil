@@ -382,7 +382,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 .bi-sidebar-body {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 12px 12px 18px;
+    padding: 12px 12px 132px;
 }
 
 .bi-sidebar-body::-webkit-scrollbar {
@@ -497,9 +497,14 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 }
 
 .bi-sidebar-foot {
-    padding: 12px;
+    padding: 12px 12px 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(6, 20, 34, 0.42);
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    min-height: 82px;
 }
 
 .bi-topbar-select {
@@ -510,6 +515,7 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     font-size: 0.76rem;
     color: #f1f8ff;
     background: rgba(255, 255, 255, 0.08);
+    min-height: 48px;
 }
 
 .bi-topbar-select option,
@@ -575,6 +581,15 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-body {
     .bi-sidebar-shell {
         transform: translateX(-100%);
         width: min(320px, calc(100vw - 28px));
+    }
+
+    .bi-sidebar-body {
+        padding-bottom: 150px;
+    }
+
+    .bi-sidebar-foot {
+        min-height: 94px;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     }
 
     body.bi-theme.bi-nav-open .bi-sidebar-shell {

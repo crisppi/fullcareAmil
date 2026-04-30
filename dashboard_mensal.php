@@ -195,13 +195,15 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
 <style>
 .dashboard-card {
     border: none;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
 }
 .dashboard-card .card-header {
     border-bottom: none;
     font-weight: 600;
     color: #3A3A3A;
+    font-size: .84rem;
+    padding: 10px 14px 0;
 }
 .filter-chip {
     border-radius: 999px;
@@ -215,8 +217,38 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
     border-color: transparent;
 }
 .chart-container {
-    min-height: 280px;
+    min-height: 220px;
 }
+</style>
+<style>
+    .container-fluid.py-4 {
+        padding-top: 14px !important;
+        padding-bottom: 24px !important;
+    }
+
+    .container-fluid .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .container-fluid h4 {
+        font-size: 1.2rem;
+    }
+
+    .container-fluid .text-muted,
+    .container-fluid .small,
+    .container-fluid .form-select,
+    .container-fluid .card-body,
+    .container-fluid .card small {
+        font-size: .78rem;
+    }
+
+    .dashboard-card.p-3 {
+        padding: .85rem !important;
+    }
+
+    .dashboard-card h3 {
+        font-size: 1.35rem;
+    }
 </style>
 <div class="container-fluid py-4">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">

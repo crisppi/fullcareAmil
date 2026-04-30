@@ -34,6 +34,16 @@ if (!function_exists('fullcare_is_diretoria_inteligencia')) {
     }
 }
 
+if (!function_exists('fullcare_has_inteligencia_override')) {
+    function fullcare_has_inteligencia_override(): bool
+    {
+        $email = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
+        return in_array($email, [
+            'crisppi@fullcare.com.br',
+        ], true);
+    }
+}
+
 if (!function_exists('fullcare_is_inteligencia_request')) {
     function fullcare_is_inteligencia_request(): bool
     {
@@ -90,6 +100,9 @@ if (!function_exists('fullcare_enforce_inteligencia_access')) {
             return;
         }
         if (fullcare_is_bi_inteligencia_page() && function_exists('fullcare_has_bi_access') && fullcare_has_bi_access()) {
+            return;
+        }
+        if (fullcare_has_inteligencia_override()) {
             return;
         }
         if (fullcare_is_diretoria_inteligencia()) {
