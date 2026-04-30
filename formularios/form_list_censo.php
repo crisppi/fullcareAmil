@@ -109,6 +109,10 @@ $user = $_SESSION['id_usuario'];
         line-height: 1.05;
     }
 
+    .listagem-hero__copy {
+        padding-left: 10px;
+    }
+
     .listagem-subtitle {
         font-size: .66rem;
         line-height: 1.25;
@@ -131,76 +135,6 @@ $user = $_SESSION['id_usuario'];
         padding: 8px 8px 6px;
     }
 
-    .filter-inline-row {
-        display: flex;
-        align-items: stretch;
-        flex-wrap: wrap;
-        padding: 5px 6px;
-        row-gap: 4px;
-    }
-
-    .filter-inline-row > [class*="col-"],
-    .filter-inline-row > .form-group {
-        display: flex;
-        align-items: stretch;
-        padding: 2px !important;
-    }
-
-    .filter-inline-row > :first-child {
-        padding-left: 8px !important;
-    }
-
-    .filter-inline-row .form-control,
-    .filter-inline-row .btn,
-    .filter-inline-row .bootstrap-select > .dropdown-toggle {
-        min-height: 32px !important;
-        height: 32px !important;
-        font-size: .72rem;
-        line-height: 1.2;
-        border-radius: 11px;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-
-    .filter-inline-row .form-control {
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-
-    .filter-inline-row .form-control::placeholder {
-        font-size: .72rem;
-        color: #c4c4c4;
-    }
-
-    .filter-inline-row select.form-control {
-        padding-right: 28px;
-    }
-
-    .filter-inline-row .btn-filtro-buscar {
-        width: 32px;
-        min-width: 32px;
-        padding: 0;
-        background-color: #5e2363;
-        border-color: #5e2363;
-    }
-
-    .filter-inline-row .btn-filtro-limpar-icon {
-        height: 32px !important;
-        min-width: 32px;
-        padding: 0;
-    }
-
-    .filter-inline-row .filter-actions {
-        gap: 8px;
-        justify-content: flex-start;
-    }
-
-    .filter-inline-row .material-icons {
-        font-size: 16px;
-        line-height: 1;
-        margin: 0;
-    }
-
     #table-content {
         margin-top: -4px;
     }
@@ -213,9 +147,10 @@ $user = $_SESSION['id_usuario'];
 
     #table-content tbody td,
     #table-content tbody th {
-        padding: 6px 10px;
-        font-size: .7rem;
+        padding: 4px 10px;
+        font-size: .66rem;
         vertical-align: middle;
+        line-height: 1.15;
     }
 
     #table-content .dropdown-toggle {
@@ -251,8 +186,8 @@ $user = $_SESSION['id_usuario'];
             <h1 class="listagem-title">Listagem de censo</h1>
         </div>
         <div class="listagem-hero__actions">
-            <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="fa-solid fa-plus"></i>Novo lançamento</a>
-            <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="fa-solid fa-check"></i>Internar selecionados</a>
+            <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="bi bi-plus-lg"></i>Novo lançamento</a>
+            <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="bi bi-door-open"></i>Internar selecionados</a>
         </div>
     </div>
     <div class="complete-table listagem-panel">
@@ -686,7 +621,7 @@ function loadCensoList(url, dataPayload) {
 }
 
 $(document).ready(function() {
-    $('#select-censo-form').on('submit', function(e) {
+$('#select-censo-form').on('submit', function(e) {
         e.preventDefault();
         loadCensoList($(this).attr('action') || window.location.pathname, $(this).serialize());
     });

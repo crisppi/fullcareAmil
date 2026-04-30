@@ -118,31 +118,101 @@
 
 .listagem-panel .filter-inline-row {
     display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: stretch;
     gap: 8px;
-    padding: 8px 10px;
+    padding: 5px 6px;
     border-radius: 14px;
     background: #fff;
     border: 1px solid #ece4f4;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
 
+.listagem-panel .filter-inline-row > [class*="col-"],
+.listagem-panel .filter-inline-row > .form-group {
+    display: flex;
+    align-items: stretch;
+    padding: 2px !important;
+}
+
+.listagem-panel .filter-inline-row > :first-child {
+    padding-left: 8px !important;
+}
+
 .listagem-panel .filter-inline-row .form-control,
 .listagem-panel .filter-inline-row .form-control-sm,
-.listagem-panel .filter-inline-row .btn {
-    min-height: 38px;
-    border-radius: 10px;
-    font-size: .82rem;
+.listagem-panel .filter-inline-row .btn,
+.listagem-panel .filter-inline-row .bootstrap-select > .dropdown-toggle {
+    min-height: 32px !important;
+    height: 32px !important;
+    border-radius: 11px;
+    font-size: .72rem !important;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    line-height: 1.2;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 .listagem-panel .filter-inline-row .form-control,
 .listagem-panel .filter-inline-row .form-control-sm {
     border-color: #ddd6e7;
+    color: #8e88a1 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.listagem-panel .filter-inline-row .form-control::placeholder,
+.listagem-panel .filter-inline-row .form-control-sm::placeholder {
+    font-size: .72rem !important;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    color: #8e88a1 !important;
+    opacity: 1;
+}
+
+.listagem-panel .filter-inline-row select.form-control,
+.listagem-panel .filter-inline-row select.form-control-sm {
+    padding-right: 28px;
+    color: #8e88a1 !important;
+    background-color: #fff;
+    font-style: normal;
+}
+
+.listagem-panel .filter-inline-row select.form-control option,
+.listagem-panel .filter-inline-row select.form-control-sm option {
+    color: #8e88a1;
+    font-style: normal;
+    font-size: .72rem;
+    font-family: inherit;
+    font-weight: 400;
 }
 
 .listagem-panel .btn-filtro-buscar {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
     box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
+}
+
+.listagem-panel .btn-filtro-limpar-icon {
+    width: 32px;
+    height: 32px !important;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
+}
+
+.listagem-panel .filter-actions {
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.listagem-panel .material-icons {
+    font-size: 16px;
+    line-height: 1;
+    margin: 0;
 }
 
 .listagem-table-wrap {
