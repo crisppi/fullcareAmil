@@ -25,6 +25,9 @@ include_once("dao/hospitalDao.php");
 include_once("dao/hospitalUserDao.php");
 
 include_once("models/pagination.php");
+?>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<?php
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -557,7 +560,7 @@ try {
     color: #fff;
 }
 
-.filter-inline-row {
+.listagem-panel .filter-inline-row {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
@@ -569,12 +572,12 @@ try {
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
 
-.filter-inline-row > .filter-inline-field {
+.listagem-panel .filter-inline-row > .filter-inline-field {
     flex: 1 1 0;
     min-width: 80px;
 }
 
-.filter-inline-row > .filter-inline-field:last-child {
+.listagem-panel .filter-inline-row > .filter-inline-field:last-child {
     flex: 0 0 auto;
 }
 
@@ -601,87 +604,25 @@ try {
     gap: 6px;
 }
 
-.filter-inline-row .form-control,
-.filter-inline-row .form-control-sm,
-.filter-inline-row .btn {
-    min-height: 32px;
-    height: 32px;
-    border-radius: 9px;
-    font-size: .72rem;
-    line-height: 1.1;
-}
-
-.filter-inline-row .form-control,
-.filter-inline-row .form-control-sm {
-    border-color: #ddd6e7;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-.filter-inline-row .bootstrap-select,
-.filter-inline-row .bootstrap-select > .dropdown-toggle,
-.filter-inline-row select.form-control,
-.filter-inline-row input.form-control,
-.filter-inline-row .btn-filtro-limpar-icon,
-.filter-inline-row .btn-filtro-buscar {
-    min-height: 32px !important;
-    height: 32px !important;
-}
-
-.filter-inline-row .bootstrap-select > .dropdown-toggle,
-.filter-inline-row select.form-control,
-.filter-inline-row input.form-control {
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
-}
-
-.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option,
-.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option-inner,
-.filter-inline-row .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
-    line-height: 20px !important;
-    font-size: .72rem !important;
-}
-
-.filter-inline-row input[type="date"]::placeholder,
-.filter-inline-row input[type="text"]::placeholder,
-.filter-inline-row input[type="search"]::placeholder {
-    font-size: .72rem !important;
-    color: #c4c4c4 !important;
-    opacity: 1;
-}
-
-.filter-inline-row input[type="date"] {
+.listagem-panel .filter-inline-row input[type="date"] {
     color: #c4c4c4;
 }
 
-.filter-inline-row input[type="date"]::-webkit-datetime-edit,
-.filter-inline-row input[type="date"]::-webkit-datetime-edit-fields-wrapper,
-.filter-inline-row input[type="date"]::-webkit-datetime-edit-text,
-.filter-inline-row input[type="date"]::-webkit-datetime-edit-month-field,
-.filter-inline-row input[type="date"]::-webkit-datetime-edit-day-field,
-.filter-inline-row input[type="date"]::-webkit-datetime-edit-year-field {
-    font-size: .72rem !important;
-}
-
-.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit,
-.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-text,
-.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-month-field,
-.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-day-field,
-.filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-year-field {
+.listagem-panel .filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit,
+.listagem-panel .filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-text,
+.listagem-panel .filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-month-field,
+.listagem-panel .filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-day-field,
+.listagem-panel .filter-inline-row input[type="date"]:invalid::-webkit-datetime-edit-year-field {
     color: #c4c4c4 !important;
 }
 
-.filter-inline-row input[type="date"]:focus,
-.filter-inline-row input[type="date"]:valid {
+.listagem-panel .filter-inline-row input[type="date"]:focus,
+.listagem-panel .filter-inline-row input[type="date"]:valid {
     color: #212529;
 }
 
-.btn-filtro-buscar {
-    box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
-}
-
 @media (max-width: 1199.98px) {
-    .filter-inline-row {
+    .listagem-panel .filter-inline-row {
         flex-wrap: wrap;
     }
 }
@@ -838,7 +779,7 @@ if (typeof jQuery !== 'undefined') {
         </div>
     </div>
 
-    <div class="complete-table">
+    <div class="complete-table listagem-panel">
         <?php if ($isGestorSeguradora): ?>
             <div class="scope-badge">
                 Escopo: Seguradora <?= htmlspecialchars($seguradoraUserNome !== '' ? $seguradoraUserNome : ('#' . $seguradoraUserId), ENT_QUOTES, 'UTF-8') ?>

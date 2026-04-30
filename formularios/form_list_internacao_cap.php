@@ -337,9 +337,8 @@ if ($havePages) {
 
                 <div class="form-group row filter-inline-row">
                     <!-- SELECT de Hospital (sem duplicidade) -->
-                    <div class="form-group col-sm-3" style="padding:2px !important;padding-left:16px !important;">
-                        <select class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" name="id_hosp" id="id_hosp">
+                    <div class="form-group col-sm-3">
+                        <select class="form-control form-control-sm" name="id_hosp" id="id_hosp">
                             <option value=""><?= $isDiretor ? 'Todos os Hospitais' : 'Selecione o Hospital' ?></option>
                             <?php foreach ($hospitals as $h): ?>
                                 <option value="<?= (int) $h['id_hospital'] ?>"
@@ -350,39 +349,33 @@ if ($havePages) {
                         </select>
                     </div>
 
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <input class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" type="text" name="pesquisa_pac"
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="text" name="pesquisa_pac"
                             placeholder="Paciente" value="<?= htmlspecialchars((string) $pesquisa_pac) ?>">
                     </div>
 
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <input class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" type="text" name="pesquisa_matricula"
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="text" name="pesquisa_matricula"
                             placeholder="Matrícula" value="<?= htmlspecialchars((string) $pesquisa_matricula) ?>">
                     </div>
 
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <input class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" type="text" name="senha_int"
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="text" name="senha_int"
                             placeholder="Senha" value="<?= htmlspecialchars((string) $senha_int) ?>">
                     </div>
 
-                    <div class="form-group col-sm-1" style="padding:2px !important">
-                        <input class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" type="text" name="lote"
+                    <div class="form-group col-sm-1">
+                        <input class="form-control form-control-sm" type="text" name="lote"
                             placeholder="Lote" value="<?= htmlspecialchars((string) $lote) ?>">
                     </div>
 
-                    <div class="form-group col-sm-1" style="padding:2px !important">
-                        <input class="form-control form-control-sm"
-                            style="margin-top:7px; font-size:.8em; color:#878787" type="text" name="idcapeante"
+                    <div class="form-group col-sm-1">
+                        <input class="form-control form-control-sm" type="text" name="idcapeante"
                             placeholder="Capeante" value="<?= htmlspecialchars((string) $idcapeante) ?>">
                     </div>
 
-                    <div class="col-sm-1" style="padding:2px !important">
-                        <select class="form-control mb-3 form-control-sm"
-                            style="margin-top:7px;font-size:.8em; color:#878787" id="limite" name="limite">
+                    <div class="col-sm-1">
+                        <select class="form-control form-control-sm" id="limite" name="limite">
                             <option value="">Reg/pág</option>
                             <option value="5" <?= (int) $limite === 5 ? 'selected' : null ?>>5</option>
                             <option value="10" <?= (int) $limite === 10 ? 'selected' : null ?>>10</option>
@@ -395,9 +388,8 @@ if ($havePages) {
                 </div>
 
                 <div class="form-group row filter-inline-row" style="margin-top:10px; margin-bottom:14px;">
-                    <div class="form-group col-sm-2" style="padding-left:16px !important;">
-                        <select class="form-control form-control-sm"
-                            style="margin-top:7px;font-size:.8em; color:#878787" id="ordenar" name="ordenar">
+                    <div class="form-group col-sm-2">
+                        <select class="form-control form-control-sm" id="ordenar" name="ordenar">
                             <option value="">Classificar por</option>
                             <option value="id_capeante_desc" <?= $ordenar == 'id_capeante_desc' ? 'selected' : '' ?>>
                                 No.capeante (desc)</option>
@@ -416,25 +408,22 @@ if ($havePages) {
                         </select>
                     </div>
 
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <select class="form-control form-control-sm"
-                            style="margin-top:7px;font-size:.8em; color:#878787" id="senha_fin" name="senha_fin">
+                    <div class="form-group col-sm-2">
+                        <select class="form-control form-control-sm" id="senha_fin" name="senha_fin">
                             <option value="">Senha finalizada</option>
                             <option value="s" <?= $senha_fin === 's' ? 'selected' : '' ?>>Sim</option>
                             <option value="n" <?= $senha_fin === 'n' ? 'selected' : '' ?>>Não</option>
                         </select>
                     </div>
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <select class="form-control form-control-sm"
-                            style="margin-top:7px;font-size:.8em;color:#878787" id="conta_parada" name="conta_parada">
+                    <div class="form-group col-sm-2">
+                        <select class="form-control form-control-sm" id="conta_parada" name="conta_parada">
                             <option value="" <?= ($conta_parada === null || $conta_parada === '') ? 'selected' : '' ?>>Conta parada (todas)</option>
                             <option value="s" <?= $conta_parada === 's' ? 'selected' : '' ?>>Paradas</option>
                             <option value="n" <?= $conta_parada === 'n' ? 'selected' : '' ?>>Ativas</option>
                         </select>
                     </div>
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <select class="form-control form-control-sm"
-                            style="margin-top:7px;font-size:.8em;color:#878787" id="status_conta" name="status_conta">
+                    <div class="form-group col-sm-2">
+                        <select class="form-control form-control-sm" id="status_conta" name="status_conta">
                             <option value="todos" <?= $status_conta === 'todos' ? 'selected' : '' ?>>Status — Encerrado (todos)
                             </option>
                             <option value="aberto" <?= $status_conta === 'aberto' ? 'selected' : '' ?>>Apenas abertos</option>
@@ -444,21 +433,18 @@ if ($havePages) {
                             </option>
                         </select>
                     </div>
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <input class="form-control form-control-sm" type="date"
-                            style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int"
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="date" name="data_intern_int"
                             placeholder="Data Internação Min" value="<?= htmlspecialchars((string) $data_intern_int) ?>">
                     </div>
-                    <div class="form-group col-sm-2" style="padding:2px !important">
-                        <input class="form-control form-control-sm" type="date"
-                            style="margin-top:7px;font-size:.8em; color:#878787" name="data_intern_int_max"
+                    <div class="form-group col-sm-2">
+                        <input class="form-control form-control-sm" type="date" name="data_intern_int_max"
                             placeholder="Data Internação Max"
                             value="<?= htmlspecialchars((string) $data_intern_int_max) ?>">
                     </div>
-                    <div class="form-group col-sm-1" style="padding:2px !important">
-                        <button type="submit" class="btn btn-primary"
-                            style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363">
-                            <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
+                    <div class="form-group col-sm-1 filter-actions">
+                        <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon">
+                            <span class="material-icons">search</span>
                         </button>
                     </div>
                 </div>

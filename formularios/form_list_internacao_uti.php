@@ -122,54 +122,6 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
         padding: 8px 8px 6px;
     }
 
-    .filter-inline-row {
-        padding: 5px 6px;
-        row-gap: 4px;
-    }
-
-    .filter-inline-row > [class*="col-"] {
-        padding: 2px !important;
-    }
-
-    .filter-inline-row > :first-child {
-        padding-left: 8px !important;
-    }
-
-    .filter-inline-row .form-control,
-    .filter-inline-row .btn,
-    .filter-inline-row .bootstrap-select > .dropdown-toggle {
-        min-height: 32px;
-        height: 32px;
-        font-size: .72rem;
-        line-height: 1.2;
-        border-radius: 11px;
-        margin-top: 0 !important;
-    }
-
-    .filter-inline-row .form-control::placeholder {
-        font-size: .72rem;
-        color: #c4c4c4;
-    }
-
-    .filter-inline-row .btn-filtro-buscar {
-        width: 32px;
-        min-width: 32px;
-        padding: 0;
-        background-color: #5e2363;
-        border-color: #5e2363;
-    }
-
-    .filter-inline-row .btn-filtro-limpar-icon {
-        min-width: 32px;
-        padding: 0;
-    }
-
-    .filter-inline-row .material-icons {
-        font-size: 16px;
-        line-height: 1;
-        margin: 0;
-    }
-
     .th-sortable {
         display: flex;
         align-items: center;

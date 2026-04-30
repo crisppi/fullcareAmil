@@ -99,7 +99,6 @@ sort($dadosAlta);
         #main-container .form-control,
         #main-container .form-select,
         #main-container .btn { min-height: 32px; height: 32px; font-size: .72rem; line-height: 1.2; }
-        #main-container .form-control::placeholder { font-size: .72rem; color:#c4c4c4; }
         #main-container .btn-lg { min-height: 32px; padding: 6px 12px !important; font-size: .72rem; }
         .gerar-alta-card {
             position: relative;

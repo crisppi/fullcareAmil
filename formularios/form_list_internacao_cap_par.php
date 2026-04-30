@@ -59,12 +59,6 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
     .listagem-page { padding: 4px 4px 14px; }
     .legacy-list-title { font-size:.96rem; margin-bottom:6px; }
     .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
-    .legacy-filter-row { padding:5px 6px; row-gap:4px; }
-    .legacy-filter-row > [class*="col-"], .legacy-filter-row > .form-group { padding:2px !important; }
-    .legacy-filter-row > :first-child { padding-left:8px !important; }
-    .legacy-filter-row .form-control, .legacy-filter-row .btn { min-height:32px; height:32px; font-size:.72rem; line-height:1.2; border-radius:11px; margin-top:0 !important; }
-    .legacy-filter-row .form-control::placeholder { font-size:.72rem; color:#c4c4c4; }
-    .legacy-filter-row .material-icons { font-size:16px; line-height:1; margin:0; }
     #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
     #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
 </style>

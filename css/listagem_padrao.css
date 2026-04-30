@@ -129,7 +129,8 @@
 }
 
 .listagem-panel .filter-inline-row > [class*="col-"],
-.listagem-panel .filter-inline-row > .form-group {
+.listagem-panel .filter-inline-row > .form-group,
+.listagem-panel .filter-inline-row > .filter-inline-field {
     display: flex;
     align-items: stretch;
     padding: 2px !important;
@@ -210,6 +211,84 @@
 }
 
 .listagem-panel .material-icons {
+    font-size: 16px;
+    line-height: 1;
+    margin: 0;
+}
+
+.legacy-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    padding: 5px 6px;
+}
+
+.legacy-filter-row > [class*="col-"],
+.legacy-filter-row > .form-group {
+    display: flex;
+    align-items: stretch;
+    padding: 2px !important;
+}
+
+.legacy-filter-row > :first-child {
+    padding-left: 8px !important;
+}
+
+.legacy-filter-row .form-control,
+.legacy-filter-row .form-control-sm,
+.legacy-filter-row .btn {
+    min-height: 32px !important;
+    height: 32px !important;
+    border-radius: 11px;
+    font-size: .72rem !important;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    line-height: 1.2;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.legacy-filter-row .form-control,
+.legacy-filter-row .form-control-sm {
+    color: #8e88a1 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.legacy-filter-row .form-control::placeholder,
+.legacy-filter-row .form-control-sm::placeholder {
+    font-size: .72rem !important;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    color: #8e88a1 !important;
+    opacity: 1;
+}
+
+.legacy-filter-row select.form-control,
+.legacy-filter-row select.form-control-sm {
+    padding-right: 28px;
+    color: #8e88a1 !important;
+    background-color: #fff;
+    font-style: normal;
+}
+
+.legacy-filter-row .btn-filtro-buscar {
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
+}
+
+.legacy-filter-row .btn-filtro-limpar-icon {
+    width: 32px;
+    height: 32px !important;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
+}
+
+.legacy-filter-row .material-icons {
     font-size: 16px;
     line-height: 1;
     margin: 0;
