@@ -192,6 +192,18 @@ foreach ($rowsIntern as $row) {
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+    .bi-sinistro-main-chart {
+        min-height: 160px !important;
+        height: 160px !important;
+        max-height: 160px !important;
+    }
+
+    .bi-sinistro-main-chart canvas {
+        height: 160px !important;
+        max-height: 160px !important;
+    }
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
@@ -278,19 +290,19 @@ foreach ($rowsIntern as $row) {
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Valor apresentado</h3>
-        <div class="bi-chart"><canvas id="chartApresentado"></canvas></div>
+        <div class="bi-chart bi-sinistro-main-chart" style="height:160px;max-height:160px;"><canvas id="chartApresentado" height="160" style="height:160px !important;"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Glosa total</h3>
-        <div class="bi-chart"><canvas id="chartGlosa"></canvas></div>
+        <div class="bi-chart bi-sinistro-main-chart" style="height:160px;max-height:160px;"><canvas id="chartGlosa" height="160" style="height:160px !important;"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Valor final</h3>
-        <div class="bi-chart"><canvas id="chartFinal"></canvas></div>
+        <div class="bi-chart bi-sinistro-main-chart" style="height:160px;max-height:160px;"><canvas id="chartFinal" height="160" style="height:160px !important;"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Internações</h3>
-        <div class="bi-chart"><canvas id="chartIntern"></canvas></div>
+        <div class="bi-chart bi-sinistro-main-chart" style="height:160px;max-height:160px;"><canvas id="chartIntern" height="160" style="height:160px !important;"></canvas></div>
     </div>
 </div>
 

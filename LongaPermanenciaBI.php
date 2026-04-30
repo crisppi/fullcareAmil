@@ -134,6 +134,16 @@ $valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais)
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+.lp-chart-compact {
+    min-height: 140px;
+    height: 140px;
+}
+
+.lp-chart-compact canvas {
+    height: 140px !important;
+}
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
@@ -225,7 +235,7 @@ $valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais)
 
             <div class="bi-panel">
                 <h3>Hospital</h3>
-                <div class="bi-chart"><canvas id="chartLongaHosp"></canvas></div>
+                <div class="bi-chart lp-chart-compact"><canvas id="chartLongaHosp"></canvas></div>
             </div>
 
             <div class="bi-panel">
@@ -297,10 +307,11 @@ new Chart(document.getElementById('chartLongaHosp'), {
       data: lpValues,
       backgroundColor: 'rgba(126, 150, 255, 0.8)',
       borderRadius: 10,
-      maxBarThickness: 60
+      maxBarThickness: 34
     }]
   },
   options: {
+    maintainAspectRatio: false,
     legend: { display: false },
     scales: {
       xAxes: [{

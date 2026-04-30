@@ -160,6 +160,18 @@ $barValues = [
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+    .bi-perfil-sinistro-chart {
+        min-height: 240px !important;
+        height: 240px !important;
+        max-height: 240px !important;
+    }
+
+    .bi-perfil-sinistro-chart canvas {
+        height: 240px !important;
+        max-height: 240px !important;
+    }
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
@@ -258,17 +270,17 @@ $barValues = [
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Alocação dos custos</h3>
-        <div class="bi-chart"><canvas id="chartAlloc"></canvas></div>
+        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartAlloc" height="240" style="height:240px !important;"></canvas></div>
     </div>
 
     <div class="bi-panel">
         <h3>Análise da glosa</h3>
-        <div class="bi-chart"><canvas id="chartGlosa"></canvas></div>
+        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartGlosa" height="240" style="height:240px !important;"></canvas></div>
     </div>
 
     <div class="bi-panel">
         <h3>Valores consolidados</h3>
-        <div class="bi-chart"><canvas id="chartValores"></canvas></div>
+        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartValores" height="240" style="height:240px !important;"></canvas></div>
     </div>
 
     <div class="bi-panel">

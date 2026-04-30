@@ -153,6 +153,16 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
+<style>
+    .bi-patologia-chart-sm {
+        min-height: 200px;
+        height: 200px;
+    }
+
+    .bi-patologia-chart-sm canvas {
+        height: 200px !important;
+    }
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
@@ -232,34 +242,34 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Acomodação</h3>
-        <div class="bi-chart"><canvas id="chartAcom"></canvas></div>
+        <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartAcom"></canvas></div>
     </div>
 
     <div class="bi-grid fixed-2" style="margin-top:16px;">
         <div class="bi-panel">
             <h3>Custo por patologia</h3>
-            <div class="bi-chart"><canvas id="chartCusto"></canvas></div>
+            <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartCusto"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>Custo médio internação por patologia</h3>
-            <div class="bi-chart"><canvas id="chartCustoMedio"></canvas></div>
+            <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartCustoMedio"></canvas></div>
         </div>
     </div>
 
     <div class="bi-grid fixed-2" style="margin-top:16px;">
         <div class="bi-panel">
             <h3>Internações por patologia</h3>
-            <div class="bi-chart"><canvas id="chartIntern"></canvas></div>
+            <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartIntern"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>MP por patologia</h3>
-            <div class="bi-chart"><canvas id="chartMp"></canvas></div>
+            <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartMp"></canvas></div>
         </div>
     </div>
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Diárias por patologia</h3>
-        <div class="bi-chart"><canvas id="chartDiárias"></canvas></div>
+        <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartDiárias"></canvas></div>
     </div>
 </div>
 

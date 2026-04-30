@@ -122,6 +122,49 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
         padding: 8px 8px 6px;
     }
 
+    .listagem-panel .uti-filter-row {
+        flex-wrap: nowrap !important;
+    }
+
+    .listagem-panel .uti-filter-row > [class*="col-"] {
+        max-width: none;
+        min-width: 0;
+    }
+
+    .listagem-panel .uti-filter-hospital {
+        flex: 1.35 1 0;
+    }
+
+    .listagem-panel .uti-filter-paciente {
+        flex: 1.4 1 0;
+    }
+
+    .listagem-panel .uti-filter-matricula {
+        flex: 0.95 1 0;
+    }
+
+    .listagem-panel .uti-filter-internado {
+        flex: 0.95 1 0;
+    }
+
+    .listagem-panel .uti-filter-limit {
+        flex: 0 0 156px;
+        max-width: 156px;
+    }
+
+    .listagem-panel .uti-filter-actions {
+        flex: 0 0 74px;
+        max-width: 74px;
+        display: flex;
+        align-items: stretch;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .listagem-panel .uti-filter-actions .btn {
+        flex: 0 0 32px;
+    }
+
     .th-sortable {
         display: flex;
         align-items: center;
@@ -193,8 +236,8 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
     <div class="complete-table listagem-panel">
         <div id="navbarToggleExternalContent" class="table-filters">
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-            <div class="row">
-                <form action="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/internacoes/uti', ENT_QUOTES, 'UTF-8') ?>" id="select-internacao-form" method="GET">
+            <div>
+                <form action="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/internacoes/uti', ENT_QUOTES, 'UTF-8') ?>" id="select-internacao-form" method="GET" style="width:100%;">
                     <?php $pesquisa_nome = (string)listaUtiGetParam('pesquisa_nome', '');
                     $pesqInternado = (string)listaUtiGetParam('pesqInternado', 's');
                     $limite_pag = (int)listaUtiGetParam('limite_pag', 10);
@@ -202,31 +245,31 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                     $pesquisa_matricula = (string)listaUtiGetParam('pesquisa_matricula', '');
                     $ordenar = (string)listaUtiGetParam('ordenar', '');
                     ?>
-                    <div class="row filter-inline-row">
-                        <div class="col-sm-3" style="padding:2px !important;padding-left:16px !important;">
+                    <div class="row filter-inline-row uti-filter-row">
+                        <div class="col-sm-3 uti-filter-hospital" style="padding:2px !important;padding-left:16px !important;">
                             <input class="form-control form-control-sm" type="text" name="pesquisa_nome"
                                 placeholder="Hospital" autofocus
                                 value="<?= $pesquisa_nome ?>">
                         </div>
-                        <div class="col-sm-3" style="padding:2px !important">
+                        <div class="col-sm-3 uti-filter-paciente" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="text" name="pesquisa_pac"
                                 placeholder="Paciente"
                                 value="<?= $pesquisa_pac ?>">
                         </div>
-                        <div class="col-sm-2" style="padding:2px !important">
+                        <div class="col-sm-2 uti-filter-matricula" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="text" name="pesquisa_matricula"
                                 placeholder="Matrícula"
                                 value="<?= htmlspecialchars((string)$pesquisa_matricula) ?>">
                         </div>
 
-                        <div class="col-sm-2" style="padding:2px !important">
+                        <div class="col-sm-2 uti-filter-internado" style="padding:2px !important">
                             <select class="form-control sm-3 form-control-sm" id="pesqInternado" name="pesqInternado">
                                 <option value="">Busca por Internados</option>
                                 <option value="s" <?= $pesqInternado == 's' ? 'selected' : null ?>>Sim</option>
                                 <option value="n" <?= $pesqInternado == 'n' ? 'selected' : null ?>>Não</option>
                             </select>
                         </div>
-                        <div class="col-sm-1" style="padding:2px !important">
+                        <div class="col-sm-1 uti-filter-limit" style="padding:2px !important">
                             <select class="form-control mb-3 form-control-sm" id="limite"
                                 name="limite_pag">
                                 <option value="">Reg por página</option>
@@ -240,7 +283,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                                 </option>
                             </select>
                         </div>
-                        <div class="col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                        <div class="col-sm-1 uti-filter-actions" style="padding:2px !important">
                             <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"><span
                                     class="material-icons">
                                     search
