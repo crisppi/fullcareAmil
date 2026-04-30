@@ -225,8 +225,27 @@ foreach ($cycleRows as $row) {
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+.bi-faturamento-consolidado .bi-chart {
+    min-height: 172px;
+    height: 172px;
+}
 
-<div class="bi-wrapper bi-theme">
+.bi-faturamento-consolidado .bi-chart.bi-chart-line {
+    min-height: 192px;
+    height: 192px;
+}
+
+@media (max-width: 900px) {
+    .bi-faturamento-consolidado .bi-chart,
+    .bi-faturamento-consolidado .bi-chart.bi-chart-line {
+        min-height: 182px;
+        height: 182px;
+    }
+}
+</style>
+
+<div class="bi-wrapper bi-theme bi-faturamento-consolidado">
     <div class="bi-header">
         <h1 class="bi-title">Faturamento consolidado</h1>
         <div class="bi-header-actions">
@@ -320,11 +339,11 @@ foreach ($cycleRows as $row) {
     </div>
     <div class="bi-panel">
         <h3>Evolução por ciclo (30 dias)</h3>
-        <div class="bi-chart"><canvas id="chartCycle"></canvas></div>
+        <div class="bi-chart bi-chart-line"><canvas id="chartCycle"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Evolução mensal de faturamento</h3>
-        <div class="bi-chart"><canvas id="chartTrend"></canvas></div>
+        <div class="bi-chart bi-chart-line"><canvas id="chartTrend"></canvas></div>
     </div>
 </div>
 

@@ -287,8 +287,21 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+.bi-performance-rede .bi-chart {
+    min-height: 160px;
+    height: 160px;
+}
 
-<div class="bi-wrapper bi-theme">
+@media (max-width: 900px) {
+    .bi-performance-rede .bi-chart {
+        min-height: 165px;
+        height: 165px;
+    }
+}
+</style>
+
+<div class="bi-wrapper bi-theme bi-performance-rede">
     <div class="bi-header">
         <h1 class="bi-title">Performance Comparativa da Rede Hospitalar</h1>
         <div class="bi-header-actions">
