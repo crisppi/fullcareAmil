@@ -92,6 +92,79 @@ function hubComputeCoverageAndGaps(array $intervals, int $startTs, int $endTs): 
     return [$coveredDays, $missingDays, $gaps];
 }
 
+function hubInternacaoEvidenceScore(array $row): int
+{
+    $score = 0;
+    $temAlta = !empty($row['data_alta_alt']) && $row['data_alta_alt'] !== '0000-00-00';
+    if ($temAlta) {
+        $score += 100;
+    }
+    $score += ((int)($row['visitas_total'] ?? 0)) * 20;
+    $score += ((int)($row['prorrogacoes'] ?? 0)) * 15;
+    $score += ((int)($row['negociacoes'] ?? 0)) * 15;
+    if (($row['internado_int'] ?? '') === 'n') {
+        $score += 5;
+    }
+    return $score;
+}
+
+function hubDeduplicateInternacoes(array $rows): array
+{
+    $grouped = [];
+    foreach ($rows as $row) {
+        $key = implode('|', [
+            (string)($row['fk_hospital_int'] ?? 0),
+            (string)($row['data_intern_int'] ?? ''),
+        ]);
+        $grouped[$key][] = $row;
+    }
+
+    $result = [];
+    foreach ($grouped as $group) {
+        if (count($group) <= 1) {
+            $result[] = $group[0];
+            continue;
+        }
+
+        $hasZeroEvidence = false;
+        $hasRichEvidence = false;
+        foreach ($group as $row) {
+            $score = hubInternacaoEvidenceScore($row);
+            if ($score <= 0) {
+                $hasZeroEvidence = true;
+            } else {
+                $hasRichEvidence = true;
+            }
+        }
+
+        if ($hasZeroEvidence && $hasRichEvidence) {
+            usort($group, static function ($a, $b) {
+                $scoreCompare = hubInternacaoEvidenceScore($b) <=> hubInternacaoEvidenceScore($a);
+                if ($scoreCompare !== 0) {
+                    return $scoreCompare;
+                }
+                return ((int)($b['id_internacao'] ?? 0)) <=> ((int)($a['id_internacao'] ?? 0));
+            });
+            $result[] = $group[0];
+            continue;
+        }
+
+        foreach ($group as $row) {
+            $result[] = $row;
+        }
+    }
+
+    usort($result, static function ($a, $b) {
+        $dateCompare = strcmp((string)($b['data_intern_int'] ?? ''), (string)($a['data_intern_int'] ?? ''));
+        if ($dateCompare !== 0) {
+            return $dateCompare;
+        }
+        return ((int)($b['id_internacao'] ?? 0)) <=> ((int)($a['id_internacao'] ?? 0));
+    });
+
+    return $result;
+}
+
 try {
     ajax_require_active_session();
     $ctx = ajax_user_context($conn);
@@ -114,13 +187,6 @@ try {
 
     $scopeParams = [];
     $scopeSql = ajax_scope_clause_for_internacao($ctx, 'ac', $scopeParams, 'ipp');
-
-    $stmtTotal = $conn->prepare("SELECT COUNT(*) AS total
-                                   FROM tb_internacao ac
-                                  WHERE ac.fk_paciente_int = :pac {$scopeSql}");
-    ajax_bind_params($stmtTotal, array_merge([':pac' => (int)$pacId], $scopeParams));
-    $stmtTotal->execute();
-    $total = (int)($stmtTotal->fetchColumn() ?: 0);
 
     $sql = "SELECT
                 ac.id_internacao,
@@ -158,16 +224,16 @@ try {
                  LIMIT 1
             )
             WHERE ac.fk_paciente_int = :pac {$scopeSql}
-            ORDER BY ac.data_intern_int DESC, ac.id_internacao DESC
-            LIMIT :limit OFFSET :offset";
+            ORDER BY ac.data_intern_int DESC, ac.id_internacao DESC";
     $stmtRows = $conn->prepare($sql);
     ajax_bind_params($stmtRows, array_merge([
         ':pac' => (int)$pacId,
-        ':limit' => (int)$limit,
-        ':offset' => (int)$offset,
     ], $scopeParams));
     $stmtRows->execute();
     $rows = $stmtRows->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    $rows = hubDeduplicateInternacoes($rows);
+    $total = count($rows);
+    $rows = array_slice($rows, $offset, $limit);
 
     $ids = array_values(array_unique(array_filter(array_map(static fn($r) => (int)($r['id_internacao'] ?? 0), $rows))));
     $prorrogacoesByInternacao = [];

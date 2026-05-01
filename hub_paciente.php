@@ -1069,6 +1069,13 @@ $complexInfo = $complexMap[$effectiveLevel];
     color: #fff !important;
   }
 
+  .hub-prorrog-pendente {
+    margin-top: 2px;
+    font-size: .74rem;
+    line-height: 1.15;
+    font-weight: 500;
+  }
+
   /* Abas (nav-pills) */
   .nav-pills .nav-link {
     color: var(--brand);

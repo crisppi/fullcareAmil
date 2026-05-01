@@ -227,7 +227,7 @@
         <td>${visitas}</td>
         <td>
           <div>${pror}</div>
-          ${prorPend > 0 ? `<div class="text-danger small fw-semibold">Pendente${prorPendLabel ? ` (${esc(prorPendLabel)})` : ''}</div>` : ''}
+          ${prorPend > 0 ? `<div class="hub-prorrog-pendente text-danger">Pendente${prorPendLabel ? ` (${esc(prorPendLabel)})` : ''}</div>` : ''}
         </td>
         <td>${negociacoes}</td>
         <td class="text-center">
