@@ -138,6 +138,12 @@ try {
                 ) AS prorrogacoes,
                 (
                     SELECT COUNT(*)
+                      FROM tb_negociacao ng
+                     WHERE ng.fk_id_int = ac.id_internacao
+                       AND UPPER(COALESCE(ng.tipo_negociacao, '')) <> 'PRORROGACAO_AUTOMATICA'
+                ) AS negociacoes,
+                (
+                    SELECT COUNT(*)
                       FROM tb_visita vi
                      WHERE vi.fk_internacao_vis = ac.id_internacao
                        AND (vi.retificado IS NULL OR vi.retificado = 0)
@@ -254,6 +260,7 @@ try {
             'prorrogacoes' => count($prorrogacoesByInternacao[$idInternacao] ?? []),
             'prorrogacoes_pendentes' => $prorrogPendentes,
             'prorrogacoes_pendentes_label' => $prorrogPendentesLabel,
+            'negociacoes' => (int)($r['negociacoes'] ?? 0),
             'visitas' => (int)($r['visitas_total'] ?? 0),
             'tem_alta' => $temAlta,
         ];

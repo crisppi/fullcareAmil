@@ -542,23 +542,36 @@ $complexInfo = $complexMap[$effectiveLevel];
   <!-- Abas -->
   <div class="card shadow-sm" style="border-radius:14px;">
     <div class="card-body">
-      <ul class="nav nav-pills mb-3" role="tablist">
-       
-        <li class="nav-item">
-          <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-internacoes" type="button"
-            role="tab">
-            <i class="fa-solid fa-bed-pulse me-2"></i>Internações
-          </button>
-        </li>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <ul class="nav nav-pills mb-0" role="tablist">
+
+          <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-internacoes" type="button"
+              role="tab">
+              <i class="fa-solid fa-bed-pulse me-2"></i>Internações
+            </button>
+          </li>
 
 
-        <li class="nav-item">
-          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-contas" type="button"
-            role="tab">
-            <i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas
-          </button>
-        </li>
-      </ul>
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-contas" type="button"
+              role="tab">
+              <i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas
+            </button>
+          </li>
+        </ul>
+        <div class="hub-int-actions d-flex align-items-center gap-2">
+          <div class="input-group input-group-sm hub-int-filter">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input id="buscaInternacoes" type="text" class="form-control" placeholder="Filtrar...">
+          </div>
+          <?php if (!$isGestorSeguradora) { ?>
+            <a class="btn btn-sm btn-primary hub-new-int-btn" href="<?= $BASE_URL ?>cad_internacao.php?id_paciente=<?= (int)$p['id_paciente'] ?>">
+              <i class="fa-solid fa-plus me-1"></i> Nova Internação
+            </a>
+          <?php } ?>
+        </div>
+      </div>
 
       <div class="tab-content">
         <div class="tab-pane fade" id="tab-overview" role="tabpanel">
@@ -571,17 +584,6 @@ $complexInfo = $complexMap[$effectiveLevel];
         <div class="tab-pane fade show active" id="tab-internacoes" role="tabpanel">
           <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-2">
             <h6 class="mb-0">Histórico de internações</h6>
-            <div class="d-flex flex-wrap gap-2">
-              <div class="input-group input-group-sm" style="max-width:260px">
-                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-                <input id="buscaInternacoes" type="text" class="form-control" placeholder="Filtrar...">
-              </div>
-              <?php if (!$isGestorSeguradora) { ?>
-                <a class="btn btn-sm btn-primary" href="<?= $BASE_URL ?>cad_internacao.php?id_paciente=<?= (int)$p['id_paciente'] ?>">
-                  <i class="fa-solid fa-plus me-1"></i> Nova Internação
-                </a>
-              <?php } ?>
-            </div>
           </div>
 
           <div class="table-responsive">
@@ -593,10 +595,10 @@ $complexInfo = $complexMap[$effectiveLevel];
                   <th>Admissão</th>
                   <th>Alta</th>
                   <th>Unidade</th>
-                  <th>Médico</th>
                   <th>Status</th>
                   <th>Visitas</th>
                   <th>Prorrog.</th>
+                  <th>Negoc.</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -1043,6 +1045,28 @@ $complexInfo = $complexMap[$effectiveLevel];
     color: #fff;
     background-color: #10b981;
     border-color: #059669;
+  }
+
+  .hub-int-actions {
+    min-width: min(100%, 420px);
+  }
+
+  .hub-int-filter {
+    max-width: 240px;
+  }
+
+  .hub-new-int-btn {
+    background-color: #2563eb !important;
+    border-color: #1d4ed8 !important;
+    color: #fff !important;
+    font-weight: 600;
+  }
+
+  .hub-new-int-btn:hover,
+  .hub-new-int-btn:focus {
+    background-color: #1d4ed8 !important;
+    border-color: #1e40af !important;
+    color: #fff !important;
   }
 
   /* Abas (nav-pills) */

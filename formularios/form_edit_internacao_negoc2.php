@@ -1213,6 +1213,15 @@ if (!function_exists('sel')) {
         $('#negociacoes_delete_ids').val(JSON.stringify(window.__NEGOC_DELETE_IDS || []));
     }
 
+    window.genJSON = genJSON;
+    window.generateNegotiationsJSON = genJSON;
+    window.fcRecalculateNegotiationRow = function(row) {
+        const $row = $(row).closest('.negociation-field-container');
+        if (!$row.length) return;
+        calcSaving($row);
+        genJSON();
+    };
+
     window.refreshNegotiationRows = function(forceDates = false) {
         $('#negotiationFieldsContainer .negociation-field-container').each(function () {
             const $row = $(this);
@@ -1242,6 +1251,10 @@ if (!function_exists('sel')) {
         }
         calcSaving($row);
         genJSON();
+    });
+
+    $('#negotiationFieldsContainer').on('input change keyup', 'input[name="qtd"]', function () {
+        window.fcRecalculateNegotiationRow(this);
     });
     // e no submit do form, pra garantir
     $('form').on('submit', genJSON);

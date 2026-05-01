@@ -161,10 +161,10 @@
             <th>Admissão</th>
             <th>Alta</th>
             <th>Unidade</th>
-            <th>Médico</th>
             <th>Status</th>
             <th>Visitas</th>
             <th>Prorrog.</th>
+            <th>Negoc.</th>
             <th>Ações</th>`;
         }
       }
@@ -193,7 +193,6 @@
       const admDisplay = formatDateTimeBr(adm, row.hora_admissao ?? row.hora_intern_int ?? row.hora ?? null);
       const altaDisplay = formatDateTimeBr(alta, row.hora_alta ?? row.hora_alta_alt ?? null);
       const unidade = row.unidade ?? row.nome_hosp ?? row.hospital ?? row.estabelecimento ?? row.acomodacao_int ?? '—';
-      const medico = row.medico ?? row.medico_responsavel ?? row.crm_int ?? row.crm ?? '—';
       const hasAlta = Boolean((row.tem_alta ?? false)) || (String(alta || '').trim() !== '');
       const status =
         row.status ??
@@ -203,6 +202,7 @@
       const pror = Number(row.prorrogacoes ?? row.qtd_prorrog ?? 0) || 0;
       const prorPend = Number(row.prorrogacoes_pendentes ?? row.prorrog_pendentes ?? 0) || 0;
       const prorPendLabel = (row.prorrogacoes_pendentes_label ?? row.prorrog_pendente_label ?? '').toString().trim();
+      const negociacoes = Number(row.negociacoes ?? row.negociacoes_total ?? row.qtd_negociacoes ?? 0) || 0;
       const visitas = Number(row.visitas ?? row.visitas_total ?? row.num_visitas ?? row.qtd_visitas ?? 0) || 0;
       const isAlta = hasAlta ||
         String(status).toLowerCase() === 'alta' ||
@@ -223,13 +223,13 @@
         <td>${admDisplay}</td>
         <td>${altaDisplay}</td>
         <td>${esc(unidade)}</td>
-        <td>${esc(medico)}</td>
         <td>${esc(status)}</td>
         <td>${visitas}</td>
         <td>
           <div>${pror}</div>
           ${prorPend > 0 ? `<div class="text-danger small fw-semibold">Pendente${prorPendLabel ? ` (${esc(prorPendLabel)})` : ''}</div>` : ''}
         </td>
+        <td>${negociacoes}</td>
         <td class="text-center">
           ${primaryActionButton}
           ${isAlta ? '' : `
@@ -326,7 +326,8 @@
       let emptyRow = tbody.querySelector('tr[data-empty="1"]');
       if (!emptyRow) {
         emptyRow = document.createElement('tr'); emptyRow.dataset.empty = '1';
-        emptyRow.innerHTML = `<td colspan="9" class="text-center text-muted py-3">Nenhuma internação encontrada.</td>`;
+        const colCount = table.querySelectorAll('thead tr:first-child th').length || 10;
+        emptyRow.innerHTML = `<td colspan="${colCount}" class="text-center text-muted py-3">Nenhuma internação encontrada.</td>`;
         tbody.appendChild(emptyRow);
       }
       emptyRow.style.display = vis === 0 ? '' : 'none';
