@@ -152,9 +152,24 @@ if ($basePath !== '' && strpos($currentPath, $basePath) === 0) {
     $currentPath = trim(substr($currentPath, strlen($basePath)), '/');
 }
 $currentRoute = $currentPath . ($currentQuery !== '' ? '?' . $currentQuery : '');
+$currentPanel = trim((string)($_GET['painel'] ?? ''));
+$panelRouteMap = [
+    'prorrogacoes' => 'bi/prorrogacoes',
+    'tuss-autorizacoes' => 'bi/tuss-autorizacoes',
+    'oportunidades-clinicas' => 'bi/oportunidades-clinicas',
+    'desfechos-alta' => 'bi/desfechos-alta',
+    'negociacao-avancada' => 'bi/negociacao-avancada',
+    'seguranca-eventos' => 'bi/seguranca-eventos',
+];
+$currentRouteAliases = array_filter([$currentPath, $currentRoute]);
+if ($currentPage === 'BiOperacionalAvancado.php' && isset($panelRouteMap[$currentPanel])) {
+    $currentRouteAliases[] = $panelRouteMap[$currentPanel];
+}
+$currentRouteAliases = array_values(array_unique($currentRouteAliases));
 $currentSection = '';
 $currentLabel = '';
 $flatPages = [];
+$fileCounts = [];
 $matchedByHref = false;
 $ieSlug = trim((string)($_GET['ie'] ?? ''));
 $ieMap = [
@@ -177,14 +192,21 @@ $ieMap = [
 foreach ($biSections as $section => $items) {
     foreach ($items as $item) {
         $file = $item['file'] ?? $item['href'];
+        $fileCounts[$file] = ($fileCounts[$file] ?? 0) + 1;
+    }
+}
+
+foreach ($biSections as $section => $items) {
+    foreach ($items as $item) {
+        $file = $item['file'] ?? $item['href'];
         $flatPages[] = $file;
         $hrefPath = trim((string) ($item['href'] ?? ''), '/');
-        if ($hrefPath !== '' && ($hrefPath === $currentPath || $hrefPath === $currentRoute)) {
+        if ($hrefPath !== '' && in_array($hrefPath, $currentRouteAliases, true)) {
             $currentSection = $section;
             $currentLabel = $item['label'];
             $matchedByHref = true;
         }
-        if (!$matchedByHref && $file === $currentPage) {
+        if (!$matchedByHref && ($fileCounts[$file] ?? 0) === 1 && $file === $currentPage) {
             $currentSection = $section;
             $currentLabel = $item['label'];
         }
@@ -200,18 +222,18 @@ if (!in_array($currentPage, $flatPages, true) && !$matchedByHref && !($ieSlug !=
     return;
 }
 
-$isBiTopbarItemActive = static function (array $item) use ($currentPath, $currentRoute, $currentPage, $currentSection, $ieSlug): bool {
+$isBiTopbarItemActive = static function (array $item) use ($currentRouteAliases, $currentPage, $currentSection, $ieSlug): bool {
     $itemFile = (string)($item['file'] ?? ($item['href'] ?? ''));
     $href = (string)($item['href'] ?? '');
     $hrefTarget = trim($href, '/');
     $hrefPath = trim((string)parse_url($href, PHP_URL_PATH), '/');
     $hrefQuery = parse_url($href, PHP_URL_QUERY);
 
-    if ($hrefTarget !== '' && ($hrefTarget === $currentRoute || $hrefTarget === $currentPath)) {
+    if ($hrefTarget !== '' && in_array($hrefTarget, $currentRouteAliases, true)) {
         return true;
     }
 
-    if ($hrefQuery === null && $hrefPath !== '' && $hrefPath === $currentPath) {
+    if ($hrefQuery === null && $hrefPath !== '' && in_array($hrefPath, $currentRouteAliases, true)) {
         return true;
     }
 
@@ -477,10 +499,20 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     display: none;
 }
 
-.bi-sidebar-group[open] summary,
 .bi-sidebar-group summary:hover {
     background: rgba(255, 255, 255, 0.085);
     color: #ffffff;
+}
+
+.bi-sidebar-group[open] summary {
+    background: linear-gradient(90deg, rgba(126, 181, 220, 0.18), rgba(255, 255, 255, 0.055));
+    border-bottom: 1px solid rgba(176, 214, 240, 0.14);
+    color: #ffffff;
+}
+
+.bi-sidebar-group[open] summary span:nth-child(2) {
+    color: #f5fbff;
+    text-shadow: 0 1px 10px rgba(118, 177, 219, 0.28);
 }
 
 .bi-sidebar-dot {
@@ -494,6 +526,11 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
 
 .bi-sidebar-group.is-active .bi-sidebar-dot {
     background: #63d5c0;
+}
+
+.bi-sidebar-group[open]:not(.is-active) .bi-sidebar-dot {
+    background: #9fc4de;
+    box-shadow: 0 0 0 4px rgba(159, 196, 222, 0.13);
 }
 
 .bi-sidebar-chevron {
