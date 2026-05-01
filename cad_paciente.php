@@ -64,7 +64,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;
-        padding-inline: 5px !important;
+        padding-inline: 2px !important;
         padding-top: 0 !important;
         width: auto !important;
         max-width: 100% !important;
@@ -72,7 +72,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .internacao-page__hero {
-        margin: 0 0 6px !important;
+        min-height: 58px !important;
+        margin: 0 0 5px !important;
+        padding: 14px 12px !important;
+        border-radius: 18px !important;
+    }
+
+    #main-container.internacao-page .internacao-page__hero h1 {
+        font-size: 1.22rem !important;
+        line-height: 1.1 !important;
     }
 
     #main-container.internacao-page .hero-actions {
@@ -85,10 +93,10 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         border-radius: 999px;
         border: 1px solid #d9c3f4;
         color: #5e2363;
-        padding: 7px 14px;
+        padding: 6px 12px;
         text-decoration: none;
         font-weight: 600;
-        font-size: .85rem;
+        font-size: .76rem;
         background: #f4ecfb;
     }
 
@@ -101,20 +109,112 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         font-weight: 700 !important;
     }
 
+    #main-container.internacao-page .internacao-page__tag,
+    #main-container.internacao-page .internacao-card__tag,
+    #main-container.internacao-page .entity-step-badge {
+        padding: 4px 8px !important;
+        font-size: .58rem !important;
+    }
+
+    #main-container.internacao-page .internacao-page__content {
+        display: block !important;
+    }
+
+    #main-container.internacao-page .internacao-card {
+        border-radius: 16px !important;
+    }
+
+    #main-container.internacao-page .internacao-card__header {
+        padding: 12px 10px 4px !important;
+    }
+
+    #main-container.internacao-page .internacao-card__title {
+        font-size: .82rem !important;
+        line-height: 1.1 !important;
+    }
+
+    #main-container.internacao-page .internacao-card__body {
+        padding: 6px 10px 12px !important;
+        gap: 6px !important;
+    }
+
+    #main-container.internacao-page .entity-step-card {
+        padding: 8px 10px 9px !important;
+        border-radius: 14px !important;
+    }
+
+    #main-container.internacao-page .entity-step-card + .entity-step-card {
+        margin-top: 2px !important;
+    }
+
+    #main-container.internacao-page #step-2,
+    #main-container.internacao-page #step-3 {
+        padding-top: 5px !important;
+    }
+
+    #main-container.internacao-page .entity-step-header {
+        align-items: center !important;
+        margin-bottom: 6px !important;
+    }
+
+    #main-container.internacao-page .entity-step-kicker {
+        margin-bottom: 1px !important;
+        font-size: .5rem !important;
+    }
+
+    #main-container.internacao-page .entity-step-title {
+        font-size: .9rem !important;
+        line-height: 1.08 !important;
+    }
+
+    #main-container.internacao-page .entity-step-desc {
+        display: none !important;
+    }
+
+    #main-container.internacao-page .entity-form .form-group,
+    #main-container.internacao-page .entity-form [class*="col-md-"].form-group {
+        margin-bottom: 7px !important;
+    }
+
+    #main-container.internacao-page .entity-form .form-group label {
+        margin-bottom: 2px !important;
+        font-size: .66rem !important;
+        line-height: 1.1 !important;
+    }
+
     #multi-step-form .form-control {
-        min-height: 42px;
+        min-height: 34px !important;
+        height: 34px !important;
         border-radius: 8px;
+        font-size: .74rem !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
     }
 
     #multi-step-form select.form-control {
-        height: 42px;
-        padding-top: .375rem;
-        padding-bottom: .375rem;
+        height: 34px !important;
+        min-height: 34px !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
     }
 
     #multi-step-form textarea.form-control {
-        min-height: 120px;
+        min-height: 62px !important;
+        height: 62px !important;
         border-radius: 8px;
+    }
+
+    #main-container.internacao-page .entity-actions-bar {
+        margin-top: 4px !important;
+        padding: 10px 12px !important;
+        border-radius: 14px !important;
+    }
+
+    #main-container.internacao-page .entity-actions-bar .btn {
+        min-height: 36px !important;
+        padding: 7px 14px !important;
+        border-radius: 10px !important;
+        font-size: .78rem !important;
     }
 </style>
 

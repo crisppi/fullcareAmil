@@ -119,7 +119,6 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 1</div>
                     <h3 class="entity-step-title">Identificação do hospital</h3>
-                    <p class="entity-step-desc">Defina o registro principal da instituição antes de configurar endereço, contatos e acomodações.</p>
                 </div>
                 <span class="entity-step-badge">Dados base</span>
             </div>
@@ -146,7 +145,6 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 2</div>
                     <h3 class="entity-step-title">Endereços</h3>
-                    <p class="entity-step-desc">Cadastre o endereço principal e, se necessário, mantenha filiais ou endereços de cobrança no mesmo fluxo.</p>
                 </div>
                 <span class="entity-step-badge">Localização</span>
             </div>
@@ -268,7 +266,6 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 3</div>
                     <h3 class="entity-step-title">Contato operacional</h3>
-                    <p class="entity-step-desc">Organize emails, telefones e contatos-chave para facilitar auditoria, faturamento e rotina assistencial.</p>
                 </div>
                 <span class="entity-step-badge">Comunicação</span>
             </div>
@@ -419,7 +416,6 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 4</div>
                     <h3 class="entity-step-title">Dados complementares</h3>
-                    <p class="entity-step-desc">Finalize com responsáveis, coordenadas e acomodações negociadas da instituição.</p>
                 </div>
                 <span class="entity-step-badge">Estrutura</span>
             </div>
