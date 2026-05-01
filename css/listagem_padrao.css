@@ -22,7 +22,7 @@
     gap: 8px;
     margin-bottom: 4px;
     color: #7b5a9a;
-    font-size: .62rem;
+    font-size: .58rem;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -39,7 +39,7 @@
 .listagem-title {
     margin: 0;
     color: #2d203d;
-    font-size: 1.42rem;
+    font-size: 1.26rem;
     font-weight: 800;
     letter-spacing: -.03em;
 }
@@ -47,7 +47,7 @@
 .listagem-subtitle {
     margin: 4px 0 0;
     color: #7b7b8d;
-    font-size: .8rem;
+    font-size: .74rem;
 }
 
 .listagem-hero__actions {
@@ -64,12 +64,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
+    min-height: 36px;
     border: none;
-    border-radius: 12px;
-    padding: 0 14px;
+    border-radius: 11px;
+    padding: 0 12px;
     font-weight: 700;
-    font-size: .82rem;
+    font-size: .76rem;
     line-height: 1;
     text-align: center;
     white-space: nowrap;

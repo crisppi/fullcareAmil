@@ -656,6 +656,77 @@ if (!function_exists('ensure_hospital_related_tables')) {
                         ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
+            'tb_paciente_endereco' => "
+                CREATE TABLE tb_paciente_endereco (
+                    id_paciente_endereco INT AUTO_INCREMENT PRIMARY KEY,
+                    fk_paciente INT NOT NULL,
+                    tipo_endereco VARCHAR(60) NULL,
+                    cep_endereco VARCHAR(20) NULL,
+                    endereco_endereco VARCHAR(255) NULL,
+                    numero_endereco VARCHAR(30) NULL,
+                    bairro_endereco VARCHAR(120) NULL,
+                    cidade_endereco VARCHAR(120) NULL,
+                    estado_endereco VARCHAR(10) NULL,
+                    complemento_endereco VARCHAR(120) NULL,
+                    principal_endereco TINYINT(1) NOT NULL DEFAULT 0,
+                    ativo_endereco CHAR(1) NOT NULL DEFAULT 's',
+                    data_create_endereco DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    KEY idx_pac_endereco_fk (fk_paciente),
+                    CONSTRAINT fk_pac_endereco_paciente
+                        FOREIGN KEY (fk_paciente) REFERENCES tb_paciente(id_paciente)
+                        ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ",
+            'tb_paciente_telefone' => "
+                CREATE TABLE tb_paciente_telefone (
+                    id_paciente_telefone INT AUTO_INCREMENT PRIMARY KEY,
+                    fk_paciente INT NOT NULL,
+                    tipo_telefone VARCHAR(40) NULL,
+                    numero_telefone VARCHAR(20) NULL,
+                    ramal_telefone VARCHAR(20) NULL,
+                    contato_telefone VARCHAR(120) NULL,
+                    principal_telefone TINYINT(1) NOT NULL DEFAULT 0,
+                    ativo_telefone CHAR(1) NOT NULL DEFAULT 's',
+                    data_create_telefone DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    KEY idx_pac_telefone_fk (fk_paciente),
+                    CONSTRAINT fk_pac_telefone_paciente
+                        FOREIGN KEY (fk_paciente) REFERENCES tb_paciente(id_paciente)
+                        ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ",
+            'tb_paciente_email' => "
+                CREATE TABLE tb_paciente_email (
+                    id_paciente_email INT AUTO_INCREMENT PRIMARY KEY,
+                    fk_paciente INT NOT NULL,
+                    tipo_email VARCHAR(40) NULL,
+                    email_email VARCHAR(150) NULL,
+                    principal_email TINYINT(1) NOT NULL DEFAULT 0,
+                    ativo_email CHAR(1) NOT NULL DEFAULT 's',
+                    data_create_email DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    KEY idx_pac_email_fk (fk_paciente),
+                    CONSTRAINT fk_pac_email_paciente
+                        FOREIGN KEY (fk_paciente) REFERENCES tb_paciente(id_paciente)
+                        ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ",
+            'tb_paciente_contato' => "
+                CREATE TABLE tb_paciente_contato (
+                    id_paciente_contato INT AUTO_INCREMENT PRIMARY KEY,
+                    fk_paciente INT NOT NULL,
+                    nome_contato VARCHAR(150) NULL,
+                    parentesco_contato VARCHAR(80) NULL,
+                    email_contato VARCHAR(150) NULL,
+                    telefone_contato VARCHAR(20) NULL,
+                    observacao_contato VARCHAR(255) NULL,
+                    principal_contato TINYINT(1) NOT NULL DEFAULT 0,
+                    ativo_contato CHAR(1) NOT NULL DEFAULT 's',
+                    data_create_contato DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    KEY idx_pac_contato_fk (fk_paciente),
+                    CONSTRAINT fk_pac_contato_paciente
+                        FOREIGN KEY (fk_paciente) REFERENCES tb_paciente(id_paciente)
+                        ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ",
         ];
 
         foreach ($tables as $tableName => $ddl) {

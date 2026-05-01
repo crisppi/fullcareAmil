@@ -89,7 +89,7 @@ if (empty($id_estipulante)) {
         padding: 14px;
     }
 </style>
-<div class="internacao-page" id="main-container">
+<div class="internacao-page cadastro-layout" id="main-container">
     <div class="internacao-page__hero">
         <div>
             <h1>Cadastrar estipulante</h1>
@@ -123,7 +123,6 @@ if (empty($id_estipulante)) {
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 1</div>
                     <h3 class="entity-step-title">Identificação do estipulante</h3>
-                    <p class="entity-step-desc">Cadastre o nome e o CNPJ de referência antes de seguir para endereço e contatos operacionais.</p>
                 </div>
                 <span class="entity-step-badge">Dados base</span>
             </div>
@@ -148,7 +147,6 @@ if (empty($id_estipulante)) {
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 2</div>
                     <h3 class="entity-step-title">Endereço</h3>
-                    <p class="entity-step-desc">Mantenha o endereço principal e endereços adicionais no mesmo padrão visual dos outros cadastros.</p>
                 </div>
                 <span class="entity-step-badge">Localização</span>
             </div>
@@ -215,7 +213,6 @@ if (empty($id_estipulante)) {
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 3</div>
                     <h3 class="entity-step-title">Contato e anexos</h3>
-                    <p class="entity-step-desc">Feche o cadastro com responsáveis, telefones adicionais, contatos auxiliares e logo institucional.</p>
                 </div>
                 <span class="entity-step-badge">Fechamento</span>
             </div>

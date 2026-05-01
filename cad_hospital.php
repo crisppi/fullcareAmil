@@ -18,7 +18,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;
-        padding-inline: 5px !important;
+        padding-inline: 2px !important;
         padding-top: 0 !important;
         width: auto !important;
         max-width: 100% !important;
@@ -26,7 +26,15 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .internacao-page__hero {
-        margin: 0 0 6px !important;
+        min-height: 58px !important;
+        margin: 0 0 5px !important;
+        padding: 14px 14px !important;
+        border-radius: 18px !important;
+    }
+
+    #main-container.internacao-page .internacao-page__hero h1 {
+        font-size: 1.2rem !important;
+        line-height: 1.1 !important;
     }
 
     #main-container.internacao-page .hero-actions {
@@ -39,10 +47,10 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         border-radius: 999px;
         border: 1px solid #d9c3f4;
         color: #5e2363;
-        padding: 7px 14px;
+        padding: 6px 12px;
         text-decoration: none;
         font-weight: 600;
-        font-size: .85rem;
+        font-size: .78rem;
         background: #f4ecfb;
     }
 
@@ -55,20 +63,102 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         font-weight: 700 !important;
     }
 
+    #main-container.internacao-page .internacao-page__content {
+        display: block !important;
+    }
+
+    #main-container.internacao-page .internacao-page__tag,
+    #main-container.internacao-page .internacao-card__tag,
+    #main-container.internacao-page .entity-step-badge {
+        padding: 4px 8px !important;
+        font-size: .6rem !important;
+    }
+
+    #main-container.internacao-page .internacao-card {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    #main-container.internacao-page .internacao-card__header {
+        padding: 8px 8px 2px !important;
+        border-bottom: 0 !important;
+    }
+
+    #main-container.internacao-page .internacao-card__title {
+        font-size: .9rem !important;
+        line-height: 1.1 !important;
+    }
+
+    #main-container.internacao-page .internacao-card__body {
+        padding: 4px 8px 10px !important;
+        gap: 5px !important;
+        background: transparent !important;
+    }
+
+    #main-container.internacao-page .entity-step-card {
+        padding: 7px 8px 8px !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        border-top: 1px solid rgba(94, 35, 99, 0.12) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    #main-container.internacao-page .entity-step-card::before {
+        display: none !important;
+    }
+
+    #main-container.internacao-page .entity-step-card + .entity-step-card {
+        margin-top: 3px !important;
+    }
+
+    #main-container.internacao-page .entity-step-header {
+        align-items: center !important;
+        margin-bottom: 7px !important;
+    }
+
+    #main-container.internacao-page .entity-step-kicker {
+        margin-bottom: 1px !important;
+        font-size: .52rem !important;
+    }
+
+    #main-container.internacao-page .entity-step-title {
+        font-size: .92rem !important;
+        line-height: 1.1 !important;
+    }
+
+    #main-container.internacao-page .entity-form .form-group,
+    #main-container.internacao-page .entity-form [class*="col-md-"].form-group {
+        margin-bottom: 8px !important;
+    }
+
+    #main-container.internacao-page .entity-form .form-group label {
+        margin-bottom: 3px !important;
+        font-size: .7rem !important;
+        line-height: 1.1 !important;
+    }
+
     #multi-step-form .form-control {
-        min-height: 42px;
-        border-radius: 8px;
+        min-height: 40px !important;
+        height: 40px !important;
+        border-radius: 9px;
+        font-size: .78rem !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
     }
 
     #multi-step-form select.form-control {
-        height: 42px;
+        height: 40px !important;
+        min-height: 40px !important;
     }
 
     #acomodacao-inline-card {
         background: #f7f5fb;
         border: 1px solid #e8def1;
-        border-radius: 14px;
-        padding: 14px;
+        border-radius: 10px;
+        padding: 9px;
     }
 
     #acomodacoesTable th,
@@ -79,12 +169,12 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     .inline-manager-card {
         background: #f7f5fb;
         border: 1px solid #e8def1;
-        border-radius: 14px;
-        padding: 14px;
+        border-radius: 10px;
+        padding: 9px;
     }
 </style>
 
-<div class="internacao-page" id="main-container">
+<div class="internacao-page cadastro-layout" id="main-container">
     <div class="internacao-page__hero">
         <div>
             <h1>Cadastrar hospital</h1>

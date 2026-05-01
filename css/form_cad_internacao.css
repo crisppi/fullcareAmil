@@ -2112,3 +2112,166 @@
                 width: 100%;
             }
         }
+
+        #main-container.internacao-page.cadastro-layout {
+            margin: 2px 0 0 !important;
+            padding-inline: 2px !important;
+            padding-top: 0 !important;
+            width: auto !important;
+            max-width: 100% !important;
+            overflow-x: hidden;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-page__hero {
+            min-height: 58px !important;
+            margin: 0 0 5px !important;
+            padding: 14px !important;
+            border-radius: 18px !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-page__hero h1 {
+            font-size: 1.2rem !important;
+            line-height: 1.1 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #main-container.internacao-page.cadastro-layout .hero-back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #5e2363;
+            font-size: .78rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(45, 18, 70, 0.10);
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-page__content {
+            display: block !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-page__tag,
+        #main-container.internacao-page.cadastro-layout .internacao-card__tag,
+        #main-container.internacao-page.cadastro-layout .entity-step-badge {
+            padding: 4px 8px !important;
+            font-size: .6rem !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-card {
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-card__header {
+            padding: 8px 8px 2px !important;
+            border-bottom: 0 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-card__title {
+            font-size: .9rem !important;
+            line-height: 1.1 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .internacao-card__body {
+            gap: 5px !important;
+            padding: 4px 8px 10px !important;
+            background: transparent !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-card {
+            padding: 7px 8px 8px !important;
+            border: 0 !important;
+            border-top: 1px solid rgba(94, 35, 99, .12) !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-card::before {
+            display: none !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-card + .entity-step-card {
+            margin-top: 3px !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-header {
+            align-items: center !important;
+            margin-bottom: 7px !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-kicker {
+            margin-bottom: 1px !important;
+            font-size: .52rem !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-title {
+            font-size: .92rem !important;
+            line-height: 1.1 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-step-desc {
+            display: none !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-form .row {
+            row-gap: 0 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-form .form-group,
+        #main-container.internacao-page.cadastro-layout .entity-form [class*="col-md-"].form-group,
+        #main-container.internacao-page.cadastro-layout .entity-form [class*="col-sm-"].form-group {
+            margin-bottom: 8px !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-form .form-group label {
+            margin-bottom: 3px !important;
+            font-size: .7rem !important;
+            line-height: 1.1 !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout #multi-step-form .form-control,
+        #main-container.internacao-page.cadastro-layout #add-movie-form .form-control,
+        #main-container.internacao-page.cadastro-layout #multi-step-form select.form-control,
+        #main-container.internacao-page.cadastro-layout #add-movie-form select.form-control {
+            min-height: 40px !important;
+            height: 40px !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            border-radius: 9px !important;
+            font-size: .78rem !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout #multi-step-form textarea.form-control,
+        #main-container.internacao-page.cadastro-layout #add-movie-form textarea.form-control {
+            min-height: 68px !important;
+            height: auto !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .inline-manager-card,
+        #main-container.internacao-page.cadastro-layout #acomodacao-inline-card {
+            padding: 9px !important;
+            border-radius: 10px !important;
+            background: #f7f5fb !important;
+        }
+
+        #main-container.internacao-page.cadastro-layout .entity-actions-bar {
+            margin-top: 8px !important;
+            padding: 12px 8px !important;
+            border: 0 !important;
+            border-top: 1px solid rgba(94, 35, 99, .12) !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }

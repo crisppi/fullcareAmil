@@ -183,8 +183,8 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #multi-step-form .form-control {
-        min-height: 34px !important;
-        height: 34px !important;
+        min-height: 36px !important;
+        height: 36px !important;
         border-radius: 8px;
         font-size: .74rem !important;
         padding-top: 4px !important;
@@ -192,8 +192,8 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #multi-step-form select.form-control {
-        height: 34px !important;
-        min-height: 34px !important;
+        height: 36px !important;
+        min-height: 36px !important;
         padding-top: 4px !important;
         padding-bottom: 4px !important;
     }
@@ -218,7 +218,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 </style>
 
-<div class="internacao-page" id="main-container">
+<div class="internacao-page cadastro-layout" id="main-container">
     <div class="internacao-page__hero">
         <div>
             <h1>Cadastrar paciente</h1>
@@ -434,6 +434,25 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <label for="complemento_pac">Complemento</label>
                 <input type="text" class="form-control" id="complemento_pac" name="complemento_pac">
             </div>
+            <p class="internacao-card__eyebrow mb-3">Endereços adicionais</p>
+            <div class="inline-manager-card mb-3">
+                <div class="row">
+                    <div class="form-group col-md-2 mb-2"><label for="end_tipo_inline">Tipo</label><input type="text" class="form-control" id="end_tipo_inline" placeholder="Cobrança"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="end_cep_inline">CEP</label><input type="text" class="form-control" id="end_cep_inline" placeholder="00000-000"></div>
+                    <div class="form-group col-md-5 mb-2"><label for="end_logradouro_inline">Endereço</label><input type="text" class="form-control" id="end_logradouro_inline" placeholder="Rua, Av, etc."></div>
+                    <div class="form-group col-md-1 mb-2"><label for="end_numero_inline">Nº</label><input type="text" class="form-control" id="end_numero_inline"></div>
+                    <div class="form-group col-md-1 mb-2"><label for="end_principal_inline">Principal</label><select class="form-control" id="end_principal_inline"><option value="n">Não</option><option value="s">Sim</option></select></div>
+                    <div class="form-group col-md-1 mb-2 d-flex align-items-end"><button type="button" id="btnAddEnderecoInline" class="btn btn-primary w-100">+</button></div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-3 mb-2"><label for="end_bairro_inline">Bairro</label><input type="text" class="form-control" id="end_bairro_inline"></div>
+                    <div class="form-group col-md-3 mb-2"><label for="end_cidade_inline">Cidade</label><input type="text" class="form-control" id="end_cidade_inline"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="end_estado_inline">UF</label><input type="text" class="form-control" id="end_estado_inline"></div>
+                    <div class="form-group col-md-4 mb-2"><label for="end_complemento_inline">Complemento</label><input type="text" class="form-control" id="end_complemento_inline"></div>
+                </div>
+                <div class="table-responsive mt-2"><table class="table table-sm table-striped mb-0"><thead><tr><th>Tipo</th><th>Endereço</th><th>Cidade/UF</th><th>P</th><th>Ação</th></tr></thead><tbody id="enderecosTableBody"><tr id="enderecosTableEmpty"><td colspan="5" class="text-muted text-center">Nenhum endereço adicional.</td></tr></tbody></table></div>
+                <div id="enderecosHiddenContainer"></div>
+            </div>
             <hr>
         </div>
 
@@ -462,6 +481,17 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                         placeholder="exemplo@dominio.com">
                 </div>
             </div>
+            <p class="internacao-card__eyebrow mb-3">Emails adicionais</p>
+            <div class="inline-manager-card mb-3">
+                <div class="row">
+                    <div class="form-group col-md-3 mb-2"><label for="email_tipo_inline">Tipo</label><input type="text" class="form-control" id="email_tipo_inline" placeholder="Responsável"></div>
+                    <div class="form-group col-md-6 mb-2"><label for="email_email_inline">Email</label><input type="email" class="form-control" id="email_email_inline" placeholder="exemplo@dominio.com"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="email_principal_inline">Principal</label><select class="form-control" id="email_principal_inline"><option value="n">Não</option><option value="s">Sim</option></select></div>
+                    <div class="form-group col-md-1 mb-2 d-flex align-items-end"><button type="button" id="btnAddEmailInline" class="btn btn-primary w-100">+</button></div>
+                </div>
+                <div class="table-responsive mt-2"><table class="table table-sm table-striped mb-0"><thead><tr><th>Tipo</th><th>Email</th><th>P</th><th>Ação</th></tr></thead><tbody id="emailsTableBody"><tr id="emailsTableEmpty"><td colspan="4" class="text-muted text-center">Nenhum email adicional.</td></tr></tbody></table></div>
+                <div id="emailsHiddenContainer"></div>
+            </div>
 
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
@@ -477,6 +507,33 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                         Por favor, insira um número de celular válido.
                     </div>
                 </div>
+            </div>
+            <p class="internacao-card__eyebrow mb-3">Telefones adicionais</p>
+            <div class="inline-manager-card mb-3">
+                <div class="row">
+                    <div class="form-group col-md-2 mb-2"><label for="tel_tipo_inline">Tipo</label><input type="text" class="form-control" id="tel_tipo_inline" placeholder="Celular"></div>
+                    <div class="form-group col-md-3 mb-2"><label for="tel_numero_inline">Telefone</label><input type="text" class="form-control" id="tel_numero_inline" placeholder="(00) 00000-0000"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="tel_ramal_inline">Ramal</label><input type="text" class="form-control" id="tel_ramal_inline"></div>
+                    <div class="form-group col-md-3 mb-2"><label for="tel_contato_inline">Contato</label><input type="text" class="form-control" id="tel_contato_inline"></div>
+                    <div class="form-group col-md-1 mb-2"><label for="tel_principal_inline">Principal</label><select class="form-control" id="tel_principal_inline"><option value="n">Não</option><option value="s">Sim</option></select></div>
+                    <div class="form-group col-md-1 mb-2 d-flex align-items-end"><button type="button" id="btnAddTelefoneInline" class="btn btn-primary w-100">+</button></div>
+                </div>
+                <div class="table-responsive mt-2"><table class="table table-sm table-striped mb-0"><thead><tr><th>Tipo</th><th>Número</th><th>Ramal</th><th>Contato</th><th>P</th><th>Ação</th></tr></thead><tbody id="telefonesTableBody"><tr id="telefonesTableEmpty"><td colspan="6" class="text-muted text-center">Nenhum telefone adicional.</td></tr></tbody></table></div>
+                <div id="telefonesHiddenContainer"></div>
+            </div>
+            <p class="internacao-card__eyebrow mb-3">Contatos adicionais</p>
+            <div class="inline-manager-card mb-3">
+                <div class="row">
+                    <div class="form-group col-md-2 mb-2"><label for="cont_nome_inline">Nome</label><input type="text" class="form-control" id="cont_nome_inline"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="cont_parentesco_inline">Parentesco</label><input type="text" class="form-control" id="cont_parentesco_inline" placeholder="Familiar"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="cont_email_inline">Email</label><input type="email" class="form-control" id="cont_email_inline"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="cont_telefone_inline">Telefone</label><input type="text" class="form-control" id="cont_telefone_inline"></div>
+                    <div class="form-group col-md-2 mb-2"><label for="cont_observacao_inline">Observação</label><input type="text" class="form-control" id="cont_observacao_inline"></div>
+                    <div class="form-group col-md-1 mb-2"><label for="cont_principal_inline">Principal</label><select class="form-control" id="cont_principal_inline"><option value="n">Não</option><option value="s">Sim</option></select></div>
+                    <div class="form-group col-md-1 mb-2 d-flex align-items-end"><button type="button" id="btnAddContatoInline" class="btn btn-primary w-100">+</button></div>
+                </div>
+                <div class="table-responsive mt-2"><table class="table table-sm table-striped mb-0"><thead><tr><th>Nome</th><th>Parentesco</th><th>Email</th><th>Telefone</th><th>P</th><th>Ação</th></tr></thead><tbody id="contatosTableBody"><tr id="contatosTableEmpty"><td colspan="6" class="text-muted text-center">Nenhum contato adicional.</td></tr></tbody></table></div>
+                <div id="contatosHiddenContainer"></div>
             </div>
             <div class="form-group mb-3">
                 <label for="obs_pac">Observações</label>

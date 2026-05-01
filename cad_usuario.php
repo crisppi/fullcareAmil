@@ -33,51 +33,81 @@ if (empty($id_usuario)) {
 }
 ?>
 <link rel="stylesheet" href="css/form_cad_internacao.css">
-<div id="main-container" class="container form_container" style="margin-top:16px;">
-    <div class="row">
-        <h4 class="page-title" style="margin-top:18px;margin-bottom:10px">Cadastrar</h4>
-
+<div id="main-container" class="internacao-page cadastro-layout">
+    <div class="internacao-page__hero">
+        <div class="internacao-page__hero-main">
+            <h1>Cadastrar usuário</h1>
+        </div>
+        <div class="hero-actions">
+            <a href="<?= $BASE_URL ?>list_usuario.php" class="hero-back-btn">Voltar para lista</a>
+            <span class="internacao-page__tag">Campos obrigatórios em destaque</span>
+        </div>
+    </div>
+    <div class="internacao-page__content">
         <form action="<?= $BASE_URL ?>process_usuario.php" id="add-movie-form" method="POST"
-            enctype="multipart/form-data">
+            enctype="multipart/form-data" class="needs-validation visible entity-form">
             <input type="hidden" name="type" value="create">
-            <div class="form-group row">
-                <div class="form-group col-sm-2 ">
-                    <label for="cpf_user">CPF</label>
-                    <input type="text" oninput="mascara(this, 'cpf')" class="form-control" id="cpf_user"
-                        name="cpf_user">
+            <div class="internacao-card internacao-card--general">
+                <div class="internacao-card__header">
+                    <div>
+                        <div class="internacao-card__eyebrow">Cadastros</div>
+                        <h2 class="internacao-card__title">Dados do usuário</h2>
+                    </div>
+                    <span class="internacao-card__tag">Cadastro base</span>
                 </div>
-                <div class="form-group col-sm-3">
-                    <label for="usuario_user">Nome do Usuário</label>
-                    <input type="text" class="form-control" id="usuario_user" name="usuario_user" autofocus required>
-                </div>
-                <div class="form-group col-sm-1">
-                    <label class="control-label" for="sexo_user">Sexo</label>
-                    <select class="form-control" name="sexo_user">
-                        <option value="">Selecione</option>
-                        <option value="f">Feminino</option>
-                        <option value="m">Masculino</option>
-                    </select>
-                </div>
+                <div class="internacao-card__body">
+                    <div class="entity-step-card">
+                        <div class="entity-step-header">
+                            <div class="entity-step-copy">
+                                <span class="entity-step-kicker">Passo 1</span>
+                                <h3 class="entity-step-title">Identificação do usuário</h3>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group col-sm-2 ">
+                                <label for="cpf_user">CPF</label>
+                                <input type="text" oninput="mascara(this, 'cpf')" class="form-control" id="cpf_user"
+                                    name="cpf_user">
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label for="usuario_user">Nome do Usuário</label>
+                                <input type="text" class="form-control" id="usuario_user" name="usuario_user" autofocus required>
+                            </div>
+                            <div class="form-group col-sm-1">
+                                <label class="control-label" for="sexo_user">Sexo</label>
+                                <select class="form-control" name="sexo_user">
+                                    <option value="">Selecione</option>
+                                    <option value="f">Feminino</option>
+                                    <option value="m">Masculino</option>
+                                </select>
+                            </div>
 
-            </div>
-            <div class="form-group row">
-                <div class="form-group col-sm-2">
-                    <label for="usuario_user">Idade</label>
-                    <input type="text" class="form-control" id="idade_user" name="idade_user">
-                </div>
-                <div class="form-group col-sm-2">
-                    <label class="control-label" for="data_admissao_user">Admissão</label>
-                    <input class="form-control" type="date" id="data_admissao_user" name="data_admissao_user">
-                </div>
-                <div class="form-group col-sm-1">
-                    <label class="control-label" for="ativo_user">Ativo</label>
-                    <select class="form-control" id="ativo_user" name="ativo_user">
-                        <option selected value="s">Sim</option>
-                        <option value="n">Não</option>
-                    </select>
-                </div>
-            </div>
-            <hr>
+                        </div>
+                        <div class="form-group row">
+                            <div class="form-group col-sm-2">
+                                <label for="usuario_user">Idade</label>
+                                <input type="text" class="form-control" id="idade_user" name="idade_user">
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label class="control-label" for="data_admissao_user">Admissão</label>
+                                <input class="form-control" type="date" id="data_admissao_user" name="data_admissao_user">
+                            </div>
+                            <div class="form-group col-sm-1">
+                                <label class="control-label" for="ativo_user">Ativo</label>
+                                <select class="form-control" id="ativo_user" name="ativo_user">
+                                    <option selected value="s">Sim</option>
+                                    <option value="n">Não</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entity-step-card">
+                        <div class="entity-step-header">
+                            <div class="entity-step-copy">
+                                <span class="entity-step-kicker">Passo 2</span>
+                                <h3 class="entity-step-title">Endereço</h3>
+                            </div>
+                        </div>
             <div class="form-group row">
                 <div class="form-group col-sm-3">
                     <label for="cep_user">CEP</label>
@@ -119,7 +149,14 @@ if (empty($id_usuario)) {
                     <input type="text" class="form-control" id="numero_user" name="numero_user">
                 </div>
             </div>
-            <hr>
+                    </div>
+                    <div class="entity-step-card">
+                        <div class="entity-step-header">
+                            <div class="entity-step-copy">
+                                <span class="entity-step-kicker">Passo 3</span>
+                                <h3 class="entity-step-title">Contato</h3>
+                            </div>
+                        </div>
             <div class="form-group row">
 
                 <div class="form-group col-sm-3">
@@ -141,7 +178,14 @@ if (empty($id_usuario)) {
                         id="telefone02_user" name="telefone02_user">
                 </div>
             </div>
-            <hr>
+                    </div>
+                    <div class="entity-step-card">
+                        <div class="entity-step-header">
+                            <div class="entity-step-copy">
+                                <span class="entity-step-kicker">Passo 4</span>
+                                <h3 class="entity-step-title">Acesso e perfil</h3>
+                            </div>
+                        </div>
             <div class="form-group row">
                 <div class="form-group col-sm-2">
                     <label class="control-label" for="cargo_user">Cargo</label>
@@ -270,11 +314,14 @@ if (empty($id_usuario)) {
                     </div>
                 </div>
             </div>
+                    </div>
+                </div>
+            </div>
             <div class="entity-actions-bar">
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
+        </form>
     </div>
-    </form>
 </div>
 <script>
 function mascara(i) {
