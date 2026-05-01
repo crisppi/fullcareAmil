@@ -221,7 +221,6 @@
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Pacientes</h1>
-                <p class="listagem-subtitle">Pesquise por nome, matrícula e seguradora com um topo mais claro e consistente.</p>
             </div>
             <div class="listagem-hero__actions">
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/novo', ENT_QUOTES, 'UTF-8') ?>"
@@ -464,7 +463,7 @@
                     <div style="text-align:right">
                         <input type="hidden" id="qtd" value="<?php echo $qtdIntItens ?>">
                     </div>
-                    <div style="display: flex;margin-top:20px">
+                    <div class="listagem-footer-row">
                         <div class="modal fade" id="myModal">
                             <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
                                 <div class="modal-content">
@@ -562,9 +561,8 @@
                             <?php endif; ?>
                         </div>
 
-                        <div>
-                            <p
-                                style="margin-bottom:25px; font-size:1em; font-weight:600; font-family:var(--bs-font-sans-serif); text-align:right">
+                        <div class="listagem-total">
+                            <p>
                                 <?php echo "Total: " . $qtdIntItens ?>
                             </p>
                         </div>

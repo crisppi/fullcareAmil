@@ -8,6 +8,8 @@
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 10px;
+    padding-left: 14px;
+    padding-right: 14px;
 }
 
 .listagem-hero__copy {
@@ -119,7 +121,7 @@
 .listagem-panel .filter-inline-row {
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
+    align-items: center;
     gap: 8px;
     padding: 5px 6px;
     border-radius: 14px;
@@ -132,7 +134,7 @@
 .listagem-panel .filter-inline-row > .form-group,
 .listagem-panel .filter-inline-row > .filter-inline-field {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     padding: 2px !important;
 }
 
@@ -144,8 +146,8 @@
 .listagem-panel .filter-inline-row .form-control-sm,
 .listagem-panel .filter-inline-row .btn,
 .listagem-panel .filter-inline-row .bootstrap-select > .dropdown-toggle {
-    min-height: 32px !important;
-    height: 32px !important;
+    min-height: 42px !important;
+    height: 42px !important;
     border-radius: 11px;
     font-size: .72rem !important;
     font-family: inherit !important;
@@ -190,18 +192,18 @@
 }
 
 .listagem-panel .btn-filtro-buscar {
-    width: 32px;
-    min-width: 32px;
-    max-width: 32px;
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
     padding: 0;
     box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
 }
 
 .listagem-panel .btn-filtro-limpar-icon {
-    width: 32px;
-    height: 32px !important;
-    min-width: 32px;
-    max-width: 32px;
+    width: 42px;
+    height: 42px !important;
+    min-width: 42px;
+    max-width: 42px;
     padding: 0;
 }
 
@@ -219,7 +221,7 @@
 .legacy-filter-row {
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
+    align-items: center;
     gap: 8px;
     padding: 5px 6px;
 }
@@ -227,7 +229,7 @@
 .legacy-filter-row > [class*="col-"],
 .legacy-filter-row > .form-group {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     padding: 2px !important;
 }
 
@@ -238,8 +240,8 @@
 .legacy-filter-row .form-control,
 .legacy-filter-row .form-control-sm,
 .legacy-filter-row .btn {
-    min-height: 32px !important;
-    height: 32px !important;
+    min-height: 42px !important;
+    height: 42px !important;
     border-radius: 11px;
     font-size: .72rem !important;
     font-family: inherit !important;
@@ -274,17 +276,17 @@
 }
 
 .legacy-filter-row .btn-filtro-buscar {
-    width: 32px;
-    min-width: 32px;
-    max-width: 32px;
+    width: 42px;
+    min-width: 42px;
+    max-width: 42px;
     padding: 0;
 }
 
 .legacy-filter-row .btn-filtro-limpar-icon {
-    width: 32px;
-    height: 32px !important;
-    min-width: 32px;
-    max-width: 32px;
+    width: 42px;
+    height: 42px !important;
+    min-width: 42px;
+    max-width: 42px;
     padding: 0;
 }
 
@@ -334,6 +336,33 @@
 
 .listagem-table-wrap tbody tr:hover {
     background: #f3ecfb !important;
+}
+
+.listagem-footer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.listagem-footer-row .pagination {
+    margin: 0 auto;
+}
+
+.listagem-total {
+    min-width: 110px;
+    margin-left: 0;
+}
+
+.listagem-total p {
+    margin: 0 8px 25px 0;
+    font-size: .9rem;
+    font-weight: 600;
+    font-family: var(--bs-font-sans-serif);
+    text-align: right;
+    color: #4f465f;
 }
 
 @media (max-width: 1199.98px) {
