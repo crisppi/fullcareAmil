@@ -182,9 +182,9 @@ foreach ($labelsTipos as $tipo) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260410">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260410"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .bi-analise-grid-2 {

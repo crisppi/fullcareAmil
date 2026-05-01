@@ -254,8 +254,8 @@ foreach ($hospitais as $h) {
 $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">

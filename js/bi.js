@@ -2,6 +2,8 @@ if (typeof Chart !== 'undefined') {
   if (Chart.defaults.global) {
     Chart.defaults.global.defaultFontColor = '#eaf6ff';
     Chart.defaults.global.legend.labels.fontColor = '#eaf6ff';
+    Chart.defaults.global.responsive = true;
+    Chart.defaults.global.maintainAspectRatio = false;
   }
   if (Chart.defaults.scale && Chart.defaults.scale.ticks) {
     Chart.defaults.scale.ticks.fontColor = '#eaf6ff';

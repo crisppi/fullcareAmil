@@ -120,9 +120,9 @@ unset($row);
 [$labelsCusto, $valsCusto] = topMetric($rows, 'custo_total');
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411f">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/CoolAdmin-master/vendor/chartjs/Chart.bundle.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260411f"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">

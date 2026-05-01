@@ -215,7 +215,7 @@ if (!is_array($prioridades)) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260213b">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 
 <style>
 .dashboard-wrapper {

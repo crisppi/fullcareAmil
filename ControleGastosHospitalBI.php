@@ -1,5 +1,33 @@
 <?php
 include_once("check_logado.php");
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
+    $query = $_GET;
+    $changed = false;
+
+    if (array_key_exists('data_ini', $query)) {
+        unset($query['data_ini']);
+        $changed = true;
+    }
+    if (array_key_exists('ie', $query)) {
+        unset($query['ie']);
+        $changed = true;
+    }
+
+    $currentPath = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
+    if (preg_match('#/ControleGastosHospitalBI\.php$#i', $currentPath)) {
+        $basePath = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
+        $currentPath = ($basePath === '' || $basePath === '.') ? '/bi/gastos-hospital' : $basePath . '/bi/gastos-hospital';
+        $changed = true;
+    }
+
+    if ($changed) {
+        $qs = http_build_query($query);
+        header('Location: ' . $currentPath . ($qs !== '' ? '?' . $qs : ''), true, 302);
+        exit;
+    }
+}
+
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
@@ -237,9 +265,9 @@ if ($topHospIds && $monthKeys) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260111">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260111"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -341,11 +369,11 @@ if ($topHospIds && $monthKeys) {
 
     <div class="bi-panel">
         <h3>Top hospitais (custo final)</h3>
-        <div class="bi-chart"><canvas id="chartHospitais"></canvas></div>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartHospitais"></canvas></div>
     </div>
     <div class="bi-panel">
         <h3>Evolução mensal de custo por hospital (Top 5)</h3>
-        <div class="bi-chart"><canvas id="chartMensalHospitais"></canvas></div>
+        <div class="bi-chart ie-chart-sm"><canvas id="chartMensalHospitais"></canvas></div>
     </div>
 
     <div class="bi-panel">
@@ -406,6 +434,8 @@ if ($topHospIds && $monthKeys) {
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: {
                 display: false
             },

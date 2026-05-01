@@ -108,9 +108,9 @@ function labelsAndValues(array $rows): array
 [$labelsMp, $valuesMp] = labelsAndValues($rowsMp);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260411d">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260411d"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>

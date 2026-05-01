@@ -27,8 +27,8 @@ $items = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260307">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260307"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-hub">
@@ -44,7 +44,7 @@ $items = [
         <h3>Selecione o indicador</h3>
         <div class="ie-grid">
             <?php foreach ($items as $item): ?>
-                <a class="ie-card" href="<?= $BASE_URL ?>IndicadoresEssenciaisItemBI.php?slug=<?= e($item['slug']) ?>">
+                <a class="ie-card" href="<?= $BASE_URL ?>bi/indicadores-essenciais/<?= e($item['slug']) ?>">
                     <strong><?= e($item['label']) ?></strong>
                     <small>Abrir indicador</small>
                 </a>

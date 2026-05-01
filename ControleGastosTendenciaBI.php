@@ -95,9 +95,9 @@ $totalGlosa = array_sum($series['valor_glosa']);
 $totalApresentado = array_sum($series['valor_apresentado']);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260111">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260111"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>

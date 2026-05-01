@@ -974,34 +974,37 @@ button.bi-filter-pill.active {
 }
 
 .bi-chart {
-  min-height: 180px;
+  min-height: 252px;
+  height: 252px;
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .bi-chart.compact {
-  min-height: 148px;
+  min-height: 207px;
+  height: 207px;
 }
 
 .bi-chart.ie-chart-sm {
-  min-height: 200px;
-  height: 200px;
+  min-height: 280px;
+  height: 280px;
 }
 
 .bi-chart.ie-chart-md {
-  min-height: 205px;
-  height: 205px;
+  min-height: 287px;
+  height: 287px;
 }
 
 .bi-chart.ie-chart-lg {
-  min-height: 220px;
-  height: 220px;
+  min-height: 308px;
+  height: 308px;
 }
 
 .bi-chart canvas {
   display: block;
   width: 100% !important;
+  height: 100% !important;
   max-width: 100% !important;
 }
 
@@ -1019,13 +1022,13 @@ button.bi-filter-pill.active {
   }
 
   .bi-chart.ie-chart-md {
-    min-height: 190px;
-    height: 190px;
+    min-height: 266px;
+    height: 266px;
   }
 
   .bi-chart.ie-chart-lg {
-    min-height: 205px;
-    height: 205px;
+    min-height: 287px;
+    height: 287px;
   }
 }
 

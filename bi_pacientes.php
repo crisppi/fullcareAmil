@@ -169,9 +169,9 @@ $labelsLp = array_map(fn($r) => $r['paciente'], $topLp);
 $valsLp = array_map(fn($r) => (float)$r['lp'], $topLp);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260110">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260110"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
