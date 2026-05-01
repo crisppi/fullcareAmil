@@ -112,6 +112,62 @@ $stmtTipos = $conn->prepare($sqlTipos);
 $stmtTipos->execute($params);
 $tipoRows = $stmtTipos->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
+$sqlStatus = "
+    SELECT CASE
+        WHEN g.evento_encerrar_ges = 's' THEN 'Encerrado'
+        WHEN g.evento_concluido_ges = 's' THEN 'Concluido'
+        ELSE 'Aberto'
+    END AS label, COUNT(*) AS total
+    {$sqlBase}
+    GROUP BY label
+    ORDER BY total DESC
+";
+$stmtStatus = $conn->prepare($sqlStatus);
+$stmtStatus->execute($params);
+$statusRows = $stmtStatus->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$sqlImpacto = "
+    SELECT CASE
+        WHEN g.evento_impacto_financ_ges = 's' THEN 'Com impacto'
+        WHEN g.evento_impacto_financ_ges = 'n' THEN 'Sem impacto'
+        ELSE 'Sem informacoes'
+    END AS label, COUNT(*) AS total
+    {$sqlBase}
+    GROUP BY label
+    ORDER BY total DESC
+";
+$stmtImpacto = $conn->prepare($sqlImpacto);
+$stmtImpacto->execute($params);
+$impactoRows = $stmtImpacto->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$sqlProlongou = "
+    SELECT CASE
+        WHEN g.evento_prolongou_internacao_ges = 's' THEN 'Sim'
+        WHEN g.evento_prolongou_internacao_ges = 'n' THEN 'Nao'
+        ELSE 'Sem informacoes'
+    END AS label, COUNT(*) AS total
+    {$sqlBase}
+    GROUP BY label
+    ORDER BY total DESC
+";
+$stmtProlongou = $conn->prepare($sqlProlongou);
+$stmtProlongou->execute($params);
+$prolongouRows = $stmtProlongou->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+function labelsAndValues(array $rows): array
+{
+    return [
+        array_map(fn($r) => $r['label'] ?? 'Sem informacoes', $rows),
+        array_map(fn($r) => (float)($r['total'] ?? 0), $rows),
+    ];
+}
+
+[$labelsHosp, $valuesHosp] = labelsAndValues($hospRows);
+[$labelsTipo, $valuesTipo] = labelsAndValues($tipoRows);
+[$labelsStatus, $valuesStatus] = labelsAndValues($statusRows);
+[$labelsImpacto, $valuesImpacto] = labelsAndValues($impactoRows);
+[$labelsProlongou, $valuesProlongou] = labelsAndValues($prolongouRows);
+
 $sqlTable = "
     SELECT
         COALESCE(NULLIF(pa.nome_pac,''), 'Sem informacoes') AS paciente,
@@ -128,10 +184,11 @@ $rowsTable = $stmtTable->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-auditor-page">
     <div class="bi-header">
         <h1 class="bi-title">Dashboard Evento Adverso</h1>
         <div class="bi-header-actions">
@@ -206,48 +263,77 @@ $rowsTable = $stmtTable->fetchAll(PDO::FETCH_ASSOC) ?: [];
     </form>
 
     <div class="bi-panel" style="margin-top:16px;">
-        <div class="bi-kpis kpi-compact">
-            <div class="bi-kpi kpi-berry kpi-compact"><small>Internações</small><strong><?= $totalInternações ?></strong></div>
-            <div class="bi-kpi kpi-teal kpi-compact"><small>Diárias</small><strong><?= $totalDiárias ?></strong></div>
-            <div class="bi-kpi kpi-indigo kpi-compact"><small>MP</small><strong><?= number_format($mp, 1, ',', '.') ?></strong></div>
-            <div class="bi-kpi kpi-rose kpi-compact"><small>Maior permanencia</small><strong><?= $maiorPermanencia ?></strong></div>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
+                    <small>Internações</small>
+                </div>
+                <strong><?= number_format($totalInternações, 0, ',', '.') ?></strong>
+                <span class="kpi-trend"><i class="bi bi-activity"></i> Com evento adverso</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-calendar2-week"></i></span>
+                    <small>Diárias</small>
+                </div>
+                <strong><?= number_format($totalDiárias, 0, ',', '.') ?></strong>
+                <span class="kpi-trend"><i class="bi bi-clock-history"></i> Permanência total</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-speedometer2"></i></span>
+                    <small>MP</small>
+                </div>
+                <strong><?= number_format($mp, 1, ',', '.') ?></strong>
+                <span class="kpi-trend"><i class="bi bi-bar-chart"></i> Média de permanência</span>
+            </div>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-hourglass-split"></i></span>
+                    <small>Maior Permanência</small>
+                </div>
+                <strong><?= number_format($maiorPermanencia, 0, ',', '.') ?></strong>
+                <span class="kpi-trend"><i class="bi bi-arrow-up-right"></i> Maior caso</span>
+            </div>
         </div>
     </div>
 
     <div class="bi-grid fixed-3" style="margin-top:16px;">
         <div class="bi-panel">
             <h3>Hospitais</h3>
-            <div class="bi-list">
-                <?php if (!$hospRows): ?>
-                    <div class="bi-list-item"><span>Sem informacoes</span><span>0</span></div>
-                <?php endif; ?>
-                <?php foreach ($hospRows as $row): ?>
-                    <div class="bi-list-item">
-                        <span><?= e($row['label'] ?? 'Sem informacoes') ?></span>
-                        <span><?= (int)($row['total'] ?? 0) ?></span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+            <div class="bi-chart"><canvas id="chartHosp"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>Tipo do evento</h3>
-            <div class="bi-list">
-                <?php if (!$tipoRows): ?>
-                    <div class="bi-list-item"><span>Sem informacoes</span><span>0</span></div>
-                <?php endif; ?>
-                <?php foreach ($tipoRows as $row): ?>
-                    <div class="bi-list-item">
-                        <span><?= e($row['label'] ?? 'Sem informacoes') ?></span>
-                        <span><?= (int)($row['total'] ?? 0) ?></span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+            <div class="bi-chart"><canvas id="chartTipo"></canvas></div>
         </div>
         <div class="bi-panel bi-panel-compact">
-            <div class="bi-kpi kpi-white">
-                <small>No. de Evento Adverso</small>
-                <strong class="bi-kpi-big"><?= $totalEventos ?></strong>
+            <div class="bi-kpis kpi-dashboard-v2">
+                <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                    <div class="kpi-card-v2-head">
+                        <span class="kpi-card-v2-icon"><i class="bi bi-exclamation-triangle"></i></span>
+                        <small>Evento Adverso</small>
+                    </div>
+                    <strong><?= number_format($totalEventos, 0, ',', '.') ?></strong>
+                    <span class="kpi-trend"><i class="bi bi-clipboard2-pulse"></i> Registros</span>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="bi-grid fixed-3" style="margin-top:16px;">
+        <div class="bi-panel">
+            <h3>Status</h3>
+            <div class="bi-chart"><canvas id="chartStatus"></canvas></div>
+        </div>
+        <div class="bi-panel">
+            <h3>Impacto financeiro</h3>
+            <div class="bi-chart"><canvas id="chartImpacto"></canvas></div>
+        </div>
+        <div class="bi-panel">
+            <h3>Prolongou internação</h3>
+            <div class="bi-chart"><canvas id="chartProlongou"></canvas></div>
         </div>
     </div>
 
@@ -280,5 +366,28 @@ $rowsTable = $stmtTable->fetchAll(PDO::FETCH_ASSOC) ?: [];
         </table>
     </div>
 </div>
+
+<script>
+const eventCharts = {
+    chartHosp: [<?= json_encode($labelsHosp) ?>, <?= json_encode($valuesHosp) ?>, 'rgba(141, 208, 255, 0.7)'],
+    chartTipo: [<?= json_encode($labelsTipo) ?>, <?= json_encode($valuesTipo) ?>, 'rgba(208, 113, 176, 0.7)'],
+    chartStatus: [<?= json_encode($labelsStatus) ?>, <?= json_encode($valuesStatus) ?>, 'rgba(111, 223, 194, 0.7)'],
+    chartImpacto: [<?= json_encode($labelsImpacto) ?>, <?= json_encode($valuesImpacto) ?>, 'rgba(255, 198, 108, 0.7)'],
+    chartProlongou: [<?= json_encode($labelsProlongou) ?>, <?= json_encode($valuesProlongou) ?>, 'rgba(139, 159, 255, 0.7)']
+};
+Object.keys(eventCharts).forEach((id) => {
+    const [labels, data, color] = eventCharts[id];
+    new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: color }] },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: { display: false },
+            scales: window.biChartScales ? window.biChartScales() : undefined
+        }
+    });
+});
+</script>
 
 <?php require_once("templates/footer.php"); ?>
