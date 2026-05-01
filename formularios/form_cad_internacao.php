@@ -319,9 +319,15 @@
                                     <label class="control-label mb-0" for="fk_paciente_int">
                                         <span style="color:red;">*</span> Paciente
                                     </label>
-                                    <button type="button" id="patientInsightToggle" class="patient-insight-inline-btn"
-                                        style="display:none;"
-                                        title="Mostrar resumo do paciente" aria-expanded="false">i</button>
+                                    <div class="patient-label-actions">
+                                        <a class="patient-inline-link"
+                                            href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/novo', ENT_QUOTES, 'UTF-8') ?>">
+                                            <i class="far fa-edit edit-icon"></i> Novo Paciente
+                                        </a>
+                                        <button type="button" id="patientInsightToggle" class="patient-insight-inline-btn"
+                                            style="display:none;"
+                                            title="Mostrar resumo do paciente" aria-expanded="false">i</button>
+                                    </div>
                                 </div>
                                 <select data-size="10" data-live-search="true" data-live-search-placeholder="Pesquisa por nome"
                                     data-style="input-lg-fullcare" data-width="100%"
@@ -385,12 +391,6 @@
                                     }
                                     ?>
                                 </select>
-                                <div class="patient-inline-actions">
-                                    <a class="patient-inline-link"
-                                        href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/novo', ENT_QUOTES, 'UTF-8') ?>">
-                                        <i class="far fa-edit edit-icon"></i> Novo Paciente
-                                    </a>
-                                </div>
                                 <div id="patientCareProgramAlert" class="patient-care-program-alert" style="display:none;" role="status" aria-live="polite"></div>
                                 <div class="patient-insight-card" id="patientInsightCard"
                                     data-hub-base="<?= $BASE_URL ?>hub_paciente.php?id_paciente=" style="display:none;">

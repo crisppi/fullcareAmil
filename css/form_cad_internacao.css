@@ -1359,18 +1359,27 @@
             margin-top: 8px;
         }
 
+        .patient-label-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 8px;
+        }
+
         .patient-inline-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 10px;
+            min-height: 24px;
+            padding: 3px 9px;
             border-radius: 999px;
             background: #eef3ff;
             border: 1px solid #d5def8;
             color: #315cbd;
-            font-size: .78rem;
+            font-size: .7rem;
             font-weight: 700;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .patient-inline-link .edit-icon {
