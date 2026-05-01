@@ -38,8 +38,12 @@ $biSections = [
         ['label' => 'Evolução', 'href' => 'bi/evolucao', 'file' => 'bi_evolucao.php'],
         ['label' => 'Visita Inicial', 'href' => 'bi/visita-inicial', 'file' => 'bi_visita_inicial.php'],
         ['label' => 'Estratégia Terapêutica', 'href' => 'bi/estrategia-terapeutica', 'file' => 'EstrategiaTerapeuticaBI.php'],
+        ['label' => 'Prorrogações', 'href' => 'bi/prorrogacoes', 'file' => 'BiOperacionalAvancado.php'],
+        ['label' => 'Oportunidades Clínicas', 'href' => 'bi/oportunidades-clinicas', 'file' => 'BiOperacionalAvancado.php'],
+        ['label' => 'Desfechos e Alta', 'href' => 'bi/desfechos-alta', 'file' => 'BiOperacionalAvancado.php'],
         ['label' => 'Detalhes Clínicos', 'href' => 'bi/detalhes-clinicos', 'file' => 'DetalhesClinicosBI.php'],
         ['label' => 'Evento Adverso', 'href' => 'bi/evento-adverso', 'file' => 'EventoAdverso.php'],
+        ['label' => 'Segurança e Eventos Abertos', 'href' => 'bi/seguranca-eventos', 'file' => 'BiOperacionalAvancado.php'],
     ],
     'Auditoria' => [
         ['label' => 'Auditor', 'href' => 'bi/auditor', 'file' => 'AuditorBI.php'],
@@ -47,6 +51,7 @@ $biSections = [
         ['label' => 'Auditoria Produtividade', 'href' => 'bi/auditoria-produtividade', 'file' => 'AuditoriaProdutividadeBI.php'],
         ['label' => 'Análise Negociações', 'href' => 'bi/analise-negociacoes', 'file' => 'bi_analise_negociacoes.php'],
         ['label' => 'Negociações Detalhadas', 'href' => 'bi/negociacoes-detalhadas', 'file' => 'bi_negociacoes_detalhadas.php'],
+        ['label' => 'Negociação Avançada', 'href' => 'bi/negociacao-avancada', 'file' => 'BiOperacionalAvancado.php'],
         ['label' => 'Saving por Auditor', 'href' => 'bi/saving-por-auditor', 'file' => 'bi_saving_por_auditor.php'],
         ['label' => 'Saving', 'href' => 'bi/saving', 'file' => 'bi_saving.php'],
     ],
@@ -60,6 +65,7 @@ $biSections = [
         ['label' => 'Home Care', 'href' => 'bi/home-care', 'file' => 'HomeCare.php'],
         ['label' => 'Desospitalização', 'href' => 'bi/desospitalizacao', 'file' => 'Desospitalizacao.php'],
         ['label' => 'OPME', 'href' => 'bi/opme', 'file' => 'Opme.php'],
+        ['label' => 'TUSS / Autorizações', 'href' => 'bi/tuss-autorizacoes', 'file' => 'BiOperacionalAvancado.php'],
     ],
     'Rede Hospitalar' => [
         ['label' => 'Comparativa', 'href' => 'bi/rede-comparativa', 'file' => 'bi_rede_comparativa.php'],
@@ -138,11 +144,14 @@ $biSections = [
 ];
 
 $currentPage = basename($_SERVER['PHP_SELF'] ?? '');
-$currentPath = trim((string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+$currentUri = (string)($_SERVER['REQUEST_URI'] ?? '');
+$currentPath = trim((string) parse_url($currentUri, PHP_URL_PATH), '/');
+$currentQuery = (string) parse_url($currentUri, PHP_URL_QUERY);
 $basePath = trim((string) parse_url($BASE_URL ?? '', PHP_URL_PATH), '/');
 if ($basePath !== '' && strpos($currentPath, $basePath) === 0) {
     $currentPath = trim(substr($currentPath, strlen($basePath)), '/');
 }
+$currentRoute = $currentPath . ($currentQuery !== '' ? '?' . $currentQuery : '');
 $currentSection = '';
 $currentLabel = '';
 $flatPages = [];
@@ -170,12 +179,12 @@ foreach ($biSections as $section => $items) {
         $file = $item['file'] ?? $item['href'];
         $flatPages[] = $file;
         $hrefPath = trim((string) ($item['href'] ?? ''), '/');
-        if ($hrefPath !== '' && $hrefPath === $currentPath) {
+        if ($hrefPath !== '' && ($hrefPath === $currentPath || $hrefPath === $currentRoute)) {
             $currentSection = $section;
             $currentLabel = $item['label'];
             $matchedByHref = true;
         }
-        if ($file === $currentPage) {
+        if (!$matchedByHref && $file === $currentPage) {
             $currentSection = $section;
             $currentLabel = $item['label'];
         }
@@ -190,6 +199,44 @@ if ($ieSlug !== '' && isset($ieMap[$ieSlug]) && isset($biSections['Indicadores E
 if (!in_array($currentPage, $flatPages, true) && !$matchedByHref && !($ieSlug !== '' && isset($ieMap[$ieSlug]))) {
     return;
 }
+
+$isBiTopbarItemActive = static function (array $item) use ($currentPath, $currentRoute, $currentPage, $currentSection, $ieSlug): bool {
+    $itemFile = (string)($item['file'] ?? ($item['href'] ?? ''));
+    $href = (string)($item['href'] ?? '');
+    $hrefTarget = trim($href, '/');
+    $hrefPath = trim((string)parse_url($href, PHP_URL_PATH), '/');
+    $hrefQuery = parse_url($href, PHP_URL_QUERY);
+
+    if ($hrefTarget !== '' && ($hrefTarget === $currentRoute || $hrefTarget === $currentPath)) {
+        return true;
+    }
+
+    if ($hrefQuery === null && $hrefPath !== '' && $hrefPath === $currentPath) {
+        return true;
+    }
+
+    if ($hrefTarget === '' && $itemFile === $currentPage) {
+        return true;
+    }
+
+    if ($currentSection === 'Indicadores Essenciais' && $ieSlug !== '') {
+        if (strpos($hrefTarget, 'bi/indicadores-essenciais/' . $ieSlug) === 0) {
+            return true;
+        }
+
+        $qp = [];
+        if (is_string($hrefQuery) && $hrefQuery !== '') {
+            parse_str($hrefQuery, $qp);
+        }
+
+        $itemSlug = trim((string)($qp['slug'] ?? ''));
+        if ($itemSlug !== '' && $itemSlug === $ieSlug) {
+            return true;
+        }
+    }
+
+    return false;
+};
 ?>
 
 <style>
@@ -678,25 +725,7 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             </summary>
             <div class="bi-sidebar-links">
                 <?php foreach ($items as $item): ?>
-                <?php $itemFile = $item['file'] ?? $item['href']; ?>
-                <?php $hrefPath = trim((string) ($item['href'] ?? ''), '/'); ?>
-                <?php
-                $isActiveChip = ($itemFile === $currentPage || $hrefPath === $currentPath);
-                if (!$isActiveChip && $currentSection === 'Indicadores Essenciais' && $ieSlug !== '') {
-                    $isActiveChip = (strpos($hrefPath, 'bi/indicadores-essenciais/' . $ieSlug) === 0);
-                    if (!$isActiveChip) {
-                        $q = (string)parse_url((string)$item['href'], PHP_URL_QUERY);
-                        $qp = [];
-                        if ($q !== '') {
-                            parse_str($q, $qp);
-                        }
-                        $itemSlug = trim((string)($qp['slug'] ?? ''));
-                        if ($itemSlug !== '' && $itemSlug === $ieSlug) {
-                            $isActiveChip = true;
-                        }
-                    }
-                }
-                ?>
+                <?php $isActiveChip = $isBiTopbarItemActive($item); ?>
                 <a class="bi-sidebar-link <?= $isActiveChip ? 'is-active' : '' ?>"
                     href="<?= $BASE_URL . $item['href'] ?>"
                     title="<?= htmlspecialchars($section . ' • ' . $item['label'], ENT_QUOTES, 'UTF-8') ?>">
@@ -715,9 +744,7 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             <?php $sectionName = $sectionDisplay[$section] ?? $section; ?>
             <optgroup label="<?= htmlspecialchars($sectionName, ENT_QUOTES, 'UTF-8') ?>">
                 <?php foreach ($items as $item): ?>
-                <?php $itemFile = $item['file'] ?? $item['href']; ?>
-                <?php $hrefPath = trim((string) ($item['href'] ?? ''), '/'); ?>
-                <option value="<?= $BASE_URL . $item['href'] ?>" <?= ($itemFile === $currentPage || $hrefPath === $currentPath) ? 'selected' : '' ?>>
+                <option value="<?= $BASE_URL . $item['href'] ?>" <?= $isBiTopbarItemActive($item) ? 'selected' : '' ?>>
                     <?= htmlspecialchars($item['label'], ENT_QUOTES, 'UTF-8') ?>
                 </option>
                 <?php endforeach; ?>

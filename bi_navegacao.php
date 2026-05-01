@@ -53,8 +53,12 @@ $navGroups = [
             ['label' => 'Evolução', 'href' => 'bi/evolucao'],
             ['label' => 'Visita Inicial', 'href' => 'bi/visita-inicial'],
             ['label' => 'Estratégia Terapêutica', 'href' => 'bi/estrategia-terapeutica'],
+            ['label' => 'Prorrogações', 'href' => 'bi/prorrogacoes'],
+            ['label' => 'Oportunidades Clínicas', 'href' => 'bi/oportunidades-clinicas'],
+            ['label' => 'Desfechos e Alta', 'href' => 'bi/desfechos-alta'],
             ['label' => 'Detalhes Clínicos', 'href' => 'bi/detalhes-clinicos'],
             ['label' => 'Evento Adverso', 'href' => 'bi/evento-adverso'],
+            ['label' => 'Segurança e Eventos Abertos', 'href' => 'bi/seguranca-eventos'],
         ],
     ],
     [
@@ -66,6 +70,7 @@ $navGroups = [
             ['label' => 'Auditoria Produtividade', 'href' => 'bi/auditoria-produtividade'],
             ['label' => 'Análise Negociações', 'href' => 'bi/analise-negociacoes'],
             ['label' => 'Negociações Detalhadas', 'href' => 'bi/negociacoes-detalhadas'],
+            ['label' => 'Negociação Avançada', 'href' => 'bi/negociacao-avancada'],
             ['label' => 'Saving por Auditor', 'href' => 'bi/saving-por-auditor'],
             ['label' => 'Saving', 'href' => 'bi/saving'],
         ],
@@ -83,6 +88,7 @@ $navGroups = [
             ['label' => 'Home Care', 'href' => 'bi/home-care'],
             ['label' => 'Desospitalizacao', 'href' => 'bi/desospitalizacao'],
             ['label' => 'OPME', 'href' => 'bi/opme'],
+            ['label' => 'TUSS / Autorizações', 'href' => 'bi/tuss-autorizacoes'],
         ],
     ],
     [
