@@ -104,6 +104,55 @@ class PacienteDAO implements PacienteDAOInterface
 
         return $paciente;
     }
+
+    public function findEnderecosByPaciente($id_paciente)
+    {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_paciente_endereco WHERE fk_paciente = :id ORDER BY principal_endereco DESC, id_paciente_endereco ASC");
+            $stmt->bindValue(":id", (int) $id_paciente, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+    }
+
+    public function findEmailsByPaciente($id_paciente)
+    {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_paciente_email WHERE fk_paciente = :id ORDER BY principal_email DESC, id_paciente_email ASC");
+            $stmt->bindValue(":id", (int) $id_paciente, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+    }
+
+    public function findTelefonesByPaciente($id_paciente)
+    {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_paciente_telefone WHERE fk_paciente = :id ORDER BY principal_telefone DESC, id_paciente_telefone ASC");
+            $stmt->bindValue(":id", (int) $id_paciente, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+    }
+
+    public function findContatosByPaciente($id_paciente)
+    {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM tb_paciente_contato WHERE fk_paciente = :id ORDER BY principal_contato DESC, id_paciente_contato ASC");
+            $stmt->bindValue(":id", (int) $id_paciente, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+    }
+
     public function findById($id_paciente)
     {
         $paciente = [];

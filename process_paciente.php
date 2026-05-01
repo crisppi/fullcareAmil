@@ -35,6 +35,214 @@ $message = new Message($BASE_URL); // <-- Objeto $message original (linha 11)
 $userDao = new UserDAO($conn, $BASE_URL);
 $pacienteDao = new PacienteDAO($conn, $BASE_URL);
 
+function normalizeDigitsPac(?string $value): string
+{
+    return preg_replace('/\D+/', '', (string) $value) ?? '';
+}
+
+function postArrayPac(string $key): array
+{
+    $values = filter_input(INPUT_POST, $key, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+    return is_array($values) ? $values : [];
+}
+
+function buildPacienteRelatedRowsFromPost(array $primary): array
+{
+    $enderecos = [];
+    if (trim((string) ($primary['endereco'] ?? '')) !== '') {
+        $enderecos[] = [
+            'tipo' => 'Principal',
+            'cep' => $primary['cep'] ?? '',
+            'endereco' => $primary['endereco'] ?? '',
+            'numero' => $primary['numero'] ?? '',
+            'bairro' => $primary['bairro'] ?? '',
+            'cidade' => $primary['cidade'] ?? '',
+            'estado' => $primary['estado'] ?? '',
+            'complemento' => $primary['complemento'] ?? '',
+            'principal' => 's',
+        ];
+    }
+    $endTipo = postArrayPac('end_tipo');
+    $endCep = postArrayPac('end_cep');
+    $endLog = postArrayPac('end_logradouro');
+    $endNum = postArrayPac('end_numero');
+    $endBairro = postArrayPac('end_bairro');
+    $endCidade = postArrayPac('end_cidade');
+    $endEstado = postArrayPac('end_estado');
+    $endComp = postArrayPac('end_complemento');
+    $endPrin = postArrayPac('end_principal');
+    $endCount = max(count($endTipo), count($endLog));
+    for ($i = 0; $i < $endCount; $i++) {
+        $enderecos[] = [
+            'tipo' => $endTipo[$i] ?? '',
+            'cep' => $endCep[$i] ?? '',
+            'endereco' => $endLog[$i] ?? '',
+            'numero' => $endNum[$i] ?? '',
+            'bairro' => $endBairro[$i] ?? '',
+            'cidade' => $endCidade[$i] ?? '',
+            'estado' => $endEstado[$i] ?? '',
+            'complemento' => $endComp[$i] ?? '',
+            'principal' => $endPrin[$i] ?? 'n',
+        ];
+    }
+
+    $emails = [];
+    if (trim((string) ($primary['email01'] ?? '')) !== '') {
+        $emails[] = ['tipo' => 'Principal', 'email' => $primary['email01'], 'principal' => 's'];
+    }
+    if (trim((string) ($primary['email02'] ?? '')) !== '') {
+        $emails[] = ['tipo' => 'Alternativo', 'email' => $primary['email02'], 'principal' => 'n'];
+    }
+    $emailTipo = postArrayPac('email_tipo');
+    $emailEmail = postArrayPac('email_email');
+    $emailPrin = postArrayPac('email_principal');
+    $emailCount = max(count($emailTipo), count($emailEmail));
+    for ($i = 0; $i < $emailCount; $i++) {
+        $emails[] = [
+            'tipo' => $emailTipo[$i] ?? '',
+            'email' => $emailEmail[$i] ?? '',
+            'principal' => $emailPrin[$i] ?? 'n',
+        ];
+    }
+
+    $telefones = [];
+    if (trim((string) ($primary['telefone01'] ?? '')) !== '') {
+        $telefones[] = ['tipo' => 'Principal', 'numero' => $primary['telefone01'], 'ramal' => '', 'contato' => '', 'principal' => 's'];
+    }
+    if (trim((string) ($primary['telefone02'] ?? '')) !== '') {
+        $telefones[] = ['tipo' => 'Celular', 'numero' => $primary['telefone02'], 'ramal' => '', 'contato' => '', 'principal' => 'n'];
+    }
+    $telTipo = postArrayPac('tel_tipo');
+    $telNumero = postArrayPac('tel_numero');
+    $telRamal = postArrayPac('tel_ramal');
+    $telContato = postArrayPac('tel_contato');
+    $telPrin = postArrayPac('tel_principal');
+    $telCount = max(count($telTipo), count($telNumero));
+    for ($i = 0; $i < $telCount; $i++) {
+        $telefones[] = [
+            'tipo' => $telTipo[$i] ?? '',
+            'numero' => $telNumero[$i] ?? '',
+            'ramal' => $telRamal[$i] ?? '',
+            'contato' => $telContato[$i] ?? '',
+            'principal' => $telPrin[$i] ?? 'n',
+        ];
+    }
+
+    $contatos = [];
+    $contNome = postArrayPac('cont_nome');
+    $contParentesco = postArrayPac('cont_parentesco');
+    $contEmail = postArrayPac('cont_email');
+    $contTelefone = postArrayPac('cont_telefone');
+    $contObs = postArrayPac('cont_observacao');
+    $contPrin = postArrayPac('cont_principal');
+    $contCount = max(count($contNome), count($contEmail), count($contTelefone));
+    for ($i = 0; $i < $contCount; $i++) {
+        $contatos[] = [
+            'nome' => $contNome[$i] ?? '',
+            'parentesco' => $contParentesco[$i] ?? '',
+            'email' => $contEmail[$i] ?? '',
+            'telefone' => $contTelefone[$i] ?? '',
+            'observacao' => $contObs[$i] ?? '',
+            'principal' => $contPrin[$i] ?? 'n',
+        ];
+    }
+
+    $enderecos = array_values(array_filter($enderecos, function ($item) {
+        static $seen = [];
+        $key = mb_strtolower(trim((string)($item['endereco'] ?? '')), 'UTF-8') . '|' . normalizeDigitsPac((string)($item['cep'] ?? '')) . '|' . trim((string)($item['numero'] ?? ''));
+        if (trim((string)($item['endereco'] ?? '')) === '' || isset($seen[$key])) return false;
+        $seen[$key] = true;
+        return true;
+    }));
+    $emails = array_values(array_filter($emails, function ($item) {
+        static $seen = [];
+        $key = mb_strtolower(trim((string)($item['email'] ?? '')), 'UTF-8');
+        if ($key === '' || isset($seen[$key])) return false;
+        $seen[$key] = true;
+        return true;
+    }));
+    $telefones = array_values(array_filter($telefones, function ($item) {
+        static $seen = [];
+        $key = normalizeDigitsPac((string)($item['numero'] ?? ''));
+        if ($key === '' || isset($seen[$key])) return false;
+        $seen[$key] = true;
+        return true;
+    }));
+    $contatos = array_values(array_filter($contatos, function ($item) {
+        static $seen = [];
+        $key = mb_strtolower(trim((string)($item['nome'] ?? '')), 'UTF-8') . '|' . mb_strtolower(trim((string)($item['email'] ?? '')), 'UTF-8') . '|' . normalizeDigitsPac((string)($item['telefone'] ?? ''));
+        if (trim((string)($item['nome'] ?? '')) === '' || isset($seen[$key])) return false;
+        $seen[$key] = true;
+        return true;
+    }));
+
+    return [$enderecos, $emails, $telefones, $contatos];
+}
+
+function insertPacienteRelatedRows(PDO $conn, int $idPaciente, array $enderecos, array $emails, array $telefones, array $contatos): void
+{
+    if ($idPaciente <= 0) return;
+
+    $stmtEnd = $conn->prepare("INSERT INTO tb_paciente_endereco (fk_paciente, tipo_endereco, cep_endereco, endereco_endereco, numero_endereco, bairro_endereco, cidade_endereco, estado_endereco, complemento_endereco, principal_endereco, ativo_endereco, data_create_endereco) VALUES (:fk_paciente, :tipo_endereco, :cep_endereco, :endereco_endereco, :numero_endereco, :bairro_endereco, :cidade_endereco, :estado_endereco, :complemento_endereco, :principal_endereco, 's', NOW())");
+    foreach ($enderecos as $item) {
+        $endereco = trim((string) ($item['endereco'] ?? ''));
+        if ($endereco === '') continue;
+        $stmtEnd->execute([
+            ':fk_paciente' => $idPaciente,
+            ':tipo_endereco' => trim((string) ($item['tipo'] ?? '')),
+            ':cep_endereco' => normalizeDigitsPac((string) ($item['cep'] ?? '')),
+            ':endereco_endereco' => $endereco,
+            ':numero_endereco' => trim((string) ($item['numero'] ?? '')),
+            ':bairro_endereco' => trim((string) ($item['bairro'] ?? '')),
+            ':cidade_endereco' => trim((string) ($item['cidade'] ?? '')),
+            ':estado_endereco' => trim((string) ($item['estado'] ?? '')),
+            ':complemento_endereco' => trim((string) ($item['complemento'] ?? '')),
+            ':principal_endereco' => ((string) ($item['principal'] ?? 'n') === 's') ? 1 : 0,
+        ]);
+    }
+
+    $stmtEmail = $conn->prepare("INSERT INTO tb_paciente_email (fk_paciente, tipo_email, email_email, principal_email, ativo_email, data_create_email) VALUES (:fk_paciente, :tipo_email, :email_email, :principal_email, 's', NOW())");
+    foreach ($emails as $item) {
+        $email = trim((string) ($item['email'] ?? ''));
+        if ($email === '') continue;
+        $stmtEmail->execute([
+            ':fk_paciente' => $idPaciente,
+            ':tipo_email' => trim((string) ($item['tipo'] ?? '')),
+            ':email_email' => strtolower($email),
+            ':principal_email' => ((string) ($item['principal'] ?? 'n') === 's') ? 1 : 0,
+        ]);
+    }
+
+    $stmtTel = $conn->prepare("INSERT INTO tb_paciente_telefone (fk_paciente, tipo_telefone, numero_telefone, ramal_telefone, contato_telefone, principal_telefone, ativo_telefone, data_create_telefone) VALUES (:fk_paciente, :tipo_telefone, :numero_telefone, :ramal_telefone, :contato_telefone, :principal_telefone, 's', NOW())");
+    foreach ($telefones as $item) {
+        $numero = normalizeDigitsPac((string) ($item['numero'] ?? ''));
+        if ($numero === '') continue;
+        $stmtTel->execute([
+            ':fk_paciente' => $idPaciente,
+            ':tipo_telefone' => trim((string) ($item['tipo'] ?? '')),
+            ':numero_telefone' => $numero,
+            ':ramal_telefone' => trim((string) ($item['ramal'] ?? '')),
+            ':contato_telefone' => trim((string) ($item['contato'] ?? '')),
+            ':principal_telefone' => ((string) ($item['principal'] ?? 'n') === 's') ? 1 : 0,
+        ]);
+    }
+
+    $stmtCont = $conn->prepare("INSERT INTO tb_paciente_contato (fk_paciente, nome_contato, parentesco_contato, email_contato, telefone_contato, observacao_contato, principal_contato, ativo_contato, data_create_contato) VALUES (:fk_paciente, :nome_contato, :parentesco_contato, :email_contato, :telefone_contato, :observacao_contato, :principal_contato, 's', NOW())");
+    foreach ($contatos as $item) {
+        $nome = trim((string) ($item['nome'] ?? ''));
+        if ($nome === '') continue;
+        $stmtCont->execute([
+            ':fk_paciente' => $idPaciente,
+            ':nome_contato' => $nome,
+            ':parentesco_contato' => trim((string) ($item['parentesco'] ?? '')),
+            ':email_contato' => trim((string) ($item['email'] ?? '')),
+            ':telefone_contato' => normalizeDigitsPac((string) ($item['telefone'] ?? '')),
+            ':observacao_contato' => trim((string) ($item['observacao'] ?? '')),
+            ':principal_contato' => ((string) ($item['principal'] ?? 'n') === 's') ? 1 : 0,
+        ]);
+    }
+}
+
 // Resgata o tipo do formulário
 $type = filter_input(INPUT_POST, "type");
 $typeDel = filter_input(INPUT_POST, "typeDel");
@@ -237,6 +445,20 @@ if ($type === "create") {
         try {
             $pacienteDao->create($paciente);
             $novoId = (int)$conn->lastInsertId();
+            [$enderecosPac, $emailsPac, $telefonesPac, $contatosPac] = buildPacienteRelatedRowsFromPost([
+                'endereco' => $endereco_pac,
+                'cep' => $cep_pac,
+                'numero' => $numero_pac,
+                'bairro' => $bairro_pac,
+                'cidade' => $cidade_pac,
+                'estado' => $estado_pac,
+                'complemento' => $complemento_pac,
+                'email01' => $email01_pac,
+                'email02' => $email02_pac,
+                'telefone01' => $telefone01_pac,
+                'telefone02' => $telefone02_pac,
+            ]);
+            insertPacienteRelatedRows($conn, $novoId, $enderecosPac, $emailsPac, $telefonesPac, $contatosPac);
             $pacienteCriado = $novoId > 0 ? $pacienteDao->findByIdSeg($novoId) : null;
             fullcareAuditLog($conn, [
                 'action' => 'create',
@@ -407,6 +629,24 @@ if ($type === "create") {
 
 
     $pacienteDao->update($pacienteData);
+    $conn->prepare("DELETE FROM tb_paciente_endereco WHERE fk_paciente = :id")->execute([':id' => (int) $id_paciente]);
+    $conn->prepare("DELETE FROM tb_paciente_email WHERE fk_paciente = :id")->execute([':id' => (int) $id_paciente]);
+    $conn->prepare("DELETE FROM tb_paciente_telefone WHERE fk_paciente = :id")->execute([':id' => (int) $id_paciente]);
+    $conn->prepare("DELETE FROM tb_paciente_contato WHERE fk_paciente = :id")->execute([':id' => (int) $id_paciente]);
+    [$enderecosPac, $emailsPac, $telefonesPac, $contatosPac] = buildPacienteRelatedRowsFromPost([
+        'endereco' => $endereco_pac,
+        'cep' => $cep_pac,
+        'numero' => $numero_pac,
+        'bairro' => $bairro_pac,
+        'cidade' => $cidade_pac,
+        'estado' => $estado_pac,
+        'complemento' => $complemento_pac,
+        'email01' => $email01_pac,
+        'email02' => $email02_pac,
+        'telefone01' => $telefone01_pac,
+        'telefone02' => $telefone02_pac,
+    ]);
+    insertPacienteRelatedRows($conn, (int) $id_paciente, $enderecosPac, $emailsPac, $telefonesPac, $contatosPac);
     $pacienteDepois = $pacienteDao->findByIdSeg((int)$id_paciente);
     fullcareAuditLog($conn, [
         'action' => 'update',
