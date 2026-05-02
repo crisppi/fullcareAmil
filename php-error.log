@@ -285,3 +285,19 @@ Stack trace:
 #1 /Applications/AMPPS/www/fullcareAmil/list_internacao_ciclo.php(20): include_once('/Applications/A...')
 #2 {main}
   thrown in /Applications/AMPPS/www/fullcareAmil/dao/internacaoDao.php on line 19
+[02-May-2026 02:46:02 UTC] PHP Warning:  Undefined variable $conn in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19
+[02-May-2026 02:46:02 UTC] PHP Warning:  Undefined variable $BASE_URL in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19
+[02-May-2026 02:46:02 UTC] PHP Fatal error:  Uncaught TypeError: internacaoDAO::__construct(): Argument #1 ($conn) must be of type PDO, null given, called in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19 and defined in /Applications/AMPPS/www/FullCareAmil/dao/internacaoDao.php:19
+Stack trace:
+#0 /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php(19): internacaoDAO->__construct(NULL, NULL)
+#1 /Applications/AMPPS/www/FullCareAmil/list_internacao_cap_jornada.php(20): include_once('/Applications/A...')
+#2 {main}
+  thrown in /Applications/AMPPS/www/FullCareAmil/dao/internacaoDao.php on line 19
+[02-May-2026 02:46:29 UTC] PHP Warning:  Undefined variable $conn in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19
+[02-May-2026 02:46:29 UTC] PHP Warning:  Undefined variable $BASE_URL in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19
+[02-May-2026 02:46:29 UTC] PHP Fatal error:  Uncaught TypeError: internacaoDAO::__construct(): Argument #1 ($conn) must be of type PDO, null given, called in /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php on line 19 and defined in /Applications/AMPPS/www/FullCareAmil/dao/internacaoDao.php:19
+Stack trace:
+#0 /Applications/AMPPS/www/FullCareAmil/formularios/form_list_internacao_cap_jornada.php(19): internacaoDAO->__construct(NULL, NULL)
+#1 /Applications/AMPPS/www/FullCareAmil/list_internacao_cap_jornada.php(20): include_once('/Applications/A...')
+#2 {main}
+  thrown in /Applications/AMPPS/www/FullCareAmil/dao/internacaoDao.php on line 19

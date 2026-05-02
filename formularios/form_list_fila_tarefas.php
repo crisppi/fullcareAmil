@@ -21,6 +21,32 @@ function fmt_date_br($raw)
     return $ts ? date('d/m/Y', $ts) : $raw;
 }
 
+function fmt_responsavel_label($raw)
+{
+    $value = trim((string)$raw);
+    if ($value === '') {
+        return '-';
+    }
+
+    $normalized = strtolower($value);
+    if (str_starts_with($normalized, 'codex-import-') || str_contains($normalized, 'import-')) {
+        return 'Importação automática';
+    }
+
+    if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        $local = strstr($value, '@', true);
+        if ($local !== false && $local !== '') {
+            $value = $local;
+        }
+    }
+
+    $value = preg_replace('/[._-]+/', ' ', $value);
+    $value = preg_replace('/\s+/', ' ', (string)$value);
+    $value = trim((string)$value);
+
+    return $value !== '' ? mb_convert_case($value, MB_CASE_TITLE, 'UTF-8') : '-';
+}
+
 $dt_ini = filter_input(INPUT_GET, 'dt_ini', FILTER_SANITIZE_SPECIAL_CHARS);
 $dt_fim = filter_input(INPUT_GET, 'dt_fim', FILTER_SANITIZE_SPECIAL_CHARS);
 $seguradora_id = filter_input(INPUT_GET, 'seguradora_id', FILTER_VALIDATE_INT);
@@ -248,6 +274,45 @@ try {
                 color: #6c757d;
                 margin: 4px 0 0;
             }
+
+            .fila-filter-row {
+                flex-wrap: nowrap !important;
+                align-items: flex-end;
+            }
+
+            .fila-filter-row > [class*="col-"] {
+                max-width: none;
+                min-width: 0;
+            }
+
+            .fila-filter-date {
+                flex: 0 0 170px;
+                max-width: 170px;
+            }
+
+            .fila-filter-convenio {
+                flex: 1.2 1 0;
+            }
+
+            .fila-filter-responsavel {
+                flex: 0.92 1 0;
+            }
+
+            .fila-filter-actions {
+                flex: 0 0 168px;
+                max-width: 168px;
+                display: flex;
+                align-items: stretch;
+                gap: 8px;
+                white-space: nowrap;
+            }
+
+            .fila-filter-actions .btn {
+                flex: 1 1 0;
+                min-height: 32px;
+                height: 32px;
+                font-size: .72rem;
+            }
         </style>
         <div class="fila-hero">
             <h1>Fila de Tarefas</h1>
@@ -255,16 +320,16 @@ try {
         </div>
         <p class="fila-subtitle">Visitas e contas pendentes, com filtros por periodo, convenio e responsavel.</p>
 
-    <form method="GET" class="row g-2 align-items-end mb-3">
-        <div class="col-sm-2">
+    <form method="GET" class="row g-2 align-items-end mb-3 fila-filter-row">
+        <div class="col-sm-2 fila-filter-date">
             <label class="form-label mb-1">Data inicio</label>
             <input type="date" class="form-control form-control-sm" name="dt_ini" value="<?= h($dt_ini) ?>">
         </div>
-        <div class="col-sm-2">
+        <div class="col-sm-2 fila-filter-date">
             <label class="form-label mb-1">Data fim</label>
             <input type="date" class="form-control form-control-sm" name="dt_fim" value="<?= h($dt_fim) ?>">
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 fila-filter-convenio">
             <label class="form-label mb-1">Convenio</label>
             <select class="form-select form-select-sm" name="seguradora_id">
                 <option value="">Todos</option>
@@ -275,15 +340,13 @@ try {
                 <?php endforeach; ?>
             </select>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3 fila-filter-responsavel">
             <label class="form-label mb-1">Responsavel</label>
             <input type="text" class="form-control form-control-sm" name="responsavel" placeholder="Nome ou email"
                 value="<?= h($responsavel) ?>">
         </div>
-        <div class="col-sm-1 d-grid">
+        <div class="col-sm-1 fila-filter-actions">
             <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
-        </div>
-        <div class="col-sm-1 d-grid">
             <a class="btn btn-outline-secondary btn-sm btn-filtro-limpar" href="list_fila_tarefas.php">Limpar</a>
         </div>
     </form>
@@ -364,7 +427,7 @@ try {
                         <td><?= h($row['nome_hosp']) ?></td>
                         <td><?= h($row['seguradora_seg'] ?? '-') ?></td>
                         <td><?= h(fmt_date_br($row['data_intern_int'] ?? '')) ?></td>
-                        <td><?= h($row['usuario_create_int'] ?? '-') ?></td>
+                        <td><?= h(fmt_responsavel_label($row['usuario_create_int'] ?? '')) ?></td>
                         <td class="text-end">
                             <a class="btn btn-outline-primary btn-sm"
                                 href="<?= h(rtrim($BASE_URL, '/') . '/internacoes/visualizar/' . (int)$row['id_internacao']) ?>">Abrir</a>
@@ -454,7 +517,7 @@ try {
                         <td><?= h($row['nome_hosp']) ?></td>
                         <td><?= h($row['seguradora_seg'] ?? '-') ?></td>
                         <td><?= h(fmt_date_br($row['data_create_cap'] ?? '')) ?></td>
-                        <td><?= h($row['usuario_create_cap'] ?? '-') ?></td>
+                        <td><?= h(fmt_responsavel_label($row['usuario_create_cap'] ?? '')) ?></td>
                         <td class="text-end">
                             <?php
                             $capeanteId = (int)($row['id_capeante'] ?? 0);

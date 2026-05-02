@@ -309,6 +309,55 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
         padding: 8px 8px 6px;
     }
 
+    .listagem-panel .alta-filter-row {
+        flex-wrap: nowrap !important;
+    }
+
+    .listagem-panel .alta-filter-row > [class*="col-"] {
+        max-width: none;
+        min-width: 0;
+    }
+
+    .listagem-panel .alta-filter-hospital {
+        flex: 1.05 1 0;
+    }
+
+    .listagem-panel .alta-filter-paciente {
+        flex: 1.05 1 0;
+    }
+
+    .listagem-panel .alta-filter-matricula {
+        flex: 1.1 1 0;
+    }
+
+    .listagem-panel .alta-filter-limit {
+        flex: 0 0 164px;
+        max-width: 164px;
+    }
+
+    .listagem-panel .alta-filter-order {
+        flex: 0 0 340px;
+        max-width: 340px;
+    }
+
+    .listagem-panel .alta-filter-date {
+        flex: 0 0 170px;
+        max-width: 170px;
+    }
+
+    .listagem-panel .alta-filter-actions {
+        flex: 0 0 86px;
+        max-width: 86px;
+        display: flex;
+        align-items: stretch;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .listagem-panel .alta-filter-actions .btn {
+        flex: 0 0 32px;
+    }
+
     .filter-inline-row input[type="date"]::-webkit-datetime-edit,
     .filter-inline-row input[type="date"]::-webkit-datetime-edit-text,
     .filter-inline-row input[type="date"]::-webkit-datetime-edit-month-field,
@@ -386,24 +435,24 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
         <div id="navbarToggleExternalContent" class="table-filters">
             <div>
                 <form action="" id="select-internacao-form" method="GET">
-                    <div class="row filter-inline-row">
-                        <div class="col-sm-2" style="padding:2px !important;padding-left:16px !important;">
+                    <div class="row filter-inline-row alta-filter-row">
+                        <div class="col-sm-2 alta-filter-hospital" style="padding:2px !important;padding-left:16px !important;">
                             <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_nome" placeholder="Selecione o Hospital"
                                 value="<?= htmlspecialchars((string)$pesquisa_nome) ?>">
                         </div>
-                        <div class="col-sm-2" style="padding:2px !important">
+                        <div class="col-sm-2 alta-filter-paciente" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_pac" placeholder="Selecione o Paciente"
                                 value="<?= htmlspecialchars((string)$pesquisa_pac) ?>">
                         </div>
-                        <div class="col-sm-2" style="padding:2px !important">
+                        <div class="col-sm-2 alta-filter-matricula" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_matricula" placeholder="Matrícula"
                                 value="<?= htmlspecialchars((string)$pesquisa_matricula) ?>">
                         </div>
 
-                        <div class="col-sm-1" style="padding:2px !important">
+                        <div class="col-sm-1 alta-filter-limit" style="padding:2px !important">
                             <select class="form-control mb-3 form-control-sm" id="limite"
                                 name="limite">
                                 <option value="">Reg por página</option>
@@ -414,7 +463,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                             </select>
                         </div>
 
-                        <div class="col-sm-2" style="padding:2px !important">
+                        <div class="col-sm-2 alta-filter-order" style="padding:2px !important">
                             <select class="form-control mb-3 form-control-sm" id="ordenar"
                                 name="ordenar">
                                 <option value="">Classificar por</option>
@@ -433,19 +482,19 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                             </select>
                         </div>
 
-                        <div class="col-sm-1" style="padding:2px !important">
+                        <div class="col-sm-1 alta-filter-date" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="date"
                                 name="data_alta" placeholder="Data Alta Min"
                                 value="<?= htmlspecialchars((string)$data_alta) ?>">
                         </div>
 
-                        <div class="col-sm-1" style="padding:2px !important">
+                        <div class="col-sm-1 alta-filter-date" style="padding:2px !important">
                             <input class="form-control form-control-sm" type="date"
                                 name="data_alta_max" placeholder="Data Alta Max"
                                 value="<?= htmlspecialchars((string)$data_alta_max) ?>">
                         </div>
 
-                        <div class="col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                        <div class="col-sm-1 alta-filter-actions" style="padding:2px !important">
                             <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon">
                                 <span class="material-icons">search</span>
                             </button>

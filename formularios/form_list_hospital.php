@@ -110,7 +110,7 @@
                 </a>
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/novo', ENT_QUOTES, 'UTF-8') ?>"
                     class="btn listagem-btn-top listagem-btn-top--blue">
-                    <i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo Hospital
+                    <i class="bi bi-plus-lg" style='font-size: .95rem;margin-right:5px;'></i>Novo Hospital
                 </a>
             </div>
         </div>
