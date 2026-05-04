@@ -64,7 +64,7 @@ if (empty($id_usuario)) {
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="form-group col-sm-2 ">
+                            <div class="form-group col-sm-2">
                                 <label for="cpf_user">CPF</label>
                                 <input type="text" oninput="mascara(this, 'cpf')" class="form-control" id="cpf_user"
                                     name="cpf_user">
@@ -81,9 +81,6 @@ if (empty($id_usuario)) {
                                     <option value="m">Masculino</option>
                                 </select>
                             </div>
-
-                        </div>
-                        <div class="form-group row">
                             <div class="form-group col-sm-2">
                                 <label for="usuario_user">Idade</label>
                                 <input type="text" class="form-control" id="idade_user" name="idade_user">
@@ -92,7 +89,7 @@ if (empty($id_usuario)) {
                                 <label class="control-label" for="data_admissao_user">Admissão</label>
                                 <input class="form-control" type="date" id="data_admissao_user" name="data_admissao_user">
                             </div>
-                            <div class="form-group col-sm-1">
+                            <div class="form-group col-sm-2">
                                 <label class="control-label" for="ativo_user">Ativo</label>
                                 <select class="form-control" id="ativo_user" name="ativo_user">
                                     <option selected value="s">Sim</option>
