@@ -67,27 +67,67 @@ if ($pesquisa_pac  !== '') {
 }
 
 if ($faturada === 's') {
-  $condicoes[] = "ca.conta_faturada_cap = 's'";
+  $condicoes[] = "EXISTS (
+    SELECT 1
+      FROM tb_capeante caf
+     WHERE caf.fk_int_capeante = ac.id_internacao
+       AND caf.conta_faturada_cap = 's'
+  )";
 } elseif ($faturada === 'n') {
-  $condicoes[] = "(ca.conta_faturada_cap IS NULL OR ca.conta_faturada_cap='' OR ca.conta_faturada_cap='n')";
+  $condicoes[] = "NOT EXISTS (
+    SELECT 1
+      FROM tb_capeante caf
+     WHERE caf.fk_int_capeante = ac.id_internacao
+       AND caf.conta_faturada_cap = 's'
+  )";
 }
 
 if ($aberta === 's') {
-  $condicoes[] = "ca.aberto_cap = 's'";
+  $condicoes[] = "EXISTS (
+    SELECT 1
+      FROM tb_capeante caa
+     WHERE caa.fk_int_capeante = ac.id_internacao
+       AND caa.aberto_cap = 's'
+  )";
 } elseif ($aberta === 'n') {
-  $condicoes[] = "COALESCE(ca.aberto_cap,'n') <> 's'";
+  $condicoes[] = "NOT EXISTS (
+    SELECT 1
+      FROM tb_capeante caa
+     WHERE caa.fk_int_capeante = ac.id_internacao
+       AND caa.aberto_cap = 's'
+  )";
 }
 
 if ($encerrada === 's') {
-  $condicoes[] = "ca.encerrado_cap = 's'";
+  $condicoes[] = "EXISTS (
+    SELECT 1
+      FROM tb_capeante cae
+     WHERE cae.fk_int_capeante = ac.id_internacao
+       AND cae.encerrado_cap = 's'
+  )";
 } elseif ($encerrada === 'n') {
-  $condicoes[] = "COALESCE(ca.encerrado_cap,'n') <> 's'";
+  $condicoes[] = "NOT EXISTS (
+    SELECT 1
+      FROM tb_capeante cae
+     WHERE cae.fk_int_capeante = ac.id_internacao
+       AND cae.encerrado_cap = 's'
+  )";
 }
 
 if ($auditoria === 's') {
-  $condicoes[] = "(ca.em_auditoria_cap='s' OR ca.med_check='s' OR ca.enfer_check='s' OR ca.adm_check='s')";
+  $condicoes[] = "EXISTS (
+    SELECT 1
+      FROM tb_capeante cau
+     WHERE cau.fk_int_capeante = ac.id_internacao
+       AND (cau.em_auditoria_cap = 's' OR cau.med_check = 's' OR cau.enfer_check = 's' OR cau.adm_check = 's')
+  )";
 } elseif ($auditoria === 'n') {
-  $condicoes[] = "(COALESCE(ca.em_auditoria_cap,'n')<>'s' AND COALESCE(ca.med_check,'n')<>'s' AND COALESCE(ca.enfer_check,'n')<>'s' AND COALESCE(ca.adm_check,'n')<>'s')";
+  $condicoes[] = "NOT EXISTS (
+    SELECT 1
+      FROM tb_capeante cau
+     WHERE cau.fk_int_capeante = ac.id_internacao
+       AND (cau.em_auditoria_cap = 's' OR cau.med_check = 's' OR cau.enfer_check = 's' OR cau.adm_check = 's')
+  )";
 }
 
 $where = implode(' AND ', $condicoes);
@@ -98,11 +138,7 @@ $where = implode(' AND ', $condicoes);
 $baseFromSql = '
   FROM tb_internacao ac
   LEFT JOIN tb_hospital AS ho ON ac.fk_hospital_int = ho.id_hospital
-  LEFT JOIN tb_hospitalUser AS hos ON hos.fk_hospital_user = ho.id_hospital
-  LEFT JOIN tb_user AS se ON se.id_usuario = hos.fk_usuario_hosp
-  LEFT JOIN tb_uti AS ut ON ac.id_internacao = ut.fk_internacao_uti
   LEFT JOIN tb_paciente AS pa ON ac.fk_paciente_int = pa.id_paciente
-  LEFT JOIN tb_capeante AS ca ON ac.id_internacao = ca.fk_int_capeante
 ';
 $whereSql = $where !== '' ? (' WHERE ' . $where) : '';
 
@@ -146,16 +182,46 @@ if ($totalDeItensUnicos > 0) {
 // Busca apenas as linhas necessárias (com todos os capeantes dessas internações da página)
 $linhasFiltradas = [];
 if (!empty($idsDaPagina)) {
-  $wherePagina = $where;
-  $wherePaginaParams = $whereParams;
   $idPlaceholders = [];
   foreach (array_values($idsDaPagina) as $idx => $idPagina) {
     $ph = ':id_pagina_' . $idx;
     $idPlaceholders[] = $ph;
-    $wherePaginaParams[$ph] = (int)$idPagina;
+    $whereParams[$ph] = (int)$idPagina;
   }
-  $wherePagina .= ($wherePagina !== '' ? ' AND ' : '') . 'ac.id_internacao IN (' . implode(',', $idPlaceholders) . ')';
-  $linhasFiltradas = $internacaoDAO->selectAllInternacaoCap($wherePagina, $ordenarSql, null, $wherePaginaParams);
+  $sqlPagina = "
+    SELECT
+      ac.id_internacao,
+      ac.data_intern_int,
+      ho.nome_hosp,
+      pa.nome_pac,
+      ca.id_capeante,
+      ca.senha_finalizada,
+      ca.adm_check,
+      ca.med_check,
+      ca.enfer_check,
+      ca.aberto_cap,
+      ca.em_auditoria_cap,
+      ca.encerrado_cap,
+      ca.conta_faturada_cap
+    FROM tb_internacao ac
+    LEFT JOIN tb_hospital ho ON ac.fk_hospital_int = ho.id_hospital
+    LEFT JOIN tb_paciente pa ON ac.fk_paciente_int = pa.id_paciente
+    LEFT JOIN tb_capeante ca ON ac.id_internacao = ca.fk_int_capeante
+    WHERE ac.id_internacao IN (" . implode(',', $idPlaceholders) . ")
+    ORDER BY " . $ordenarSql;
+  try {
+    $stmtPagina = $conn->prepare($sqlPagina);
+    foreach ($whereParams as $key => $value) {
+      if (str_starts_with((string)$key, ':id_pagina_')) {
+        $stmtPagina->bindValue($key, (int)$value, PDO::PARAM_INT);
+      }
+    }
+    $stmtPagina->execute();
+    $linhasFiltradas = $stmtPagina->fetchAll(PDO::FETCH_ASSOC) ?: [];
+  } catch (Throwable $e) {
+    error_log('[JORNADA][PAGE_ROWS] ' . $e->getMessage());
+    $linhasFiltradas = [];
+  }
 }
 
 // agrega por id_internacao
