@@ -533,8 +533,14 @@
                                     <div class="row">
                                         <div class="form-group col-sm-3 mb-0" id="div-data-alta" style="display:none">
                                             <label class="control-label" for="data_alta_alt"> Data/Hora Alta</label>
-                                            <input type="datetime-local" class="form-control input-lg-fullcare" id="data_alta_alt"
-                                                name="data_alta_alt" step="60">
+                                            <div class="date-picker-field">
+                                                <input type="datetime-local" class="form-control input-lg-fullcare" id="data_alta_alt"
+                                                    name="data_alta_alt" step="60">
+                                                <button type="button" class="date-picker-button" data-open-picker="data_alta_alt"
+                                                    aria-label="Abrir seletor de data e hora">
+                                                    <i class="bi bi-calendar3" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div class="form-group col-sm-3 mb-0" id="div-motivo-alta" style="display:none">
@@ -887,7 +893,7 @@
                                 <i class="bi bi-card-checklist"></i>
                                 Checklist Auditoria
                             </button>
-                            <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
+                            <button type="button" class="btn btn-sm btn-outline-primary auditoria-action-btn auditoria-action-btn--subtle-ia" id="btn-executar-prompt-uti">
                                 <i class="bi bi-cpu"></i>
                                 Executar Prompt UTI
                             </button>
@@ -1005,19 +1011,16 @@
         </div>
 
         <div>
-            <hr>
-            <!-- ... dentro do <form id="myForm"> ... -->
-            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                <small id="autosave-status" class="text-muted">Rascunho automático: ativo</small>
-                <button type="button" id="btn-clear-draft" class="btn btn-sm btn-outline-secondary">Limpar rascunho</button>
+            <div class="internacao-form-actions">
+                <button type="submit" class="btn btn-success fixed-submit btn-submit-standard">
+                    <i class="fas fa-save edit-icon" style="font-size:1rem;"></i>
+                    Cadastrar
+                </button>
+                <div class="internacao-draft-actions">
+                    <small id="autosave-status" class="text-muted">Rascunho automático: ativo</small>
+                    <button type="button" id="btn-clear-draft" class="btn btn-sm btn-outline-secondary">Limpar rascunho</button>
+                </div>
             </div>
-
-            <button type="submit" class="btn btn-success btn-lg fixed-submit btn-submit-standard">
-                <i class="fas fa-save edit-icon" style="font-size:1rem;margin-right:8px;"></i>
-                Cadastrar
-            </button>
-
-
             <br><br>
             <div style="width:500px;display:none" class="alert" id="alert" role="alert"></div>
         </div>

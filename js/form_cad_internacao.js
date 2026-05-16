@@ -2591,6 +2591,25 @@ document.addEventListener('paciente:cadastrado', function(event) {
     }
 });
 
+document.addEventListener('click', function(event) {
+    const pickerButton = event.target.closest('[data-open-picker]');
+    if (!pickerButton) return;
+
+    const input = document.getElementById(pickerButton.getAttribute('data-open-picker'));
+    if (!input) return;
+
+    input.focus();
+    if (typeof input.showPicker === 'function') {
+        try {
+            input.showPicker();
+        } catch (error) {
+            input.click();
+        }
+    } else {
+        input.click();
+    }
+});
+
     window.triggerInternacaoAutoSave = triggerInternacaoAutoSave;
     window.aumentarText = aumentarText;
     window.reduzirText = reduzirText;

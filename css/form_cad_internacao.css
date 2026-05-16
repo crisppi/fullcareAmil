@@ -64,6 +64,113 @@
             font-weight: 700;
         }
 
+        .date-picker-field {
+            position: relative;
+        }
+
+        .date-picker-field input[type="date"],
+        .date-picker-field input[type="datetime-local"] {
+            padding-right: 46px !important;
+        }
+
+        .date-picker-field input[type="date"]::-webkit-calendar-picker-indicator,
+        .date-picker-field input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            opacity: .01;
+            cursor: pointer;
+        }
+
+        .date-picker-button {
+            align-items: center;
+            background: rgba(94, 35, 99, .10);
+            border: 1px solid rgba(94, 35, 99, .18);
+            border-radius: 10px;
+            color: #5e2363;
+            display: inline-flex;
+            height: 34px;
+            justify-content: center;
+            padding: 0;
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            z-index: 3;
+        }
+
+        .date-picker-button:hover,
+        .date-picker-button:focus {
+            background: #5e2363;
+            color: #fff;
+            outline: none;
+        }
+
+        .date-picker-button i {
+            display: none;
+        }
+
+        .date-picker-button::before {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border: 2px solid currentColor;
+            border-radius: 4px;
+            box-shadow: inset 0 4px 0 rgba(94, 35, 99, .16);
+        }
+
+        .internacao-form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 24px;
+            padding: 16px 18px;
+            border: 1px solid rgba(94, 35, 99, .10);
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #faf7fb 100%);
+        }
+
+        .internacao-draft-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .internacao-draft-actions small {
+            color: #7b7280 !important;
+            font-size: .82rem;
+        }
+
+        .internacao-draft-actions .btn {
+            min-height: 38px;
+            padding: 7px 13px;
+            border-radius: 9px;
+        }
+
+        .internacao-form-actions .btn-submit-standard {
+            min-width: 150px;
+            min-height: 46px;
+            padding: 9px 18px;
+            font-size: .96rem;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .internacao-form-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .internacao-draft-actions {
+                justify-content: flex-start;
+            }
+
+            .internacao-form-actions .btn-submit-standard {
+                width: 100%;
+            }
+        }
+
         .is-invalid {
             border-color: #dc3545 !important;
         }
@@ -219,6 +326,47 @@
 
         .hospital-col .d-flex.mb-1 {
             margin-bottom: 0 !important;
+        }
+
+        .patient-col > .d-flex.mb-1 {
+            min-height: 24px;
+            margin-bottom: 4px !important;
+            align-items: flex-end !important;
+        }
+
+        .patient-col .control-label {
+            line-height: 1.2;
+            margin-bottom: 0 !important;
+        }
+
+        .patient-label-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: -1px;
+        }
+
+        .patient-inline-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 22px;
+            padding: 3px 12px;
+            border: 1px solid rgba(37, 99, 235, .16);
+            border-radius: 999px;
+            background: rgba(37, 99, 235, .05);
+            color: #3157b7;
+            font-size: .72rem;
+            font-weight: 800;
+            line-height: 1;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .patient-inline-link:hover {
+            background: rgba(37, 99, 235, .10);
+            color: #1d4ed8;
+            text-decoration: none;
         }
 
         .hospital-name-slot {
@@ -830,6 +978,20 @@
             font-weight: 700;
         }
 
+        .auditoria-action-btn--subtle-ia {
+            border-color: rgba(37, 99, 235, .32) !important;
+            background: rgba(37, 99, 235, .04) !important;
+            color: #3157b7 !important;
+            font-weight: 650 !important;
+        }
+
+        .auditoria-action-btn--subtle-ia:hover,
+        .auditoria-action-btn--subtle-ia:focus {
+            border-color: rgba(37, 99, 235, .54) !important;
+            background: rgba(37, 99, 235, .10) !important;
+            color: #1d4ed8 !important;
+        }
+
         .ia-highlight-box {
             margin-top: 2px;
             padding: 10px 12px;
@@ -1099,14 +1261,14 @@
         .internacao-head-grid > .form-group > label,
         .internacao-head-grid > .hospital-col > .d-flex.mb-1,
         .internacao-head-grid > .patient-col > .d-flex.mb-1 {
-            min-height: auto;
+            min-height: 26px;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 1px !important;
+            margin-bottom: 4px !important;
         }
 
         .internacao-head-grid > .form-group > label {
-            margin-bottom: 1px;
+            margin-bottom: 4px !important;
         }
 
         .internacao-head-grid > .hospital-col,
@@ -1138,7 +1300,7 @@
 
         .internacao-head-grid > .hospital-col .d-flex.mb-1,
         .internacao-head-grid > .patient-col .d-flex.mb-1 {
-            margin-bottom: 2px !important;
+            margin-bottom: 4px !important;
         }
 
         .internacao-head-grid .hospital-select-wrapper {
@@ -1630,6 +1792,14 @@
             font-weight: 400;
             font-size: .74rem !important;
             line-height: 1.15;
+        }
+
+        .tabelas-adicionais-card > .tabelas-selects > .tabelas-col > label.control-label {
+            color: #3c2248 !important;
+            font-size: .82rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0 !important;
+            margin-bottom: 8px !important;
         }
 
         .tabelas-adicionais-card .form-control,

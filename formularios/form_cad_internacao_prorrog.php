@@ -636,8 +636,8 @@ if (isset($dados_alta) && is_array($dados_alta)) {
                 <div class="form-group col-sm-3">
                     <label class="control-label" for="prorrog_data_alta_alt_display">Data/Hora Alta</label>
                     <input type="hidden" id="prorrog_data_alta_alt" name="prorrog_data_alta_alt">
-                    <input type="text" class="form-control-sm form-control" id="prorrog_data_alta_alt_display"
-                        placeholder="dd/mm/aaaa hh:mm" autocomplete="off">
+                    <input type="datetime-local" class="form-control-sm form-control" id="prorrog_data_alta_alt_display"
+                        step="60" autocomplete="off">
                 </div>
                 <div class="form-group col-sm-4">
                     <label class="control-label" for="prorrog_tipo_alta_alt">Motivo Alta</label>
@@ -894,9 +894,7 @@ function syncProrrogAltaHiddenFromDisplay() {
 
     const normalized = normalizeProrrogAltaDateTime(display.value);
     hidden.value = normalized;
-    if (normalized) {
-        display.value = formatLocalDateTimeToBR(normalized);
-    }
+    display.value = normalized;
     return normalized;
 }
 
@@ -905,7 +903,7 @@ function setProrrogAltaDateTime(value) {
     const display = document.getElementById('prorrog_data_alta_alt_display');
     const normalized = normalizeProrrogAltaDateTime(value);
     if (hidden) hidden.value = normalized;
-    if (display) display.value = normalized ? formatLocalDateTimeToBR(normalized) : '';
+    if (display) display.value = normalized;
 }
 
 function getSuggestedAltaDateFromProrrog() {
@@ -922,15 +920,26 @@ function getSuggestedAltaDateFromProrrog() {
 
 function syncProrrogAltaBounds() {
     const dataInput = document.getElementById('prorrog_data_alta_alt');
+    const dataDisplay = document.getElementById('prorrog_data_alta_alt_display');
     if (!dataInput) return;
 
     const internDate = getInternacaoDateForProrrog();
     const now = formatLocalDateTimeNow();
     dataInput.dataset.max = now;
+    if (dataDisplay) {
+        dataDisplay.max = now;
+    }
     if (internDate) {
-        dataInput.dataset.min = formatDateToLocalDateTime(internDate);
+        const min = formatDateToLocalDateTime(internDate);
+        dataInput.dataset.min = min;
+        if (dataDisplay) {
+            dataDisplay.min = min;
+        }
     } else {
         delete dataInput.dataset.min;
+        if (dataDisplay) {
+            dataDisplay.removeAttribute('min');
+        }
     }
 }
 
@@ -1225,7 +1234,7 @@ function validateProrrogAltaFields() {
 
     if (!normalized) {
         if (display) display.focus();
-        openProrrogError("Informe a Data/Hora Alta no formato dd/mm/aaaa hh:mm.");
+        openProrrogError("Informe a Data/Hora Alta.");
         return false;
     }
 

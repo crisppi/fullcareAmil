@@ -306,7 +306,7 @@
                             <i class="bi bi-file-earmark-pdf"></i>
                             LER PDF/IMAGEM
                         </button>
-                        <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti-visita">
+                        <button type="button" class="btn btn-sm btn-outline-primary auditoria-action-btn auditoria-action-btn--subtle-ia" id="btn-executar-prompt-uti-visita">
                             <i class="bi bi-cpu"></i>
                             Executar Prompt UTI
                         </button>

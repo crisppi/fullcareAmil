@@ -329,14 +329,59 @@
             || trim((string)($row['troca_de'] ?? '')) !== ''
             || trim((string)($row['troca_para'] ?? '')) !== '';
     }));
+    $detalhesSavedCount = is_array($detalhesDaInt ?? null) ? count($detalhesDaInt) : 0;
+    $tussSavedCount = is_array($tussDaInt ?? null) ? count($tussDaInt) : 0;
+    $prorrogSavedCount = count(array_filter($prorList ?? [], static function ($row) {
+        $row = (array)$row;
+        return trim((string)($row['acomod'] ?? '')) !== ''
+            || trim((string)($row['ini'] ?? '')) !== ''
+            || trim((string)($row['fim'] ?? '')) !== '';
+    }));
+    $utiSavedCount = count(array_filter($utiList ?? [], static function ($row) {
+        $row = (array)$row;
+        return trim((string)($row['entrada'] ?? '')) !== ''
+            || trim((string)($row['saida'] ?? '')) !== ''
+            || trim((string)($row['motivo_uti'] ?? '')) !== ''
+            || trim((string)($row['internado_uti'] ?? '')) !== '';
+    }));
+    $negocSavedCount = count(array_filter($negociacoesInt ?? [], static function ($row) {
+        $row = (array)$row;
+        return trim((string)($row['tipo_negociacao'] ?? '')) !== ''
+            || trim((string)($row['data_inicio_neg'] ?? $row['data_inicio_negoc'] ?? '')) !== ''
+            || trim((string)($row['troca_de'] ?? '')) !== ''
+            || trim((string)($row['troca_para'] ?? '')) !== '';
+    }));
+    $gestaoFilledCount = 0;
+    foreach ($gestaoCamposRelevantes as $campoGestaoTooltip) {
+        $valorGestaoTooltip = $gestaoData[$campoGestaoTooltip] ?? null;
+        if (is_string($valorGestaoTooltip)) {
+            $valorGestaoTooltip = trim($valorGestaoTooltip);
+            if ($valorGestaoTooltip !== '' && strtolower($valorGestaoTooltip) !== 'n') {
+                $gestaoFilledCount++;
+            }
+            continue;
+        }
+        if ($valorGestaoTooltip !== null && $valorGestaoTooltip !== false && $valorGestaoTooltip !== 0 && $valorGestaoTooltip !== '0') {
+            $gestaoFilledCount++;
+        }
+    }
+    $gestaoSavedCount = $hasGestaoReg ? 1 : 0;
 
     if (!function_exists('savedIndicator')) {
-        function savedIndicator(bool $hasData, string $label): string
+        function savedIndicator(bool $hasData, string $sectionName, int $count = 0, string $itemSingular = 'lançamento', string $itemPlural = 'lançamentos', ?string $extraInfo = null): string
         {
             if (!$hasData) {
                 return '';
             }
-            return '<span class="saved-dot" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '"></span>';
+            $safeLabel = htmlspecialchars('Já lançado em ' . $sectionName, ENT_QUOTES, 'UTF-8');
+            return '<span class="saved-indicator" aria-label="' . $safeLabel . '"><span class="saved-indicator__icon">✓</span>Já lançado</span>';
+        }
+    }
+
+    if (!function_exists('savedFieldClass')) {
+        function savedFieldClass(bool $hasData): string
+        {
+            return $hasData ? ' has-saved-record' : '';
         }
     }
 
@@ -471,16 +516,115 @@
             color: #4b1850;
         }
 
-        .saved-dot {
-            display: inline-block;
-            width: 9px;
-            height: 9px;
-            margin-left: 6px;
+        .saved-indicator {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 8px;
+            padding: 3px 9px 3px 6px;
             border-radius: 999px;
-            background: #f59e0b;
-            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18);
+            border: 1px solid rgba(180, 83, 9, .26);
+            background: #fff7ed;
+            color: #92400e;
+            font-size: .69rem;
+            font-weight: 800;
+            line-height: 1;
             vertical-align: middle;
             cursor: help;
+            box-shadow: 0 5px 12px rgba(180, 83, 9, .12);
+            white-space: nowrap;
+        }
+
+        .saved-indicator__icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 999px;
+            background: #f59e0b;
+            color: #fff;
+            font-size: .68rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .tabelas-col.has-saved-record {
+            border-radius: 13px;
+            padding: 0 0 2px;
+        }
+
+        .tabelas-col.has-saved-record .control-label {
+            color: #5e2363;
+        }
+
+        .tabelas-col.has-saved-record .form-control {
+            border-color: #f59e0b !important;
+            background: linear-gradient(180deg, #fffaf0 0%, #fff4df 100%) !important;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, .13), inset 0 1px 0 rgba(255, 255, 255, .8) !important;
+        }
+
+        .tabelas-adicionais-card .tabelas-selects > .tabelas-col label.control-label {
+            color: #3c2248 !important;
+            font-size: .82rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0 !important;
+            margin-bottom: 8px !important;
+        }
+
+        .edit-form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 28px;
+            padding: 16px 18px;
+            border: 1px solid rgba(94, 35, 99, .10);
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #faf7fb 100%);
+        }
+
+        .edit-form-actions .btn-submit-standard {
+            min-width: 150px;
+            min-height: 46px;
+            padding: 9px 18px;
+            font-size: .96rem;
+            border-radius: 10px;
+        }
+
+        .edit-draft-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .edit-draft-actions small {
+            color: #7b7280 !important;
+            font-size: .82rem;
+        }
+
+        .edit-draft-actions .btn {
+            min-height: 38px;
+            padding: 7px 13px;
+            border-radius: 9px;
+        }
+
+        @media (max-width: 640px) {
+            .edit-form-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .edit-draft-actions {
+                justify-content: flex-start;
+            }
+
+            .edit-form-actions .btn-submit-standard {
+                width: 100%;
+            }
         }
 
         #tabelas-adicionais-paineis-edit #container-gestao[style*="block"] {
@@ -999,7 +1143,7 @@
                                     <i class="bi bi-file-earmark-pdf"></i>
                                     LER PDF/IMAGEM
                                 </button>
-                                <button type="button" class="btn btn-sm btn-primary auditoria-action-btn" id="btn-executar-prompt-uti">
+                                <button type="button" class="btn btn-sm btn-outline-primary auditoria-action-btn auditoria-action-btn--subtle-ia" id="btn-executar-prompt-uti">
                                     <i class="bi bi-cpu"></i>
                                     Executar Prompt UTI
                                 </button>
@@ -1042,49 +1186,49 @@
                             </h4>
                         </div>
                         <div class="tabelas-selects d-flex flex-wrap justify-content-between align-items-end">
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="relatorio-detalhado">Relatório detalhado<?= savedIndicator($hasDetalhesReg, 'Existem dados salvos em Relatório detalhado') ?></label>
-                                <select class="input-lg-fullcare form-control detail-select" id="relatorio-detalhado" name="relatorio-detalhado">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasDetalhesReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="relatorio-detalhado">Relatório detalhado<?= savedIndicator($hasDetalhesReg, 'Relatório detalhado', $detalhesSavedCount, 'registro', 'registros') ?></label>
+                                <select class="input-lg-fullcare form-control detail-select<?= savedFieldClass($hasDetalhesReg) ?>" id="relatorio-detalhado" name="relatorio-detalhado">
                                     <option value="">Selecione</option>
                                     <option value="s">Sim</option>
                                     <option value="n" selected>Não</option>
                                 </select>
                             </div>
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss<?= savedIndicator($hasTussReg, 'Existem dados salvos em Tuss') ?></label>
-                                <select class="input-lg-fullcare form-control select-purple" id="select_tuss" name="select_tuss">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasTussReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss<?= savedIndicator($hasTussReg, 'Tuss', $tussSavedCount) ?></label>
+                                <select class="input-lg-fullcare form-control select-purple<?= savedFieldClass($hasTussReg) ?>" id="select_tuss" name="select_tuss">
                                     <option value="">Selecione</option>
                                     <option value="s">Sim</option>
                                     <option value="n" selected>Não</option>
                                 </select>
                             </div>
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação<?= savedIndicator($hasProrrogReg, 'Existem dados salvos em Prorrogação') ?></label>
-                                <select class="input-lg-fullcare form-control select-purple" id="select_prorrog" name="select_prorrog">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasProrrogReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação<?= savedIndicator($hasProrrogReg, 'Prorrogação', $prorrogSavedCount) ?></label>
+                                <select class="input-lg-fullcare form-control select-purple<?= savedFieldClass($hasProrrogReg) ?>" id="select_prorrog" name="select_prorrog">
                                     <option value="">Selecione</option>
                                     <option value="s" <?= $forceProrrogSection ? 'selected' : '' ?>>Sim</option>
                                     <option value="n" <?= !$forceProrrogSection ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial<?= savedIndicator($hasGestaoReg, 'Existem dados salvos em Gestão Assistencial') ?></label>
-                                <select class="input-lg-fullcare form-control select-purple" id="select_gestao" name="select_gestao">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasGestaoReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial<?= savedIndicator($hasGestaoReg, 'Gestão Assistencial', $gestaoSavedCount, 'registro', 'registros', $gestaoFilledCount > 0 ? $gestaoFilledCount . ' campo(s) preenchido(s).' : null) ?></label>
+                                <select class="input-lg-fullcare form-control select-purple<?= savedFieldClass($hasGestaoReg) ?>" id="select_gestao" name="select_gestao">
                                     <option value="">Selecione</option>
                                     <option value="s" <?= $forceGestaoSection ? 'selected' : '' ?>>Sim</option>
                                     <option value="n" <?= !$forceGestaoSection ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_uti">UTI<?= savedIndicator($hasUtiReg, 'Existem dados salvos em UTI') ?></label>
-                                <select class="input-lg-fullcare form-control select-purple" id="select_uti" name="select_uti">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasUtiReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="select_uti">UTI<?= savedIndicator($hasUtiReg, 'UTI', $utiSavedCount) ?></label>
+                                <select class="input-lg-fullcare form-control select-purple<?= savedFieldClass($hasUtiReg) ?>" id="select_uti" name="select_uti">
                                     <option value="">Selecione</option>
                                     <option value="s">Sim</option>
                                     <option value="n" selected>Não</option>
                                 </select>
                             </div>
-                            <div class="form-group tabelas-col">
-                                <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações<?= savedIndicator($hasNegocReg, 'Existem dados salvos em Negociações') ?></label>
-                                <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
+                            <div class="form-group tabelas-col<?= savedFieldClass($hasNegocReg) ?>">
+                                <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações<?= savedIndicator($hasNegocReg, 'Negociações', $negocSavedCount, 'negociação', 'negociações') ?></label>
+                                <select class="input-lg-fullcare form-control select-purple<?= savedFieldClass($hasNegocReg) ?>" id="select_negoc" name="select_negoc">
                                     <option value="">Selecione</option>
                                     <option value="s" <?= $forceNegocSection ? 'selected' : '' ?>>Sim</option>
                                     <option value="n" <?= !$forceNegocSection ? 'selected' : '' ?>>Não</option>
@@ -1425,15 +1569,16 @@
                 </div>
                 </div>
 
-                <br>
-                <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                    <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft="fields">Limpar rascunho</button>
+                <div class="edit-form-actions">
+                    <button type="submit" class="btn btn-success btn-submit-standard">
+                        <i class="fas fa-check edit-icon" style="font-size:1rem;"></i>
+                        Atualizar
+                    </button>
+                    <div class="edit-draft-actions">
+                        <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft="fields">Limpar rascunho</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-success btn-submit-standard">
-                    <i class="fas fa-check edit-icon" style="font-size:1rem;margin-right:8px;"></i>
-                    Atualizar
-                </button>
 
                     </form>
                 </div>
