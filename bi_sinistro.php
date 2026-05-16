@@ -85,10 +85,10 @@ foreach ($params as $key => $value) {
 }
 $stmt->execute();
 $stats = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-$totalInternações = (int)($stats['total_internacoes'] ?? 0);
-$totalDiárias = (int)($stats['total_diarias'] ?? 0);
+$totalInternacoes = (int)($stats['total_internacoes'] ?? 0);
+$totalDiarias = (int)($stats['total_diarias'] ?? 0);
 $maiorPermanencia = (int)($stats['maior_permanencia'] ?? 0);
-$mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0;
+$mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0;
 
 $dateExpr = "COALESCE(NULLIF(ca.data_inicial_capeante,'0000-00-00'), NULLIF(ca.data_digit_capeante,'0000-00-00'), NULLIF(ca.data_fech_capeante,'0000-00-00'))";
 $whereFin = "YEAR(ref_date) = :ano";
@@ -161,9 +161,9 @@ foreach ($rowsFin as $row) {
 $labels = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
     .bi-sinistro-chart-sm {
@@ -267,8 +267,8 @@ $labels = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','De
 
     <div class="bi-panel">
         <div class="bi-kpis">
-            <div class="bi-kpi"><small>Internações</small><strong><?= $totalInternações ?></strong></div>
-            <div class="bi-kpi"><small>Diárias</small><strong><?= $totalDiárias ?></strong></div>
+            <div class="bi-kpi"><small>Internações</small><strong><?= $totalInternacoes ?></strong></div>
+            <div class="bi-kpi"><small>Diárias</small><strong><?= $totalDiarias ?></strong></div>
             <div class="bi-kpi"><small>MP</small><strong><?= $mp ?></strong></div>
             <div class="bi-kpi"><small>Maior permanência</small><strong><?= $maiorPermanencia ?></strong></div>
         </div>

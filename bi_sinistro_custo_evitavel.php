@@ -111,8 +111,8 @@ $tableStmt->execute($paramsLonga);
 $tableRows = $tableStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -122,7 +122,7 @@ $tableRows = $tableStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Casos com permanencia longa e readmissoes.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -207,7 +207,7 @@ $tableRows = $tableStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     <div class="bi-panel">
         <h3>Casos com permanencia longa</h3>
         <div class="bi-split">
-            <div class="bi-placeholder">Distribuicao de permanencia e readmissoes.</div>
+            <div class="bi-placeholder">Distribuição de permanencia e readmissoes.</div>
             <div class="bi-list">
                 <div class="bi-list-item">
                     <span>MP longa permanencia</span>
@@ -240,7 +240,7 @@ $tableRows = $tableStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($tableRows as $row): ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= e($row['paciente'] ?? 'Paciente') ?></td>
                             <td><?= fmtInt((int)($row['diarias'] ?? 0)) ?></td>
                             <td><?= fmtMoney((float)($row['custo'] ?? 0)) ?></td>

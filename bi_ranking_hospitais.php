@@ -47,7 +47,7 @@ function topMetric(array $rows, string $metric, int $limit = 10): array
         return (float)($b[$metric] ?? 0) <=> (float)($a[$metric] ?? 0);
     });
     $slice = array_slice($sorted, 0, $limit);
-    $labels = array_map(fn($r) => shortLabel((string)($r['label'] ?? 'Sem informacoes')), $slice);
+    $labels = array_map(fn($r) => shortLabel((string)($r['label'] ?? 'Sem informações')), $slice);
     $values = array_map(fn($r) => round((float)($r[$metric] ?? 0), 2), $slice);
     return [$labels, $values];
 }
@@ -86,7 +86,7 @@ if ($hospitalId) {
 $sql = "
     SELECT
         h.id_hospital,
-        COALESCE(h.nome_hosp, 'Sem informacoes') AS label,
+        COALESCE(h.nome_hosp, 'Sem informações') AS label,
         COUNT(DISTINCT i.id_internacao) AS internacoes,
         SUM(GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1)) AS total_diarias,
         SUM(COALESCE(ca.valor_final, 0)) AS custo_total,
@@ -144,9 +144,9 @@ unset($row);
 [$labelsReinternacoes, $valsReinternacoes] = topMetric($rows, 'reinternacoes');
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/CoolAdmin-master/vendor/chartjs/Chart.bundle.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
@@ -156,7 +156,7 @@ unset($row);
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Internações, MP, % UTI, custo total, custo diária e reinternações.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -230,7 +230,7 @@ unset($row);
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['label'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['label'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($row['internacoes'] ?? 0) ?></td>
                             <td><?= fmtFloat($row['mp'] ?? 0) ?></td>
                             <td><?= fmtPct($row['pct_uti'] ?? 0) ?></td>
@@ -284,7 +284,7 @@ const biBarValueLabelPlugin = {
 
             meta.data.forEach(function(element, index) {
                 const value = Number(dataset.data[index] || 0);
-                if (!Number.isFinite(value)) return;
+                if (!Number.isFinite(value) || value === 0) return;
 
                 const labelFormatter = dataset.valueFormatter || function(v) {
                     return Number(v || 0).toLocaleString('pt-BR');
@@ -333,9 +333,10 @@ function buildBarChart(canvasId, labels, values, tickFormatter) {
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 24
+                    top: 28
                 }
             },
+            biValueLabels: false,
             legend: { display: false },
             scales: scales,
             tooltips: {

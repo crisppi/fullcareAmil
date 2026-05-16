@@ -34,8 +34,8 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -45,7 +45,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Casos com custo elevado e sem sinalizacao clinica clara.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -57,7 +57,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         <h3>Indicadores-chave</h3>
         <div class="bi-kpis kpi-grid-4">
             <div class="bi-kpi kpi-compact">
-                <small>Custo medio</small>
+                <small>Custo médio</small>
                 <strong><?= fmtMoney($custoMedio) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -96,12 +96,12 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informacoes') ?></td>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtMoney((float)($row['custo'] ?? 0)) ?></td>
-                            <td><?= e($row['opme'] === 's' ? 'Sim' : 'Nao') ?></td>
-                            <td><?= e($row['alto_custo'] === 's' ? 'Sim' : 'Nao') ?></td>
-                            <td><?= e($row['evento'] === 's' ? 'Sim' : 'Nao') ?></td>
+                            <td><?= e($row['opme'] === 's' ? 'Sim' : 'Não') ?></td>
+                            <td><?= e($row['alto_custo'] === 's' ? 'Sim' : 'Não') ?></td>
+                            <td><?= e($row['evento'] === 's' ? 'Sim' : 'Não') ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

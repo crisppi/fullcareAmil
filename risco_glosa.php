@@ -21,9 +21,29 @@ include_once("templates/header.php");
             border-radius: 12px;
             border: 1px solid #e7e7e7;
             background: #fff;
-            margin: 0.5rem 0 1rem;
-            padding: 1.5rem;
+            margin: 0.35rem 0 0.8rem;
+            padding: 1rem 1.1rem;
             box-shadow: 0 10px 25px rgba(95,35,99,0.08);
+        }
+        .container-fluid {
+            margin-top: 12px !important;
+            padding: 0 0 12px !important;
+        }
+        .container-fluid h2 {
+            font-size: 1.06rem;
+        }
+        .container-fluid .alert,
+        .container-fluid .table,
+        .container-fluid .text-muted,
+        .container-fluid small,
+        .glosa-toolbar .meta,
+        .glosa-legend .item {
+            font-size: .78rem;
+        }
+        .table thead th,
+        .table td {
+            padding-top: .55rem;
+            padding-bottom: .55rem;
         }
         .alert {
             margin-bottom: 0;
@@ -48,9 +68,9 @@ include_once("templates/header.php");
             align-items:center;
             background:#f4f4ff;
             color:#4338ca;
-            font-size:0.82rem;
+            font-size:0.76rem;
             border-radius:999px;
-            padding:0.2rem 0.65rem;
+            padding:0.18rem 0.58rem;
             margin:0.15rem;
         }
         .glosa-toolbar {
@@ -58,26 +78,26 @@ include_once("templates/header.php");
             justify-content:space-between;
             align-items:center;
             gap:1rem;
-            margin-bottom:1rem;
+            margin-bottom:.75rem;
             flex-wrap:wrap;
         }
         .glosa-toolbar .meta {
             color:#6b7280;
-            font-size:0.92rem;
+            font-size:0.78rem;
         }
         .glosa-legend {
             display:flex;
             flex-wrap:wrap;
             gap:0.5rem;
-            margin:0.25rem 0 1rem;
+            margin:0.15rem 0 0.75rem;
         }
         .glosa-legend .item {
             display:inline-flex;
             align-items:center;
             gap:0.45rem;
-            padding:0.35rem 0.75rem;
+            padding:0.28rem 0.65rem;
             border-radius:999px;
-            font-size:0.84rem;
+            font-size:0.76rem;
             border:1px solid rgba(94,35,99,0.12);
             background:#faf7fc;
             color:#5e2363;

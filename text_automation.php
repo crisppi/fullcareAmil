@@ -20,10 +20,16 @@ include_once("templates/header.php");
 ?>
 
 <style>
+    .container-fluid.mt-5.pt-4 {
+        margin-top: 12px !important;
+        padding-top: 0 !important;
+        padding-bottom: 14px !important;
+    }
+
     .automation-card {
         border-radius: 12px;
         border: 1px solid #e7e7e7;
-        padding: 1.5rem;
+        padding: 1rem 1.1rem;
         background: #fff;
         box-shadow: 0 10px 20px rgba(95, 35, 99, 0.07);
     }
@@ -31,16 +37,25 @@ include_once("templates/header.php");
     .automation-card h4 {
         color: #5e2363;
         font-weight: 600;
+        font-size: .94rem;
     }
 
     .automation-card textarea {
         width: 100%;
-        min-height: 160px;
+        min-height: 138px;
         resize: vertical;
         border-radius: 8px;
         border: 1px solid #d9d9d9;
-        padding: 0.85rem;
-        font-size: 0.95rem;
+        padding: 0.7rem;
+        font-size: 0.82rem;
+    }
+    .container-fluid .alert,
+    .container-fluid .form-label,
+    .container-fluid .form-control,
+    .container-fluid .btn,
+    .container-fluid ul,
+    .container-fluid li {
+        font-size: .78rem;
     }
     </style>
 

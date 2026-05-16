@@ -6,6 +6,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexão inválida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
@@ -24,15 +26,6 @@ $internado = trim((string)(filter_input(INPUT_GET, 'internado') ?? ''));
 $sexo = trim((string)(filter_input(INPUT_GET, 'sexo') ?? ''));
 $uti = trim((string)(filter_input(INPUT_GET, 'uti') ?? ''));
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$patologias = $conn->query("SELECT id_patologia, patologia_pat FROM tb_patologia ORDER BY patologia_pat")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$grupos = $conn->query("SELECT DISTINCT grupo_patologia_int FROM tb_internacao WHERE grupo_patologia_int IS NOT NULL AND grupo_patologia_int <> '' ORDER BY grupo_patologia_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$modos = $conn->query("SELECT DISTINCT modo_internacao_int FROM tb_internacao WHERE modo_internacao_int IS NOT NULL AND modo_internacao_int <> '' ORDER BY modo_internacao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-
 if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $stmtAno = $conn->query("
         SELECT MAX(YEAR(ref_date)) AS ano
@@ -46,6 +39,31 @@ if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $ano = (int)($anoDb['ano'] ?? date('Y'));
 }
 
+$filterScope = [
+    'ano' => $ano,
+    'mes' => $mes,
+    'hospital_id' => $hospitalId,
+    'modo_internacao' => $modoInternação,
+    'grupo_patologia' => $grupoPatologia,
+    'internado' => $internado,
+    'sexo' => $sexo,
+    'uti' => $uti,
+];
+
+$hospitais = array_map(fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $filterScope, [
+    'date_expr' => $dateExpr,
+]));
+$grupos = array_column(bi_fetch_filter_options($conn, 'grupo_patologia', $filterScope, [
+    'date_expr' => $dateExpr,
+]), 'label');
+$modos = array_column(bi_fetch_filter_options($conn, 'modo_internacao', $filterScope, [
+    'date_expr' => $dateExpr,
+]), 'label');
+$patologias = bi_fetch_cid_options($conn, $filterScope, [
+    'date_expr' => $dateExpr,
+    'join_capeante' => true,
+]);
+
 $where = "ref_date IS NOT NULL AND ref_date <> '0000-00-00' AND YEAR(ref_date) = :ano";
 $params = [':ano' => $ano];
 if ($mes > 0) {
@@ -57,7 +75,7 @@ if ($hospitalId) {
     $params[':hospital_id'] = $hospitalId;
 }
 if ($patologiaId) {
-    $where .= " AND fk_patologia_int = :patologia_id";
+    $where .= " AND fk_cid_int = :patologia_id";
     $params[':patologia_id'] = $patologiaId;
 }
 if ($grupoPatologia !== '') {
@@ -109,6 +127,7 @@ $sql = "
             ca.*,
             {$dateExpr} AS ref_date,
             ac.fk_hospital_int,
+            ac.fk_cid_int,
             ac.fk_patologia_int,
             ac.grupo_patologia_int,
             ac.modo_internacao_int,
@@ -128,7 +147,7 @@ foreach ($params as $key => $value) {
 $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-$allocLabels = ['Diárias', 'Mat/med', 'Honorários', 'Oxigênio', 'Taxas', 'SADT'];
+$allocLabels = ['Diárias', 'Mat/Med', 'Honorários', 'Oxigênio', 'Taxas', 'SADT'];
 $allocValues = [
     (float)($row['valor_diarias'] ?? 0),
     (float)($row['valor_matmed'] ?? 0),
@@ -138,7 +157,7 @@ $allocValues = [
     (float)($row['valor_sadt'] ?? 0),
 ];
 
-$glosaLabels = ['Glosa Honorários', 'Glosa Diárias', 'Glosa Mat/med', 'Glosa Oxigênio', 'Glosa SADT', 'Glosa Taxas'];
+$glosaLabels = ['Glosa Honorários', 'Glosa Diárias', 'Glosa Mat/Med', 'Glosa Oxigênio', 'Glosa SADT', 'Glosa Taxas'];
 $glosaValues = [
     (float)($row['glosa_honorarios'] ?? 0),
     (float)($row['glosa_diaria'] ?? 0),
@@ -154,26 +173,16 @@ $barValues = [
     (float)($row['glosa_total'] ?? 0),
     (float)($row['valor_final'] ?? 0),
 ];
+$perfilColors = ['#7cc4ff', '#c06ea3', '#5fd3b5', '#ffc56c', '#a2b5ff', '#ff8fb1'];
+$allocTotal = array_sum($allocValues);
+$glosaTotalBreakdown = array_sum($glosaValues);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260508-perfil-sinistro">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
-<style>
-    .bi-perfil-sinistro-chart {
-        min-height: 240px !important;
-        height: 240px !important;
-        max-height: 240px !important;
-    }
-
-    .bi-perfil-sinistro-chart canvas {
-        height: 240px !important;
-        max-height: 240px !important;
-    }
-</style>
-
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-perfil-sinistro-page">
     <div class="bi-header">
         <h1 class="bi-title">Dashboard Perfil Sinistro</h1>
         <div class="bi-header-actions">
@@ -181,7 +190,7 @@ $barValues = [
         </div>
     </div>
 
-    <form class="bi-panel bi-filters" method="get">
+    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact bi-perfil-sinistro-filters" method="get">
         <div class="bi-filter">
             <label>Hospital</label>
             <select name="hospital_id">
@@ -205,7 +214,7 @@ $barValues = [
             </select>
         </div>
         <div class="bi-filter">
-            <label>Patologia</label>
+            <label>CID</label>
             <select name="patologia_id">
                 <option value="">Todas</option>
                 <?php foreach ($patologias as $p): ?>
@@ -268,30 +277,64 @@ $barValues = [
         </div>
     </form>
 
-    <div class="bi-panel" style="margin-top:16px;">
-        <h3>Alocação dos custos</h3>
-        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartAlloc" height="240" style="height:240px !important;"></canvas></div>
-    </div>
-
-    <div class="bi-panel">
-        <h3>Análise da glosa</h3>
-        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartGlosa" height="240" style="height:240px !important;"></canvas></div>
-    </div>
-
-    <div class="bi-panel">
-        <h3>Valores consolidados</h3>
-        <div class="bi-chart bi-perfil-sinistro-chart" style="height:240px;max-height:240px;"><canvas id="chartValores" height="240" style="height:240px !important;"></canvas></div>
-    </div>
-
-    <div class="bi-panel">
-        <div class="bi-kpis">
-            <div class="bi-kpi"><small>Valor apresentado</small><strong>R$ <?= number_format((float)($row['valor_apresentado'] ?? 0), 2, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Glosa med total</small><strong>R$ <?= number_format((float)($row['glosa_med'] ?? 0), 2, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Glosa enf total</small><strong>R$ <?= number_format((float)($row['glosa_enf'] ?? 0), 2, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Glosa total</small><strong>R$ <?= number_format((float)($row['glosa_total'] ?? 0), 2, ',', '.') ?></strong></div>
-            <div class="bi-kpi"><small>Valor final</small><strong>R$ <?= number_format((float)($row['valor_final'] ?? 0), 2, ',', '.') ?></strong></div>
+    <section class="bi-perfil-sinistro-grid">
+        <div class="bi-panel bi-perfil-chart-panel">
+            <h3>Alocação dos Custos</h3>
+            <div class="bi-perfil-chart-body">
+                <div class="bi-chart bi-perfil-sinistro-chart"><canvas id="chartAlloc"></canvas></div>
+                <div class="bi-perfil-chart-values">
+                    <?php foreach ($allocLabels as $idx => $label): ?>
+                        <?php
+                            $value = (float)($allocValues[$idx] ?? 0);
+                            $pct = $allocTotal > 0 ? ($value / $allocTotal * 100) : 0;
+                        ?>
+                        <div class="bi-perfil-chart-value">
+                            <span class="bi-perfil-chart-dot" style="background: <?= e($perfilColors[$idx] ?? '#7cc4ff') ?>"></span>
+                            <span class="bi-perfil-chart-label"><?= e($label) ?></span>
+                            <strong>R$ <?= number_format($value, 2, ',', '.') ?></strong>
+                            <em><?= number_format($pct, 1, ',', '.') ?>%</em>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <div class="bi-panel bi-perfil-chart-panel">
+            <h3>Análise da Glosa</h3>
+            <div class="bi-perfil-chart-body">
+                <div class="bi-chart bi-perfil-sinistro-chart"><canvas id="chartGlosa"></canvas></div>
+                <div class="bi-perfil-chart-values">
+                    <?php foreach ($glosaLabels as $idx => $label): ?>
+                        <?php
+                            $value = (float)($glosaValues[$idx] ?? 0);
+                            $pct = $glosaTotalBreakdown > 0 ? ($value / $glosaTotalBreakdown * 100) : 0;
+                        ?>
+                        <div class="bi-perfil-chart-value">
+                            <span class="bi-perfil-chart-dot" style="background: <?= e($perfilColors[$idx] ?? '#7cc4ff') ?>"></span>
+                            <span class="bi-perfil-chart-label"><?= e($label) ?></span>
+                            <strong>R$ <?= number_format($value, 2, ',', '.') ?></strong>
+                            <em><?= number_format($pct, 1, ',', '.') ?>%</em>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="bi-panel bi-perfil-chart-panel bi-perfil-values-panel">
+            <h3>Valores Consolidados</h3>
+            <div class="bi-chart bi-perfil-values-chart"><canvas id="chartValores"></canvas></div>
+        </div>
+
+        <div class="bi-panel bi-perfil-kpi-panel">
+            <div class="bi-kpis bi-perfil-kpis">
+                <div class="bi-kpi kpi-finance kpi-finance-primary"><small>Valor apresentado</small><strong>R$ <?= number_format((float)($row['valor_apresentado'] ?? 0), 2, ',', '.') ?></strong></div>
+                <div class="bi-kpi kpi-finance"><small>Glosa med total</small><strong>R$ <?= number_format((float)($row['glosa_med'] ?? 0), 2, ',', '.') ?></strong></div>
+                <div class="bi-kpi kpi-finance"><small>Glosa enf total</small><strong>R$ <?= number_format((float)($row['glosa_enf'] ?? 0), 2, ',', '.') ?></strong></div>
+                <div class="bi-kpi kpi-finance"><small>Glosa total</small><strong>R$ <?= number_format((float)($row['glosa_total'] ?? 0), 2, ',', '.') ?></strong></div>
+                <div class="bi-kpi kpi-finance"><small>Valor final</small><strong>R$ <?= number_format((float)($row['valor_final'] ?? 0), 2, ',', '.') ?></strong></div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -301,7 +344,9 @@ const glosaLabels = <?= json_encode($glosaLabels) ?>;
 const glosaValues = <?= json_encode($glosaValues) ?>;
 const barLabels = <?= json_encode($barLabels) ?>;
 const barValues = <?= json_encode($barValues) ?>;
-
+const perfilColors = <?= json_encode($perfilColors) ?>;
+const perfilTextColor = '#eef7ff';
+const perfilGridColor = 'rgba(235, 246, 255, 0.16)';
 function doughnut(ctx, labels, data) {
     return new Chart(ctx, {
         type: 'doughnut',
@@ -309,20 +354,20 @@ function doughnut(ctx, labels, data) {
             labels,
             datasets: [{
                 data,
-                backgroundColor: ['#7cc4ff','#c06ea3','#5fd3b5','#ffc56c','#a2b5ff','#ff8fb1']
+                backgroundColor: perfilColors,
+                borderColor: 'rgba(7, 32, 52, 0.18)',
+                borderWidth: 1,
+                hoverBorderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            legend: window.biLegendWhite || {},
-            plugins: {
-                labelsRenderer: {
-                    valueType: 'money'
-                }
-            }
-        },
-        plugins: [labelsRenderer()]
+            cutoutPercentage: 68,
+            legend: { display: false },
+            layout: { padding: { left: 12, right: 12, top: 8, bottom: 0 } },
+            biValueLabels: false
+        }
     });
 }
 
@@ -334,66 +379,29 @@ function bar(ctx, labels, data) {
             responsive: true,
             maintainAspectRatio: false,
             legend: { display: false },
-            scales: window.biChartScales ? window.biChartScales() : undefined,
-            plugins: {
-                labelsRenderer: {
-                    valueType: 'money'
-                }
-            }
-        },
-        plugins: [labelsRenderer()]
+            layout: { padding: { left: 10, right: 18, top: 8, bottom: 0 } },
+            scales: {
+                xAxes: [{
+                    ticks: { fontColor: perfilTextColor, maxRotation: 0, autoSkip: false },
+                    gridLines: { display: false }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontColor: perfilTextColor,
+                        beginAtZero: true,
+                        callback: (value) => window.biMoneyTick ? window.biMoneyTick(value) : value
+                    },
+                    gridLines: { color: perfilGridColor, zeroLineColor: perfilGridColor }
+                }]
+            },
+            tooltips: { mode: 'index', intersect: false }
+        }
     });
 }
 
 doughnut(document.getElementById('chartAlloc'), allocLabels, allocValues);
 doughnut(document.getElementById('chartGlosa'), glosaLabels, glosaValues);
 bar(document.getElementById('chartValores'), barLabels, barValues);
-
-function formatMoney(value) {
-    return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-function formatPercent(value, total) {
-    if (!total) return '0%';
-    return ((value / total) * 100).toFixed(1).replace('.', ',') + '%';
-}
-
-function labelsRenderer() {
-    return {
-        afterDatasetsDraw: function(chart) {
-            const cfg = (chart.options.plugins && chart.options.plugins.labelsRenderer) || {};
-            const valueType = cfg.valueType || 'number';
-            const ctx = chart.chart.ctx;
-            ctx.save();
-            ctx.fillStyle = '#eaf6ff';
-            ctx.font = '11px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            chart.data.datasets.forEach((dataset, i) => {
-                const meta = chart.getDatasetMeta(i);
-                if (meta.hidden) {
-                    return;
-                }
-                const total = dataset.data.reduce((sum, v) => sum + (Number(v) || 0), 0);
-                meta.data.forEach((element, index) => {
-                    const value = Number(dataset.data[index] || 0);
-                    if (!value) return;
-
-                    const pos = element.tooltipPosition();
-                    const labelValue = valueType === 'money' ? formatMoney(value) : value.toLocaleString('pt-BR');
-                    const label = labelValue + ' (' + formatPercent(value, total) + ')';
-
-                    ctx.fillText(label, pos.x, pos.y - 10);
-                });
-            });
-            ctx.restore();
-        }
-    };
-}
 
 </script>
 

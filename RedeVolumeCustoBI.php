@@ -3,7 +3,7 @@ include_once("check_logado.php");
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
-    die("Conexao invalida.");
+    die("Conexão inválida.");
 }
 
 function e($v)
@@ -18,34 +18,66 @@ $mes = ($mesInput !== null && $mesInput !== false) ? (int)$mesInput : 0;
 
 $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
     ->fetchAll(PDO::FETCH_ASSOC);
-$anos = $conn->query("SELECT DISTINCT YEAR(data_intern_int) AS ano FROM tb_internacao WHERE data_intern_int IS NOT NULL AND data_intern_int <> '0000-00-00' ORDER BY ano DESC")
+$anos = $conn->query("SELECT DISTINCT YEAR(data_alta_alt) AS ano FROM tb_alta WHERE data_alta_alt IS NOT NULL AND data_alta_alt <> '0000-00-00' AND data_alta_alt <= CURDATE() ORDER BY ano DESC")
     ->fetchAll(PDO::FETCH_COLUMN);
 if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
     $ano = !empty($anos) ? (int)$anos[0] : (int)date('Y');
 }
 
-$where = "i.data_intern_int IS NOT NULL";
+$where = "al.data_alta_alt IS NOT NULL
+    AND al.data_alta_alt <> '0000-00-00'
+    AND al.data_alta_alt <= CURDATE()
+    AND i.data_intern_int IS NOT NULL
+    AND i.data_intern_int <> '0000-00-00'
+    AND DATEDIFF(al.data_alta_alt, i.data_intern_int) >= 0";
 $params = [];
 if (!empty($ano)) {
-    $where .= " AND YEAR(i.data_intern_int) = :ano";
+    $where .= " AND YEAR(al.data_alta_alt) = :ano";
     $params[':ano'] = (int)$ano;
 }
 if (!empty($mes)) {
-    $where .= " AND MONTH(i.data_intern_int) = :mes";
+    $where .= " AND MONTH(al.data_alta_alt) = :mes";
     $params[':mes'] = (int)$mes;
 }
 
+$costExpr = "COALESCE(NULLIF(ca.valor_final_capeante, 0), ca.valor_apresentado_capeante, 0)";
+
 $sql = "
     SELECT
-        h.nome_hosp,
-        COUNT(DISTINCT i.id_internacao) AS internacoes,
-        SUM(ca.valor_final_capeante) AS total_custo,
-        AVG(ca.valor_final_capeante) AS custo_medio
-    FROM tb_capeante ca
-    INNER JOIN tb_internacao i ON i.id_internacao = ca.fk_int_capeante
-    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
-    WHERE {$where}
-    GROUP BY h.nome_hosp
+        nome_hosp,
+        COUNT(*) AS internacoes,
+        SUM(custo_internacao) AS total_custo,
+        SUM(diarias) AS total_diarias,
+        CASE
+            WHEN COUNT(*) > 0
+            THEN SUM(custo_internacao) / COUNT(*)
+            ELSE 0
+        END AS custo_medio,
+        CASE
+            WHEN SUM(diarias) > 0
+            THEN SUM(custo_internacao) / SUM(diarias)
+            ELSE 0
+        END AS custo_medio_diaria
+    FROM (
+        SELECT
+            i.id_internacao,
+            h.id_hospital,
+            h.nome_hosp,
+            SUM({$costExpr}) AS custo_internacao,
+            GREATEST(1, DATEDIFF(al.data_alta_alt, i.data_intern_int) + 1) AS diarias
+        FROM tb_capeante ca
+        INNER JOIN tb_internacao i ON i.id_internacao = ca.fk_int_capeante
+        LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+        LEFT JOIN (
+            SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt
+            FROM tb_alta
+            GROUP BY fk_id_int_alt
+        ) al ON al.fk_id_int_alt = i.id_internacao
+        WHERE {$where}
+        GROUP BY i.id_internacao, h.id_hospital, h.nome_hosp, al.data_alta_alt, i.data_intern_int
+        HAVING custo_internacao > 0
+    ) base
+    GROUP BY id_hospital, nome_hosp
     ORDER BY total_custo DESC
 ";
 $stmt = $conn->prepare($sql);
@@ -56,8 +88,8 @@ $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -103,12 +135,13 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         <th>Internações</th>
                         <th>Custo total</th>
                         <th>Custo médio</th>
+                        <th>Custo médio diária</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!$rows): ?>
                         <tr>
-                            <td colspan="4">Sem informações</td>
+                            <td colspan="5">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($rows as $row): ?>
@@ -117,6 +150,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                                 <td><?= number_format((int)($row['internacoes'] ?? 0), 0, ',', '.') ?></td>
                                 <td>R$ <?= number_format((float)($row['total_custo'] ?? 0), 2, ',', '.') ?></td>
                                 <td>R$ <?= number_format((float)($row['custo_medio'] ?? 0), 2, ',', '.') ?></td>
+                                <td>R$ <?= number_format((float)($row['custo_medio_diaria'] ?? 0), 2, ',', '.') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>

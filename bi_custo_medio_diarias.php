@@ -77,9 +77,9 @@ for ($m = 1; $m <= 12; $m++) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/CoolAdmin-master/vendor/chartjs/Chart.bundle.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -89,7 +89,7 @@ for ($m = 1; $m <= 12; $m++) {
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Resumo mensal de valores apresentados, glosa e finais.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -131,7 +131,7 @@ for ($m = 1; $m <= 12; $m++) {
         <table class="bi-table">
             <thead>
                 <tr>
-                    <th>Mes</th>
+                    <th>Mês</th>
                     <th>Valor</th>
                 </tr>
             </thead>
@@ -153,7 +153,7 @@ for ($m = 1; $m <= 12; $m++) {
         <table class="bi-table">
             <thead>
                 <tr>
-                    <th>Mes</th>
+                    <th>Mês</th>
                     <th>Valor</th>
                 </tr>
             </thead>
@@ -175,7 +175,7 @@ for ($m = 1; $m <= 12; $m++) {
         <table class="bi-table">
             <thead>
                 <tr>
-                    <th>Mes</th>
+                    <th>Mês</th>
                     <th>Valor</th>
                 </tr>
             </thead>

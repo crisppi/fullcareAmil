@@ -820,7 +820,7 @@ if (typeof jQuery !== 'undefined') {
                         <div class="filter-memory-actions">
                             <button type="button" id="btnApplyLastFilter">Aplicar último filtro</button>
                             <button type="button" id="btnSaveFavFilter">Salvar como favorito</button>
-                            <button type="button" id="btnClearFilters" class="btn-filtro-limpar">Limpar filtros</button>
+                            <button type="button" id="btnClearFilters" class="btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar filtros</button>
                         </div>
                     </div>
                     <div class="filter-favorites" id="filterFavorites"></div>
@@ -900,7 +900,7 @@ if (typeof jQuery !== 'undefined') {
                                 id="btnClearFiltersIcon"
                                 class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                                 style="margin-top:0;" title="Limpar filtros" aria-label="Limpar filtros">
-                                <i class="bi bi-x-lg"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     </div>

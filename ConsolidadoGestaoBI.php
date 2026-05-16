@@ -6,6 +6,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
@@ -54,18 +56,26 @@ $antecedenteId = filter_input(INPUT_GET, 'antecedente_id', FILTER_VALIDATE_INT) 
 $sexo = trim((string)(filter_input(INPUT_GET, 'sexo') ?? ''));
 $faixaEtaria = trim((string)(filter_input(INPUT_GET, 'faixa_etaria') ?? ''));
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$tiposInt = $conn->query("SELECT DISTINCT tipo_admissao_int FROM tb_internacao WHERE tipo_admissao_int IS NOT NULL AND tipo_admissao_int <> '' ORDER BY tipo_admissao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$modos = $conn->query("SELECT DISTINCT modo_internacao_int FROM tb_internacao WHERE modo_internacao_int IS NOT NULL AND modo_internacao_int <> '' ORDER BY modo_internacao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$patologias = $conn->query("SELECT id_patologia, patologia_pat FROM tb_patologia ORDER BY patologia_pat")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$grupos = $conn->query("SELECT DISTINCT grupo_patologia_int FROM tb_internacao WHERE grupo_patologia_int IS NOT NULL AND grupo_patologia_int <> '' ORDER BY grupo_patologia_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$antecedentes = $conn->query("SELECT id_antecedente, antecedente_ant FROM tb_antecedente WHERE antecedente_ant IS NOT NULL AND antecedente_ant <> '' ORDER BY antecedente_ant")
-    ->fetchAll(PDO::FETCH_ASSOC);
+$filterScope = [
+    'ano' => $ano,
+    'mes' => $mes,
+    'hospital_id' => $hospitalId,
+    'tipo_internacao' => $tipoInternação,
+    'modo_internacao' => $modoInternação,
+    'grupo_patologia' => $grupoPatologia,
+    'internado' => $internado,
+    'uti' => $uti,
+    'antecedente_id' => $antecedenteId,
+    'sexo' => $sexo,
+    'faixa_etaria' => $faixaEtaria,
+];
+
+$hospitais = array_map(fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $filterScope));
+$tiposInt = array_column(bi_fetch_filter_options($conn, 'tipo_internacao', $filterScope), 'label');
+$modos = array_column(bi_fetch_filter_options($conn, 'modo_internacao', $filterScope), 'label');
+$patologias = bi_fetch_cid_options($conn, $filterScope);
+$grupos = array_column(bi_fetch_filter_options($conn, 'grupo_patologia', $filterScope), 'label');
+$antecedentes = array_map(fn($r) => ['id_antecedente' => $r['value'], 'antecedente_ant' => $r['label']], bi_fetch_filter_options($conn, 'antecedente', $filterScope));
 $anos = $conn->query("SELECT DISTINCT YEAR(data_intern_int) AS ano FROM tb_internacao WHERE data_intern_int IS NOT NULL AND data_intern_int <> '0000-00-00' ORDER BY ano DESC")
     ->fetchAll(PDO::FETCH_COLUMN);
 if (!filter_has_var(INPUT_GET, 'ano') && $anos) {
@@ -126,7 +136,7 @@ function build_where_internacao(array $filters, array &$params, bool $applyUti):
         $params[':modo_internacao'] = $filters['modo_internacao'];
     }
     if (!empty($filters['patologia_id'])) {
-        $where .= " AND i.fk_patologia_int = :patologia_id";
+        $where .= " AND i.fk_cid_int = :patologia_id";
         $params[':patologia_id'] = (int)$filters['patologia_id'];
     }
     if (!empty($filters['grupo_patologia'])) {
@@ -189,7 +199,7 @@ function build_where_financeiro(array $filters, array &$params, bool $applyUti):
         $params[':modo_internacao'] = $filters['modo_internacao'];
     }
     if (!empty($filters['patologia_id'])) {
-        $where .= " AND fk_patologia_int = :patologia_id";
+        $where .= " AND fk_cid_int = :patologia_id";
         $params[':patologia_id'] = (int)$filters['patologia_id'];
     }
     if (!empty($filters['grupo_patologia'])) {
@@ -283,6 +293,7 @@ function financeiro_stats(PDO $conn, array $filters): array
                 ac.fk_hospital_int,
                 ac.tipo_admissao_int,
                 ac.modo_internacao_int,
+                ac.fk_cid_int,
                 ac.fk_patologia_int,
                 ac.grupo_patologia_int,
                 ac.fk_patologia2,
@@ -464,6 +475,7 @@ function custos_breakdown(PDO $conn, array $filters): array
                 ac.fk_hospital_int,
                 ac.tipo_admissao_int,
                 ac.modo_internacao_int,
+                ac.fk_cid_int,
                 ac.fk_patologia_int,
                 ac.grupo_patologia_int,
                 ac.fk_patologia2,
@@ -605,12 +617,12 @@ $glosaSeries = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme bi-consolidado-page">
     <div class="bi-header">
         <h1 class="bi-title">Consolidado Gestão</h1>
         <div class="bi-header-actions">
@@ -621,7 +633,7 @@ $glosaSeries = [
         </div>
     </div>
 
-    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact" method="get">
+    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact bi-consolidado-filters" method="get">
         <div class="bi-filter">
             <label>Hospital</label>
             <select name="hospital_id">
@@ -656,7 +668,7 @@ $glosaSeries = [
             </select>
         </div>
         <div class="bi-filter">
-            <label>Patologia</label>
+            <label>CID</label>
             <select name="patologia_id">
                 <option value="">Todos</option>
                 <?php foreach ($patologias as $p): ?>
@@ -748,58 +760,55 @@ $glosaSeries = [
         </div>
     </form>
 
-    <div class="bi-layout" style="margin-top:16px;">
-        <section class="bi-main bi-stack">
-            <div class="bi-grid fixed-2">
-                <div class="bi-panel">
-                    <h3>Alocacao dos Custos</h3>
-                    <div class="bi-chart"><canvas id="chartAlocacao"></canvas></div>
+    <div class="bi-layout bi-consolidado-layout">
+        <section class="bi-main bi-stack bi-consolidado-main">
+            <div class="bi-consolidado-chart-grid">
+                <div class="bi-panel bi-chart-panel">
+                    <h3>Alocação dos Custos</h3>
+                    <div class="bi-chart bi-chart-wide"><canvas id="chartAlocacao"></canvas></div>
                 </div>
-                <div class="bi-panel">
-                    <h3>Composicao do Custo (%)</h3>
-                    <div class="bi-chart"><canvas id="chartComposicao"></canvas></div>
+                <div class="bi-panel bi-chart-panel">
+                    <h3>Composição do Custo (%)</h3>
+                    <div class="bi-chart bi-chart-donut"><canvas id="chartComposicao"></canvas></div>
                 </div>
-            </div>
-
-            <div class="bi-grid fixed-2">
-                <div class="bi-panel">
-                    <h3>Analise da Glosa</h3>
-                    <div class="bi-chart"><canvas id="chartGlosa"></canvas></div>
+                <div class="bi-panel bi-chart-panel">
+                    <h3>Análise da Glosa</h3>
+                    <div class="bi-chart bi-chart-donut"><canvas id="chartGlosa"></canvas></div>
                 </div>
-                <div class="bi-panel">
+                <div class="bi-panel bi-chart-panel">
                     <h3>Glosa</h3>
-                    <div class="bi-panel-compact" style="min-height:220px;">
+                    <div class="bi-panel-compact bi-empty-state">
                         <div class="text-muted">Sem dados para exibir</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <aside class="bi-sidebar bi-stack">
-            <div class="bi-kpi kpi-berry">
+        <aside class="bi-sidebar bi-stack bi-consolidado-sidebar">
+            <div class="bi-kpi kpi-finance kpi-finance-primary">
                 <small>Valor apresentado</small>
                 <strong class="bi-kpi-big"><?= fmt_money($selFinanceiro['valor_apresentado']) ?></strong>
             </div>
-            <div class="bi-kpi kpi-berry with-badge">
+            <div class="bi-kpi kpi-finance with-badge">
                 <small>Glosa medica</small>
                 <strong><?= fmt_money($selFinanceiro['glosa_med']) ?></strong>
                 <span class="bi-kpi-badge"><?= fmt_num($glosaMedPct, 2) ?>%</span>
             </div>
-            <div class="bi-kpi kpi-berry with-badge">
+            <div class="bi-kpi kpi-finance with-badge">
                 <small>Glosa enfermagem</small>
                 <strong><?= fmt_money($selFinanceiro['glosa_enf']) ?></strong>
                 <span class="bi-kpi-badge"><?= fmt_num($glosaEnfPct, 2) ?>%</span>
             </div>
-            <div class="bi-kpi kpi-berry with-badge">
+            <div class="bi-kpi kpi-finance with-badge">
                 <small>Glosa total</small>
                 <strong><?= fmt_money($selFinanceiro['glosa_total']) ?></strong>
                 <span class="bi-kpi-badge"><?= fmt_num($glosaTotalPct, 2) ?>%</span>
             </div>
-            <div class="bi-kpi kpi-berry">
+            <div class="bi-kpi kpi-finance">
                 <small>Valor final</small>
                 <strong><?= fmt_money($selFinanceiro['valor_final']) ?></strong>
             </div>
-            <div class="bi-kpi kpi-berry">
+            <div class="bi-kpi kpi-finance">
                 <small>Custo médio diária</small>
                 <strong><?= fmt_money($custoMedioDiaria) ?></strong>
             </div>
@@ -812,30 +821,51 @@ const alocSeries = <?= json_encode($alocSeries, JSON_UNESCAPED_UNICODE) ?>;
 const compSeries = <?= json_encode($compSeries, JSON_UNESCAPED_UNICODE) ?>;
 const compPercents = <?= json_encode($compPercents, JSON_UNESCAPED_UNICODE) ?>;
 const glosaSeries = <?= json_encode($glosaSeries, JSON_UNESCAPED_UNICODE) ?>;
+const chartTextColor = '#eef7ff';
+const chartGridColor = 'rgba(235, 246, 255, 0.16)';
+const chartBorderColor = 'rgba(7, 32, 52, 0.18)';
+const legendConfig = {
+  labels: {
+    fontColor: chartTextColor,
+    boxWidth: 14,
+    padding: 14,
+    usePointStyle: true
+  }
+};
 
 new Chart(document.getElementById('chartAlocacao'), {
   type: 'bar',
   data: {
-    labels: ['Custos'],
-    datasets: alocSeries.map(item => ({
-      label: item.label,
-      data: [item.value],
-      backgroundColor: item.color
-    }))
+    labels: alocSeries.map(item => item.label),
+    datasets: [{
+      label: 'Custos',
+      data: alocSeries.map(item => item.value),
+      backgroundColor: alocSeries.map(item => item.color),
+      borderColor: 'rgba(255,255,255,0.18)',
+      borderWidth: 1,
+      maxBarThickness: 58
+    }]
   },
   options: {
-    plugins: { legend: { labels: { color: '#e8f1ff' } } },
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: { display: false },
+    layout: { padding: { left: 10, right: 18, top: 8, bottom: 0 } },
     scales: {
-      x: { stacked: true, ticks: { color: '#e8f1ff' }, grid: { display: false } },
-      y: {
-        stacked: true,
+      xAxes: [{
+        ticks: { fontColor: chartTextColor, maxRotation: 0, autoSkip: false },
+        gridLines: { display: false }
+      }],
+      yAxes: [{
         ticks: {
-          color: '#e8f1ff',
+          fontColor: chartTextColor,
+          beginAtZero: true,
           callback: (value) => window.biMoneyTick ? window.biMoneyTick(value) : value
         },
-        grid: { color: 'rgba(255,255,255,0.1)' }
-      }
-    }
+        gridLines: { color: chartGridColor, zeroLineColor: chartGridColor }
+      }]
+    },
+    tooltips: { mode: 'index', intersect: false }
   }
 });
 
@@ -845,11 +875,19 @@ new Chart(document.getElementById('chartComposicao'), {
     labels: compSeries.map(item => item.label),
     datasets: [{
       data: compPercents,
-      backgroundColor: compSeries.map(item => item.color)
+      backgroundColor: compSeries.map(item => item.color),
+      borderColor: chartBorderColor,
+      borderWidth: 1,
+      hoverBorderWidth: 1
     }]
   },
   options: {
-    plugins: { legend: { position: 'left', labels: { color: '#e8f1ff' } } }
+    responsive: true,
+    maintainAspectRatio: false,
+    cutoutPercentage: 68,
+    rotation: -0.5 * Math.PI,
+    legend: Object.assign({ position: 'bottom' }, legendConfig),
+    layout: { padding: { left: 12, right: 12, top: 8, bottom: 4 } }
   }
 });
 
@@ -859,11 +897,19 @@ new Chart(document.getElementById('chartGlosa'), {
     labels: glosaSeries.map(item => item.label),
     datasets: [{
       data: glosaSeries.map(item => item.value),
-      backgroundColor: glosaSeries.map(item => item.color)
+      backgroundColor: glosaSeries.map(item => item.color),
+      borderColor: chartBorderColor,
+      borderWidth: 1,
+      hoverBorderWidth: 1
     }]
   },
   options: {
-    plugins: { legend: { position: 'left', labels: { color: '#e8f1ff' } } }
+    responsive: true,
+    maintainAspectRatio: false,
+    cutoutPercentage: 68,
+    rotation: -0.5 * Math.PI,
+    legend: Object.assign({ position: 'bottom' }, legendConfig),
+    layout: { padding: { left: 12, right: 12, top: 8, bottom: 4 } }
   }
 });
 </script>

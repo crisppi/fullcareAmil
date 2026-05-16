@@ -32,13 +32,6 @@ if (!$dataIni || !$dataFim) {
     $dataFim = $dataFim ?: ($maxDt ?: $hoje);
 }
 
-$fonteConexao = $GLOBALS['fonte_conexao'] ?? '';
-$utiCount = 0;
-try {
-    $utiCount = (int)$conn->query("SELECT COUNT(*) FROM tb_uti")->fetchColumn();
-} catch (Throwable $e) {
-    $utiCount = 0;
-}
 $internado = trim((string)(filter_input(INPUT_GET, 'internado') ?? ''));
 $hospitalId = filter_input(INPUT_GET, 'hospital_id', FILTER_VALIDATE_INT) ?: null;
 $tipoInternação = trim((string)(filter_input(INPUT_GET, 'tipo_internacao') ?? ''));
@@ -119,15 +112,15 @@ function distQuery(PDO $conn, string $labelExpr, string $sqlBase, array $params,
     return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 }
 
-$rowsScore = distQuery($conn, "COALESCE(NULLIF(u.score_uti,''), 'Sem informacoes')", $sqlBase, $params);
-$rowsMotivo = distQuery($conn, "COALESCE(NULLIF(u.motivo_uti,''), 'Sem informacoes')", $sqlBase, $params);
-$rowsJust = distQuery($conn, "COALESCE(NULLIF(u.just_uti,''), 'Sem informacoes')", $sqlBase, $params, 6);
-$rowsUti = distQuery($conn, "CASE WHEN u.internado_uti = 's' THEN 'Sim' WHEN u.internado_uti = 'n' THEN 'Nao' ELSE 'Sem informacoes' END", $sqlBase, $params, 6);
-$rowsDva = distQuery($conn, "CASE WHEN u.dva_uti = 's' THEN 'Sim' WHEN u.dva_uti = 'n' THEN 'Nao' ELSE 'Sem informacoes' END", $sqlBase, $params, 6);
-$rowsSaps = distQuery($conn, "COALESCE(NULLIF(u.saps_uti,''), 'Sem informacoes')", $sqlBase, $params, 10);
-$rowsSexo = distQuery($conn, "COALESCE(NULLIF(pa.sexo_pac,''), 'Sem informacoes')", $sqlBase, $params, 6);
+$rowsScore = distQuery($conn, "COALESCE(NULLIF(u.score_uti,''), 'Sem informações')", $sqlBase, $params);
+$rowsMotivo = distQuery($conn, "COALESCE(NULLIF(u.motivo_uti,''), 'Sem informações')", $sqlBase, $params);
+$rowsJust = distQuery($conn, "COALESCE(NULLIF(u.just_uti,''), 'Sem informações')", $sqlBase, $params, 6);
+$rowsUti = distQuery($conn, "CASE WHEN u.internado_uti = 's' THEN 'Sim' WHEN u.internado_uti = 'n' THEN 'Não' ELSE 'Sem informações' END", $sqlBase, $params, 6);
+$rowsDva = distQuery($conn, "CASE WHEN u.dva_uti = 's' THEN 'Sim' WHEN u.dva_uti = 'n' THEN 'Não' ELSE 'Sem informações' END", $sqlBase, $params, 6);
+$rowsSaps = distQuery($conn, "COALESCE(NULLIF(u.saps_uti,''), 'Sem informações')", $sqlBase, $params, 10);
+$rowsSexo = distQuery($conn, "COALESCE(NULLIF(pa.sexo_pac,''), 'Sem informações')", $sqlBase, $params, 6);
 $rowsIdade = distQuery($conn, "CASE
-        WHEN pa.idade_pac IS NULL THEN 'Sem informacoes'
+        WHEN pa.idade_pac IS NULL THEN 'Sem informações'
         WHEN pa.idade_pac < 20 THEN '0-19'
         WHEN pa.idade_pac < 40 THEN '20-39'
         WHEN pa.idade_pac < 60 THEN '40-59'
@@ -148,14 +141,14 @@ foreach ($params as $key => $value) {
 }
 $stmt->execute();
 $kpis = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-$totalInternações = (int)($kpis['total_internacoes'] ?? 0);
-$totalDiárias = (int)($kpis['total_diarias'] ?? 0);
+$totalInternacoes = (int)($kpis['total_internacoes'] ?? 0);
+$totalDiarias = (int)($kpis['total_diarias'] ?? 0);
 $maiorPermanencia = (int)($kpis['maior_permanencia'] ?? 0);
-$mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0.0;
+$mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0.0;
 
 function labelsAndValues(array $rows): array
 {
-    $labels = array_map(fn($r) => $r['label'] ?? 'Sem informacoes', $rows);
+    $labels = array_map(fn($r) => $r['label'] ?? 'Sem informações', $rows);
     $values = array_map(fn($r) => (int)($r['total'] ?? 0), $rows);
     return [$labels, $values];
 }
@@ -170,18 +163,15 @@ function labelsAndValues(array $rows): array
 [$labelsIdade, $valuesIdade] = labelsAndValues($rowsIdade);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <h1 class="bi-title">Dashboard UTI</h1>
         <div class="bi-header-actions">
-            <div class="text-end text-muted" style="font-size:0.75rem;">
-                <?= e($fonteConexao) ?> · UTI: <?= (int)$utiCount ?>
-            </div>
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
@@ -294,11 +284,11 @@ function labelsAndValues(array $rows): array
             <div class="bi-kpis">
                 <div class="bi-kpi">
                     <small>Internações</small>
-                    <strong><?= $totalInternações ?></strong>
+                    <strong><?= $totalInternacoes ?></strong>
                 </div>
                 <div class="bi-kpi">
                     <small>Diárias</small>
-                    <strong><?= $totalDiárias ?></strong>
+                    <strong><?= $totalDiarias ?></strong>
                 </div>
                 <div class="bi-kpi">
                     <small>MP</small>

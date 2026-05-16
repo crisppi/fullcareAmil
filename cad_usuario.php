@@ -32,7 +32,7 @@ if (empty($id_usuario)) {
     }
 }
 ?>
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 <div id="main-container" class="internacao-page cadastro-layout">
     <div class="internacao-page__hero">
         <div class="internacao-page__hero-main">

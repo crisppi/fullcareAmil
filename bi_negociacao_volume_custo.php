@@ -18,14 +18,14 @@ $summary = $summaryStmt->fetch(PDO::FETCH_ASSOC) ?: [];
 $internacoes = (int)($summary['internacoes'] ?? 0);
 $custoTotal = (float)($summary['custo_total'] ?? 0);
 
-$rowsStmt = $conn->prepare("\n    SELECT\n        h.nome_hosp AS hospital,\n        COUNT(DISTINCT i.id_internacao) AS internacoes,\n        SUM({$costExpr}) AS custo_total,\n        AVG({$costExpr}) AS custo_medio\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_capeante ca ON ca.fk_int_capeante = i.id_internacao\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital\n    HAVING h.id_hospital IS NOT NULL\n    ORDER BY custo_total DESC\n    LIMIT 10\n");
+$rowsStmt = $conn->prepare("\n    SELECT\n        hospital,\n        COUNT(*) AS internacoes,\n        SUM(custo_internacao) AS custo_total,\n        SUM(diarias) AS total_diarias,\n        CASE\n            WHEN COUNT(*) > 0 THEN SUM(custo_internacao) / COUNT(*)\n            ELSE 0\n        END AS custo_medio,\n        CASE\n            WHEN SUM(diarias) > 0 THEN SUM(custo_internacao) / SUM(diarias)\n            ELSE 0\n        END AS custo_medio_diaria\n    FROM (\n        SELECT\n            i.id_internacao,\n            h.id_hospital AS hospital_id,\n            h.nome_hosp AS hospital,\n            SUM({$costExpr}) AS custo_internacao,\n            GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1) AS diarias\n        FROM tb_internacao i\n        LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n        LEFT JOIN (\n            SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt\n            FROM tb_alta\n            GROUP BY fk_id_int_alt\n        ) al ON al.fk_id_int_alt = i.id_internacao\n        LEFT JOIN tb_capeante ca ON ca.fk_int_capeante = i.id_internacao\n        {$internJoins}\n        WHERE {$internWhere}\n        GROUP BY i.id_internacao, h.id_hospital, h.nome_hosp, al.data_alta_alt, i.data_intern_int\n    ) base\n    WHERE hospital_id IS NOT NULL\n    GROUP BY hospital_id, hospital\n    ORDER BY custo_total DESC\n    LIMIT 10\n");
 biBindParams($rowsStmt, $internParams);
 $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -35,7 +35,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Peso de volume e impacto financeiro por hospital.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -51,11 +51,11 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <strong><?= fmtMoney($custoTotal) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Internacoes</small>
+                <small>Internações</small>
                 <strong><?= fmtInt($internacoes) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Custo medio</small>
+                <small>Custo médio</small>
                 <strong><?= fmtMoney($internacoes > 0 ? ($custoTotal / $internacoes) : 0) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -71,23 +71,25 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Internacoes</th>
+                    <th>Internações</th>
                     <th>Custo total</th>
-                    <th>Custo medio</th>
+                    <th>Custo médio</th>
+                    <th>Custo médio diária</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$rows): ?>
                     <tr>
-                        <td colspan="4" class="bi-empty">Sem dados com os filtros atuais.</td>
+                        <td colspan="5" class="bi-empty">Sem dados com os filtros atuais.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt((int)($row['internacoes'] ?? 0)) ?></td>
                             <td><?= fmtMoney((float)($row['custo_total'] ?? 0)) ?></td>
                             <td><?= fmtMoney((float)($row['custo_medio'] ?? 0)) ?></td>
+                            <td><?= fmtMoney((float)($row['custo_medio_diaria'] ?? 0)) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

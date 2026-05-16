@@ -28,18 +28,18 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
             <h1 class="bi-title">Tempo de Resposta</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Tempo entre internacao, visita e alta.</div>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Tempo entre internação, visita e alta.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -59,7 +59,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <strong><?= fmtFloat($tempoAlta, 1) ?> dias</strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Internacoes analisadas</small>
+                <small>Internações analisadas</small>
                 <strong><?= fmtInt($casos) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -88,7 +88,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtFloat((float)($row['tempo_visita'] ?? 0), 1) ?></td>
                             <td><?= fmtFloat((float)($row['tempo_alta'] ?? 0), 1) ?></td>
                             <td><?= fmtInt((int)($row['casos'] ?? 0)) ?></td>

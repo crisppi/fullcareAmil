@@ -77,10 +77,10 @@ foreach ($params as $key => $value) {
 }
 $stmt->execute();
 $stats = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
-$totalInternações = (int)($stats['total_internacoes'] ?? 0);
-$totalDiárias = (int)($stats['total_diarias'] ?? 0);
+$totalInternacoes = (int)($stats['total_internacoes'] ?? 0);
+$totalDiarias = (int)($stats['total_diarias'] ?? 0);
 $maiorPermanencia = (int)($stats['maior_permanencia'] ?? 0);
-$mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0;
+$mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0;
 
 $sqlHosp = "
     SELECT
@@ -169,7 +169,7 @@ $distIdade = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $labelsHosp = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', $hospRows);
 $valsIntern = array_map(fn($r) => (int)$r['total_internacoes'], $hospRows);
-$valsDiárias = array_map(fn($r) => (int)$r['total_diarias'], $hospRows);
+$valsDiarias = array_map(fn($r) => (int)$r['total_diarias'], $hospRows);
 $valsMp = array_map(fn($r) => round((float)$r['mp'], 1), $hospRows);
 
 function distToChart(array $rows, string $labelKey): array
@@ -188,9 +188,9 @@ $modoChart = distToChart($distModo, 'modo');
 $idadeChart = distToChart($distIdade, 'faixa');
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -266,8 +266,8 @@ $idadeChart = distToChart($distIdade, 'faixa');
 
     <div class="bi-panel">
         <div class="bi-kpis">
-            <div class="bi-kpi"><small>Diárias</small><strong><?= $totalDiárias ?></strong></div>
-            <div class="bi-kpi"><small>Internações</small><strong><?= $totalInternações ?></strong></div>
+            <div class="bi-kpi"><small>Diárias</small><strong><?= $totalDiarias ?></strong></div>
+            <div class="bi-kpi"><small>Internações</small><strong><?= $totalInternacoes ?></strong></div>
             <div class="bi-kpi"><small>Maior permanência</small><strong><?= $maiorPermanencia ?></strong></div>
             <div class="bi-kpi"><small>MP</small><strong><?= $mp ?></strong></div>
         </div>
@@ -311,7 +311,7 @@ $idadeChart = distToChart($distIdade, 'faixa');
 <script>
 const labelsHosp = <?= json_encode($labelsHosp) ?>;
 const valsIntern = <?= json_encode($valsIntern) ?>;
-const valsDiárias = <?= json_encode($valsDiárias) ?>;
+const valsDiarias = <?= json_encode($valsDiarias) ?>;
 const valsMp = <?= json_encode($valsMp) ?>;
 
 function barMulti(ctx) {
@@ -321,7 +321,7 @@ function barMulti(ctx) {
             labels: labelsHosp,
             datasets: [
                 { label: 'Internações', data: valsIntern, backgroundColor: 'rgba(141, 208, 255, 0.6)' },
-                { label: 'Diárias', data: valsDiárias, backgroundColor: 'rgba(208, 113, 176, 0.6)' },
+                { label: 'Diárias', data: valsDiarias, backgroundColor: 'rgba(208, 113, 176, 0.6)' },
                 { label: 'MP', data: valsMp, backgroundColor: 'rgba(111, 223, 194, 0.6)' }
             ]
         },

@@ -38,7 +38,7 @@ $clearUrl = $clearUrl ?? 'bi/rede-comparativa';
         <?php endif; ?>
     </div>
     <div class="bi-filter">
-        <label>Regiao</label>
+        <label>Região</label>
         <select name="regiao">
             <option value="">Todas</option>
             <?php foreach ($regioes as $reg): ?>
@@ -49,7 +49,7 @@ $clearUrl = $clearUrl ?? 'bi/rede-comparativa';
         </select>
     </div>
     <div class="bi-filter">
-        <label>Tipo de admissao</label>
+        <label>Tipo de admissão</label>
         <select name="tipo_admissao">
             <option value="">Todos</option>
             <?php foreach ($tiposAdm as $tipo): ?>
@@ -61,7 +61,7 @@ $clearUrl = $clearUrl ?? 'bi/rede-comparativa';
         </select>
     </div>
     <div class="bi-filter">
-        <label>Modo de internacao</label>
+        <label>Modo de internação</label>
         <select name="modo_internacao">
             <option value="">Todos</option>
             <?php foreach ($modosInt as $modo): ?>
@@ -77,7 +77,7 @@ $clearUrl = $clearUrl ?? 'bi/rede-comparativa';
         <select name="uti">
             <option value="">Todos</option>
             <option value="s" <?= $uti === 's' ? 'selected' : '' ?>>Sim</option>
-            <option value="n" <?= $uti === 'n' ? 'selected' : '' ?>>Nao</option>
+            <option value="n" <?= $uti === 'n' ? 'selected' : '' ?>>Não</option>
         </select>
     </div>
     <div class="bi-actions">

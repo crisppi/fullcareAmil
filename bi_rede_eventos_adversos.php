@@ -78,7 +78,7 @@ $taxaMensal = array_values($taxaMensalMap);
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"><?= e($pageSubtitle) ?></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -136,14 +136,14 @@ $taxaMensal = array_values($taxaMensalMap);
                 <tr>
                     <th>Hospital</th>
                     <th>Eventos adversos</th>
-                    <th>Internacoes com evento</th>
+                    <th>Internações com evento</th>
                     <th>Total de internacoes</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$rowsSorted): ?>
                     <tr>
-                        <td colspan="4" class="text-center">Sem dados no periodo.</td>
+                        <td colspan="4" class="text-center">Sem dados no período.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($rowsSorted as $row): ?>

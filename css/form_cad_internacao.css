@@ -497,6 +497,53 @@
             height: 42px !important;
         }
 
+        .internacao-central-inline {
+            margin-top: 2px !important;
+            padding-top: 6px;
+            border-top: 1px solid rgba(111, 69, 162, 0.10);
+        }
+
+        .internacao-central-inline__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .internacao-central-inline__title {
+            margin: 0;
+            font-size: .76rem;
+            color: #2a1b43;
+            font-weight: 800;
+        }
+
+        .internacao-central-inline__tag {
+            background: #f1ebfb;
+            color: #5c3687;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .56rem;
+            border: 1px solid #e2d4f6;
+        }
+
+        .internacao-central-inline__grid {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .internacao-central-inline .form-group {
+            margin-bottom: 0 !important;
+        }
+
+        .internacao-central-inline label,
+        .internacao-central-inline .control-label {
+            margin-bottom: 1px !important;
+            line-height: 1.1 !important;
+        }
+
         /* Cadastro central (internacao): remove halo azul dos selects de responsavel */
         #cadastro-central-wrapper #resp_tipo,
         #cadastro-central-wrapper #resp_tipo:focus,
@@ -587,6 +634,12 @@
             padding-top: 8px !important;
             padding-bottom: 8px !important;
             line-height: 24px !important;
+        }
+
+        @media (max-width: 991px) {
+            .internacao-central-inline__header {
+                align-items: flex-start;
+            }
         }
 
         .internacao-page {
@@ -1049,11 +1102,11 @@
             min-height: auto;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 2px !important;
+            margin-bottom: 1px !important;
         }
 
         .internacao-head-grid > .form-group > label {
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .internacao-head-grid > .hospital-col,
@@ -1396,7 +1449,7 @@
         .internacao-card label,
         .tabelas-adicionais-card label,
         .detalhes-card label {
-            font-weight: 700;
+            font-weight: 400;
             color: #4a4b57;
         }
 
@@ -1470,8 +1523,8 @@
         .tabelas-selects .control-label,
         .tabelas-selects label {
             font-size: .74rem !important;
-            font-weight: 600 !important;
-            margin-bottom: 4px !important;
+            font-weight: 400 !important;
+            margin-bottom: 2px !important;
             line-height: 1.15;
         }
 
@@ -1509,9 +1562,9 @@
         }
 
         .tabelas-selects > .tabelas-col label {
-            margin-bottom: 4px !important;
+            margin-bottom: 2px !important;
             font-size: .74rem !important;
-            font-weight: 600 !important;
+            font-weight: 400 !important;
             color: #3f4654 !important;
             line-height: 1.15;
         }
@@ -1573,8 +1626,8 @@
             min-height: 18px;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 4px;
-            font-weight: 600;
+            margin-bottom: 2px;
+            font-weight: 400;
             font-size: .74rem !important;
             line-height: 1.15;
         }
@@ -1738,7 +1791,8 @@
             min-height: 18px;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            font-weight: 400;
             font-size: .74rem !important;
             line-height: 1.15;
         }
@@ -1824,36 +1878,77 @@
             min-width: 42px !important;
         }
 
-        /* Placeholder mais claro em todos inputs/textarea */
+        /* Placeholder unificado em campos do formulario */
         input::placeholder,
-        textarea::placeholder {
-            color: #c4c4c4 !important;
-            opacity: 1;
-            font-size: .8rem;
-        }
-
-        /* Placeholder do search do bootstrap-select */
+        textarea::placeholder,
         .bootstrap-select .dropdown-menu .bs-searchbox input::placeholder {
             color: #c4c4c4 !important;
             opacity: 1;
-            font-size: .8rem;
+            font-size: .78rem !important;
+            font-weight: 500 !important;
+            font-family: "Poppins", sans-serif !important;
+            letter-spacing: 0 !important;
         }
 
-        /* Texto “placeholder” dos selects (bootstrap-select e nativo) */
+        /* Placeholder visual dos campos nativos de data/hora quando vazios */
+        .entity-form input[type="date"].is-empty-date,
+        .entity-form input[type="datetime-local"].is-empty-date {
+            color: #c4c4c4 !important;
+            font-size: .78rem !important;
+            font-weight: 500 !important;
+            font-family: "Poppins", sans-serif !important;
+            letter-spacing: 0 !important;
+        }
+
+        .entity-form input[type="date"].is-empty-date::-webkit-datetime-edit,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit,
+        .entity-form input[type="date"].is-empty-date::-webkit-datetime-edit-text,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-text,
+        .entity-form input[type="date"].is-empty-date::-webkit-datetime-edit-day-field,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-day-field,
+        .entity-form input[type="date"].is-empty-date::-webkit-datetime-edit-month-field,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-month-field,
+        .entity-form input[type="date"].is-empty-date::-webkit-datetime-edit-year-field,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-year-field,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-hour-field,
+        .entity-form input[type="datetime-local"].is-empty-date::-webkit-datetime-edit-minute-field {
+            color: #c4c4c4 !important;
+            font-size: .78rem !important;
+            font-weight: 500 !important;
+            font-family: "Poppins", sans-serif !important;
+            letter-spacing: 0 !important;
+        }
+
+        /* Ajuste fino: datetime-local vazio ainda renderiza mais forte no navegador */
+        .entity-form #data_intern_int_dt.is-empty-date,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-text,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-day-field,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-month-field,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-year-field,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-hour-field,
+        .entity-form #data_intern_int_dt.is-empty-date::-webkit-datetime-edit-minute-field {
+            color: #d2d2d2 !important;
+            font-weight: 400 !important;
+        }
+
+        /* Texto “placeholder” dos selects */
         .bootstrap-select>.dropdown-toggle.bs-placeholder,
         .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option,
-        .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner {
-            color: #c4c4c4 !important;
-            font-weight: 500;
-            font-size: .8rem !important;
-        }
-
+        .bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner,
         .bootstrap-select>.dropdown-toggle.select-placeholder,
         .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option,
-        .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner {
+        .bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner,
+        .select2-container--default .select2-selection--single .select2-selection__placeholder,
+        .select2-container--default .select2-selection--single .select2-selection__rendered.select2-default,
+        .entity-form select:required:invalid,
+        .entity-form select.select-placeholder-empty,
+        .entity-form select.select-placeholder-empty option[value=""] {
             color: #c4c4c4 !important;
-            font-weight: 500;
-            font-size: .8rem !important;
+            font-weight: 500 !important;
+            font-size: .78rem !important;
+            font-family: "Poppins", sans-serif !important;
+            letter-spacing: 0 !important;
         }
 
         select:required:invalid {
@@ -2017,8 +2112,8 @@
         }
 
         .entity-form .form-group label {
-            margin-bottom: 3px;
-            font-weight: 600;
+            margin-bottom: 2px;
+            font-weight: 400;
             color: #3b2b4b;
             font-size: .68rem;
         }
@@ -2245,9 +2340,11 @@
         }
 
         #main-container.internacao-page.cadastro-layout .entity-form .form-group label {
-            margin-bottom: 3px !important;
+            margin-bottom: 2px !important;
+            font-weight: 400 !important;
             font-size: .7rem !important;
             line-height: 1.1 !important;
+            color: #3b2b4b !important;
         }
 
         #main-container.internacao-page.cadastro-layout #multi-step-form .form-control,

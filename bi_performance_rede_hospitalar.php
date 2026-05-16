@@ -283,9 +283,9 @@ $chartLabels = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', array_slice
 $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1), array_slice($rows, 0, 10));
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .bi-performance-rede .bi-chart {
@@ -306,7 +306,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
         <h1 class="bi-title">Performance Comparativa da Rede Hospitalar</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted">Custo, qualidade e eficiencia por hospital</div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -344,7 +344,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
             </select>
         </div>
         <div class="bi-filter">
-            <label>Regiao</label>
+            <label>Região</label>
             <select name="regiao">
                 <option value="">Todas</option>
                 <?php foreach ($regioes as $reg): ?>
@@ -355,7 +355,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
             </select>
         </div>
         <div class="bi-filter">
-            <label>Tipo de admissao</label>
+            <label>Tipo de admissão</label>
             <select name="tipo_admissao">
                 <option value="">Todos</option>
                 <?php foreach ($tiposAdm as $tipo): ?>
@@ -366,7 +366,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
             </select>
         </div>
         <div class="bi-filter">
-            <label>Modo de internacao</label>
+            <label>Modo de internação</label>
             <select name="modo_internacao">
                 <option value="">Todos</option>
                 <?php foreach ($modosInt as $modo): ?>
@@ -381,7 +381,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
             <select name="uti">
                 <option value="">Todos</option>
                 <option value="s" <?= $uti === 's' ? 'selected' : '' ?>>Sim</option>
-                <option value="n" <?= $uti === 'n' ? 'selected' : '' ?>>Nao</option>
+                <option value="n" <?= $uti === 'n' ? 'selected' : '' ?>>Não</option>
             </select>
         </div>
         <div class="bi-filter bi-filter-actions">
@@ -393,19 +393,19 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
     <div class="bi-panel">
         <div class="bi-kpi-grid">
             <div class="bi-kpi">
-                <small>Custo medio apresentado</small>
+                <small>Custo médio apresentado</small>
                 <strong><?= number_format($network['custo_apresentado'], 2, ',', '.') ?></strong>
             </div>
             <div class="bi-kpi">
-                <small>Custo medio final</small>
+                <small>Custo médio final</small>
                 <strong><?= number_format($network['custo_final'], 2, ',', '.') ?></strong>
             </div>
             <div class="bi-kpi">
-                <small>Glosa media</small>
+                <small>Glosa média</small>
                 <strong><?= number_format($network['glosa_rate'] * 100, 1, ',', '.') ?>%</strong>
             </div>
             <div class="bi-kpi">
-                <small>Permanencia media</small>
+                <small>Permanência média</small>
                 <strong><?= number_format($network['permanencia_media'], 1, ',', '.') ?> d</strong>
             </div>
             <div class="bi-kpi">
@@ -413,14 +413,14 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
                 <strong><?= number_format($network['eventos_rate'] * 100, 1, ',', '.') ?>%</strong>
             </div>
             <div class="bi-kpi">
-                <small>Readmissao 30d</small>
+                <small>Readmissão 30d</small>
                 <strong><?= number_format($network['readm_rate'] * 100, 1, ',', '.') ?>%</strong>
             </div>
         </div>
     </div>
 
     <div class="bi-panel">
-        <div class="bi-section-title">Permanencia media por hospital</div>
+        <div class="bi-section-title">Permanência média por hospital</div>
         <div class="bi-chart">
             <canvas id="chartPermanenciaRede"></canvas>
         </div>
@@ -437,17 +437,17 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
                         <th>Custo por caso (apresentado)</th>
                         <th>Custo por caso (final)</th>
                         <th>Glosa</th>
-                        <th>Rejeicao capeante</th>
-                        <th>Permanencia</th>
+                        <th>Rejeição capeante</th>
+                        <th>Permanência</th>
                         <th>Eventos adversos</th>
-                        <th>Readmissao 30d</th>
+                        <th>Readmissão 30d</th>
                         <th>Casos</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!$rows): ?>
                         <tr>
-                            <td colspan="10" class="text-center">Sem dados no periodo.</td>
+                            <td colspan="10" class="text-center">Sem dados no período.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($rows as $row): ?>

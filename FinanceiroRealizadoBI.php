@@ -125,7 +125,7 @@ $taxaAuditadaPeriodo = $totalContasPeriodo > 0 ? (($totalContasAuditadasPeriodo 
 
 // Top seguradoras por valor apresentado
 $sqlTopSeg = "
-    SELECT s.id_seguradora, COALESCE(s.seguradora_seg, 'Sem informacoes') AS nome,
+    SELECT s.id_seguradora, COALESCE(s.seguradora_seg, 'Sem informações') AS nome,
            SUM(COALESCE(ca.valor_apresentado_capeante,0)) AS total
     FROM tb_capeante ca
     JOIN tb_internacao i ON i.id_internacao = ca.fk_int_capeante
@@ -210,9 +210,9 @@ $topLabels = array_map(fn($r) => (string)($r['hospital'] ?? 'Sem hospital'), $to
 $topValues = array_map(fn($r) => (float)($r['valor'] ?? 0), $topHospitais);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
@@ -239,7 +239,7 @@ $topValues = array_map(fn($r) => (float)($r['valor'] ?? 0), $topHospitais);
             </select>
         </div>
         <div class="bi-filter">
-            <label>Data inicio</label>
+            <label>Data início</label>
             <input type="date" name="data_inicio" value="<?= e($startStr) ?>">
         </div>
         <div class="bi-filter">

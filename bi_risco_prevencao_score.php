@@ -117,18 +117,18 @@ usort($scored, static function ($a, $b) {
 });
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Score de Risco por Internacao</h1>
+            <h1 class="bi-title">Score de Risco por Internação</h1>
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Score calculado via ReadmissionRiskService.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -170,7 +170,7 @@ usort($scored, static function ($a, $b) {
             <select name="internado">
                 <option value="">Todos</option>
                 <option value="s" <?= $internado === 's' ? 'selected' : '' ?>>Sim</option>
-                <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Nao</option>
+                <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Não</option>
             </select>
         </div>
         <div class="bi-actions">
@@ -180,7 +180,7 @@ usort($scored, static function ($a, $b) {
     </form>
 
     <div class="bi-panel">
-        <h3>Distribuicao por risco</h3>
+        <h3>Distribuição por risco</h3>
         <div class="bi-kpis kpi-grid-4">
             <div class="bi-kpi kpi-compact">
                 <small>Base analisada</small>
@@ -202,16 +202,16 @@ usort($scored, static function ($a, $b) {
     </div>
 
     <div class="bi-panel">
-        <h3>Internacoes com maior risco</h3>
+        <h3>Internações com maior risco</h3>
         <table class="bi-table">
             <thead>
                 <tr>
                     <th>Paciente</th>
                     <th>Hospital</th>
-                    <th>Data internacao</th>
+                    <th>Data internação</th>
                     <th>Probabilidade</th>
                     <th>Score</th>
-                    <th>Nivel</th>
+                    <th>Nível</th>
                     <th>Dias atuais</th>
                     <th>Eventos</th>
                 </tr>
@@ -224,8 +224,8 @@ usort($scored, static function ($a, $b) {
                 <?php else: ?>
                     <?php foreach ($scored as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?: 'Sem informacoes') ?></td>
-                            <td><?= e($row['hospital'] ?: 'Sem informacoes') ?></td>
+                            <td><?= e($row['paciente'] ?: 'Sem informações') ?></td>
+                            <td><?= e($row['hospital'] ?: 'Sem informações') ?></td>
                             <td><?= !empty($row['data']) ? e(date('d/m/Y', strtotime($row['data']))) : '-' ?></td>
                             <td><?= fmtPct(((float)$row['probability']) * 100, 1) ?></td>
                             <td><?= fmtFloat($row['risk_score'], 1) ?></td>
@@ -237,7 +237,7 @@ usort($scored, static function ($a, $b) {
                 <?php endif; ?>
             </tbody>
         </table>
-        <div style="margin-top:8px; color: var(--bi-muted); font-size: 0.88rem;">Base limitada a 150 internacoes mais recentes no periodo.</div>
+        <div style="margin-top:8px; color: var(--bi-muted); font-size: 0.88rem;">Base limitada a 150 internacoes mais recentes no período.</div>
     </div>
 </div>
 

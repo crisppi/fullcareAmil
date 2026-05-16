@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Elasticidade de Preco';
+$pageTitle = 'Elasticidade de Preço';
 $pageSlug = 'bi/negociacao-elasticidade';
 require_once("templates/bi_rede_bootstrap.php");
 
@@ -16,18 +16,18 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Elasticidade de Preco</h1>
+            <h1 class="bi-title">Elasticidade de Preço</h1>
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Relacao entre custo medio e volume captado.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -41,9 +41,9 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Internacoes</th>
-                    <th>Custo medio</th>
-                    <th>Indice elasticidade</th>
+                    <th>Internações</th>
+                    <th>Custo médio</th>
+                    <th>Índice elasticidade</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,7 +59,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         $indice = $custo > 0 ? ($vol / $custo) * 1000 : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($vol) ?></td>
                             <td><?= fmtMoney($custo) ?></td>
                             <td><?= fmtFloat($indice, 2) ?></td>
@@ -68,7 +68,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php endif; ?>
             </tbody>
         </table>
-        <div class="bi-note" style="margin-top: 10px;">Indice = volume / custo medio (escala 1000).</div>
+        <div class="bi-note" style="margin-top: 10px;">Índice = volume / custo medio (escala 1000).</div>
     </div>
 </div>
 

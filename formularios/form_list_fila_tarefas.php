@@ -347,7 +347,7 @@ try {
         </div>
         <div class="col-sm-1 fila-filter-actions">
             <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
-            <a class="btn btn-outline-secondary btn-sm btn-filtro-limpar" href="list_fila_tarefas.php">Limpar</a>
+            <a class="btn btn-outline-secondary btn-sm btn-filtro-limpar" href="list_fila_tarefas.php"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar</a>
         </div>
     </form>
 

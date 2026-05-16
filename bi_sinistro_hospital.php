@@ -15,27 +15,31 @@ $internWhere = $internFilters['where'];
 $internParams = $internFilters['params'];
 $internJoins = $internFilters['joins'];
 
-$labelPat = "COALESCE(NULLIF(i.grupo_patologia_int,''), p.patologia_pat, 'Sem informacoes')";
+$labelPat = "COALESCE(NULLIF(CONCAT_WS(' - ', NULLIF(c.cat, ''), NULLIF(c.descricao, '')), ''), 'Sem informações')";
 $costExpr = "COALESCE(NULLIF(ca.valor_final_capeante,0), ca.valor_apresentado_capeante, 0)";
 
-$patologiaFiltro = trim((string)(filter_input(INPUT_GET, 'patologia') ?? ''));
+$patologiaFiltro = filter_input(INPUT_GET, 'patologia', FILTER_VALIDATE_INT) ?: null;
 $extraWhere = '';
 $params = $internParams;
-if ($patologiaFiltro !== '') {
-    $extraWhere = " AND {$labelPat} = :patologia";
-    $params[':patologia'] = $patologiaFiltro;
+if ($patologiaFiltro) {
+    $extraWhere = " AND i.fk_cid_int = :patologia";
+    $params[':patologia'] = (int)$patologiaFiltro;
 }
 
 $optStmt = $conn->prepare("
-    SELECT DISTINCT {$labelPat} AS label
+    SELECT DISTINCT
+        c.id_cid AS value,
+        {$labelPat} AS label
     FROM tb_internacao i
-    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
+    INNER JOIN tb_cid c ON c.id_cid = i.fk_cid_int
     {$internJoins}
     WHERE {$internWhere}
+      AND i.fk_cid_int IS NOT NULL
+      AND i.fk_cid_int <> 0
     ORDER BY label
 ");
 $optStmt->execute($internParams);
-$patologiaOptions = $optStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+$patologiaOptions = $optStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $summaryStmt = $conn->prepare("
     SELECT
@@ -78,8 +82,8 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 $topHospital = $rows[0]['hospital'] ?? '-';
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -89,7 +93,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Qual hospital gasta mais em cada diagnostico.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -117,12 +121,12 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 </select>
             </div>
             <div class="bi-filter">
-                <label for="patologia">Patologia</label>
+                <label for="patologia">CID</label>
                 <select id="patologia" name="patologia">
                     <option value="">Todas</option>
                     <?php foreach ($patologiaOptions as $opt): ?>
-                        <option value="<?= e($opt) ?>" <?= $patologiaFiltro === $opt ? 'selected' : '' ?>>
-                            <?= e($opt) ?>
+                        <option value="<?= (int)$opt['value'] ?>" <?= (int)$patologiaFiltro === (int)$opt['value'] ? 'selected' : '' ?>>
+                            <?= e($opt['label']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -139,7 +143,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 </select>
             </div>
             <div class="bi-filter">
-                <label for="regiao">Regiao</label>
+                <label for="regiao">Região</label>
                 <select id="regiao" name="regiao">
                     <option value="">Todas</option>
                     <?php foreach ($filterOptions['regioes'] as $opt): ?>
@@ -150,7 +154,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 </select>
             </div>
             <div class="bi-filter">
-                <label for="tipo_admissao">Tipo de admissao</label>
+                <label for="tipo_admissao">Tipo de admissão</label>
                 <select id="tipo_admissao" name="tipo_admissao">
                     <option value="">Todos</option>
                     <?php foreach ($filterOptions['tipos_admissao'] as $opt): ?>
@@ -161,7 +165,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 </select>
             </div>
             <div class="bi-filter">
-                <label for="modo_internacao">Modo de internacao</label>
+                <label for="modo_internacao">Modo de internação</label>
                 <select id="modo_internacao" name="modo_internacao">
                     <option value="">Todos</option>
                     <?php foreach ($filterOptions['modos_internacao'] as $opt): ?>
@@ -176,7 +180,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 <select id="uti" name="uti">
                     <option value="">Todos</option>
                     <option value="s" <?= $filterValues['uti'] === 's' ? 'selected' : '' ?>>Sim</option>
-                    <option value="n" <?= $filterValues['uti'] === 'n' ? 'selected' : '' ?>>Nao</option>
+                    <option value="n" <?= $filterValues['uti'] === 'n' ? 'selected' : '' ?>>Não</option>
                 </select>
             </div>
             <div class="bi-actions">
@@ -197,7 +201,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 <strong><?= e($topHospital) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Custo medio por caso</small>
+                <small>Custo médio por caso</small>
                 <strong><?= fmtMoney($custoMedio) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -231,7 +235,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                 <tr>
                     <th>Hospital</th>
                     <th>Custo total</th>
-                    <th>Custo medio</th>
+                    <th>Custo médio</th>
                     <th>Casos</th>
                     <th>% do total</th>
                 </tr>
@@ -250,7 +254,7 @@ $topHospital = $rows[0]['hospital'] ?? '-';
                         $rowPct = $custoTotal > 0 ? ($rowTotal / $custoTotal) * 100 : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtMoney($rowTotal) ?></td>
                             <td><?= fmtMoney($rowMedio) ?></td>
                             <td><?= fmtInt($rowCasos) ?></td>

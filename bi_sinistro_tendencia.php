@@ -45,18 +45,18 @@ $labels = array_map(fn($r) => $r['etiqueta'] ?? '-', $rows);
 $values = array_map(fn($r) => (float)($r['total'] ?? 0), $rows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
             <h1 class="bi-title">Tendencia de Custo</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Evolucao mensal do custo assistencial.</div>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Evolução mensal do custo assistencial.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -72,7 +72,7 @@ $values = array_map(fn($r) => (float)($r['total'] ?? 0), $rows);
                 <strong><?= fmtMoney($total) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Variacao no periodo</small>
+                <small>Variacao no período</small>
                 <strong><?= fmtPct($varPct, 1) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -108,7 +108,7 @@ $values = array_map(fn($r) => (float)($r['total'] ?? 0), $rows);
         <table class="bi-table" style="margin-top: 16px;">
             <thead>
                 <tr>
-                    <th>Mes</th>
+                    <th>Mês</th>
                     <th>Custo total</th>
                 </tr>
             </thead>

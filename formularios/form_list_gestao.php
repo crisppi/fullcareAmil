@@ -282,7 +282,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                     </div>
                     <div class="filter-item clear-btn">
                         <a href="<?= htmlspecialchars($BASE_URL . 'list_gestao.php', ENT_QUOTES, 'UTF-8') ?>"
-                            class="btn btn-outline-secondary w-100 btn-filtro-limpar">Limpar filtros</a>
+                            class="btn btn-outline-secondary w-100 btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar filtros</a>
                     </div>
                 </div>
             </form>

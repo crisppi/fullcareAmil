@@ -1,5 +1,15 @@
 <?php
 include_once("check_logado.php");
+
+$modo = trim((string)(filter_input(INPUT_GET, 'modo') ?: 'custo'));
+if (!in_array($modo, ['custo', 'percentual'], true)) {
+    $modo = 'custo';
+}
+
+if (empty($_GET['ie'])) {
+    $_GET['ie'] = $modo === 'percentual' ? 'percentual-internacao-uti' : 'custo-uti';
+}
+
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
@@ -11,11 +21,6 @@ if (!function_exists('e')) {
     {
         return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
     }
-}
-
-$modo = trim((string)(filter_input(INPUT_GET, 'modo') ?: 'custo'));
-if (!in_array($modo, ['custo', 'percentual'], true)) {
-    $modo = 'custo';
 }
 
 $startInput = (string)(filter_input(INPUT_GET, 'data_inicio') ?: filter_input(INPUT_GET, 'data_ini') ?: date('Y-m-01', strtotime('-5 months')));
@@ -157,12 +162,12 @@ $ytdPrev = $getYtd($prevStart, $prevEnd);
 $deltaPerc = $ytdCur['perc'] - $ytdPrev['perc'];
 $deltaCusto = $ytdCur['custo'] - $ytdPrev['custo'];
 
-$title = $modo === 'percentual' ? '% de Internacao UTI' : 'Custo por UTI';
+$title = $modo === 'percentual' ? '% de Internação UTI' : 'Custo por UTI';
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
@@ -177,7 +182,7 @@ $title = $modo === 'percentual' ? '% de Internacao UTI' : 'Custo por UTI';
         <input type="hidden" name="modo" value="<?= e($modo) ?>">
         <input type="hidden" name="ie" value="<?= e($modo === 'percentual' ? 'percentual-internacao-uti' : 'custo-uti') ?>">
         <div class="bi-filter">
-            <label>Data inicio</label>
+            <label>Data início</label>
             <input type="date" name="data_inicio" value="<?= e($start) ?>">
         </div>
         <div class="bi-filter">
@@ -235,7 +240,7 @@ $title = $modo === 'percentual' ? '% de Internacao UTI' : 'Custo por UTI';
             <thead><tr><th>Indicador</th><th class="text-end">Atual</th><th class="text-end">Anterior</th><th class="text-end">Delta</th></tr></thead>
             <tbody>
                 <tr>
-                    <td>% Internacao UTI</td>
+                    <td>% Internação UTI</td>
                     <td class="text-end"><?= number_format($ytdCur['perc'], 2, ',', '.') ?>%</td>
                     <td class="text-end"><?= number_format($ytdPrev['perc'], 2, ',', '.') ?>%</td>
                     <td class="text-end"><?= number_format($deltaPerc, 2, ',', '.') ?> p.p.</td>
@@ -270,7 +275,7 @@ new Chart(document.getElementById('chartUtiMain'), {
     data: {
         labels,
         datasets: [{
-            label: modo === 'custo' ? 'Custo UTI' : '% Internacao UTI',
+            label: modo === 'custo' ? 'Custo UTI' : '% Internação UTI',
             data: modo === 'custo' ? serieCusto : seriePerc,
             borderColor: 'rgba(126,150,255,0.92)',
             backgroundColor: 'rgba(126,150,255,0.12)',

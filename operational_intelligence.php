@@ -97,19 +97,42 @@ include_once("templates/header.php");
         border-radius: 12px;
         border: 1px solid #e7e7e7;
         background: #fff;
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
+        margin-bottom: 1rem;
+        padding: 1rem 1.1rem;
         box-shadow: 0 10px 25px rgba(95, 35, 99, 0.08);
     }
 
     .insight-card h4 {
         color: #5e2363;
         font-weight: 600;
+        font-size: .96rem;
     }
 
     .forecast-table td,
     .forecast-table th {
-        font-size: 0.9rem;
+        font-size: 0.78rem;
+        padding-top: .55rem;
+        padding-bottom: .55rem;
+    }
+
+    .container-fluid {
+        margin-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+
+    .container-fluid h2,
+    .container-fluid h3 {
+        font-size: 1.06rem;
+    }
+
+    .container-fluid .text-muted,
+    .container-fluid .small,
+    .container-fluid .table,
+    .container-fluid label,
+    .container-fluid .form-select,
+    .container-fluid .form-control,
+    .container-fluid .btn {
+        font-size: .78rem;
     }
 
     .risk-alto {

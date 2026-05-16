@@ -24,6 +24,24 @@ if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCare|FullConex(?:Aud)?)(
     $BASE_URL = $schemeHeader . '://' . $hostHeader . '/' . trim((string)$mBaseApp[1], '/') . '/';
 }
 
+$currentScriptName = strtolower((string)basename((string)($_SERVER['SCRIPT_NAME'] ?? '')));
+$isOperationalIntelligencePage =
+    preg_match('#/inteligencia(/|$)#i', $requestUriPath) === 1
+    || in_array($currentScriptName, [
+        'dashboard_operacional.php',
+        'faturamento_previsao.php',
+        'dashboard_mensal.php',
+        'inteligencia_operadora.php',
+        'relatorio_tmp.php',
+        'relatorio_motivos_prorrogacao.php',
+        'relatorio_backlog_autorizacoes.php',
+        'explicabilidade_insights.php',
+        'risco_glosa.php',
+        'clusterizacao_clinica.php',
+        'dashboard_performance.php',
+        'inteligencia_logs_usuario.php',
+    ], true);
+
 // Caminho default da foto do usuario
 $defaultFoto = $BASE_URL . 'uploads/usuarios/default-user.jpeg';
 
@@ -222,11 +240,11 @@ if (!empty($sessionIdUsuario)) {
     <link href="<?= $BASE_URL ?>diversos/CoolAdmin-master/css/theme.css" rel="stylesheet" media="all">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css">
-    <link href="<?= $BASE_URL ?>css/style.css" rel="stylesheet">
-    <link href="<?= $BASE_URL ?>css/legendas.css" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/style.css?v=<?= @filemtime(__DIR__ . '/../css/style.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/legendas.css?v=<?= @filemtime(__DIR__ . '/../css/legendas.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/styleMenu.css?v=<?= @filemtime(__DIR__ . '/../css/styleMenu.css') ?>" rel="stylesheet">
-    <link href="<?= $BASE_URL ?>css/style_show_internacao.css" rel="stylesheet">
-    <link href="<?= $BASE_URL ?>css/table_style.css" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/style_show_internacao.css?v=<?= @filemtime(__DIR__ . '/../css/style_show_internacao.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/table_style.css?v=<?= @filemtime(__DIR__ . '/../css/table_style.css') ?>" rel="stylesheet">
     <script defer src="<?= $BASE_URL ?>js/lista_header_sort.js"></script>
 
     <!-- ======= APENAS DESIGN (logos alinhados e simétricos) ======= -->
@@ -238,19 +256,25 @@ if (!empty($sessionIdUsuario)) {
             gap: 8px;
         }
 
+        .navbar.nav_bar_custom.fixed-top {
+            min-height: 74px;
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+
         .navbar .navbar-brand {
             display: inline-flex !important;
             align-items: center;
             line-height: 1;
             flex: 0 1 auto !important;
-            max-width: 165px;
+            max-width: 300px;
             margin-right: 4px;
             visibility: visible !important;
             opacity: 1 !important;
         }
 
         .navbar .navbar-brand .logo-novo {
-            height: 34px !important;
+            height: 48px !important;
             width: auto !important;
             max-height: none !important;
             min-height: 0 !important;
@@ -264,13 +288,13 @@ if (!empty($sessionIdUsuario)) {
 
         @media (max-width: 1199.98px) {
             .navbar .navbar-brand .logo-novo {
-                height: 31px !important;
+                height: 43px !important;
             }
         }
 
         @media (max-width: 575.98px) {
             .navbar .navbar-brand .logo-novo {
-                height: 28px !important;
+                height: 38px !important;
             }
         }
 
@@ -300,9 +324,9 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .navbar .navbar-brand .logo-seguradora {
-            height: 34px;
+            height: 42px;
             width: auto;
-            max-width: 96px;
+            max-width: 120px;
             object-fit: contain;
             display: block;
             flex: 0 1 auto;
@@ -310,8 +334,8 @@ if (!empty($sessionIdUsuario)) {
 
         @media (max-width: 1199.98px) {
             .navbar .navbar-brand .logo-seguradora {
-                height: 29px;
-                max-width: 84px;
+                height: 38px;
+                max-width: 108px;
             }
         }
 
@@ -337,10 +361,26 @@ if (!empty($sessionIdUsuario)) {
             min-width: 0;
         }
 
+        .navbar .nav-tabs {
+            border-bottom: 0 !important;
+        }
+
+        .navbar .nav-tabs .nav-link {
+            border: 0 !important;
+            border-bottom: 0 !important;
+            border-radius: 8px;
+        }
+
+        .navbar .nav-tabs .nav-link:hover,
+        .navbar .nav-tabs .nav-link:focus,
+        .navbar .nav-tabs .nav-link.active {
+            border-color: transparent !important;
+        }
+
         .navbar-nav.navbar-nav-scroll .nav-link {
             white-space: nowrap;
-            padding: 0.32rem 0.36rem;
-            font-size: 0.84rem;
+            padding: 0.24rem 0.3rem;
+            font-size: 0.78rem;
             line-height: 1.1;
         }
 
@@ -354,21 +394,41 @@ if (!empty($sessionIdUsuario)) {
         .header-actions {
             margin-left: auto !important;
             margin-right: 0 !important;
-            gap: 0.35rem !important;
+            gap: 0.7rem !important;
             flex: 0 0 auto;
+            align-items: center;
         }
 
         .header-actions #global-patient-search {
-            min-width: 200px;
+            min-width: 170px;
             flex: 0 0 auto;
+            margin-right: 0.2rem;
+        }
+
+        .header-actions #global-patient-search .form-control,
+        .header-actions #global-patient-search input,
+        .header-actions #global-patient-search .btn {
+            min-height: 34px !important;
+            height: 34px !important;
+            font-size: 0.78rem !important;
+        }
+
+        .header-actions #global-patient-search .input-group-text {
+            min-height: 34px !important;
+            height: 34px !important;
+            padding: 0 0.8rem !important;
+            display: inline-flex;
+            align-items: center;
         }
 
         .header-action-btn {
             border: 1px solid rgba(94, 35, 99, 0.28) !important;
             background: #fff;
             color: #5e2363;
-            font-size: 0.82rem;
-            padding: 0.32rem 0.5rem;
+            font-size: 0.76rem;
+            min-height: 34px !important;
+            height: 34px !important;
+            padding: 0 0.75rem !important;
         }
 
         .header-action-btn:hover {
@@ -380,17 +440,6 @@ if (!empty($sessionIdUsuario)) {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
-        }
-
-        .header-zoom-actions {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .header-zoom-actions .btn {
-            padding: 0.28rem 0.45rem;
-            font-size: 0.8rem;
         }
 
         .header-chat-launcher .chat-unread-badge {
@@ -421,11 +470,62 @@ if (!empty($sessionIdUsuario)) {
             display: none !important;
         }
 
+        .header-actions .account-wrap,
+        .header-actions .account-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .header-actions .account-wrap {
+            padding: 3px 10px 3px 8px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(247, 243, 251, .96));
+            border: 1px solid rgba(94, 35, 99, 0.12);
+            box-shadow: 0 8px 18px rgba(57, 73, 111, 0.12);
+        }
+
+        .header-actions .account-item {
+            flex-direction: row-reverse;
+            gap: 0.35rem;
+        }
+
+        .header-actions .account-item .image {
+            display: flex;
+            align-items: center;
+            margin-top: 0 !important;
+        }
+
+        .header-actions .account-item .content {
+            display: flex;
+            align-items: center;
+            margin-left: 0 !important;
+            padding: 0 !important;
+        }
+
+        .header-actions .account-item .image img {
+            display: block;
+            width: 38px;
+            height: 38px;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(93, 63, 140, 0.18);
+        }
+
         .account-user-caret {
             font-size: 0.8rem;
             margin-left: 4px;
             color: #6b7280;
             vertical-align: middle;
+        }
+
+        .account-user-trigger {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #28354d;
         }
 
         @media (max-width: 991.98px) {
@@ -449,6 +549,7 @@ if (!empty($sessionIdUsuario)) {
                 overflow-x: auto;
                 padding: 0 12px 10px;
                 margin-top: 6px;
+                gap: 0.5rem !important;
             }
 
             .header-actions #global-patient-search {
@@ -456,9 +557,6 @@ if (!empty($sessionIdUsuario)) {
                 flex: 1 0 auto;
             }
 
-            .header-zoom-actions {
-                display: none !important;
-            }
         }
 
         @media (max-width: 575.98px) {
@@ -471,14 +569,42 @@ if (!empty($sessionIdUsuario)) {
                 width: 100%;
             }
         }
+
+<?php if ($isOperationalIntelligencePage): ?>
+        .report-header h1,
+        .forecast-hero h1,
+        .dash-hero h1 {
+            font-size: clamp(1.2rem, 1.7vw, 1.65rem) !important;
+            line-height: 1.08 !important;
+            margin-bottom: 0.2rem !important;
+        }
+
+        .container-fluid h2.fw-semibold,
+        .container-fluid h2.mb-0.fw-semibold {
+            font-size: clamp(1.05rem, 1.45vw, 1.35rem) !important;
+            line-height: 1.08 !important;
+        }
+
+        .container-fluid h4,
+        .dashboard-wrapper h4 {
+            font-size: clamp(0.95rem, 1.2vw, 1.12rem) !important;
+            line-height: 1.12 !important;
+        }
+
+        .report-header .text-muted,
+        .forecast-hero .text-muted,
+        .dash-hero p,
+        .container-fluid > .row .text-muted,
+        .container-fluid .alert,
+        .container-fluid .alert strong {
+            font-size: clamp(0.78rem, 1vw, 0.92rem) !important;
+            line-height: 1.3 !important;
+        }
+<?php endif; ?>
     </style>
 </head>
 
 <body>
-    <button type="button" id="return-flow-btn"
-        style="display:none;position:fixed;bottom:24px;right:24px;z-index:1100;padding:0.65rem 1.2rem;border:none;border-radius:999px;background:#5e2363;color:#fff;font-weight:600;box-shadow:0 12px 25px rgba(94,35,99,0.35);cursor:pointer;">
-        Voltar ao fluxo anterior
-    </button>
     <div class="col-md-12" style="padding:0 !important">
         <nav class="navbar navbar-expand-lg navbar-light bg-light nav_bar_custom fixed-top">
             <div class="bar_color" style="position:fixed;top:0;z-index:1000;width:100%;height:5px;background-image: linear-gradient(to right, #5e2363,#5bd9f3);
@@ -794,6 +920,17 @@ if (!empty($sessionIdUsuario)) {
                                                     class="bi bi-shield-check"
                                                     style="font-size: 1rem;margin-right:5px; color:#198754;"></i>
                                                 Medicina Preventiva</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>longa_permanencia_gestao.php"><i
+                                                    class="bi bi-hourglass-split"
+                                                    style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
+                                                Longa Permanência</a></li>
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>home_care_gestao.php"><i
+                                                    class="bi bi-house-heart"
+                                                    style="font-size: 1rem;margin-right:5px; color:#0ea5e9;"></i>
+                                                Home Care</a></li>
                                     </ul>
                                 </li>
                             <?php }; ?>
@@ -857,10 +994,21 @@ if (!empty($sessionIdUsuario)) {
                                                     class="bi bi-bar-chart-line"
                                                     style="font-size: 1rem;margin-right:5px; color:#72d2ff;"></i>
                                                 Negociação &amp; Rede</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>bi/qualidade-eventos"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>bi/qualidade-desfecho"><i
                                                     class="bi bi-exclamation-octagon"
                                                     style="font-size: 1rem;margin-right:5px; color:#b897ff;"></i>
                                                 Qualidade &amp; Desfecho</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>longa_permanencia_gestao.php"><i
+                                                    class="bi bi-hourglass-split"
+                                                    style="font-size: 1rem;margin-right:5px; color:#c084fc;"></i>
+                                                Gestão Longa Permanência</a></li>
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>home_care_gestao.php"><i
+                                                    class="bi bi-house-heart"
+                                                    style="font-size: 1rem;margin-right:5px; color:#7dd3fc;"></i>
+                                                Gestão Home Care</a></li>
                                     </ul>
                                 </li>
                             <?php }; ?>
@@ -1036,16 +1184,6 @@ if (!empty($sessionIdUsuario)) {
             </div>
 
             <div class="d-flex align-items-center gap-2 ms-auto header-actions pe-3">
-                <div class="header-zoom-actions" role="group" aria-label="Zoom da página">
-                    <button type="button" class="btn btn-outline-secondary header-action-btn" id="zoom-out-btn"
-                        title="Diminuir zoom">
-                        <i class="bi bi-zoom-out"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary header-action-btn" id="zoom-in-btn"
-                        title="Aumentar zoom">
-                        <i class="bi bi-zoom-in"></i>
-                    </button>
-                </div>
                 <a href="<?= htmlspecialchars($chatAssistantLink) ?>"
                     class="btn btn-outline-secondary position-relative header-chat-launcher header-action-btn"
                     title="Chat interno e Assistente Virtual">
@@ -1073,7 +1211,7 @@ if (!empty($sessionIdUsuario)) {
 
                 <div class="account-wrap">
                     <div class="account-item clearfix js-item-menu" style="margin-right:0">
-                        <div class="image" style="margin-top:15px">
+                        <div class="image">
                             <?php
                             // arquivo da sessão (sanitizado) e checagem no filesystem real
                             $sessFoto  = $_SESSION['foto_usuario'] ?? '';
@@ -1183,49 +1321,10 @@ if (!empty($sessionIdUsuario)) {
 <script src="js/fix-header.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var root = document.documentElement;
-        var minZoom = 0.8;
-        var maxZoom = 1.3;
-        var step = 0.1;
-
-        function clampZoom(value) {
-            return Math.min(maxZoom, Math.max(minZoom, value));
-        }
-
-        function getCurrentZoom() {
-            var current = parseFloat(root.style.zoom || '1');
-            if (Number.isNaN(current)) return 1;
-            return current;
-        }
-
-        function applyZoom(value) {
-            var next = clampZoom(value);
-            root.style.zoom = next;
-            try {
-                localStorage.setItem('fcx_zoom', String(next));
-            } catch (e) {}
-        }
-
         try {
-            var saved = parseFloat(localStorage.getItem('fcx_zoom') || '');
-            if (!Number.isNaN(saved)) {
-                applyZoom(saved);
-            }
+            localStorage.removeItem('fcx_zoom');
         } catch (e) {}
-
-        var zoomOut = document.getElementById('zoom-out-btn');
-        var zoomIn = document.getElementById('zoom-in-btn');
-
-        if (zoomOut) {
-            zoomOut.addEventListener('click', function() {
-                applyZoom(getCurrentZoom() - step);
-            });
-        }
-        if (zoomIn) {
-            zoomIn.addEventListener('click', function() {
-                applyZoom(getCurrentZoom() + step);
-            });
-        }
+        document.documentElement.style.zoom = '';
     });
 </script>
 
@@ -1562,7 +1661,7 @@ if (!empty($sessionIdUsuario)) {
 
     function navigateWithReturn(url) {
         try {
-            sessionStorage.setItem('return_flow_url', window.location.href);
+            sessionStorage.removeItem('return_flow_url');
         } catch (e) {}
         try {
             const draft = collectFormDraft();
@@ -1744,30 +1843,9 @@ if (!empty($sessionIdUsuario)) {
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('return-flow-btn');
-        let target = null;
         try {
-            target = sessionStorage.getItem('return_flow_url');
-        } catch (e) {
-            target = null;
-        }
-        if (target && window.location.href === target) {
-            try {
-                sessionStorage.removeItem('return_flow_url');
-            } catch (_) {}
-            target = null;
-        }
-        if (target && btn) {
-            btn.style.display = 'flex';
-            btn.addEventListener('click', function() {
-                try {
-                    sessionStorage.removeItem('return_flow_url');
-                } catch (_) {}
-                window.location.href = target;
-            });
-        } else if (btn) {
-            btn.style.display = 'none';
-        }
+            sessionStorage.removeItem('return_flow_url');
+        } catch (_) {}
         restoreFormDraft();
     });
 </script>

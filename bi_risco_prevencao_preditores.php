@@ -99,7 +99,7 @@ $ageRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $sqlPat = "
     SELECT
-        COALESCE(NULLIF(patologia_pat, ''), 'Sem informacoes') AS patologia,
+        COALESCE(NULLIF(patologia_pat, ''), 'Sem informações') AS patologia,
         COUNT(*) AS altas,
         SUM(readm30) AS readm30
     FROM ({$readmBase}) base
@@ -128,7 +128,7 @@ if ($seguradoraId) {
 
 $sqlComp = "
     SELECT
-        COALESCE(NULLIF(pat.patologia_pat, ''), 'Sem informacoes') AS patologia,
+        COALESCE(NULLIF(pat.patologia_pat, ''), 'Sem informações') AS patologia,
         COUNT(DISTINCT i.id_internacao) AS casos,
         COUNT(DISTINCT CASE WHEN g.evento_adverso_ges = 's' THEN i.id_internacao END) AS eventos
     FROM tb_internacao i
@@ -146,18 +146,18 @@ $stmt->execute($paramsIntern);
 $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Preditores de Readmissao e Complicacoes</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Leitura por perfil, patologia e eventos adversos no periodo.</div>
+            <h1 class="bi-title">Preditores de Readmissão e Complicações</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Leitura por perfil, patologia e eventos adversos no período.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -201,13 +201,13 @@ $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     </form>
 
     <div class="bi-panel">
-        <h3>Readmissao 30d por faixa etaria</h3>
+        <h3>Readmissão 30d por faixa etaria</h3>
         <table class="bi-table">
             <thead>
                 <tr>
-                    <th>Faixa etaria</th>
+                    <th>Faixa etária</th>
                     <th>Altas</th>
-                    <th>Readmissao 30d</th>
+                    <th>Readmissão 30d</th>
                     <th>Taxa</th>
                 </tr>
             </thead>
@@ -242,7 +242,7 @@ $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <tr>
                     <th>Patologia</th>
                     <th>Altas</th>
-                    <th>Readmissao 30d</th>
+                    <th>Readmissão 30d</th>
                     <th>Taxa</th>
                 </tr>
             </thead>
@@ -259,7 +259,7 @@ $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         $rate = $altas > 0 ? ($readm / $altas) * 100 : 0;
                         ?>
                         <tr>
-                            <td><?= e($row['patologia'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['patologia'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($altas) ?></td>
                             <td><?= fmtInt($readm) ?></td>
                             <td><?= fmtPct($rate, 1) ?></td>
@@ -271,7 +271,7 @@ $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
     </div>
 
     <div class="bi-panel">
-        <h3>Complicacoes (eventos adversos) por patologia</h3>
+        <h3>Complicações (eventos adversos) por patologia</h3>
         <table class="bi-table">
             <thead>
                 <tr>
@@ -294,7 +294,7 @@ $compRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         $rate = $casos > 0 ? ($eventos / $casos) * 100 : 0;
                         ?>
                         <tr>
-                            <td><?= e($row['patologia'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['patologia'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($casos) ?></td>
                             <td><?= fmtInt($eventos) ?></td>
                             <td><?= fmtPct($rate, 1) ?></td>

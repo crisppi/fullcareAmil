@@ -38,7 +38,7 @@ if ($hospitalId) {
 
 // Permanência média por patologia
 $sqlPermanencia = "
-    SELECT COALESCE(p.patologia_pat, 'Sem informacoes') AS label,
+    SELECT COALESCE(p.patologia_pat, 'Sem informações') AS label,
            AVG(GREATEST(1, DATEDIFF(COALESCE(al.data_alta_alt, CURDATE()), i.data_intern_int) + 1)) AS media_dias
     FROM tb_internacao i
     LEFT JOIN (
@@ -95,7 +95,7 @@ foreach ($readmHospRows as $row) {
 
 // Readmissão 30d por seguradora
 $sqlReadmSeg = "
-    SELECT COALESCE(s.seguradora_seg, 'Sem informacoes') AS label,
+    SELECT COALESCE(s.seguradora_seg, 'Sem informações') AS label,
            COUNT(*) AS total_altas,
            SUM(
              CASE WHEN EXISTS (
@@ -147,9 +147,9 @@ $comorbLabels = array_map(fn($r) => $r['label'], $comorbRows);
 $comorbValues = array_map(fn($r) => (int)$r['total'], $comorbRows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -178,7 +178,7 @@ $comorbValues = array_map(fn($r) => (int)$r['total'], $comorbRows);
             </select>
         </div>
         <div class="bi-filter">
-            <label>Data inicio</label>
+            <label>Data início</label>
             <input type="date" name="data_inicio" value="<?= e($startStr) ?>">
         </div>
         <div class="bi-filter">

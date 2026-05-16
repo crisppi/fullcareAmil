@@ -1,8 +1,12 @@
 <?php
+ob_start();
+
 // ===== DEV ONLY (remova em produção) =====
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../php-error.log');
 error_reporting(E_ALL);
+
+require_once("templates/header.php");
 
 require_once(__DIR__ . "/../dao/internacaoDao.php");
 require_once(__DIR__ . "/../dao/capeanteDao.php");
@@ -577,7 +581,7 @@ th.th-acoes {
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_internacao_cap_jornada.php', ENT_QUOTES, 'UTF-8') ?>"
                     class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                     title="Limpar filtros" aria-label="Limpar filtros">
-                    <i class="bi bi-x-lg"></i>
+                    <i class="bi bi-trash3"></i>
                 </a>
             </div>
         </div>

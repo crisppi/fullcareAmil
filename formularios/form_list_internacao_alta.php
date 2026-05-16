@@ -500,7 +500,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                             </button>
                             <a class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                                 href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/' . ($somenteListaAltas ? 'listas/altas' : 'internacoes/reverter-alta'), ENT_QUOTES, 'UTF-8') ?>">
-                                <i class="bi bi-x-lg"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     </div>

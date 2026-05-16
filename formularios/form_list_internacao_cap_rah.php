@@ -333,8 +333,9 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
         </div>
 
         <style>
-        .listagem-page { padding: 4px 4px 14px; }
-        .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
+        .listagem-page { padding: 2px 4px 14px; }
+        .complete-table { padding: 4px 8px 2px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
+        .form-group.row { margin-top: 0 !important; margin-bottom: 4px !important; row-gap: 4px; }
         .form-group.row > [class*="col-"], .form-group.row > .form-group { padding:2px !important; }
         .form-group.row > :first-child { padding-left:8px !important; }
         .form-group.row .form-control, .form-group.row .btn { min-height:32px; height:32px; font-size:.72rem; line-height:1.2; border-radius:11px; margin-top:0 !important; }
@@ -342,16 +343,83 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
         .form-group.row .material-icons { font-size:16px; line-height:1; margin:0; }
         #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
         #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
+        .rah-filter-secondary {
+            margin-top: 0 !important;
+            margin-bottom: 1px !important;
+        }
+        .rah-filter-actions {
+            flex: 0 0 auto;
+            width: auto;
+        }
         .filter-date-col {
             flex: 0 0 150px;
             width: 150px;
             max-width: 150px;
+        }
+        .rah-action-stack {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 10px;
+        }
+        .rah-inline-actions {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .rah-inline-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: .68rem;
+            font-weight: 700;
+            line-height: 1;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .rah-inline-link i {
+            font-size: .82rem;
+            line-height: 1;
+        }
+        .rah-inline-link--start {
+            color: #194eff;
+        }
+        .rah-inline-link--audit {
+            color: #db5a0f;
+        }
+        .rah-inline-link--partial {
+            color: #2f9e44;
+        }
+        .rah-inline-link:hover,
+        .rah-inline-link:focus {
+            opacity: .9;
+            text-decoration: none;
+        }
+        .cap-rah-contas-btn {
+            min-height: 30px !important;
+            height: 30px !important;
+            padding: 0 8px !important;
+            font-size: .68rem !important;
+            font-weight: 500;
+            line-height: 1;
+            border-radius: 9px;
+            white-space: nowrap;
+        }
+        .cap-rah-contas-btn i {
+            font-size: .82rem;
         }
         @media (max-width: 991.98px) {
             .filter-date-col {
                 flex: 1 0 100%;
                 width: 100%;
                 max-width: 100%;
+            }
+            .rah-filter-actions {
+                width: 100%;
             }
         }
         </style>
@@ -433,7 +501,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                         </div>
                     </div>
 
-                    <div class="form-group row" style="margin-top:-20px; margin-bottom:14px;">
+                    <div class="form-group row rah-filter-secondary">
                         <div class="form-group col-sm-1" style="padding:2px !important;padding-left:16px !important;">
                             <select class="form-control form-control-sm"
                                 style="margin-top:7px;font-size:.8em; color:#878787" id="ordenar" name="ordenar">
@@ -500,7 +568,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                 placeholder="Data Internação Max"
                                 value="<?= htmlspecialchars((string)$data_intern_int_max) ?>">
                         </div>
-                        <div class="form-group col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                        <div class="form-group col-sm-1 d-flex align-items-start gap-2 rah-filter-actions" style="padding:2px !important">
                             <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
                                 style="background-color:#5e2363;width:42px;height:32px;margin-top:7px;border-color:#5e2363">
                                 <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
@@ -509,7 +577,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                 id="btnRahClearFiltersIcon"
                                 class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                                 style="margin-top:7px;" title="Limpar filtros" aria-label="Limpar filtros">
-                                <i class="bi bi-x-lg"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     </div>
@@ -621,13 +689,13 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     $rahEditUrl = $BASE_URL . 'edit_capeante_rah.php?id_capeante=' . $intern['id_capeante'];
                                 ?>
                                 <td class="action">
-                                    <div class="d-flex flex-column gap-1 align-items-center">
+                                    <div class="rah-action-stack">
                                         <a class="btn btn-outline-primary btn-sm" href="#"
                                             onclick="edit('<?= $BASE_URL ?>edit_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>')">
                                             Editar RAH
                                         </a>
                                         <div class="dropdown">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle cap-rah-contas-btn" type="button"
                                                 id="contasDropdown<?= $intern['id_capeante'] ?>_<?= $intern['id_internacao'] ?>"
                                                 data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bi bi-stack me-1"></i>
@@ -773,7 +841,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     $rahEditUrl = $BASE_URL . 'edit_capeante_rah.php?id_capeante=' . $intern['id_capeante'];
                                 ?>
                                 <td class="action text-center">
-                                    <div class="d-flex flex-column align-items-center gap-2">
+                                    <div class="rah-action-stack">
                                         <?php if ($isSenhasContext): ?>
                                             <a class="btn btn-outline-primary btn-sm"
                                                 href="#"
@@ -781,18 +849,16 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                                 Editar RAH
                                             </a>
                                         <?php else: ?>
-                                            <div class="d-flex flex-wrap align-items-center gap-3 justify-content-center">
+                                            <div class="rah-inline-actions">
                                                 <?php if (($intern['encerrado_cap'] ?? 'n') !== "s"): ?>
                                                     <?php if (($intern['em_auditoria_cap'] ?? 'n') === "s"): ?>
-                                                        <a class="legenda-em-auditoria" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
-                                                            <i class="bi bi-file-text"
-                                                                style="color:#db5a0f;font-size:1.1em;margin:0 5px"></i>
-                                                            <span style="color:#db5a0f;">Analisar</span>
+                                                        <a class="rah-inline-link rah-inline-link--audit" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                            <i class="bi bi-file-text"></i>
+                                                            <span>Analisar</span>
                                                         </a>
                                                     <?php else: ?>
-                                                        <a class="legenda-iniciar" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
-                                                            <i class="bi bi-file-text"
-                                                                style="color:rgb(25,78,255);font-size:1.1em;font-weight:bold;margin:0 5px"></i>
+                                                        <a class="rah-inline-link rah-inline-link--start" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                            <i class="bi bi-file-text"></i>
                                                             <span>Iniciar</span>
                                                         </a>
                                                     <?php endif; ?>
@@ -804,17 +870,16 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                                     </span>
                                                 <?php endif; ?>
 
-                                                <a class="legenda-parcial"
+                                                <a class="rah-inline-link rah-inline-link--partial"
                                                     href="<?= $BASE_URL ?>cad_capeante_rah.php?id_internacao=<?= $intern["id_internacao"] ?>&type=create&nova_parcial=1">
-                                                    <i class="legenda-parcial bi bi-file-text"
-                                                        style="color:green;text-decoration:none;font-size:10px;font-weight:bold;margin:0 5px">
-                                                        Criar Parcial</i>
+                                                    <i class="bi bi-file-text"></i>
+                                                    <span>Parcial</span>
                                                 </a>
                                             </div>
                                         <?php endif; ?>
 
                                         <div class="dropdown">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle cap-rah-contas-btn" type="button"
                                                 id="<?= htmlspecialchars($dropdownId, ENT_QUOTES, 'UTF-8') ?>"
                                                 data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bi bi-stack me-1"></i>

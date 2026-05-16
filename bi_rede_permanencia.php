@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Permanencia media por hospital';
+$pageTitle = 'Permanência média por hospital';
 $pageSubtitle = 'Variacao entre hospitais e gargalos de eficiencia';
 $clearUrl = 'bi/rede-permanencia';
 $redeCurrent = 'permanencia';
@@ -19,7 +19,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"><?= e($pageSubtitle) ?></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -31,11 +31,11 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
         <h3>Indicadores-chave</h3>
         <div class="bi-kpis kpi-compact">
             <div class="bi-kpi">
-                <small>Permanencia media</small>
+                <small>Permanência média</small>
                 <strong><?= number_format($network['permanencia_media'], 1, ',', '.') ?> d</strong>
             </div>
             <div class="bi-kpi">
-                <small>Internacoes</small>
+                <small>Internações</small>
                 <strong><?= (int)$totals['internacoes'] ?></strong>
             </div>
             <div class="bi-kpi">
@@ -46,7 +46,7 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
     </div>
 
     <div class="bi-panel">
-        <h3>Permanencia por hospital</h3>
+        <h3>Permanência por hospital</h3>
         <div class="bi-chart">
             <canvas id="chartPermanencia"></canvas>
         </div>
@@ -58,15 +58,15 @@ $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1)
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Permanencia media</th>
-                    <th>Internacoes</th>
+                    <th>Permanência média</th>
+                    <th>Internações</th>
                     <th>Casos com alta</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$rowsSorted): ?>
                     <tr>
-                        <td colspan="4" class="text-center">Sem dados no periodo.</td>
+                        <td colspan="4" class="text-center">Sem dados no período.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($rowsSorted as $row): ?>

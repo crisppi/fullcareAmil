@@ -3,7 +3,7 @@ include_once("check_logado.php");
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
-    die("Conexao invalida.");
+    die("Conexão inválida.");
 }
 
 function e($v)
@@ -30,6 +30,7 @@ if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
 }
 
 $dateExpr = "COALESCE(NULLIF(ca.data_inicial_capeante,'0000-00-00'), NULLIF(ca.data_digit_capeante,'0000-00-00'), NULLIF(ca.data_fech_capeante,'0000-00-00'))";
+$patologiaLabelExpr = "COALESCE(NULLIF(CONCAT(c.cat, ' - ', c.descricao), ' - '), NULLIF(c.cat,''), NULLIF(p.patologia_pat, ''), 'Sem patologia')";
 $where = "YEAR(ref_date) = :ano";
 $params = [':ano' => (int)$ano];
 if (!empty($mes)) {
@@ -47,7 +48,7 @@ if (!empty($seguradoraId)) {
 
 $sql = "
     SELECT
-        COALESCE(NULLIF(p.patologia_pat, ''), 'Sem patologia') AS patologia,
+        {$patologiaLabelExpr} AS patologia,
         COUNT(*) AS casos,
         SUM(valor_apresentado_capeante) AS valor_apresentado,
         SUM(valor_glosa_total) AS valor_glosa,
@@ -58,6 +59,7 @@ $sql = "
             ca.valor_glosa_total,
             ca.valor_final_capeante,
             {$dateExpr} AS ref_date,
+            ac.fk_cid_int,
             ac.fk_patologia_int,
             ac.fk_hospital_int,
             pa.fk_seguradora_pac
@@ -66,6 +68,7 @@ $sql = "
         LEFT JOIN tb_paciente pa ON pa.id_paciente = ac.fk_paciente_int
     ) t
     LEFT JOIN tb_patologia p ON p.id_patologia = t.fk_patologia_int
+    LEFT JOIN tb_cid c ON c.id_cid = COALESCE(NULLIF(t.fk_cid_int, 0), NULLIF(p.fk_cid_10_pat, 0))
     WHERE ref_date IS NOT NULL AND ref_date <> '0000-00-00'
       AND {$where}
     GROUP BY patologia
@@ -95,16 +98,19 @@ $labels = array_map(fn($r) => $r['patologia'], $topRows);
 $values = array_map(fn($r) => round((float)($r['valor_final'] ?? 0), 2), $topRows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
-        <h1 class="bi-title">Sinistralidade por Patologia</h1>
+        <div>
+            <h1 class="bi-title">Sinistralidade por Patologia</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Agrupamento pelo CID da internação, com patologia como apoio quando não houver CID.</div>
+        </div>
         <div class="bi-header-actions">
             <div class="text-end text-muted">Ano <?= e($ano) ?></div>
         </div>
@@ -157,37 +163,53 @@ $values = array_map(fn($r) => round((float)($r['valor_final'] ?? 0), 2), $topRow
         </div>
     </form>
 
-    <div class="bi-kpis kpi-compact kpi-tight kpi-slim">
-        <div class="bi-kpi kpi-indigo kpi-compact">
-            <small>Custo final</small>
+    <div class="bi-kpis kpi-dashboard-v2">
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-cash-stack"></i></span>
+                <small>Custo final</small>
+            </div>
             <strong>R$ <?= number_format($totalFinal, 2, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-neutral">Período filtrado</span>
         </div>
-        <div class="bi-kpi kpi-amber kpi-compact">
-            <small>Glosa total</small>
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-receipt-cutoff"></i></span>
+                <small>Glosa total</small>
+            </div>
             <strong>R$ <?= number_format($totalGlosa, 2, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-neutral"><?= number_format($totalCasos, 0, ',', '.') ?> casos</span>
         </div>
-        <div class="bi-kpi kpi-teal kpi-compact">
-            <small>Casos</small>
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-clipboard2-pulse"></i></span>
+                <small>Casos</small>
+            </div>
             <strong><?= number_format($totalCasos, 0, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-neutral">Internações no recorte</span>
         </div>
-        <div class="bi-kpi kpi-rose kpi-compact">
-            <small>Custo médio</small>
+        <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+            <div class="kpi-card-v2-head">
+                <span class="kpi-card-v2-icon"><i class="bi bi-graph-up"></i></span>
+                <small>Custo médio</small>
+            </div>
             <strong>R$ <?= number_format($mp, 2, ',', '.') ?></strong>
+            <span class="kpi-trend kpi-trend-neutral">Por caso</span>
         </div>
     </div>
 
     <div class="bi-panel">
-        <h3>Top patologias (custo final)</h3>
+        <h3>Top CIDs / patologias (custo final)</h3>
         <div class="bi-chart ie-chart-sm"><canvas id="chartPatologias"></canvas></div>
     </div>
 
     <div class="bi-panel">
-        <h3>Detalhe por patologia</h3>
+        <h3>Detalhe por CID / patologia</h3>
         <div class="table-responsive">
             <table class="bi-table">
                 <thead>
                     <tr>
-                        <th>Patologia</th>
+                        <th>CID / Patologia</th>
                         <th>Casos</th>
                         <th>Custo apresentado</th>
                         <th>Glosa</th>

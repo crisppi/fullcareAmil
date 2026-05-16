@@ -33,12 +33,12 @@ $profissional = trim((string)(filter_input(INPUT_GET, 'profissional') ?? ''));
 $auditorExpr = "
     CASE
         WHEN NULLIF(v.visita_auditor_prof_med,'') IS NOT NULL
-            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Medico)')
+            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Médico)')
         WHEN NULLIF(v.visita_auditor_prof_enf,'') IS NOT NULL
             THEN CONCAT(COALESCE(u_enf.usuario_user, v.visita_auditor_prof_enf), ' (Enfermagem)')
         WHEN u.usuario_user IS NOT NULL
             THEN CONCAT(u.usuario_user, ' (Auditor)')
-        ELSE 'Sem informacoes'
+        ELSE 'Sem informações'
     END
 ";
 
@@ -49,7 +49,7 @@ $auditores = $conn->query("SELECT DISTINCT {$auditorExpr} AS auditor_nome
     LEFT JOIN tb_user u ON u.id_usuario = v.fk_usuario_vis
     LEFT JOIN tb_user u_med ON u_med.id_usuario = CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
     LEFT JOIN tb_user u_enf ON u_enf.id_usuario = CAST(NULLIF(v.visita_auditor_prof_enf,'') AS UNSIGNED)
-    WHERE {$auditorExpr} <> 'Sem informacoes'
+    WHERE {$auditorExpr} <> 'Sem informações'
     ORDER BY auditor_nome")
     ->fetchAll(PDO::FETCH_COLUMN);
 
@@ -77,7 +77,7 @@ if ($profissional === 'medico') {
     $where .= " AND (v.visita_enf_vis = 's' OR UPPER(v.visita_auditor_prof_enf) LIKE 'ENF%')";
 }
 
-$seguradoraExpr = "COALESCE(NULLIF(s.seguradora_seg,''), 'Sem informacoes')";
+$seguradoraExpr = "COALESCE(NULLIF(s.seguradora_seg,''), 'Sem informações')";
 $sql = "
     SELECT
         {$seguradoraExpr} AS seguradora_nome,
@@ -109,8 +109,8 @@ foreach ($hospitais as $h) {
 }
 
 foreach ($rows as $row) {
-    $seg = $row['seguradora_nome'] ?? 'Sem informacoes';
-    $aud = $row['auditor_nome'] ?? 'Sem informacoes';
+    $seg = $row['seguradora_nome'] ?? 'Sem informações';
+    $aud = $row['auditor_nome'] ?? 'Sem informações';
     $hid = (int)($row['id_hospital'] ?? 0);
     $total = (int)($row['total'] ?? 0);
     if (!isset($matrix[$seg])) {
@@ -135,8 +135,8 @@ foreach ($rows as $row) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
     .seg-row td {
@@ -227,7 +227,7 @@ foreach ($rows as $row) {
             <label>Profissional Auditor</label>
             <select name="profissional">
                 <option value="">Todos</option>
-                <option value="medico" <?= $profissional === 'medico' ? 'selected' : '' ?>>Medico</option>
+                <option value="medico" <?= $profissional === 'medico' ? 'selected' : '' ?>>Médico</option>
                 <option value="enfermeiro" <?= $profissional === 'enfermeiro' ? 'selected' : '' ?>>Enfermeiro</option>
             </select>
         </div>
@@ -252,7 +252,7 @@ foreach ($rows as $row) {
                 <tbody>
                     <?php if (!$matrix): ?>
                         <tr>
-                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($matrix as $seg => $segData): ?>

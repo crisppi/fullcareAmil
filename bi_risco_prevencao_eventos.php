@@ -3,7 +3,7 @@ include_once("check_logado.php");
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
-    die("Conexao invalida.");
+    die("Conexão inválida.");
 }
 
 if (!function_exists('e')) {
@@ -73,7 +73,7 @@ $eventoPct = $totalInternacoes > 0 ? ($internacoesEvento / $totalInternacoes) * 
 
 $sqlTipos = "
     SELECT
-        COALESCE(NULLIF(g.tipo_evento_adverso_gest, ''), 'Sem informacoes') AS tipo,
+        COALESCE(NULLIF(g.tipo_evento_adverso_gest, ''), 'Sem informações') AS tipo,
         COUNT(*) AS total
     FROM tb_gestao g
     JOIN tb_internacao i ON i.id_internacao = g.fk_internacao_ges
@@ -108,7 +108,7 @@ $hospRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $sqlRel = "
     SELECT
-        COALESCE(NULLIF(g.rel_evento_adverso_ges, ''), 'Sem informacoes') AS relato,
+        COALESCE(NULLIF(g.rel_evento_adverso_ges, ''), 'Sem informações') AS relato,
         COUNT(*) AS total
     FROM tb_gestao g
     JOIN tb_internacao i ON i.id_internacao = g.fk_internacao_ges
@@ -125,9 +125,9 @@ $relRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $sqlTable = "
     SELECT
-        COALESCE(NULLIF(pa.nome_pac, ''), 'Sem informacoes') AS paciente,
-        COALESCE(NULLIF(h.nome_hosp, ''), 'Sem informacoes') AS hospital,
-        COALESCE(NULLIF(g.tipo_evento_adverso_gest, ''), 'Sem informacoes') AS tipo,
+        COALESCE(NULLIF(pa.nome_pac, ''), 'Sem informações') AS paciente,
+        COALESCE(NULLIF(h.nome_hosp, ''), 'Sem informações') AS hospital,
+        COALESCE(NULLIF(g.tipo_evento_adverso_gest, ''), 'Sem informações') AS tipo,
         COALESCE(NULLIF(g.rel_evento_adverso_ges, ''), '-') AS relato
     FROM tb_gestao g
     JOIN tb_internacao i ON i.id_internacao = g.fk_internacao_ges
@@ -143,8 +143,8 @@ $stmt->execute($params);
 $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -154,7 +154,7 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Padroes por tipo, hospital e relatos registrados.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -199,22 +199,38 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     <div class="bi-panel">
         <h3>Indicadores-chave</h3>
-        <div class="bi-kpis kpi-grid-4">
-            <div class="bi-kpi kpi-compact">
-                <small>Internacoes analisadas</small>
+        <div class="bi-kpis kpi-dashboard-v2">
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
+                    <small>Internações analisadas</small>
+                </div>
                 <strong><?= fmtInt($totalInternacoes) ?></strong>
+                <span class="kpi-trend kpi-trend-neutral">Período filtrado</span>
             </div>
-            <div class="bi-kpi kpi-compact">
-                <small>Internacoes com evento</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-exclamation-octagon"></i></span>
+                    <small>Internações com evento</small>
+                </div>
                 <strong><?= fmtInt($internacoesEvento) ?></strong>
+                <span class="kpi-trend kpi-trend-neutral">Com evento adverso</span>
             </div>
-            <div class="bi-kpi kpi-compact">
-                <small>Taxa de evento</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-percent"></i></span>
+                    <small>Taxa de evento</small>
+                </div>
                 <strong><?= fmtPct($eventoPct, 1) ?></strong>
+                <span class="kpi-trend kpi-trend-neutral">Sobre internações</span>
             </div>
-            <div class="bi-kpi kpi-compact">
-                <small>Total de eventos</small>
+            <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                <div class="kpi-card-v2-head">
+                    <span class="kpi-card-v2-icon"><i class="bi bi-clipboard2-pulse"></i></span>
+                    <small>Total de eventos</small>
+                </div>
                 <strong><?= fmtInt($totalEventos) ?></strong>
+                <span class="kpi-trend kpi-trend-neutral">Registros no recorte</span>
             </div>
         </div>
     </div>
@@ -236,7 +252,7 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($tipoRows as $row): ?>
                         <tr>
-                            <td><?= e($row['tipo'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['tipo'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($row['total'] ?? 0) ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -262,7 +278,7 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($hospRows as $row): ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($row['total'] ?? 0) ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -288,7 +304,7 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($relRows as $row): ?>
                         <tr>
-                            <td><?= e($row['relato'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['relato'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($row['total'] ?? 0) ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -316,9 +332,9 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($tableRows as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informacoes') ?></td>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
-                            <td><?= e($row['tipo'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
+                            <td><?= e($row['tipo'] ?? 'Sem informações') ?></td>
                             <td><?= e($row['relato'] ?? '-') ?></td>
                         </tr>
                     <?php endforeach; ?>

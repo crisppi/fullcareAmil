@@ -34,6 +34,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
@@ -49,12 +51,6 @@ $hospitalId = filter_input(INPUT_GET, 'hospital_id', FILTER_VALIDATE_INT) ?: nul
 $seguradoraId = filter_input(INPUT_GET, 'seguradora_id', FILTER_VALIDATE_INT) ?: null;
 $patologiaId = filter_input(INPUT_GET, 'patologia_id', FILTER_VALIDATE_INT) ?: null;
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$seguradoras = $conn->query("SELECT id_seguradora, seguradora_seg FROM tb_seguradora ORDER BY seguradora_seg")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$patologias = $conn->query("SELECT id_patologia, patologia_pat FROM tb_patologia ORDER BY patologia_pat")
-    ->fetchAll(PDO::FETCH_ASSOC);
 $anos = $conn->query("SELECT DISTINCT YEAR(data_intern_int) AS ano FROM tb_internacao WHERE data_intern_int IS NOT NULL AND data_intern_int <> '0000-00-00' ORDER BY ano DESC")
     ->fetchAll(PDO::FETCH_COLUMN);
 
@@ -89,6 +85,25 @@ if ($hasRange) {
         $params[':mes'] = (int)$mes;
     }
 }
+
+$filterScope = [
+    'ano' => $hasRange ? null : $ano,
+    'mes' => $hasRange ? null : $mes,
+    'data_inicio' => $hasRange ? $rangeStart : null,
+    'data_fim' => $hasRange ? $rangeEnd : null,
+    'hospital_id' => $hospitalId,
+    'seguradora_id' => $seguradoraId,
+];
+$hospitais = array_map(fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $filterScope, [
+    'date_expr' => $dateExpr,
+]));
+$seguradoras = array_map(fn($r) => ['id_seguradora' => $r['value'], 'seguradora_seg' => $r['label']], bi_fetch_filter_options($conn, 'seguradora', $filterScope, [
+    'date_expr' => $dateExpr,
+]));
+$patologias = bi_fetch_cid_options($conn, $filterScope, [
+    'date_expr' => $dateExpr,
+    'join_capeante' => true,
+]);
 if (!empty($hospitalId)) {
     $whereParts[] = "fk_hospital_int = :hospital_id";
     $params[':hospital_id'] = (int)$hospitalId;
@@ -98,7 +113,7 @@ if (!empty($seguradoraId)) {
     $params[':seguradora_id'] = (int)$seguradoraId;
 }
 if (!empty($patologiaId)) {
-    $whereParts[] = "fk_patologia_int = :patologia_id";
+    $whereParts[] = "fk_cid_int = :patologia_id";
     $params[':patologia_id'] = (int)$patologiaId;
 }
 $where = implode(" AND ", $whereParts);
@@ -108,6 +123,7 @@ $baseSql = "
         ca.valor_final_capeante,
         {$dateExpr} AS ref_date,
         ac.fk_hospital_int,
+        ac.fk_cid_int,
         ac.fk_patologia_int,
         pa.fk_seguradora_pac
     FROM tb_capeante ca
@@ -137,12 +153,12 @@ $rowsHosp = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 $sqlCombo = "
     SELECT
         h.nome_hosp AS hospital,
-            COALESCE(NULLIF(p.patologia_pat, ''), 'Sem patologia') AS patologia,
+        COALESCE(NULLIF(CONCAT_WS(' - ', NULLIF(c.cat, ''), NULLIF(c.descricao, '')), ''), 'Sem CID') AS patologia,
         COUNT(*) AS casos,
         SUM(valor_final_capeante) AS valor_final
     FROM ({$baseSql}) t
     LEFT JOIN tb_hospital h ON h.id_hospital = t.fk_hospital_int
-    LEFT JOIN tb_patologia p ON p.id_patologia = t.fk_patologia_int
+    LEFT JOIN tb_cid c ON c.id_cid = t.fk_cid_int
     WHERE {$where}
     GROUP BY hospital, patologia
     ORDER BY valor_final DESC
@@ -265,9 +281,9 @@ if ($topHospIds && $monthKeys) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -326,7 +342,7 @@ if ($topHospIds && $monthKeys) {
             </select>
         </div>
         <div class="bi-filter">
-            <label>Patologia</label>
+            <label>CID</label>
             <select name="patologia_id">
                 <option value="">Todas</option>
                 <?php foreach ($patologias as $p): ?>

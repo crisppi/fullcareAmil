@@ -6,6 +6,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 if (!function_exists('e')) {
     function e($v)
     {
@@ -67,22 +69,27 @@ $tipoAdmissao = trim((string)(filter_input(INPUT_GET, 'tipo_admissao') ?? ''));
 $modoInternacao = trim((string)(filter_input(INPUT_GET, 'modo_internacao') ?? ''));
 $uti = trim((string)(filter_input(INPUT_GET, 'uti') ?? ''));
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$seguradoras = $conn->query("SELECT id_seguradora, seguradora_seg FROM tb_seguradora ORDER BY seguradora_seg")
-    ->fetchAll(PDO::FETCH_ASSOC);
+$optionScope = [
+    'data_inicio' => $dataIni,
+    'data_fim' => $dataFim,
+    'hospital_id' => $hospitalId,
+    'seguradora_id' => $seguradoraId,
+    'regiao' => $regiao,
+    'tipo_internacao' => $tipoAdmissao,
+    'modo_internacao' => $modoInternacao,
+    'uti' => $uti,
+];
+$hospitais = array_map(static fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $optionScope));
+$seguradoras = array_map(static fn($r) => ['id_seguradora' => $r['value'], 'seguradora_seg' => $r['label']], bi_fetch_filter_options($conn, 'seguradora', $optionScope));
 if ($isSeguradoraRole) {
     $seguradoraId = $seguradoraUserId > 0 ? $seguradoraUserId : -1;
     $seguradoras = array_values(array_filter($seguradoras, static function ($s) use ($seguradoraUserId) {
         return (int)($s['id_seguradora'] ?? 0) === (int)$seguradoraUserId;
     }));
 }
-$regioes = $conn->query("SELECT DISTINCT estado_hosp FROM tb_hospital WHERE estado_hosp IS NOT NULL AND estado_hosp <> '' ORDER BY estado_hosp")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$tiposAdm = $conn->query("SELECT DISTINCT tipo_admissao_int FROM tb_internacao WHERE tipo_admissao_int IS NOT NULL AND tipo_admissao_int <> '' ORDER BY tipo_admissao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$modosInt = $conn->query("SELECT DISTINCT modo_internacao_int FROM tb_internacao WHERE modo_internacao_int IS NOT NULL AND modo_internacao_int <> '' ORDER BY modo_internacao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
+$regioes = array_column(bi_fetch_filter_options($conn, 'regiao', $optionScope), 'label');
+$tiposAdm = array_column(bi_fetch_filter_options($conn, 'tipo_internacao', $optionScope), 'label');
+$modosInt = array_column(bi_fetch_filter_options($conn, 'modo_internacao', $optionScope), 'label');
 
 $filterValues = [
     'data_ini' => $dataIni,
@@ -445,7 +452,7 @@ $redeTabs = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>

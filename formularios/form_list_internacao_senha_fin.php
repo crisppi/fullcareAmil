@@ -198,7 +198,7 @@ if (empty($data_intern_int_max)) {
                         <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_internacao_senha_fin.php', ENT_QUOTES, 'UTF-8') ?>"
                             class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                             style="margin-top:7px;" title="Limpar filtros" aria-label="Limpar filtros">
-                            <i class="bi bi-x-lg"></i>
+                            <i class="bi bi-trash3"></i>
                         </a>
                     </div>
             </form>

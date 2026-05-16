@@ -96,12 +96,12 @@
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Seguradoras</h1>
-                <p class="listagem-subtitle">Consulte operadoras e parâmetros com o mesmo acabamento das outras listas do sistema.</p>
             </div>
             <div class="listagem-hero__actions">
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/seguradoras/nova', ENT_QUOTES, 'UTF-8') ?>"
                     class="btn listagem-btn-top listagem-btn-top--blue">
-                    <i class="bi bi-plus-lg" style='font-size: .95rem;margin-right:5px;'></i>Nova Seguradora
+                    <i class="bi bi-building-add listagem-btn-top__icon" aria-hidden="true"></i>
+                    <span>Nova Seguradora</span>
                 </a>
             </div>
         </div>
@@ -150,8 +150,9 @@
                         </div>
                         <div class="col-sm-2" style="padding:2px !important">
                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/seguradoras', ENT_QUOTES, 'UTF-8') ?>"
-                                class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;">
-                                Limpar filtros
+                                class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;"
+                                title="Limpar filtros" aria-label="Limpar filtros">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>

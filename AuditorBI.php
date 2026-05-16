@@ -86,7 +86,7 @@ function fetchStats(PDO $conn, string $auditorExpr, string $where, array $params
 
 function labelsAndValues(array $rows): array
 {
-    $labels = array_map(fn($r) => $r['auditor_nome'] ?? 'Sem informacoes', $rows);
+    $labels = array_map(fn($r) => $r['auditor_nome'] ?? 'Sem informações', $rows);
     $values = array_map(fn($r) => (float)($r['total'] ?? 0), $rows);
     return [$labels, $values];
 }
@@ -152,12 +152,12 @@ $hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER 
 $auditorExpr = "
     CASE
         WHEN NULLIF(v.visita_auditor_prof_med,'') IS NOT NULL
-            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Medico)')
+            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Médico)')
         WHEN NULLIF(v.visita_auditor_prof_enf,'') IS NOT NULL
             THEN CONCAT(COALESCE(u_enf.usuario_user, v.visita_auditor_prof_enf), ' (Enfermagem)')
         WHEN u.usuario_user IS NOT NULL
             THEN CONCAT(u.usuario_user, ' (Auditor)')
-        ELSE 'Sem informacoes'
+        ELSE 'Sem informações'
     END
 ";
 
@@ -167,7 +167,7 @@ $auditorListSql = "
     LEFT JOIN tb_user u ON u.id_usuario = v.fk_usuario_vis
     LEFT JOIN tb_user u_med ON u_med.id_usuario = CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
     LEFT JOIN tb_user u_enf ON u_enf.id_usuario = CAST(NULLIF(v.visita_auditor_prof_enf,'') AS UNSIGNED)
-    WHERE {$auditorExpr} <> 'Sem informacoes'
+    WHERE {$auditorExpr} <> 'Sem informações'
     ORDER BY auditor_nome
 ";
 $auditores = $conn->query($auditorListSql)->fetchAll(PDO::FETCH_COLUMN);
@@ -329,9 +329,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === '1') {
 $ajaxEndpoint = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: ($_SERVER['PHP_SELF'] ?? 'AuditorBI.php'));
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-auditor-page">
@@ -339,7 +339,7 @@ $ajaxEndpoint = (string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) 
         <h1 class="bi-title">Auditor</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>

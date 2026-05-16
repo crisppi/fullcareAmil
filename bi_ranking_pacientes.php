@@ -35,7 +35,7 @@ function shortLabel(string $value, int $limit = 18): string
     return mb_substr($clean, 0, $limit - 3, 'UTF-8') . '...';
 }
 
-function topMetric(array $rows, string $metric, int $limit = 10): array
+function topMetric(array $rows, string $metric, int $limit = 8): array
 {
     $sorted = $rows;
     usort($sorted, function ($a, $b) use ($metric) {
@@ -120,9 +120,9 @@ unset($row);
 [$labelsCusto, $valsCusto] = topMetric($rows, 'custo_total');
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/CoolAdmin-master/vendor/chartjs/Chart.bundle.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
@@ -132,7 +132,7 @@ unset($row);
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Internações, MP e custo por paciente.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -214,44 +214,73 @@ unset($row);
         </table>
     </div>
 
-    <div class="bi-grid fixed-3">
+    <div class="bi-grid fixed-2 bi-ranking-top-grid">
         <div class="bi-panel">
             <h3>Internações</h3>
-            <div class="bi-chart ie-chart-sm"><canvas id="chartInternacoes"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartInternacoes"></canvas></div>
         </div>
         <div class="bi-panel">
             <h3>MP</h3>
-            <div class="bi-chart ie-chart-sm"><canvas id="chartMp"></canvas></div>
+            <div class="bi-chart ie-chart-md"><canvas id="chartMp"></canvas></div>
         </div>
-        <div class="bi-panel">
+        <div class="bi-panel bi-ranking-top-wide">
             <h3>Custo</h3>
-            <div class="bi-chart ie-chart-sm"><canvas id="chartCusto"></canvas></div>
+            <div class="bi-chart ie-chart-lg"><canvas id="chartCusto"></canvas></div>
         </div>
     </div>
 </div>
 
 <script>
-function buildBarChart(canvasId, labels, values, tickFormatter) {
+function buildBarChart(canvasId, labels, values, tickFormatter, orientation) {
     const el = document.getElementById(canvasId);
     if (!el || !window.Chart) return;
+    const isHorizontal = orientation === 'horizontal';
     const scales = window.biChartScales ? window.biChartScales() : undefined;
-    if (tickFormatter && scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
-        scales.yAxes[0].ticks.callback = tickFormatter;
+    const maxValue = Math.max.apply(null, values.map(function(v) { return Number(v || 0); }));
+
+    if (scales && scales.xAxes && scales.xAxes[0]) {
+        scales.xAxes[0].ticks.maxRotation = isHorizontal ? 0 : 48;
+        scales.xAxes[0].ticks.autoSkip = false;
+        if (isHorizontal) {
+            scales.xAxes[0].ticks.callback = tickFormatter || function (v) { return Number(v || 0).toLocaleString('pt-BR'); };
+            scales.xAxes[0].ticks.suggestedMax = maxValue ? maxValue * 1.18 : undefined;
+            scales.xAxes[0].gridLines.display = false;
+        }
+    }
+
+    if (scales && scales.yAxes && scales.yAxes[0]) {
+        scales.yAxes[0].ticks.autoSkip = false;
+        if (isHorizontal) {
+            scales.yAxes[0].ticks.padding = 10;
+        } else {
+            scales.yAxes[0].ticks.suggestedMax = maxValue ? maxValue * 1.18 : undefined;
+            if (tickFormatter) {
+                scales.yAxes[0].ticks.callback = tickFormatter;
+            }
+        }
     }
     new Chart(el, {
-        type: 'bar',
+        type: isHorizontal ? 'horizontalBar' : 'bar',
         data: {
             labels: labels,
             datasets: [{
                 data: values,
                 backgroundColor: 'rgba(126,150,255,0.82)',
                 borderRadius: 10,
-                maxBarThickness: 48
+                maxBarThickness: isHorizontal ? 34 : 52
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: isHorizontal ? 12 : 30,
+                    right: isHorizontal ? 88 : 18,
+                    bottom: 8,
+                    left: isHorizontal ? 8 : 12
+                }
+            },
             legend: { display: false },
             scales: scales,
             tooltips: {
@@ -268,7 +297,7 @@ function buildBarChart(canvasId, labels, values, tickFormatter) {
 
 buildBarChart('chartInternacoes', <?= json_encode($labelsInternacoes) ?>, <?= json_encode($valsInternacoes) ?>);
 buildBarChart('chartMp', <?= json_encode($labelsMp) ?>, <?= json_encode($valsMp) ?>);
-buildBarChart('chartCusto', <?= json_encode($labelsCusto) ?>, <?= json_encode($valsCusto) ?>, window.biMoneyTick);
+buildBarChart('chartCusto', <?= json_encode($labelsCusto) ?>, <?= json_encode($valsCusto) ?>, window.biMoneyTick, 'horizontal');
 </script>
 
 <?php require_once("templates/footer.php"); ?>

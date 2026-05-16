@@ -259,7 +259,7 @@ $user = $_SESSION['id_usuario'];
                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/censo/lista', ENT_QUOTES, 'UTF-8') ?>"
                                 class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                                 title="Limpar filtros" aria-label="Limpar filtros">
-                                <i class="bi bi-x-lg"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     </div>

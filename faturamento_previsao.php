@@ -110,52 +110,61 @@ for ($i = 0; $i < 4; $i++) {
 .forecast-wrapper {
     width: 100%;
     max-width: none;
-    margin: 24px 0 70px;
+    margin: 12px 0 56px;
     padding: 0 24px;
     font-family: 'Inter', sans-serif;
 }
 .forecast-hero {
     background: linear-gradient(120deg, #f6f8ff, #fef1ff);
     border-radius: 24px;
-    padding: 32px;
+    padding: 24px 28px;
     border: 1px solid rgba(59, 35, 99, .08);
     box-shadow: 0 25px 55px rgba(33, 17, 56, .12);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 .forecast-hero h1 {
+    font-size: 1.05rem;
     font-weight: 800;
     color: #2e1d49;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+}
+.forecast-hero p {
+    font-size: .76rem;
+    line-height: 1.4;
 }
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 18px;
-    margin-bottom: 26px;
+    gap: 14px;
+    margin-bottom: 18px;
 }
 .forecast-card {
     background: #fff;
     border-radius: 18px;
-    padding: 18px;
+    padding: 14px 18px;
     border: 1px solid rgba(27, 11, 53, .08);
     box-shadow: 0 12px 25px rgba(18, 9, 29, .08);
 }
 .forecast-card h3 {
-    font-size: .9rem;
+    font-size: .72rem;
     text-transform: uppercase;
     letter-spacing: .08em;
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     color: #7b6c8f;
 }
 .forecast-card strong {
-    font-size: 2rem;
+    font-size: 1.18rem;
     color: #24172f;
+}
+.forecast-card small {
+    font-size: .72rem;
+    line-height: 1.35;
 }
 .forecast-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
-    font-size: .92rem;
+    margin-top: 8px;
+    font-size: .82rem;
     background: #fff;
     border-radius: 20px;
     border: 1px solid rgba(27, 11, 53, .08);
@@ -164,13 +173,13 @@ for ($i = 0; $i < 4; $i++) {
 }
 .forecast-table th,
 .forecast-table td {
-    padding: 14px 16px;
+    padding: 11px 16px;
     border-bottom: 1px solid #f2eff7;
     text-align: left;
 }
 .forecast-table th {
     text-transform: uppercase;
-    font-size: .75rem;
+    font-size: .68rem;
     letter-spacing: .08em;
     color: #85769a;
     background: #faf7ff;
@@ -182,7 +191,7 @@ for ($i = 0; $i < 4; $i++) {
 .badge-pill {
     padding: 2px 10px;
     border-radius: 999px;
-    font-size: .75rem;
+    font-size: .68rem;
     font-weight: 600;
 }
 .badge-optimistic {

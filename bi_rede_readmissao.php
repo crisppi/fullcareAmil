@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Readmissao 30 dias por hospital';
+$pageTitle = 'Readmissão 30 dias por hospital';
 $pageSubtitle = 'Indicador de resolucao e qualidade assistencial';
 $clearUrl = 'bi/rede-readmissao';
 $redeCurrent = 'readmissao';
@@ -19,7 +19,7 @@ $chartVals = array_map(fn($r) => round((float)($r['readm_rate'] ?? 0) * 100, 1),
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"><?= e($pageSubtitle) ?></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -31,7 +31,7 @@ $chartVals = array_map(fn($r) => round((float)($r['readm_rate'] ?? 0) * 100, 1),
         <h3>Indicadores-chave</h3>
         <div class="bi-kpis kpi-compact">
             <div class="bi-kpi">
-                <small>Readmissao media</small>
+                <small>Readmissão media</small>
                 <strong><?= number_format($network['readm_rate'] * 100, 1, ',', '.') ?>%</strong>
             </div>
             <div class="bi-kpi">
@@ -46,7 +46,7 @@ $chartVals = array_map(fn($r) => round((float)($r['readm_rate'] ?? 0) * 100, 1),
     </div>
 
     <div class="bi-panel">
-        <h3>Readmissao por hospital</h3>
+        <h3>Readmissão por hospital</h3>
         <div class="bi-chart">
             <canvas id="chartReadm"></canvas>
         </div>
@@ -58,7 +58,7 @@ $chartVals = array_map(fn($r) => round((float)($r['readm_rate'] ?? 0) * 100, 1),
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Readmissao</th>
+                    <th>Readmissão</th>
                     <th>Readmissoes</th>
                     <th>Altas analisadas</th>
                 </tr>
@@ -66,7 +66,7 @@ $chartVals = array_map(fn($r) => round((float)($r['readm_rate'] ?? 0) * 100, 1),
             <tbody>
                 <?php if (!$rowsSorted): ?>
                     <tr>
-                        <td colspan="4" class="text-center">Sem dados no periodo.</td>
+                        <td colspan="4" class="text-center">Sem dados no período.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($rowsSorted as $row): ?>

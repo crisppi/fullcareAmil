@@ -3,7 +3,7 @@ include_once("check_logado.php");
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
-    die("Conexao invalida.");
+    die("Conexão inválida.");
 }
 
 function e($v)
@@ -59,16 +59,16 @@ $stmtKpi = $conn->prepare("
 $stmtKpi->execute($params);
 $kpi = $stmtKpi->fetch(PDO::FETCH_ASSOC) ?: [];
 
-$rowsVm = rows($conn, "CASE WHEN u.vm_uti = 's' THEN 'Sim' WHEN u.vm_uti = 'n' THEN 'Nao' ELSE 'Sem informacoes' END", $sqlBase, $params, 6);
-$rowsDva = rows($conn, "CASE WHEN u.dva_uti = 's' THEN 'Sim' WHEN u.dva_uti = 'n' THEN 'Nao' ELSE 'Sem informacoes' END", $sqlBase, $params, 6);
-$rowsSuporte = rows($conn, "CASE WHEN u.suporte_vent_uti = 's' THEN 'Sim' WHEN u.suporte_vent_uti = 'n' THEN 'Nao' ELSE 'Sem informacoes' END", $sqlBase, $params, 6);
-$rowsGlasgow = rows($conn, "COALESCE(NULLIF(u.glasgow_uti,''), 'Sem informacoes')", $sqlBase, $params, 10);
-$rowsCriterios = rows($conn, "COALESCE(NULLIF(u.criterios_uti,''), 'Sem informacoes')", $sqlBase, $params, 10);
-$rowsHosp = rows($conn, "COALESCE(NULLIF(h.nome_hosp,''), 'Sem informacoes')", $sqlBase, $params, 12);
+$rowsVm = rows($conn, "CASE WHEN u.vm_uti = 's' THEN 'Sim' WHEN u.vm_uti = 'n' THEN 'Não' ELSE 'Sem informações' END", $sqlBase, $params, 6);
+$rowsDva = rows($conn, "CASE WHEN u.dva_uti = 's' THEN 'Sim' WHEN u.dva_uti = 'n' THEN 'Não' ELSE 'Sem informações' END", $sqlBase, $params, 6);
+$rowsSuporte = rows($conn, "CASE WHEN u.suporte_vent_uti = 's' THEN 'Sim' WHEN u.suporte_vent_uti = 'n' THEN 'Não' ELSE 'Sem informações' END", $sqlBase, $params, 6);
+$rowsGlasgow = rows($conn, "COALESCE(NULLIF(u.glasgow_uti,''), 'Sem informações')", $sqlBase, $params, 10);
+$rowsCriterios = rows($conn, "COALESCE(NULLIF(u.criterios_uti,''), 'Sem informações')", $sqlBase, $params, 10);
+$rowsHosp = rows($conn, "COALESCE(NULLIF(h.nome_hosp,''), 'Sem informações')", $sqlBase, $params, 12);
 
 function lv(array $rows): array
 {
-    return [array_map(fn($r) => $r['label'] ?? 'Sem informacoes', $rows), array_map(fn($r) => (float)($r['total'] ?? 0), $rows)];
+    return [array_map(fn($r) => $r['label'] ?? 'Sem informações', $rows), array_map(fn($r) => (float)($r['total'] ?? 0), $rows)];
 }
 [$labelsVm, $valuesVm] = lv($rowsVm);
 [$labelsDva, $valuesDva] = lv($rowsDva);
@@ -78,9 +78,9 @@ function lv(array $rows): array
 [$labelsHosp, $valuesHosp] = lv($rowsHosp);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">

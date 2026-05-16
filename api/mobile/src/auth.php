@@ -66,12 +66,17 @@ function mobileParseToken(string $token): ?array
 
 function mobileAuthorizationToken(): string
 {
-    $header = (string)($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
-    if (stripos($header, 'Bearer ') !== 0) {
-        return '';
+    $header = (string)($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? $_SERVER['HTTP_X_AUTH_TOKEN'] ?? '');
+    if (stripos($header, 'Bearer ') === 0) {
+        return trim(substr($header, 7));
     }
 
-    return trim(substr($header, 7));
+    $queryToken = trim((string)($_GET['token'] ?? ''));
+    if ($queryToken !== '') {
+        return $queryToken;
+    }
+
+    return $header !== '' ? trim($header) : '';
 }
 
 function mobileFindUserByEmail(PDO $conn, string $email): ?array

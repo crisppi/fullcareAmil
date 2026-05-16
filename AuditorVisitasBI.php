@@ -33,12 +33,12 @@ $profissional = trim((string)(filter_input(INPUT_GET, 'profissional') ?? ''));
 $auditorExpr = "
     CASE
         WHEN NULLIF(v.visita_auditor_prof_med,'') IS NOT NULL
-            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Medico)')
+            THEN CONCAT(COALESCE(u_med.usuario_user, v.visita_auditor_prof_med), ' (Médico)')
         WHEN NULLIF(v.visita_auditor_prof_enf,'') IS NOT NULL
             THEN CONCAT(COALESCE(u_enf.usuario_user, v.visita_auditor_prof_enf), ' (Enfermagem)')
         WHEN u.usuario_user IS NOT NULL
             THEN CONCAT(u.usuario_user, ' (Auditor)')
-        ELSE 'Sem informacoes'
+        ELSE 'Sem informações'
     END
 ";
 
@@ -60,7 +60,7 @@ $auditores = $conn->query("SELECT DISTINCT {$auditorExpr} AS auditor_nome
     LEFT JOIN tb_user u ON u.id_usuario = v.fk_usuario_vis
     LEFT JOIN tb_user u_med ON u_med.id_usuario = CAST(NULLIF(v.visita_auditor_prof_med,'') AS UNSIGNED)
     LEFT JOIN tb_user u_enf ON u_enf.id_usuario = CAST(NULLIF(v.visita_auditor_prof_enf,'') AS UNSIGNED)
-    WHERE {$auditorExpr} <> 'Sem informacoes'
+    WHERE {$auditorExpr} <> 'Sem informações'
     ORDER BY auditor_nome")
     ->fetchAll(PDO::FETCH_COLUMN);
 
@@ -113,7 +113,7 @@ $matrix = [];
 $totals = [];
 $auditorLabels = [];
 foreach ($rows as $row) {
-    $aud = $row['auditor_nome'] ?? 'Sem informacoes';
+    $aud = $row['auditor_nome'] ?? 'Sem informações';
     $auditorId = (int)($row['auditor_id'] ?? 0);
     $hid = (int)($row['id_hospital'] ?? 0);
     $total = (int)($row['total'] ?? 0);
@@ -138,7 +138,7 @@ foreach ($matrix as $auditorId => $data) {
     }
 }
 
-// Esconde colunas de hospital sem nenhuma visita no periodo/filtro atual.
+// Esconde colunas de hospital sem nenhuma visita no período/filtro atual.
 $hospitais = array_values(array_filter($hospitais, static function ($h) use ($colTotals): bool {
     $hid = (int)($h['id_hospital'] ?? 0);
     return (int)($colTotals[$hid] ?? 0) > 0;
@@ -168,7 +168,7 @@ if (!empty($auditorNome)) {
 if ($profissional === 'medico') {
     $negWhere .= " AND (
         COALESCE(NULLIF(u_neg.cargo_user, ''), '') LIKE '%med%'
-        OR {$auditorExpr} LIKE '%(Medico)'
+        OR {$auditorExpr} LIKE '%(Médico)'
     )";
 } elseif ($profissional === 'enfermeiro') {
     $negWhere .= " AND (
@@ -180,7 +180,7 @@ if ($profissional === 'medico') {
 $negSql = "
     SELECT
         COALESCE(ng.fk_usuario_neg, 0) AS auditor_id,
-        COALESCE({$auditorExpr}, COALESCE(u_neg.usuario_user, 'Sem informacoes')) AS auditor_nome,
+        COALESCE({$auditorExpr}, COALESCE(u_neg.usuario_user, 'Sem informações')) AS auditor_nome,
         h.id_hospital,
         COUNT(DISTINCT ng.id_negociacao) AS total
     FROM tb_negociacao ng
@@ -217,7 +217,7 @@ foreach ($negRows as $row) {
     $negMatrix[$auditorId][$hid] = $total;
     $negTotals[$auditorId] += $total;
     if (empty($auditorLabels[$auditorId])) {
-        $auditorLabels[$auditorId] = (string)($row['auditor_nome'] ?? 'Sem informacoes');
+        $auditorLabels[$auditorId] = (string)($row['auditor_nome'] ?? 'Sem informações');
     }
     $negColTotals[$hid] = ($negColTotals[$hid] ?? 0) + $total;
     $negGrandTotal += $total;
@@ -254,8 +254,8 @@ foreach ($hospitais as $h) {
 $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -263,7 +263,7 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
         <h1 class="bi-title">Auditor Visitas</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -282,7 +282,7 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
             </select>
         </div>
         <div class="bi-filter">
-            <label>Mes</label>
+            <label>Mês</label>
             <select name="mes">
                 <option value="">Todos</option>
                 <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -309,7 +309,7 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
             <label>Profissional Auditor</label>
             <select name="profissional">
                 <option value="">Todos</option>
-                <option value="medico" <?= $profissional === 'medico' ? 'selected' : '' ?>>Medico</option>
+                <option value="medico" <?= $profissional === 'medico' ? 'selected' : '' ?>>Médico</option>
                 <option value="enfermeiro" <?= $profissional === 'enfermeiro' ? 'selected' : '' ?>>Enfermeiro</option>
             </select>
         </div>
@@ -334,13 +334,13 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
                 <tbody>
                     <?php if (!$matrix): ?>
                         <tr>
-                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($allAuditorIds as $auditorId): ?>
                             <?php $data = $matrix[$auditorId] ?? []; ?>
                             <tr>
-                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informações') ?></td>
                                 <?php foreach ($hospitais as $h): ?>
                                     <?php $val = $data[$h['id_hospital']] ?? 0; ?>
                                     <td><?= (int)$val ?></td>
@@ -377,13 +377,13 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
                 <tbody>
                     <?php if (!$allAuditorIds): ?>
                         <tr>
-                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($allAuditorIds as $auditorId): ?>
                             <?php $data = $negMatrix[$auditorId] ?? []; ?>
                             <tr>
-                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informações') ?></td>
                                 <?php foreach ($hospitais as $h): ?>
                                     <td><?= (int)($data[$h['id_hospital']] ?? 0) ?></td>
                                 <?php endforeach; ?>
@@ -419,12 +419,12 @@ $ratioGrand = $grandTotal > 0 ? (($negGrandTotal / $grandTotal) * 100) : 0.0;
                 <tbody>
                     <?php if (!$allAuditorIds): ?>
                         <tr>
-                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informacoes</td>
+                            <td colspan="<?= count($hospitais) + 2 ?>">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($allAuditorIds as $auditorId): ?>
                             <tr>
-                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informacoes') ?></td>
+                                <td><?= e($auditorLabels[$auditorId] ?? 'Sem informações') ?></td>
                                 <?php foreach ($hospitais as $h): ?>
                                     <td><?= number_format((float)($ratioByHospital[$auditorId][$h['id_hospital']] ?? 0), 1, ',', '.') ?>%</td>
                                 <?php endforeach; ?>

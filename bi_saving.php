@@ -118,12 +118,159 @@ $labelsHosp = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', $hospRows);
 $savingHosp = array_map(fn($r) => (float)$r['total_saving'], $hospRows);
 $countHosp = array_map(fn($r) => (int)$r['total_registros'], $hospRows);
 $qtdDiariasHosp = array_map(fn($r) => (int)($r['total_qtd'] ?? 0), $hospRows);
+
+$sqlTipoValor = "
+    SELECT
+        COALESCE(ng.tipo_negociacao, 'Não informado') AS tipo,
+        SUM({$savingExpr}) AS total_saving,
+        COUNT(DISTINCT ng.id_negociacao) AS total_registros
+    FROM tb_negociacao ng
+    INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    WHERE {$whereTot}
+    GROUP BY tipo
+    ORDER BY total_saving DESC
+";
+$stmt = $conn->prepare($sqlTipoValor);
+foreach ($paramsTot as $key => $value) {
+    $stmt->bindValue($key, $value, PDO::PARAM_INT);
+}
+$stmt->execute();
+$tipoRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$sqlTipoMensal = "
+    SELECT
+        MONTH(ng.data_inicio_neg) AS mes,
+        COALESCE(ng.tipo_negociacao, 'Não informado') AS tipo,
+        SUM({$savingExpr}) AS total_saving,
+        COUNT(DISTINCT ng.id_negociacao) AS total_registros
+    FROM tb_negociacao ng
+    INNER JOIN tb_internacao i ON i.id_internacao = ng.fk_id_int
+    WHERE {$whereBase}
+    GROUP BY mes, tipo
+    ORDER BY mes, tipo
+";
+$stmt = $conn->prepare($sqlTipoMensal);
+foreach ($paramsBase as $key => $value) {
+    $stmt->bindValue($key, $value, PDO::PARAM_INT);
+}
+$stmt->execute();
+$tipoMensalRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+$tipoLabels = array_map(fn($r) => (string)($r['tipo'] ?: 'Não informado'), $tipoRows);
+$tipoSavingValues = array_map(fn($r) => (float)($r['total_saving'] ?? 0), $tipoRows);
+$tipoCountValues = array_map(fn($r) => (int)($r['total_registros'] ?? 0), $tipoRows);
+
+$tipoMonthlyMap = [];
+$tipoMonthlyCountMap = [];
+foreach ($tipoLabels as $tipoLabel) {
+    $tipoMonthlyMap[$tipoLabel] = array_fill(1, 12, 0.0);
+    $tipoMonthlyCountMap[$tipoLabel] = array_fill(1, 12, 0);
+}
+foreach ($tipoMensalRows as $row) {
+    $mesRef = (int)($row['mes'] ?? 0);
+    $tipoRef = (string)($row['tipo'] ?: 'Não informado');
+    if ($mesRef >= 1 && $mesRef <= 12 && isset($tipoMonthlyMap[$tipoRef])) {
+        $tipoMonthlyMap[$tipoRef][$mesRef] = (float)($row['total_saving'] ?? 0);
+        $tipoMonthlyCountMap[$tipoRef][$mesRef] = (int)($row['total_registros'] ?? 0);
+    }
+}
+
+$tipoPalette = [
+    'rgba(159, 196, 214, 0.92)',
+    'rgba(196, 168, 132, 0.9)',
+    'rgba(184, 150, 176, 0.9)',
+    'rgba(136, 174, 162, 0.92)',
+    'rgba(127, 143, 176, 0.9)',
+    'rgba(203, 183, 142, 0.88)',
+];
+$tipoLineDatasets = [];
+$tipoCountLineDatasets = [];
+$tipoColorIndex = 0;
+foreach ($tipoLabels as $tipoLabel) {
+    $color = $tipoPalette[$tipoColorIndex % count($tipoPalette)];
+    $tipoLineDatasets[] = [
+        'label' => $tipoLabel,
+        'data' => array_values($tipoMonthlyMap[$tipoLabel] ?? array_fill(1, 12, 0.0)),
+        'borderColor' => $color,
+        'backgroundColor' => 'rgba(0,0,0,0)',
+        'borderWidth' => 2,
+        'pointRadius' => 3,
+        'tension' => 0.28,
+        'fill' => false,
+    ];
+    $tipoCountLineDatasets[] = [
+        'label' => $tipoLabel,
+        'data' => array_values($tipoMonthlyCountMap[$tipoLabel] ?? array_fill(1, 12, 0)),
+        'borderColor' => $color,
+        'backgroundColor' => 'rgba(0,0,0,0)',
+        'borderWidth' => 2,
+        'pointRadius' => 3,
+        'tension' => 0.28,
+        'fill' => false,
+    ];
+    $tipoColorIndex++;
+}
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+.saving-type-grid {
+    display:flex;
+    flex-wrap:nowrap;
+    gap:12px;
+    margin-top:12px;
+    align-items:stretch;
+}
+@media (max-width: 992px) {
+    .saving-type-grid {
+        flex-direction:column;
+    }
+}
+.saving-type-grid .bi-panel {
+    flex: 1 1 0;
+    width: calc(50% - 6px);
+    max-width: calc(50% - 6px);
+    height: 400px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.saving-type-grid .bi-panel + .bi-panel {
+    margin-top: 0;
+}
+@media (max-width: 992px) {
+    .saving-type-grid .bi-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+.saving-type-panel h3 {
+    margin-bottom:12px;
+}
+.saving-type-panel .bi-chart {
+    flex: 1 1 auto;
+    height: 300px;
+    min-height: 300px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.saving-section-stack {
+    display:grid;
+    gap:12px;
+    margin-top:12px;
+}
+.saving-section-stack .bi-panel + .bi-panel {
+    margin-top: 0;
+}
+</style>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
@@ -201,6 +348,26 @@ $qtdDiariasHosp = array_map(fn($r) => (int)($r['total_qtd'] ?? 0), $hospRows);
         <h3>Evolução mensal do saving (ano completo)</h3>
         <div class="bi-chart ie-chart-md"><canvas id="chartSavingEvolucao"></canvas></div>
     </div>
+    <div class="saving-type-grid">
+        <div class="bi-panel saving-type-panel">
+            <h3>Tipo de saving por valor</h3>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartTipoSavingValor"></canvas></div>
+        </div>
+        <div class="bi-panel saving-type-panel">
+            <h3>Tipo de saving por quantidade</h3>
+            <div class="bi-chart ie-chart-sm"><canvas id="chartTipoSavingQuantidade"></canvas></div>
+        </div>
+    </div>
+    <div class="saving-section-stack">
+        <div class="bi-panel">
+            <h3>Evolução mensal por tipo de saving</h3>
+            <div class="bi-chart ie-chart-md"><canvas id="chartTipoSavingMensal"></canvas></div>
+        </div>
+        <div class="bi-panel">
+            <h3>Evolução mensal por tipo de saving em quantidade</h3>
+            <div class="bi-chart ie-chart-md"><canvas id="chartTipoSavingMensalQuantidade"></canvas></div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -210,6 +377,12 @@ const countHosp = <?= json_encode($countHosp) ?>;
 const qtdDiariasHosp = <?= json_encode($qtdDiariasHosp) ?>;
 const labelsMes = <?= json_encode($labelsMes) ?>;
 const savingMensal = <?= json_encode($savingMensal) ?>;
+const tipoLabels = <?= json_encode($tipoLabels, JSON_UNESCAPED_UNICODE) ?>;
+const tipoSavingValues = <?= json_encode($tipoSavingValues) ?>;
+const tipoCountValues = <?= json_encode($tipoCountValues) ?>;
+const tipoLineDatasets = <?= json_encode($tipoLineDatasets, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+const tipoCountLineDatasets = <?= json_encode($tipoCountLineDatasets, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+const tipoPalette = <?= json_encode($tipoPalette) ?>;
 
 const biValueLabelPlugin = {
     afterDatasetsDraw: function(chart) {
@@ -225,7 +398,8 @@ const biValueLabelPlugin = {
                 if (!Number.isFinite(rawValue)) return;
 
                 const isMoney = !!dataset.isMoney;
-                const label = isMoney
+                const valueMode = String(dataset.valueMode || (isMoney ? 'money' : 'count'));
+                const label = valueMode === 'money'
                     ? formatMoneyCompact(rawValue)
                     : Number(rawValue).toLocaleString('pt-BR');
 
@@ -275,6 +449,7 @@ function barChart(ctx, labels, data, color) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            biValueLabels: false,
             layout: {
                 padding: {
                     top: 26
@@ -341,6 +516,118 @@ function lineChart(ctx, labels, data, color, money = true) {
     });
 }
 
+function categoryBarChart(ctx, labels, data, isMoney) {
+    const scales = window.biChartScales ? window.biChartScales() : undefined;
+    if (scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
+        scales.yAxes[0].ticks.callback = function (value) {
+            return isMoney
+                ? (window.biMoneyTick ? window.biMoneyTick(value) : formatMoneyCompact(value))
+                : Number(value || 0).toLocaleString('pt-BR');
+        };
+    }
+    return new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                data,
+                backgroundColor: tipoPalette,
+                borderColor: 'rgba(11, 24, 39, 0.15)',
+                borderWidth: 1,
+                isMoney: isMoney,
+                valueMode: isMoney ? 'money' : 'count'
+            }]
+        },
+        plugins: [biValueLabelPlugin],
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            biValueLabels: false,
+            layout: {
+                padding: {
+                    top: 18
+                }
+            },
+            legend: {
+                display: false
+            },
+            scales: scales,
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, chartData) {
+                        const idx = tooltipItem.index;
+                        const label = chartData.labels[idx] || '';
+                        const value = chartData.datasets[0].data[idx] || 0;
+                        return isMoney
+                            ? (label + ': ' + formatMoney(value))
+                            : (label + ': ' + Number(value).toLocaleString('pt-BR'));
+                    }
+                }
+            }
+        }
+    });
+}
+
+function multiLineChart(ctx, labels, datasets) {
+    const scales = window.biChartScales ? window.biChartScales() : undefined;
+    if (scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
+        scales.yAxes[0].ticks.callback = function (value) {
+            return Number(value || 0).toLocaleString('pt-BR');
+        };
+    }
+    return new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: scales,
+            legend: {
+                position: 'bottom',
+                labels: { fontColor: '#eaf6ff', boxWidth: 14 }
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        const ds = data.datasets[tooltipItem.datasetIndex] || {};
+                        return (ds.label ? ds.label + ': ' : '') + Number(tooltipItem.yLabel || 0).toLocaleString('pt-BR');
+                    }
+                }
+            }
+        }
+    });
+}
+
+function multiLineCountChart(ctx, labels, datasets) {
+    const scales = window.biChartScales ? window.biChartScales() : undefined;
+    if (scales && scales.yAxes && scales.yAxes[0] && scales.yAxes[0].ticks) {
+        scales.yAxes[0].ticks.callback = function (value) {
+            return Number(value || 0).toLocaleString('pt-BR');
+        };
+    }
+    return new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: scales,
+            legend: {
+                position: 'bottom',
+                labels: { fontColor: '#eaf6ff', boxWidth: 14 }
+            },
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        const ds = data.datasets[tooltipItem.datasetIndex] || {};
+                        return (ds.label ? ds.label + ': ' : '') + Number(tooltipItem.yLabel || 0).toLocaleString('pt-BR');
+                    }
+                }
+            }
+        }
+    });
+}
+
 barChart(document.getElementById('chartSavingHospital'), labelsHosp, savingHosp, 'rgba(141, 208, 255, 0.7)');
 new Chart(document.getElementById('chartQtdeHospital'), {
     type: 'bar',
@@ -349,6 +636,7 @@ new Chart(document.getElementById('chartQtdeHospital'), {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        biValueLabels: false,
         layout: {
             padding: {
                 top: 24
@@ -365,6 +653,7 @@ new Chart(document.getElementById('chartDiariasHospital'), {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        biValueLabels: false,
         layout: {
             padding: {
                 top: 24
@@ -375,6 +664,10 @@ new Chart(document.getElementById('chartDiariasHospital'), {
     }
 });
 lineChart(document.getElementById('chartSavingEvolucao'), labelsMes, savingMensal, 'rgba(255, 205, 86, 0.85)');
+categoryBarChart(document.getElementById('chartTipoSavingValor'), tipoLabels, tipoSavingValues, false);
+categoryBarChart(document.getElementById('chartTipoSavingQuantidade'), tipoLabels, tipoCountValues, false);
+multiLineChart(document.getElementById('chartTipoSavingMensal'), labelsMes, tipoLineDatasets);
+multiLineCountChart(document.getElementById('chartTipoSavingMensalQuantidade'), labelsMes, tipoCountLineDatasets);
 </script>
 
 <?php require_once("templates/footer.php"); ?>

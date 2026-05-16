@@ -699,25 +699,32 @@ form#form-capeante-rah {
 select option[value=""],
 select option[disabled],
 input::placeholder,
-textarea::placeholder {
-    color: #b3b3b3 !important;
+textarea::placeholder,
+.bootstrap-select .dropdown-menu .bs-searchbox input::placeholder,
+.bootstrap-select>.dropdown-toggle.bs-placeholder,
+.bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option,
+.bootstrap-select>.dropdown-toggle.bs-placeholder .filter-option-inner-inner,
+.bootstrap-select>.dropdown-toggle.select-placeholder,
+.bootstrap-select>.dropdown-toggle.select-placeholder .filter-option,
+.bootstrap-select>.dropdown-toggle.select-placeholder .filter-option-inner-inner,
+.select2-container--default .select2-selection--single .select2-selection__placeholder,
+.select2-container--default .select2-selection--single .select2-selection__rendered.select2-default,
+select.select-placeholder-empty,
+select.select-placeholder-empty option[value=""] {
+    color: #c4c4c4 !important;
     opacity: 1;
-}
-
-select.select-placeholder-empty {
-    color: #9c9c9c !important;
-    font-size: 0.9em !important;
-    font-style: italic;
+    font-size: .78rem !important;
+    font-weight: 500 !important;
+    font-family: "Poppins", sans-serif !important;
+    font-style: normal !important;
+    letter-spacing: 0 !important;
 }
 
 select.select-placeholder-empty option {
     color: #333 !important;
-    font-style: normal;
-}
-
-select.select-placeholder-empty option[value=""] {
-    color: #9c9c9c !important;
-    font-style: italic;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 select:invalid,

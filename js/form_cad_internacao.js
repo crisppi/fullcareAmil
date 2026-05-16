@@ -1507,10 +1507,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!selectEl || !Array.isArray(allOptions)) return;
         const current = String(selectEl.value || '');
         const nextOptions = [];
+        const shouldRestrict = hasHospital && allowedSet instanceof Set && allowedSet.size > 0;
 
         allOptions.forEach(function(opt, idx) {
             const val = String(opt.value || '');
-            if (val === '' || !hasHospital || allowedSet.has(val)) {
+            if (val === '' || !shouldRestrict || allowedSet.has(val)) {
                 nextOptions.push(opt.cloneNode(true));
             } else if (idx === 0 && val === '') {
                 nextOptions.push(opt.cloneNode(true));

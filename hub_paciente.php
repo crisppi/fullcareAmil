@@ -397,26 +397,26 @@ $effectiveLevel = isset($riskColor[$riskLevel]) ? $riskLevel : 'baixo';
         <div>
           <h4 class="mb-1"><?= htmlspecialchars($nome_str ?: '—') ?></h4>
           <div class="d-flex flex-wrap gap-2 text-secondary small">
-            <span><i class="fa-regular fa-id-card me-1"></i>Matrícula:
+            <span><i class="bi bi-person-badge me-1"></i>Matrícula:
               <?= htmlspecialchars($mat_full ?: '—') ?></span>
             <span>•</span>
-            <span><i class="fa-regular fa-calendar me-1"></i>Nasc.:
+            <span><i class="bi bi-calendar-event me-1"></i>Nasc.:
               <?= htmlspecialchars($nasc_fmt ?: '—') ?></span>
             <span>•</span>
             <span><i
-                class="fa-solid fa-venus-mars me-1"></i><?= htmlspecialchars(strtoupper($p['sexo_pac'] ?? '')) ?></span>
+                class="bi bi-person me-1"></i><?= htmlspecialchars(strtoupper($p['sexo_pac'] ?? '')) ?></span>
             <span>•</span>
-            <span><i class="fa-solid fa-shield-heart me-1"></i>Seg.:
+            <span><i class="bi bi-shield-check me-1"></i>Seg.:
               <?= htmlspecialchars($seguradora_nome ?: '—') ?></span>
+            <span>•</span>
             <?php if ($estipulante_nome): ?>
-              <span>•</span>
-              <span><i class="fa-solid fa-briefcase-medical me-1"></i>Estip.:
+              <span><i class="bi bi-briefcase-fill me-1"></i>Estip.:
                 <?= htmlspecialchars($estipulante_nome) ?></span>
             <?php endif; ?>
             <?php if ($recem_nascido_pac !== null): ?>
               <span>•</span>
               <span>
-                <i class="fa-solid fa-baby me-1"></i>
+                <i class="bi bi-star-fill me-1"></i>
                 RN: <?= $recem_nascido_pac == 's' ? 'Sim' : 'Não' ?>
                 <?php if (!empty($numero_recem_nascido_pac)): ?>
                   - Nº <?= htmlspecialchars($numero_recem_nascido_pac) ?>
@@ -432,7 +432,7 @@ $effectiveLevel = isset($riskColor[$riskLevel]) ? $riskLevel : 'baixo';
       ?>
             <div class="mt-2">
               <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:600;background:<?= $badgePalette['bg'] ?>;color:<?= $badgePalette['text'] ?>;border:1px solid <?= $badgePalette['border'] ?>;">
-                <i class="fa-solid fa-bolt"></i>
+                <i class="bi bi-lightning-fill"></i>
                 <?= $badgeInfo['label'] ?> — <?= $badgeInfo['prioridade'] ?>
               </span>
             </div>
@@ -462,7 +462,7 @@ $complexInfo = $complexMap[$effectiveLevel];
           <div class="col-12 col-md-6 hub-compact-left">
             <div class="d-flex justify-content-between align-items-start mb-1">
               <small class="text-uppercase fw-semibold" style="letter-spacing:.08em;color:<?= $palette['text'] ?>;">Indicador de readmissão</small>
-              <i class="fa-solid fa-chart-line" style="font-size:1.2rem;"></i>
+              <i class="bi bi-graph-up" style="font-size:1.2rem;"></i>
             </div>
             <?php if (!empty($riskOverview['available'])): ?>
               <div class="hub-compact-big"><?= $probPct ?>%</div>
@@ -495,7 +495,7 @@ $complexInfo = $complexMap[$effectiveLevel];
         <?php if (!empty($riskOverview['available'])): ?>
           <div class="hub-compact-badge-bottom">
             <span class="badge-compact" style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-weight:600;background:rgba(255,255,255,.55);color:<?= $palette['text'] ?>;border:1px solid rgba(0,0,0,.05);">
-              <i class="fa-solid fa-triangle-exclamation"></i>
+              <i class="bi bi-lightning-fill"></i>
               <span><?= $complexInfo['label'] ?> · <?= $complexInfo['prioridade'] ?></span>
             </span>
           </div>
@@ -548,7 +548,7 @@ $complexInfo = $complexMap[$effectiveLevel];
           <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-internacoes" type="button"
               role="tab">
-              <i class="fa-solid fa-bed-pulse me-2"></i>Internações
+              <i class="bi bi-hospital me-2"></i>Internações
             </button>
           </li>
 
@@ -556,18 +556,18 @@ $complexInfo = $complexMap[$effectiveLevel];
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-contas" type="button"
               role="tab">
-              <i class="fa-solid fa-file-invoice-dollar me-2"></i>Contas
+              <i class="bi bi-receipt me-2"></i>Contas
             </button>
           </li>
         </ul>
         <div class="hub-int-actions d-flex align-items-center gap-2">
           <div class="input-group input-group-sm hub-int-filter">
-            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
             <input id="buscaInternacoes" type="text" class="form-control" placeholder="Filtrar...">
           </div>
           <?php if (!$isGestorSeguradora) { ?>
             <a class="btn btn-sm btn-primary hub-new-int-btn" href="<?= $BASE_URL ?>cad_internacao.php?id_paciente=<?= (int)$p['id_paciente'] ?>">
-              <i class="fa-solid fa-plus me-1"></i> Nova Internação
+              <i class="bi bi-plus me-1"></i> Nova Internação
             </a>
           <?php } ?>
         </div>
@@ -626,7 +626,7 @@ $complexInfo = $complexMap[$effectiveLevel];
             <h6 class="mb-0">Antecedentes e condições</h6>
             <?php if (!$isGestorSeguradora) { ?>
               <button class="btn btn-outline-secondary btn-sm"><i
-                  class="fa-solid fa-plus me-2"></i>Novo</button>
+                  class="bi bi-plus me-2"></i>Novo</button>
             <?php } ?>
           </div>
           <div id="chipsAntecedentes" class="d-flex flex-wrap gap-2">

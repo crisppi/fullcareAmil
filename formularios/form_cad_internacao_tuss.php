@@ -6,7 +6,7 @@
     align-items:flex-end;
 }
 #container-tuss .form-group {margin-bottom:15px;}
-#container-tuss .form-group label {margin-bottom:5px;font-weight:bold;}
+#container-tuss .form-group label {margin-bottom:2px;font-weight:400;}
 #container-tuss .form-control {width:100%;padding:5px;}
 #container-tuss .btn {padding:5px 10px;font-size:.9rem;border:none;border-radius:5px;cursor:pointer;}
 #container-tuss .btn-add {background-color:#007bff;color:#fff;}

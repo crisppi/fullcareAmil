@@ -91,7 +91,7 @@ foreach ($rows as $row) {
     $motivos = [];
     if ($diasIntern !== null && $diasEsperado !== null && $diasEsperado > 0 && $diasIntern > $diasEsperado) {
         $score += $pontosPermanencia;
-        $motivos[] = "Permanencia > esperado";
+        $motivos[] = "Permanência > esperado";
     }
     if ($altoCusto) {
         $score += $pontosAltoCusto;
@@ -141,8 +141,8 @@ foreach ($rows as $row) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -150,7 +150,7 @@ foreach ($rows as $row) {
         <h1 class="bi-title">Internações com Risco</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -169,7 +169,7 @@ foreach ($rows as $row) {
             </select>
         </div>
         <div class="bi-filter">
-            <label>Nivel de Risco</label>
+            <label>Nível de Risco</label>
             <select name="risco">
                 <option value="">Todos</option>
                 <option value="alto" <?= $riscoFiltro === 'alto' ? 'selected' : '' ?>>Alto</option>
@@ -198,14 +198,14 @@ foreach ($rows as $row) {
                         <th>Alto Custo</th>
                         <th>Antecedentes Risco</th>
                         <th>Score</th>
-                        <th>Nivel</th>
+                        <th>Nível</th>
                         <th>Motivos</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!$resultados): ?>
                         <tr>
-                            <td colspan="12">Sem informacoes</td>
+                            <td colspan="12">Sem informações</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($resultados as $row): ?>
@@ -223,7 +223,7 @@ foreach ($rows as $row) {
                                     <?php endif; ?>
                                 </td>
                                 <td><?= $row['dias_sem_visita'] !== null ? (int)$row['dias_sem_visita'] : 'Sem visita' ?></td>
-                                <td><?= $row['alto_custo'] === 's' ? 'Sim' : 'Nao' ?></td>
+                                <td><?= $row['alto_custo'] === 's' ? 'Sim' : 'Não' ?></td>
                                 <td><?= (int)$row['risco_antecedentes'] ?></td>
                                 <td><?= (int)$row['score'] ?></td>
                                 <td><?= e($row['nivel']) ?></td>

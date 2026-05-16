@@ -35,7 +35,7 @@ function usuarioCargoNormalizado(?string $cargo): string
 $cargoAtualNorm = usuarioCargoNormalizado($usuario->cargo_user ?? '');
 $isGestorSeguradoraUser = strpos($cargoAtualNorm, 'gestorseguradora') === 0;
 ?>
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 
 <div id="main-container" class="internacao-page cadastro-layout">
     <div class="internacao-page__hero">

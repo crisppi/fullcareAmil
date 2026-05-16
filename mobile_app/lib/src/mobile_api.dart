@@ -8,7 +8,7 @@ class MobileApi {
   MobileApi();
 
   static const String _baseUrl =
-      'http://10.0.2.2:8090/FullCare/api/mobile/index.php';
+      'http://10.0.2.2/FullCare/api/mobile/index.php';
   static const String _tokenKey = 'fullcare_mobile_token';
 
   String? _token;
@@ -33,10 +33,7 @@ class MobileApi {
     final payload = await _request(
       method: 'POST',
       action: 'login',
-      body: {
-        'email': email,
-        'password': password,
-      },
+      body: {'email': email, 'password': password},
     );
 
     final data = payload['data'] as Map<String, dynamic>;
@@ -71,34 +68,49 @@ class MobileApi {
   }
 
   Future<List<AdmissionItem>> listAdmissions(String query) async {
-    final payload =
-        await _request(action: 'admissions', query: {'query': query});
-    final items = (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ?? [];
+    final payload = await _request(
+      action: 'admissions',
+      query: {'query': query},
+    );
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
     return items
         .map((item) => AdmissionItem.fromJson(item as Map<String, dynamic>))
         .toList();
   }
 
   Future<AdmissionDetail> fetchAdmissionDetail(int admissionId) async {
-    final payload =
-        await _request(action: 'admission', query: {'id': '$admissionId'});
+    final payload = await _request(
+      action: 'admission',
+      query: {'id': '$admissionId'},
+    );
     final data = payload['data'] as Map<String, dynamic>;
     return AdmissionDetail(
-      admission:
-          AdmissionItem.fromJson(data['admission'] as Map<String, dynamic>),
-      tussItems: ((data['tuss_items'] as List<dynamic>? ?? []))
-          .map((item) => TussItem.fromJson(item as Map<String, dynamic>))
-          .toList(),
-      extensions: ((data['extensions'] as List<dynamic>? ?? []))
-          .map((item) => ExtensionItem.fromJson(item as Map<String, dynamic>))
-          .toList(),
+      admission: AdmissionItem.fromJson(
+        data['admission'] as Map<String, dynamic>,
+      ),
+      tussItems:
+          ((data['tuss_items'] as List<dynamic>? ?? []))
+              .map((item) => TussItem.fromJson(item as Map<String, dynamic>))
+              .toList(),
+      extensions:
+          ((data['extensions'] as List<dynamic>? ?? []))
+              .map(
+                (item) => ExtensionItem.fromJson(item as Map<String, dynamic>),
+              )
+              .toList(),
     );
   }
 
   Future<List<TussCatalogItem>> searchTussCatalog(String query) async {
-    final payload =
-        await _request(action: 'tuss-catalog', query: {'query': query});
-    final items = (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ?? [];
+    final payload = await _request(
+      action: 'tuss-catalog',
+      query: {'query': query},
+    );
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
     return items
         .map((item) => TussCatalogItem.fromJson(item as Map<String, dynamic>))
         .toList();
@@ -108,7 +120,7 @@ class MobileApi {
     final payload = await _request(action: 'discharge-types');
     final items =
         (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
-            [];
+        [];
     return items
         .map((item) => item?.toString().trim() ?? '')
         .where((item) => item.isNotEmpty)
@@ -188,10 +200,187 @@ class MobileApi {
     );
     final items =
         (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
-            [];
+        [];
     return items
         .map((item) => EvolutionItem.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<List<HomeCareCase>> listHomeCareCases(String query) async {
+    final payload = await _request(
+      action: 'home-care-cases',
+      query: {'query': query},
+    );
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => HomeCareCase.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<LongStayCase>> listLongStayCases(String query) async {
+    final payload = await _request(
+      action: 'long-stay-cases',
+      query: {'query': query},
+    );
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => LongStayCase.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<String>> listLongStayStatuses() async {
+    final payload = await _request(action: 'long-stay-statuses');
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  Future<List<String>> listLongStayReasons() async {
+    final payload = await _request(action: 'long-stay-reasons');
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  Future<List<String>> listLongStayRisks() async {
+    final payload = await _request(action: 'long-stay-risks');
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  Future<LongStayCase> saveLongStayUpdate({
+    required int admissionId,
+    required String status,
+    required String mainReason,
+    required String clinicalBarrier,
+    required String administrativeBarrier,
+    required String actionPlan,
+    required String owner,
+    required String deadlineDate,
+    required String expectedDischargeDate,
+    required String nextReviewDate,
+    required String dehospitalizationFlag,
+    required String escalatedFlag,
+    required String riskLevel,
+    required String notes,
+  }) async {
+    final payload = await _request(
+      method: 'POST',
+      action: 'long-stay-update',
+      body: {
+        'admission_id': admissionId,
+        'status': status,
+        'main_reason': mainReason,
+        'clinical_barrier': clinicalBarrier,
+        'administrative_barrier': administrativeBarrier,
+        'action_plan': actionPlan,
+        'owner': owner,
+        'deadline_date': deadlineDate,
+        'expected_discharge_date': expectedDischargeDate,
+        'next_review_date': nextReviewDate,
+        'dehospitalization_flag': dehospitalizationFlag,
+        'escalated_flag': escalatedFlag,
+        'risk_level': riskLevel,
+        'notes': notes,
+      },
+    );
+
+    return LongStayCase.fromJson(payload['data'] as Map<String, dynamic>);
+  }
+
+  Future<HomeCareCase> saveHomeCareUpdate({
+    required int admissionId,
+    required String status,
+    required String supplier,
+    required String approvedMode,
+    required String expectedDate,
+    required String mainBarrier,
+    required String transitionPlan,
+    required String notes,
+  }) async {
+    final payload = await _request(
+      method: 'POST',
+      action: 'home-care-update',
+      body: {
+        'admission_id': admissionId,
+        'status': status,
+        'supplier': supplier,
+        'approved_mode': approvedMode,
+        'expected_date': expectedDate,
+        'main_barrier': mainBarrier,
+        'transition_plan': transitionPlan,
+        'notes': notes,
+      },
+    );
+
+    return HomeCareCase.fromJson(payload['data'] as Map<String, dynamic>);
+  }
+
+  Future<List<AdverseEventCase>> listAdverseEventCases(String query) async {
+    final payload = await _request(
+      action: 'adverse-event-cases',
+      query: {'query': query},
+    );
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => AdverseEventCase.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<String>> listAdverseEventTypes() async {
+    final payload = await _request(action: 'adverse-event-types');
+    final items =
+        (payload['data'] as Map<String, dynamic>)['items'] as List<dynamic>? ??
+        [];
+    return items
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
+
+  Future<AdverseEventCase> saveAdverseEventUpdate({
+    required int admissionId,
+    required String eventType,
+    required String report,
+    required String eventDate,
+    String signaledFlag = 's',
+    String concludedFlag = 'n',
+    String closeFlag = 'n',
+  }) async {
+    final payload = await _request(
+      method: 'POST',
+      action: 'adverse-event-update',
+      body: {
+        'admission_id': admissionId,
+        'event_type': eventType,
+        'report': report,
+        'event_date': eventDate,
+        'signaled_flag': signaledFlag,
+        'concluded_flag': concludedFlag,
+        'close_flag': closeFlag,
+      },
+    );
+
+    return AdverseEventCase.fromJson(payload['data'] as Map<String, dynamic>);
   }
 
   Future<EvolutionItem> saveEvolution({
@@ -201,10 +390,7 @@ class MobileApi {
     final payload = await _request(
       method: 'POST',
       action: 'admission-evolution',
-      body: {
-        'admission_id': admissionId,
-        'report': report,
-      },
+      body: {'admission_id': admissionId, 'report': report},
     );
 
     final data = payload['data'] as Map<String, dynamic>;
@@ -217,16 +403,14 @@ class MobileApi {
     Map<String, String>? query,
     Map<String, dynamic>? body,
   }) async {
-    final uri = Uri.parse(_baseUrl).replace(
-      queryParameters: {
-        'action': action,
-        ...?query,
-      },
-    );
+    final queryParameters = <String, String>{'action': action, ...?query};
+    if (_token != null && _token!.isNotEmpty) {
+      queryParameters['token'] = _token!;
+    }
 
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
+    final uri = Uri.parse(_baseUrl).replace(queryParameters: queryParameters);
+
+    final headers = <String, String>{'Content-Type': 'application/json'};
     if (_token != null && _token!.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_token';
     }

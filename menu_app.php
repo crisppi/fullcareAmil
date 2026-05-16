@@ -1514,10 +1514,6 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                         <span>Previsão de permanência (IA)</span>
                         <i class="bi bi-robot" style="color:white; margin-left:10px;"></i>
                     </div>
-                    <small style="color:#f1f1f1">
-                        Modelo <?= htmlspecialchars($forecastSummary['model'] ?? 'n/d', ENT_QUOTES, 'UTF-8') ?> ·
-                        <?= (int)($forecastSummary['updated'] ?? 0) ?> recalculados agora
-                    </small>
                 </div>
                 <table class="table table-sm table-striped table-hover table-condensed" style="margin-top:10px;">
                     <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">

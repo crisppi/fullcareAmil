@@ -225,7 +225,8 @@
             <div class="listagem-hero__actions">
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/novo', ENT_QUOTES, 'UTF-8') ?>"
                     class="btn listagem-btn-top listagem-btn-top--blue">
-                    <i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Novo Paciente
+                    <i class="bi bi-person-plus-fill listagem-btn-top__icon" aria-hidden="true"></i>
+                    <span>Novo Paciente</span>
                 </a>
             </div>
         </div>
@@ -305,8 +306,10 @@
                                 </span></button>
                         </div>
                         <div class="form-group col-sm-2" style="padding:2px !important">
-                            <a href="<?= htmlspecialchars($BASE_URL . 'pacientes', ENT_QUOTES, 'UTF-8') ?>" class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;">
-                                Limpar filtros
+                            <a href="<?= htmlspecialchars($BASE_URL . 'pacientes', ENT_QUOTES, 'UTF-8') ?>"
+                                class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;"
+                                title="Limpar filtros" aria-label="Limpar filtros">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
                             </a>
                         </div>
 

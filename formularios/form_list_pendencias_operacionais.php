@@ -439,7 +439,7 @@ function pendenciasUrl(array $params): string
                         <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
                     </button>
                     <a href="<?= e(pendenciasUrl([])) ?>" class="btn btn-light btn-sm" title="Limpar filtros">
-                        <i class="bi bi-x-lg"></i>
+                        <i class="bi bi-trash3"></i>
                     </a>
                 </div>
             </form>

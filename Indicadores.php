@@ -113,11 +113,11 @@ $stmt = $conn->prepare($sqlStats);
 $stmt->execute($params);
 $stats = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-$totalInternações = (int)($stats['total_internacoes'] ?? 0);
-$totalDiárias = (int)($stats['total_diarias'] ?? 0);
+$totalInternacoes = (int)($stats['total_internacoes'] ?? 0);
+$totalDiarias = (int)($stats['total_diarias'] ?? 0);
 $maiorPermanencia = (int)($stats['maior_permanencia'] ?? 0);
 $internados = (int)($stats['internados'] ?? 0);
-$mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0.0;
+$mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0.0;
 
 $sqlFlags = "
     SELECT
@@ -146,16 +146,16 @@ function fmtPct(float $value): string
     return number_format($value, 1, ',', '.') . '%';
 }
 
-$idxEventoAdverso = $totalInternações > 0 ? ($eventoAdverso / $totalInternações) * 100 : 0.0;
-$idxHomeCare = $totalInternações > 0 ? ($homeCare / $totalInternações) * 100 : 0.0;
-$idxOpme = $totalInternações > 0 ? ($opme / $totalInternações) * 100 : 0.0;
-$idxAltoCusto = $totalInternações > 0 ? ($altoCusto / $totalInternações) * 100 : 0.0;
-$idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0.0;
+$idxEventoAdverso = $totalInternacoes > 0 ? ($eventoAdverso / $totalInternacoes) * 100 : 0.0;
+$idxHomeCare = $totalInternacoes > 0 ? ($homeCare / $totalInternacoes) * 100 : 0.0;
+$idxOpme = $totalInternacoes > 0 ? ($opme / $totalInternacoes) * 100 : 0.0;
+$idxAltoCusto = $totalInternacoes > 0 ? ($altoCusto / $totalInternacoes) * 100 : 0.0;
+$idxObitos = $totalInternacoes > 0 ? ($obitos / $totalInternacoes) * 100 : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
     .bi-indicadores-page .bi-kpis.kpi-auditor-v2 {
@@ -221,7 +221,7 @@ $idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0
         <h1 class="bi-title">Dashboard Indicadores</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -297,7 +297,7 @@ $idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0
                     <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
                     <small>Internações</small>
                 </div>
-                <strong><?= number_format($totalInternações, 0, ',', '.') ?></strong>
+                <strong><?= number_format($totalInternacoes, 0, ',', '.') ?></strong>
                 <div class="kpi-trend kpi-trend-neutral">
                     <i class="bi bi-dash-circle"></i>
                     <span>No período</span>
@@ -308,7 +308,7 @@ $idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0
                     <span class="kpi-card-v2-icon"><i class="bi bi-moon-stars"></i></span>
                     <small>Diárias</small>
                 </div>
-                <strong><?= number_format($totalDiárias, 0, ',', '.') ?></strong>
+                <strong><?= number_format($totalDiarias, 0, ',', '.') ?></strong>
                 <div class="kpi-trend kpi-trend-neutral">
                     <i class="bi bi-dash-circle"></i>
                     <span>No período</span>
@@ -347,7 +347,7 @@ $idxObitos = $totalInternações > 0 ? ($obitos / $totalInternações) * 100 : 0
                     <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
                     <small>Internações</small>
                 </div>
-                <strong><?= number_format($totalInternações, 0, ',', '.') ?></strong>
+                <strong><?= number_format($totalInternacoes, 0, ',', '.') ?></strong>
                 <div class="kpi-trend kpi-trend-neutral">
                     <i class="bi bi-pie-chart"></i>
                     <span>Base de cálculo</span>

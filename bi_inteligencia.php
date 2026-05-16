@@ -127,6 +127,53 @@ function aiExtractText(array $responseJson): ?string
     return trim(implode("\n", $parts));
 }
 
+function aiHttpErrorMessage(string $raw, int $httpCode): string
+{
+    $json = json_decode($raw, true);
+    $type = is_array($json) ? (string)($json['error']['type'] ?? '') : '';
+    $code = is_array($json) ? (string)($json['error']['code'] ?? '') : '';
+
+    if ($httpCode === 401 || $code === 'invalid_api_key') {
+        return 'Chave da API inválida ou revogada.';
+    }
+    if ($httpCode === 429) {
+        return 'Limite de uso da API atingido.';
+    }
+    if ($type !== '' || $code !== '') {
+        return 'Erro da API' . ($code !== '' ? ' (' . $code . ')' : '') . '.';
+    }
+
+    return 'Serviço de IA indisponível no momento.';
+}
+
+function aiNarrativeParagraphs(string $text): array
+{
+    $text = trim(preg_replace('/\s+/', ' ', $text));
+    if ($text === '') {
+        return [];
+    }
+
+    $sentences = preg_split('/(?<=[.!?])\s+/u', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    if (!$sentences) {
+        return [$text];
+    }
+
+    $paragraphs = [];
+    $current = [];
+    foreach ($sentences as $sentence) {
+        $current[] = trim($sentence);
+        if (count($current) >= 2) {
+            $paragraphs[] = implode(' ', $current);
+            $current = [];
+        }
+    }
+    if ($current) {
+        $paragraphs[] = implode(' ', $current);
+    }
+
+    return array_slice(array_values(array_filter($paragraphs)), 0, 3);
+}
+
 function gerarNarrativaGerencialIA(array $indicadores, ?string &$erro = null): ?array
 {
     $erro = null;
@@ -145,7 +192,9 @@ function gerarNarrativaGerencialIA(array $indicadores, ?string &$erro = null): ?
 
     $prompt = "Gere narrativa gerencial em português-BR, objetiva e executiva.\n"
         . "Retorne SOMENTE JSON válido com as chaves: financeiro e produtividade.\n"
-        . "Cada chave deve conter texto com 2 a 3 parágrafos, sem markdown.\n"
+        . "Cada chave deve conter exatamente 2 parágrafos curtos, separados por uma quebra de linha simples.\n"
+        . "Cada parágrafo deve ter no máximo 2 frases, mantendo o mesmo tom e densidade dos demais blocos do relatório.\n"
+        . "Não use markdown, listas, bullets, títulos internos, travessões ou frases excessivamente longas.\n"
         . "Use apenas os dados fornecidos, sem inventar valores.\n\n"
         . "DADOS (JSON):\n" . json_encode($indicadores, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
@@ -191,7 +240,7 @@ function gerarNarrativaGerencialIA(array $indicadores, ?string &$erro = null): ?
         return null;
     }
     if ($httpCode < 200 || $httpCode >= 300) {
-        $erro = 'Serviço de IA indisponível no momento.';
+        $erro = aiHttpErrorMessage((string)$raw, $httpCode);
         return null;
     }
 
@@ -329,13 +378,13 @@ function internacaoStats(PDO $conn, int $ano, ?int $hospitalId, string $tipoAdmi
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-    $totalInternações = (int)($row['total_internacoes'] ?? 0);
-    $totalDiárias = (int)($row['total_diarias'] ?? 0);
-    $mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0.0;
+    $totalInternacoes = (int)($row['total_internacoes'] ?? 0);
+    $totalDiarias = (int)($row['total_diarias'] ?? 0);
+    $mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0.0;
 
     return [
-        'total_internacoes' => $totalInternações,
-        'total_diarias' => $totalDiárias,
+        'total_internacoes' => $totalInternacoes,
+        'total_diarias' => $totalDiarias,
         'mp' => $mp,
     ];
 }
@@ -380,13 +429,13 @@ function utiStats(PDO $conn, int $ano, ?int $hospitalId, string $tipoAdmissão):
     $stmt->execute();
     $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-    $totalInternações = (int)($row['total_internacoes_uti'] ?? 0);
-    $totalDiárias = (int)($row['total_diarias_uti'] ?? 0);
-    $mp = $totalInternações > 0 ? round($totalDiárias / $totalInternações, 1) : 0.0;
+    $totalInternacoes = (int)($row['total_internacoes_uti'] ?? 0);
+    $totalDiarias = (int)($row['total_diarias_uti'] ?? 0);
+    $mp = $totalInternacoes > 0 ? round($totalDiarias / $totalInternacoes, 1) : 0.0;
 
     return [
-        'total_internacoes' => $totalInternações,
-        'total_diarias' => $totalDiárias,
+        'total_internacoes' => $totalInternacoes,
+        'total_diarias' => $totalDiarias,
         'mp' => $mp,
     ];
 }
@@ -676,20 +725,38 @@ $kpiCards = [
 
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
+    .bi-panel.bi-report {
+        padding: 18px !important;
+        background: linear-gradient(180deg, rgba(239, 247, 253, .96), rgba(222, 235, 247, .94));
+        border-color: rgba(210, 229, 243, .72);
+        box-shadow: 0 14px 28px rgba(4, 26, 45, .18);
+    }
     .bi-report-title {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         gap: 12px;
         align-items: flex-end;
-        margin-bottom: 18px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(64, 91, 112, 0.14);
     }
     .bi-report-title h3 {
-        margin: 0;
+        display: block !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        color: #223548 !important;
+        font-size: 1rem;
+        line-height: 1.35;
+        text-shadow: none !important;
     }
     .bi-report-meta-stack {
         display: flex;
@@ -697,11 +764,11 @@ $kpiCards = [
         gap: 10px;
     }
     .bi-report-meta-stack span {
-        padding: 8px 12px;
+        padding: 7px 11px;
         border-radius: 999px;
-        background: rgba(41, 83, 116, .10);
-        color: #41586c;
-        font-size: .84rem;
+        background: rgba(41, 83, 116, .09);
+        color: #496174;
+        font-size: .78rem;
     }
     .bi-section-anchor-nav {
         display: flex;
@@ -719,47 +786,68 @@ $kpiCards = [
     }
     .bi-report-intro {
         margin-top: 16px;
-        padding: 18px 20px;
-        border-radius: 14px;
-        background: rgba(41, 83, 116, .06);
-        border: 1px solid rgba(41, 83, 116, .12);
+        padding: 15px 17px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .34);
+        border: 1px solid rgba(63, 96, 121, .13);
         color: #243746;
-        line-height: 1.7;
+        line-height: 1.64;
+    }
+    .bi-report-intro p {
+        color: #243746;
+        font-size: .9rem;
+        line-height: 1.64;
+        margin-bottom: 10px;
     }
     .bi-report-section {
-        margin-top: 18px;
-        padding: 0;
-        border-radius: 0;
-        background: transparent;
-        border: 0;
-        box-shadow: none;
+        margin-top: 14px;
+        padding: 15px 17px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .36);
+        border: 1px solid rgba(63, 96, 121, .12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38);
     }
     .bi-report-section h4 {
-        display: block;
-        margin-bottom: 10px;
-        font-size: 1.04rem;
-        color: #1a2a35;
+        display: block !important;
+        align-items: initial !important;
+        min-height: 0 !important;
+        margin: 0 0 10px !important;
+        padding: 0 0 0 11px !important;
+        border-radius: 0 !important;
+        border: 0 !important;
+        border-left: 3px solid rgba(48, 104, 145, .55) !important;
+        background: transparent !important;
+        color: #223548 !important;
+        font-size: .96rem;
+        line-height: 1.35;
+        text-shadow: none !important;
     }
     .bi-report-section p {
         color: #243746;
-        line-height: 1.82;
-        margin-bottom: 14px;
+        line-height: 1.64;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
     }
     .bi-report-section p:last-child {
         margin-bottom: 0;
     }
     .bi-report-section + .bi-report-section {
-        border-top: 1px solid rgba(255,255,255,.08);
-        padding-top: 18px;
+        border-top: 1px solid rgba(63, 96, 121, .12);
     }
     .bi-report-submeta {
-        margin-top: 10px;
+        margin-top: 7px;
         color: #5a7286;
-        font-size: .84rem;
+        font-size: .8rem;
     }
     .bi-report-highlight {
         color: #1b4f72;
         font-weight: 700;
+    }
+    .bi-report-ai-text p {
+        margin-bottom: 14px;
+    }
+    .bi-report-ai-text p:last-child {
+        margin-bottom: 0;
     }
     @media (max-width: 991.98px) {
         .bi-report-title {
@@ -984,7 +1072,11 @@ $kpiCards = [
         <div class="bi-report-section" id="relatorio-gerencial-financeiro">
             <h4>5. Relatório Gerencial Financeiro</h4>
             <?php if ($relatorioModo === 'ia' && $iaNarrativa !== null): ?>
-                <p style="white-space: pre-line;"><?= nl2br(e($iaNarrativa['financeiro'])) ?></p>
+                <div class="bi-report-ai-text">
+                    <?php foreach (aiNarrativeParagraphs($iaNarrativa['financeiro']) as $paragrafo): ?>
+                        <p><?= e($paragrafo) ?></p>
+                    <?php endforeach; ?>
+                </div>
             <?php else: ?>
                 <p>
                     No recorte selecionado, foram analisadas <strong><?= fmtInt($financeiroGerAtual['total_contas']) ?></strong> contas,
@@ -1019,7 +1111,11 @@ $kpiCards = [
         <div class="bi-report-section" id="relatorio-gerencial-produtividade">
             <h4>6. Relatório Gerencial de Produtividade</h4>
             <?php if ($relatorioModo === 'ia' && $iaNarrativa !== null): ?>
-                <p style="white-space: pre-line;"><?= nl2br(e($iaNarrativa['produtividade'])) ?></p>
+                <div class="bi-report-ai-text">
+                    <?php foreach (aiNarrativeParagraphs($iaNarrativa['produtividade']) as $paragrafo): ?>
+                        <p><?= e($paragrafo) ?></p>
+                    <?php endforeach; ?>
+                </div>
             <?php else: ?>
                 <p>
                     Foram registradas <strong><?= fmtInt($produtividadeGerAtual['total_visitas']) ?></strong> visitas no período,

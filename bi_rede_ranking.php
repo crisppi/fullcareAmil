@@ -19,7 +19,7 @@ $chartVals = array_map(fn($r) => (float)($r['score'] ?? 0), $topRows);
         <h1 class="bi-title"><?= e($pageTitle) ?></h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted"><?= e($pageSubtitle) ?></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -43,16 +43,16 @@ $chartVals = array_map(fn($r) => (float)($r['score'] ?? 0), $topRows);
                     <th>Score</th>
                     <th>Custo final</th>
                     <th>Glosa</th>
-                    <th>Rejeicao</th>
-                    <th>Permanencia</th>
+                    <th>Rejeição</th>
+                    <th>Permanência</th>
                     <th>Eventos adversos</th>
-                    <th>Readmissao</th>
+                    <th>Readmissão</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (!$rowsSorted): ?>
                     <tr>
-                        <td colspan="8" class="text-center">Sem dados no periodo.</td>
+                        <td colspan="8" class="text-center">Sem dados no período.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($rowsSorted as $row): ?>

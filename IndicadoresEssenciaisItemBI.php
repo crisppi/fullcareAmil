@@ -34,6 +34,7 @@ $params = [
     'data_inicio' => $start,
     'data_fim' => $end,
     'ano' => $ano,
+    'ie' => $slug,
 ];
 
 $target = rtrim((string)$BASE_URL, '/') . '/' . ltrim($items[$slug]['target'], '/');

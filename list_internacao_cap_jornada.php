@@ -1,6 +1,6 @@
 <?php
 include_once("check_logado.php");
-
+include_once("globals.php");
 include_once("models/pagination.php");
 ?>
 <!DOCTYPE html>

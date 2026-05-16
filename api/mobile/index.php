@@ -91,6 +91,117 @@ try {
         ]);
     }
 
+    if ($method === 'GET' && $action === 'home-care-cases') {
+        $query = trim((string)($_GET['query'] ?? ''));
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListHomeCareCases($conn, $authUser, $query),
+            ],
+        ]);
+    }
+
+    if ($method === 'GET' && $action === 'long-stay-cases') {
+        $query = trim((string)($_GET['query'] ?? ''));
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListLongStayCases($conn, $authUser, $query),
+            ],
+        ]);
+    }
+
+    if ($method === 'GET' && $action === 'long-stay-statuses') {
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListLongStayStatuses($conn),
+            ],
+        ]);
+    }
+
+    if ($method === 'GET' && $action === 'long-stay-reasons') {
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListLongStayReasons($conn),
+            ],
+        ]);
+    }
+
+    if ($method === 'GET' && $action === 'long-stay-risks') {
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListLongStayRisks($conn),
+            ],
+        ]);
+    }
+
+    if ($method === 'POST' && $action === 'long-stay-update') {
+        $input = mobileJsonInput();
+        $admissionId = (int)($input['admission_id'] ?? 0);
+        if ($admissionId <= 0 || mobileFindAdmission($conn, $authUser, $admissionId) === null) {
+            mobileJsonResponse(['success' => false, 'message' => 'Internacao invalida.'], 422);
+        }
+
+        $item = mobileCreateLongStayUpdate($conn, $authUser, $input);
+        mobileJsonResponse([
+            'success' => true,
+            'message' => 'Atualizacao de longa permanencia salva com sucesso.',
+            'data' => $item,
+        ], 201);
+    }
+
+    if ($method === 'POST' && $action === 'home-care-update') {
+        $input = mobileJsonInput();
+        $admissionId = (int)($input['admission_id'] ?? 0);
+        if ($admissionId <= 0 || mobileFindAdmission($conn, $authUser, $admissionId) === null) {
+            mobileJsonResponse(['success' => false, 'message' => 'Internacao invalida.'], 422);
+        }
+
+        $item = mobileCreateHomeCareUpdate($conn, $authUser, $input);
+        mobileJsonResponse([
+            'success' => true,
+            'message' => 'Atualizacao de Home Care salva com sucesso.',
+            'data' => $item,
+        ], 201);
+    }
+
+    if ($method === 'GET' && $action === 'adverse-event-cases') {
+        $query = trim((string)($_GET['query'] ?? ''));
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListAdverseEventCases($conn, $authUser, $query),
+            ],
+        ]);
+    }
+
+    if ($method === 'GET' && $action === 'adverse-event-types') {
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'items' => mobileListAdverseEventTypes(),
+            ],
+        ]);
+    }
+
+    if ($method === 'POST' && $action === 'adverse-event-update') {
+        $input = mobileJsonInput();
+        $admissionId = (int)($input['admission_id'] ?? 0);
+        if ($admissionId <= 0 || mobileFindAdmission($conn, $authUser, $admissionId) === null) {
+            mobileJsonResponse(['success' => false, 'message' => 'Internacao invalida.'], 422);
+        }
+
+        $item = mobileCreateAdverseEventUpdate($conn, $authUser, $input);
+        mobileJsonResponse([
+            'success' => true,
+            'message' => 'Atualizacao de evento adverso salva com sucesso.',
+            'data' => $item,
+        ], 201);
+    }
+
     if ($method === 'POST' && $action === 'admission-tuss') {
         $input = mobileJsonInput();
         $admissionId = (int)($input['admission_id'] ?? 0);

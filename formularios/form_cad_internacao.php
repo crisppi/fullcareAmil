@@ -275,7 +275,6 @@
                 <div class="internacao-card internacao-card--general">
                     <div class="internacao-card__header">
                         <div class="internacao-card__title-wrap">
-                            <p class="internacao-card__eyebrow">Etapa 1</p>
                             <h2 class="internacao-card__title">Dados da internação</h2>
                         </div>
                         <span class="internacao-card__tag internacao-card__tag--critical">Campos principais</span>
@@ -426,7 +425,7 @@
                             <div class="form-group essential-medium">
                                 <label class="control-label" for="matricula_paciente_display">Matrícula</label>
                                 <input type="text" class="form-control input-lg-fullcare" id="matricula_paciente_display"
-                                    placeholder="Digite para pesquisar por matrícula" list="matricula_list"
+                                    placeholder="Pesquisa por matrícula" list="matricula_list"
                                     value="<?= htmlspecialchars(trim((string)($pacientePrefill['matricula_pac'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
                                 <datalist id="matricula_list">
                                     <?php foreach ($pacientes as $paciente): ?>
@@ -466,6 +465,61 @@
                                     <option value="n">Não</option>
                                 </select>
                             </div>
+
+                            <?php if ($mostrarCadastroCentral): ?>
+                                <div id="cadastro-central-wrapper" class="form-group essential-full internacao-central-inline">
+                                    <div class="internacao-central-inline__header">
+                                        <div class="internacao-central-inline__title-wrap">
+                                            <h4 class="internacao-central-inline__title">Responsável pela visita</h4>
+                                        </div>
+                                        <span class="internacao-central-inline__tag">
+                                            <?php if ($cadastroCentralObrigatorio): ?>
+                                                Obrigatório selecionar tipo e responsável
+                                            <?php else: ?>
+                                                Opcional: escolha o responsável
+                                            <?php endif; ?>
+                                        </span>
+                                    </div>
+                                    <div class="row align-items-end internacao-central-inline__grid">
+                                        <div class="form-group col-sm-3">
+                                            <label class="control-label" for="resp_tipo">Responsável</label>
+                                            <select id="resp_tipo" class="form-control input-lg-fullcare">
+                                                <option value="">(sem seleção)</option>
+                                                <option value="med">Médico auditor</option>
+                                                <option value="enf">Enfermeiro auditor</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-sm-5 d-none" id="box_resp_med">
+                                            <label class="control-label" for="resp_med_id">Selecionar médico</label>
+                                            <select id="resp_med_id" class="form-control input-lg-fullcare selectpicker"
+                                                data-live-search="true" data-size="5" data-style="no-shadow-picker" title="Selecione">
+                                                <option value="">Selecione</option>
+                                                <?php foreach ($medicosAud as $m): ?>
+                                                    <option value="<?= (int) $m['id_usuario'] ?>"
+                                                        data-email="<?= htmlspecialchars($m['email_user'] ?? '') ?>">
+                                                        <?= htmlspecialchars($m['usuario_user'] ?? ('#' . $m['id_usuario'])) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-sm-5 d-none" id="box_resp_enf">
+                                            <label class="control-label" for="resp_enf_id">Selecionar enfermeiro</label>
+                                            <select id="resp_enf_id" class="form-control input-lg-fullcare selectpicker"
+                                                data-live-search="true" data-size="5" data-style="no-shadow-picker" title="Selecione">
+                                                <option value="">Selecione</option>
+                                                <?php foreach ($enfsAud as $e): ?>
+                                                    <option value="<?= (int) $e['id_usuario'] ?>"
+                                                        data-email="<?= htmlspecialchars($e['email_user'] ?? '') ?>">
+                                                        <?= htmlspecialchars($e['usuario_user'] ?? ('#' . $e['id_usuario'])) ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="form-group essential-full mb-2" style="flex:1 1 100%;">
                                 <div id="erro-data-internacao" class="alert d-none w-100 mb-0" role="alert"></div>
@@ -533,68 +587,9 @@
                 <!-- fk_usuario_int: padrão = usuário logado; Cadastro Central pode sobrescrever -->
                 <input type="hidden" value="<?= htmlspecialchars($idSessao) ?>" id="fk_usuario_int" name="fk_usuario_int">
 
-                <!-- ===== CADASTRO CENTRAL (só aparece se NÃO for med/enf) ===== -->
-                <?php if ($mostrarCadastroCentral): ?>
-                    <div id="cadastro-central-wrapper" class="internacao-card internacao-card--central">
-                        <div class="internacao-card__header">
-                            <div>
-                                <h3 class="internacao-card__title">Responsável pela visita</h3>
-                            </div>
-                            <span class="internacao-card__tag">
-                                <?php if ($cadastroCentralObrigatorio): ?>
-                                    Obrigatório selecionar tipo e responsável
-                                <?php else: ?>
-                                    Opcional: escolha o responsável
-                                <?php endif; ?>
-                            </span>
-                        </div>
-                        <div class="internacao-card__body">
-                            <div class="form-group row align-items-end">
-                                <div class="form-group col-sm-3">
-                                    <label class="control-label" for="resp_tipo">Responsável pela visita</label>
-                                    <select id="resp_tipo" class="form-control input-lg-fullcare">
-                                        <option value="">(sem seleção)</option>
-                                        <option value="med">Médico auditor</option>
-                                        <option value="enf">Enfermeiro auditor</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-sm-4 d-none" id="box_resp_med">
-                                    <label class="control-label" for="resp_med_id">Selecionar médico</label>
-                                    <select id="resp_med_id" class="form-control input-lg-fullcare selectpicker"
-                                        data-live-search="true" data-size="5" data-style="no-shadow-picker" title="Selecione">
-                                        <option value="">Selecione</option>
-                                        <?php foreach ($medicosAud as $m): ?>
-                                            <option value="<?= (int) $m['id_usuario'] ?>"
-                                                data-email="<?= htmlspecialchars($m['email_user'] ?? '') ?>">
-                                                <?= htmlspecialchars($m['usuario_user'] ?? ('#' . $m['id_usuario'])) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-sm-5 d-none" id="box_resp_enf">
-                                    <label class="control-label" for="resp_enf_id">Selecionar enfermeiro</label>
-                                    <select id="resp_enf_id" class="form-control input-lg-fullcare selectpicker"
-                                        data-live-search="true" data-size="5" data-style="no-shadow-picker" title="Selecione">
-                                        <option value="">Selecione</option>
-                                        <?php foreach ($enfsAud as $e): ?>
-                                            <option value="<?= (int) $e['id_usuario'] ?>"
-                                                data-email="<?= htmlspecialchars($e['email_user'] ?? '') ?>">
-                                                <?= htmlspecialchars($e['usuario_user'] ?? ('#' . $e['id_usuario'])) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
                 <div class="internacao-card internacao-card--fields">
                     <div class="internacao-card__header">
                         <div class="internacao-card__title-wrap">
-                            <p class="internacao-card__eyebrow">Etapa 2</p>
                             <h3 class="internacao-card__title">Dados assistenciais</h3>
                         </div>
                         <span class="internacao-card__tag">Classificação clínica</span>
@@ -788,7 +783,6 @@
         <div class="internacao-card internacao-card--notes">
             <div class="internacao-card__header">
                 <div class="internacao-card__title-wrap">
-                    <p class="internacao-card__eyebrow">Etapa 3</p>
                     <h3 class="internacao-card__title">Relatórios e observações</h3>
                 </div>
                 <span class="internacao-card__tag">Registro clínico</span>
@@ -929,7 +923,7 @@
 
             <div class="tabelas-selects d-flex flex-wrap justify-content-between align-items-end">
                 <div class="form-group tabelas-col">
-                    <label class="control-label" style="font-weight: bold;" for="relatorio-detalhado">Relatório detalhado</label>
+                    <label class="control-label" for="relatorio-detalhado">Relatório detalhado</label>
                     <select class="input-lg-fullcare form-control detail-select" id="relatorio-detalhado" name="relatorio-detalhado">
                         <option value="">Selecione</option>
                         <option value="s">Sim</option>
@@ -938,7 +932,7 @@
                 </div>
                 <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
                     <div class="form-group tabelas-col">
-                        <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss</label>
+                        <label class="control-label" for="select_tuss">Tuss</label>
                         <select class="input-lg-fullcare form-control select-purple" id="select_tuss" name="select_tuss">
                             <option value="">Selecione</option>
                             <option value="s">Sim</option>
@@ -946,7 +940,7 @@
                         </select>
                     </div>
                     <div class="form-group tabelas-col">
-                        <label class="control-label" style="font-weight: bold;" for="select_prorrog">Prorrogação</label>
+                        <label class="control-label" for="select_prorrog">Prorrogação</label>
                         <select class="input-lg-fullcare form-control select-purple" id="select_prorrog"
                             name="select_prorrog">
                             <option value="">Selecione</option>
@@ -957,7 +951,7 @@
                 <?php } ?>
 
                 <div class="form-group tabelas-col">
-                    <label class="control-label" style="font-weight: bold;" for="select_gestao">Gestão Assistencial</label>
+                    <label class="control-label" for="select_gestao">Gestão Assistencial</label>
                     <select class="input-lg-fullcare form-control select-purple" id="select_gestao" name="select_gestao">
                         <option value="">Selecione</option>
                         <option value="s">Sim</option>
@@ -966,7 +960,7 @@
                 </div>
 
                 <div class="form-group tabelas-col">
-                    <label class="control-label" style="font-weight: bold;" for="select_uti">UTI</label>
+                    <label class="control-label" for="select_uti">UTI</label>
                     <select class="input-lg-fullcare form-control select-purple" id="select_uti" name="select_uti">
                         <option value="">Selecione</option>
                         <option value="s">Sim</option>
@@ -976,7 +970,7 @@
 
                 <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
                     <div class="form-group tabelas-col">
-                        <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações</label>
+                        <label class="control-label" for="select_negoc">Negociações</label>
                         <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
                             <option value="">Selecione</option>
                             <option value="s">Sim</option>
@@ -1133,6 +1127,32 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            function syncNativeDatePlaceholderState(field) {
+                if (!field) return;
+                field.classList.toggle('is-empty-date', !field.value);
+            }
+
+            var nativeDateFields = document.querySelectorAll(
+                '.entity-form input[type="date"], .entity-form input[type="datetime-local"]'
+            );
+
+            nativeDateFields.forEach(function(field) {
+                syncNativeDatePlaceholderState(field);
+                field.addEventListener('change', function() {
+                    syncNativeDatePlaceholderState(field);
+                });
+                field.addEventListener('input', function() {
+                    syncNativeDatePlaceholderState(field);
+                });
+                field.addEventListener('blur', function() {
+                    syncNativeDatePlaceholderState(field);
+                });
+            });
+
+            window.syncNativeDatePlaceholderState = syncNativeDatePlaceholderState;
+        });
+
         (function() {
             var dataInternDt = document.getElementById('data_intern_int_dt');
             var dataIntern = document.getElementById('data_intern_int');
@@ -1183,6 +1203,9 @@
                     dataInternDt.value = '';
                     if (dataIntern) dataIntern.value = '';
                     if (horaIntern) horaIntern.value = '';
+                    if (window.syncNativeDatePlaceholderState) {
+                        window.syncNativeDatePlaceholderState(dataInternDt);
+                    }
                     dataInternDt.focus();
                     return false;
                 }

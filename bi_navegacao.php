@@ -33,9 +33,9 @@ $navGroups = [
             ['label' => 'Custo por Patologia', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=custo-patologia'],
             ['label' => 'Custo por Antecedente', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=custo-antecedente'],
             ['label' => 'Custo por UTI', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=custo-uti'],
-            ['label' => '% Internacao UTI', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=percentual-internacao-uti'],
+            ['label' => '% Internação UTI', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=percentual-internacao-uti'],
             ['label' => 'Eventos Adversos por Hospital', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=eventos-adversos-hospital'],
-            ['label' => 'Obitos por Hospital', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=obitos-hospital'],
+            ['label' => 'Óbitos por Hospital', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=obitos-hospital'],
             ['label' => 'Qualidade Hospitalar', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=qualidade-hospital'],
         ],
     ],
@@ -86,7 +86,7 @@ $navGroups = [
             ['label' => 'Internações com Risco', 'href' => 'bi/internacoes-risco'],
             ['label' => 'Qualidade e Gestão', 'href' => 'bi/qualidade-gestao'],
             ['label' => 'Home Care', 'href' => 'bi/home-care'],
-            ['label' => 'Desospitalizacao', 'href' => 'bi/desospitalizacao'],
+            ['label' => 'Desospitalização', 'href' => 'bi/desospitalizacao'],
             ['label' => 'OPME', 'href' => 'bi/opme'],
             ['label' => 'TUSS / Autorizações', 'href' => 'bi/tuss-autorizacoes'],
         ],
@@ -113,12 +113,17 @@ $navGroups = [
             ['label' => 'Sinistro BI', 'href' => 'bi/sinistro'],
             ['label' => 'Perfil Sinistro', 'href' => 'bi/perfil-sinistro'],
             ['label' => 'Sinistro YTD', 'href' => 'bi/sinistro-ytd'],
-            ['label' => 'Producao BI', 'href' => 'bi/producao'],
-            ['label' => 'Producao YTD', 'href' => 'bi/producao-ytd'],
             ['label' => 'Pacientes', 'href' => 'bi/pacientes'],
             ['label' => 'Hospitais', 'href' => 'bi/hospitais'],
             ['label' => 'Sinistro', 'href' => 'bi/sinistro-bi'],
-            ['label' => 'Inteligencia Artificial', 'href' => 'bi/inteligencia'],
+        ],
+    ],
+    [
+        'title' => 'Produção',
+        'key' => 'producao',
+        'items' => [
+            ['label' => 'Produção BI', 'href' => 'bi/producao'],
+            ['label' => 'Produção YTD', 'href' => 'bi/producao-ytd'],
         ],
     ],
     [
@@ -128,14 +133,6 @@ $navGroups = [
             ['label' => 'Top Hospitais', 'href' => 'bi/tops-hospitais'],
             ['label' => 'Top Pacientes', 'href' => 'bi/tops-pacientes'],
             ['label' => 'Top Patologia', 'href' => 'bi/tops-patologia'],
-        ],
-    ],
-    [
-        'title' => 'Faturamento',
-        'key' => 'faturamento',
-        'items' => [
-            ['label' => 'Visitas', 'href' => 'bi/faturamento-visitas'],
-            ['label' => 'Consolidado', 'href' => 'bi/faturamento-consolidado'],
         ],
     ],
     [
@@ -205,14 +202,16 @@ $navGroups = [
         'title' => 'Qualidade & Desfecho',
         'key' => 'qualidade',
         'items' => [
+            ['label' => 'Visão geral', 'href' => 'bi/qualidade-desfecho'],
             ['label' => 'Eventos Adversos', 'href' => 'bi/qualidade-eventos'],
-            ['label' => 'Óbitos', 'href' => 'QualidadeObitosBI.php'],
+            ['label' => 'Óbitos', 'href' => 'bi/qualidade-obitos'],
         ],
     ],
     [
         'title' => 'Inteligência',
         'key' => 'inteligencia',
         'items' => [
+            ['label' => 'Inteligência Artificial', 'href' => 'bi/inteligencia'],
             ['label' => 'Tempo Médio Permanência', 'href' => 'inteligencia/tmp'],
             ['label' => 'Prorrogacao x Alta', 'href' => 'inteligencia/prorrogacao-vs-alta'],
             ['label' => 'Motivos Prorrogacao', 'href' => 'inteligencia/motivos-prorrogacao'],
@@ -222,9 +221,9 @@ $navGroups = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi-navegacao.css?v=20260110">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme', 'bi-navegacao'));</script>
 
 <div class="bi-wrapper bi-theme">

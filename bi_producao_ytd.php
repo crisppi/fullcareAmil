@@ -84,9 +84,9 @@ $seriesComp = producaoSeries($conn, $anoComp, $hospitalId, $tipoAdmissão);
 $labels = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -136,14 +136,14 @@ $labels = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','De
     <div class="bi-panel">
         <h3>Total internações</h3>
         <div class="bi-chart">
-            <canvas id="chartInternações"></canvas>
+            <canvas id="chartInternacoes"></canvas>
         </div>
     </div>
 
     <div class="bi-panel">
         <h3>Total diárias</h3>
         <div class="bi-chart">
-            <canvas id="chartDiárias"></canvas>
+            <canvas id="chartDiarias"></canvas>
         </div>
     </div>
 
@@ -195,8 +195,8 @@ function lineChart(ctx, key) {
     });
 }
 
-lineChart(document.getElementById('chartInternações'), 'internacoes');
-lineChart(document.getElementById('chartDiárias'), 'diarias');
+lineChart(document.getElementById('chartInternacoes'), 'internacoes');
+lineChart(document.getElementById('chartDiarias'), 'diarias');
 lineChart(document.getElementById('chartMp'), 'mp');
 </script>
 

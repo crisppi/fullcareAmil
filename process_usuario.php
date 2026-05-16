@@ -82,7 +82,7 @@ function resolveUsuarioHomeUrl(string $baseUrl, ?string $cargo, $nivel): string
         return $baseUrl . 'list_internacao_cap_fin.php';
     }
 
-    return $isDiretoria ? $baseUrl . 'dashboard' : $baseUrl . 'menu_app.php';
+    return $baseUrl . 'inicio';
 }
 
 function storeUsuarioImage(array $file, string $targetDir, int $maxBytes = 2097152): ?string

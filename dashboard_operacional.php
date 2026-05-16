@@ -215,34 +215,34 @@ if (!is_array($prioridades)) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 
 <style>
 .dashboard-wrapper {
     width: 100%;
     max-width: none;
-    margin: 14px 0 40px;
+    margin: 10px 0 32px;
     padding: 0 18px;
 }
 .dash-hero {
     background: linear-gradient(120deg, #fff6fb, #fbe1f2 60%, #f3cee6);
     color: #3b1d4f;
     border-radius: 14px;
-    padding: 20px 22px;
-    margin-bottom: 16px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
     border: 1px solid rgba(94, 35, 99, .12);
     box-shadow: 0 20px 45px rgba(94, 35, 99, .15);
 }
 .dash-hero h1 {
     font-weight: 800;
     letter-spacing: .02em;
-    margin-bottom: 8px;
-    font-size: clamp(1.34rem, 2.2vw, 1.9rem);
+    margin-bottom: 5px;
+    font-size: clamp(1.08rem, 1.8vw, 1.46rem);
 }
 .dash-hero p {
     margin: 0;
     opacity: .85;
-    font-size: .84rem;
+    font-size: .76rem;
 }
 .dash-grid {
     display: grid;
@@ -254,21 +254,21 @@ if (!is_array($prioridades)) {
 }
 .dash-card .dash-value {
     margin-top: 0;
-    font-size: clamp(1.18rem, 1.8vw, 1.56rem);
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
     line-height: 1.05;
 }
 .dash-card .dash-desc {
     margin: 0;
     color: rgba(228, 241, 255, 0.85);
-    font-size: .74rem;
-    min-height: 2.3em;
+    font-size: .68rem;
+    min-height: 2em;
 }
 .dash-card .dash-link {
     margin-top: 2px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: .74rem;
+    font-size: .68rem;
     color: #cfe8ff;
     font-weight: 600;
 }
@@ -277,14 +277,14 @@ if (!is_array($prioridades)) {
     border-color: rgba(255, 168, 168, 0.46);
 }
 .dash-table-card {
-    margin-top: 24px;
+    margin-top: 18px;
     border-radius: 14px;
     border: 1px solid rgba(94, 35, 99, .1);
     background: #fff;
     box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
 }
 .dash-table-card h4 {
-    padding: 12px 16px;
+    padding: 10px 14px;
     margin: 0;
     border-bottom: 1px solid rgba(94, 35, 99, .1);
     font-weight: 800;
@@ -292,7 +292,7 @@ if (!is_array($prioridades)) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: .92rem;
+    font-size: .84rem;
 }
 .dash-table-card table {
     width: 100%;
@@ -300,8 +300,8 @@ if (!is_array($prioridades)) {
 }
 .dash-table-card th,
 .dash-table-card td {
-    padding: 9px 12px;
-    font-size: .82rem;
+    padding: 8px 11px;
+    font-size: .76rem;
     text-align: left;
 }
 .dash-table-card th {
@@ -319,10 +319,10 @@ if (!is_array($prioridades)) {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 10px;
+    padding: 3px 9px;
     border-radius: 999px;
     font-weight: 700;
-    font-size: .74rem;
+    font-size: .68rem;
     color: #fff;
     background: linear-gradient(120deg, #5e2363, #a23ec3);
 }

@@ -13,7 +13,7 @@ foreach ($internParams as $key => $value) {
     $internParams2[':w2_' . ltrim($key, ':')] = $value;
 }
 
-$labelPat = "COALESCE(NULLIF(i.grupo_patologia_int,''), p.patologia_pat, 'Sem informacoes')";
+$labelPat = "COALESCE(NULLIF(i.grupo_patologia_int,''), p.patologia_pat, 'Sem informações')";
 
 $baseSql = "\n    SELECT\n        h.id_hospital AS hospital_id,\n        h.nome_hosp AS hospital,\n        {$labelPat} AS grupo,\n        COUNT(*) AS casos\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int\n    {$internJoins}\n    WHERE {$internWhere}\n    GROUP BY h.id_hospital, grupo\n";
 $baseSql2 = "\n    SELECT\n        h.id_hospital AS hospital_id,\n        h.nome_hosp AS hospital,\n        {$labelPat} AS grupo,\n        COUNT(*) AS casos\n    FROM tb_internacao i\n    LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int\n    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int\n    {$internJoins}\n    WHERE {$internWhere2}\n    GROUP BY h.id_hospital, grupo\n";
@@ -25,8 +25,8 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -36,7 +36,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Principal grupo de casos atendido por hospital.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -62,8 +62,8 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
-                            <td><?= e($row['grupo'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
+                            <td><?= e($row['grupo'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt((int)($row['casos'] ?? 0)) ?></td>
                         </tr>
                     <?php endforeach; ?>

@@ -18,11 +18,28 @@ include_once("templates/header.php");
             border-radius: 12px;
             border: 1px solid #e7e7e7;
             background: #fff;
-            margin: 0.5rem 0 1rem;
-            padding: 1.5rem;
+            margin: 0.35rem 0 0.8rem;
+            padding: 1rem 1.1rem;
             box-shadow: 0 10px 25px rgba(95,35,99,0.08);
         }
-
+        .container-fluid {
+            margin-top: 12px !important;
+            padding: 0 0 12px !important;
+        }
+        .container-fluid h2 {
+            font-size: 1.06rem;
+        }
+        .container-fluid .alert,
+        .container-fluid .table,
+        .container-fluid .text-muted,
+        .container-fluid small {
+            font-size: .78rem;
+        }
+        .table thead th,
+        .table td {
+            padding-top: .55rem;
+            padding-bottom: .55rem;
+        }
         .alert {
             margin-bottom: 0;
         }

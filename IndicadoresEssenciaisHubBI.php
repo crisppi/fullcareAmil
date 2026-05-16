@@ -20,15 +20,15 @@ $items = [
     ['slug' => 'custo-patologia', 'label' => 'Custo por patologia', 'target' => 'bi/gastos-patologia'],
     ['slug' => 'custo-antecedente', 'label' => 'Custo por antecedente', 'target' => 'bi/antecedente'],
     ['slug' => 'custo-uti', 'label' => 'Custo por UTI', 'target' => 'IndicadorEssencialUtiBI.php?modo=custo'],
-    ['slug' => 'percentual-internacao-uti', 'label' => '% internacao UTI', 'target' => 'IndicadorEssencialUtiBI.php?modo=percentual'],
+    ['slug' => 'percentual-internacao-uti', 'label' => '% Internação UTI', 'target' => 'IndicadorEssencialUtiBI.php?modo=percentual'],
     ['slug' => 'eventos-adversos-hospital', 'label' => 'Eventos adversos por hospital', 'target' => 'bi/rede-eventos-adversos'],
-    ['slug' => 'obitos-hospital', 'label' => 'Obitos por hospital', 'target' => 'bi/qualidade-obitos'],
+    ['slug' => 'obitos-hospital', 'label' => 'Óbitos por hospital', 'target' => 'bi/qualidade-obitos'],
     ['slug' => 'qualidade-hospital', 'label' => 'Qualidade hospitalar', 'target' => 'bi/rede-comparativa'],
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-hub">
@@ -36,7 +36,7 @@ $items = [
         <h1 class="bi-title">Indicadores Essenciais</h1>
         <div class="bi-header-actions">
             <div class="text-end text-muted">Uma pagina por indicador</div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao"><i class="bi bi-grid-3x3-gap"></i></a>
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação"><i class="bi bi-grid-3x3-gap"></i></a>
         </div>
     </div>
 

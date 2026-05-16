@@ -47,10 +47,10 @@ while ($cursor < $limit) {
 $auditorExpr = "
     CASE
         WHEN NULLIF(i.visita_auditor_prof_med,'') IS NOT NULL
-            THEN CONCAT(COALESCE(u_med.usuario_user, i.visita_auditor_prof_med), ' (Medico)')
+            THEN CONCAT(COALESCE(u_med.usuario_user, i.visita_auditor_prof_med), ' (Médico)')
         WHEN NULLIF(i.visita_auditor_prof_enf,'') IS NOT NULL
             THEN CONCAT(COALESCE(u_enf.usuario_user, i.visita_auditor_prof_enf), ' (Enfermagem)')
-        ELSE 'Sem informacoes'
+        ELSE 'Sem informações'
     END
 ";
 
@@ -83,7 +83,7 @@ $sqlAuditor = "
     LEFT JOIN tb_user u_enf ON u_enf.id_usuario = CAST(NULLIF(i.visita_auditor_prof_enf,'') AS UNSIGNED)
     {$latestCapeanteJoin}
     WHERE {$where}
-      AND ({$auditorExpr}) <> 'Sem informacoes'
+      AND ({$auditorExpr}) <> 'Sem informações'
     GROUP BY auditor
     ORDER BY " . ($modo === 'glosa' ? "glosa" : "contas") . " DESC
     LIMIT 12
@@ -162,7 +162,7 @@ $getYtd = function (string $a, string $b) use ($conn, $latestCapeanteJoin, $hosp
 $ytdCur = $getYtd($curStart, $curEnd);
 $ytdPrev = $getYtd($prevStart, $prevEnd);
 
-$audLabels = array_map(fn($r) => (string)($r['auditor'] ?? 'Sem informacoes'), $audRows);
+$audLabels = array_map(fn($r) => (string)($r['auditor'] ?? 'Sem informações'), $audRows);
 $audContas = array_map(fn($r) => (int)($r['contas'] ?? 0), $audRows);
 $audGlosa = array_map(fn($r) => (float)($r['glosa'] ?? 0), $audRows);
 
@@ -248,9 +248,9 @@ $title = $modo === 'glosa' ? 'Glosa por Auditor' : 'Contas Auditadas por Auditor
 $ieSlug = $modo === 'glosa' ? 'glosa-auditor' : 'contas-auditadas-auditor';
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-ie-page bi-auditor-page">
@@ -265,7 +265,7 @@ $ieSlug = $modo === 'glosa' ? 'glosa-auditor' : 'contas-auditadas-auditor';
         <input type="hidden" name="modo" value="<?= e($modo) ?>">
         <input type="hidden" name="ie" value="<?= e($ieSlug) ?>">
         <div class="bi-filter">
-            <label>Data inicio</label>
+            <label>Data início</label>
             <input type="date" name="data_inicio" value="<?= e($start) ?>">
         </div>
         <div class="bi-filter">

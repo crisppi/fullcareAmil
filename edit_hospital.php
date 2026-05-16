@@ -150,7 +150,7 @@ if (empty($telefonesHospital) && (!empty($telefone01_hosp) || !empty($telefone02
 ?>
 <script src="css/ocultar.css"></script>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;

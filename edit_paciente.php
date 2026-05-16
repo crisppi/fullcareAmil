@@ -135,7 +135,7 @@ if (empty($telefonesPaciente)) {
 <link rel="stylesheet" href="diversos/CoolAdmin-master/vendor/font-awesome-5/css/fontawesome-all.min.css">
 <script src="css/ocultar.css"></script>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;

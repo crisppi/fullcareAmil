@@ -161,18 +161,18 @@ usort($highHigh, static function ($a, $b) {
 $highHigh = array_slice($highHigh, 0, 20);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Matriz de Risco (Readmissao 7/30d x Custo)</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Probabilidade via ReadmissionRiskService e custo medio da internação no periodo.</div>
+            <h1 class="bi-title">Matriz de Risco (Readmissão 7/30d x Custo)</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Probabilidade via ReadmissionRiskService e custo medio da internação no período.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -227,7 +227,7 @@ $highHigh = array_slice($highHigh, 0, 20);
                 <strong><?= fmtInt($matrix['alto_alto'] + $matrix['alto_baixo']) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Custo medio referencia</small>
+                <small>Custo médio referencia</small>
                 <strong><?= $avgCost > 0 ? fmtCurrency($avgCost) : 'n/d' ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -270,7 +270,7 @@ $highHigh = array_slice($highHigh, 0, 20);
                 <tr>
                     <th>Paciente</th>
                     <th>Hospital</th>
-                    <th>Data internacao</th>
+                    <th>Data internação</th>
                     <th>Probabilidade</th>
                     <th>Score</th>
                     <th>Custo</th>
@@ -284,8 +284,8 @@ $highHigh = array_slice($highHigh, 0, 20);
                 <?php else: ?>
                     <?php foreach ($highHigh as $item): ?>
                         <tr>
-                            <td><?= e($item['paciente'] ?: 'Sem informacoes') ?></td>
-                            <td><?= e($item['hospital'] ?: 'Sem informacoes') ?></td>
+                            <td><?= e($item['paciente'] ?: 'Sem informações') ?></td>
+                            <td><?= e($item['hospital'] ?: 'Sem informações') ?></td>
                             <td><?= !empty($item['data']) ? e(date('d/m/Y', strtotime($item['data']))) : '-' ?></td>
                             <td><?= fmtPct(((float)$item['probability']) * 100, 1) ?></td>
                             <td><?= fmtFloat($item['risk_score'], 1) ?></td>

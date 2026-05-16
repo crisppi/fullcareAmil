@@ -61,8 +61,8 @@ for ($i = 0; $i < min(3, count($rows)); $i++) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -72,7 +72,7 @@ for ($i = 0; $i < min(3, count($rows)); $i++) {
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Hospitais que concentram o gasto.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -142,7 +142,7 @@ for ($i = 0; $i < min(3, count($rows)); $i++) {
                         $rowPct = $custoTotal > 0 ? ($rowTotal / $custoTotal) * 100 : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtMoney($rowTotal) ?></td>
                             <td><?= fmtInt((int)($row['casos'] ?? 0)) ?></td>
                             <td><?= fmtPct($rowPct, 1) ?></td>

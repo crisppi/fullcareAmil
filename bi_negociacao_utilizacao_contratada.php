@@ -23,8 +23,8 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -34,7 +34,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Uso medio diario de internacoes por hospital.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -46,7 +46,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         <h3>Indicadores-chave</h3>
         <div class="bi-kpis kpi-grid-4">
             <div class="bi-kpi kpi-compact">
-                <small>Internacoes no periodo</small>
+                <small>Internações no período</small>
                 <strong><?= fmtInt($internacoes) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -70,8 +70,8 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Internacoes</th>
-                    <th>Internacoes/dia</th>
+                    <th>Internações</th>
+                    <th>Internações/dia</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,7 +83,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php foreach ($rows as $row): ?>
                         <?php $ints = (int)($row['internacoes'] ?? 0); ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($ints) ?></td>
                             <td><?= fmtFloat($ints / $periodDays, 2) ?></td>
                         </tr>

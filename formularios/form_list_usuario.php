@@ -116,15 +116,15 @@ if ($qtdIntItens > $limite) {
     <script src="./scripts/cadastro/general.js"></script>
 
     <div class="listagem-hero">
-        <div class="listagem-hero__copy">
-            <div class="listagem-kicker">Cadastros</div>
-            <h1 class="listagem-title">Usuários</h1>
-            <p class="listagem-subtitle">Pesquise pessoas por nome, cargo e departamento com a mesma linguagem visual das demais listas.</p>
-        </div>
+            <div class="listagem-hero__copy">
+                <div class="listagem-kicker">Cadastros</div>
+                <h1 class="listagem-title">Usuários</h1>
+            </div>
         <div class="listagem-hero__actions">
             <a href="<?= $BASE_URL ?>cad_usuario.php"
                 class="btn listagem-btn-top listagem-btn-top--blue">
-                <i class="bi bi-plus-lg" style="font-size: 1rem;margin-right:5px;"></i>Novo Usuário
+                <i class="bi bi-person-plus-fill listagem-btn-top__icon" aria-hidden="true"></i>
+                <span>Novo Usuário</span>
             </a>
         </div>
     </div>
@@ -187,7 +187,7 @@ if ($qtdIntItens > $limite) {
                                 </button>
                                 <button type="button" id="btnLimparFiltro" class="btn btn-light btn-filtro-limpar"
                                     title="Limpar filtros" aria-label="Limpar filtros">
-                                    <i class="bi bi-x-lg"></i>
+                                    <i class="bi bi-trash3"></i>
                                 </button>
                             </div>
                         </div>
@@ -487,33 +487,53 @@ function resetSenha(id_user, evt) {
 .btn-filtro-buscar,
 .btn-filtro-limpar {
     width: 42px;
-    height: 32px;
+    min-width: 42px;
+    max-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    max-height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    padding: 0 !important;
+    border-radius: 12px;
+    flex: 0 0 42px;
 }
 
 .btn-filtro-buscar {
     background-color: #5e2363;
     border-color: #5e2363;
+    box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
 }
 
 .btn-filtro-limpar {
-    color: #5e2363;
-    border: 1px solid #aeb7c2;
-    background-color: #f3f5f7;
-    box-shadow: 0 2px 6px rgba(30, 41, 59, 0.2);
+    color: #8b5a7a;
+    border: 1px solid #eadff3;
+    background: linear-gradient(180deg, #fff 0%, #f8f2fd 100%);
+    box-shadow: 0 8px 16px rgba(94, 35, 99, 0.08);
 }
 
 .btn-filtro-limpar:hover {
-    color: #ffffff !important;
-    border-color: #5e2363 !important;
-    background-color: #5e2363 !important;
-    box-shadow: 0 3px 8px rgba(30, 41, 59, 0.28);
+    color: #7a294f !important;
+    border-color: #e1bfd2 !important;
+    background: linear-gradient(180deg, #fff9fc 0%, #f8eaf1 100%) !important;
+    box-shadow: 0 10px 18px rgba(94, 35, 99, 0.12);
 }
 
 .btn-filtro-limpar:hover i {
-    color: #ffffff !important;
+    color: inherit !important;
+}
+
+.btn-filtro-buscar i,
+.btn-filtro-limpar i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1rem;
+    line-height: 1;
+    margin: 0;
 }
 
 .user-email-cell {

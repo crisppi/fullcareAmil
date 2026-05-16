@@ -74,7 +74,7 @@ $altoHospVals = array_map(fn($r) => (int)$r['total'], $altoHospRows);
 
 // Alto custo por patologia
 $sqlAltoPat = "
-    SELECT COALESCE(p.patologia_pat, 'Sem informacoes') AS label, COUNT(DISTINCT i.id_internacao) AS total
+    SELECT COALESCE(p.patologia_pat, 'Sem informações') AS label, COUNT(DISTINCT i.id_internacao) AS total
     FROM tb_gestao g
     JOIN tb_internacao i ON i.id_internacao = g.fk_internacao_ges
     LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
@@ -158,9 +158,9 @@ foreach ($glosaRows as $row) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -187,7 +187,7 @@ foreach ($glosaRows as $row) {
             </select>
         </div>
         <div class="bi-filter">
-            <label>Data inicio</label>
+            <label>Data início</label>
             <input type="date" name="data_inicio" value="<?= e($startStr) ?>">
         </div>
         <div class="bi-filter">

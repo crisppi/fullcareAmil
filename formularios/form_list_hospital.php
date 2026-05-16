@@ -101,7 +101,6 @@
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Hospitais</h1>
-                <p class="listagem-subtitle">Gerencie hospitais, acomodações e vínculos operacionais com mais respiro visual.</p>
             </div>
             <div class="listagem-hero__actions">
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_hospitalUser.php', ENT_QUOTES, 'UTF-8') ?>"
@@ -110,7 +109,8 @@
                 </a>
                 <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/novo', ENT_QUOTES, 'UTF-8') ?>"
                     class="btn listagem-btn-top listagem-btn-top--blue">
-                    <i class="bi bi-plus-lg" style='font-size: .95rem;margin-right:5px;'></i>Novo Hospital
+                    <i class="bi bi-hospital-fill listagem-btn-top__icon" aria-hidden="true"></i>
+                    <span>Novo Hospital</span>
                 </a>
             </div>
         </div>
@@ -156,8 +156,9 @@
                         </div>
                         <div class="form-group col-sm-2" style="padding:2px !important">
                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais', ENT_QUOTES, 'UTF-8') ?>"
-                                class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;">
-                                Limpar filtros
+                                class="btn btn-outline-secondary btn-sm btn-filtro-limpar" style="margin-top:7px;"
+                                title="Limpar filtros" aria-label="Limpar filtros">
+                                <i class="bi bi-trash3" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>

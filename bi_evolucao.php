@@ -3,12 +3,85 @@ include_once("check_logado.php");
 require_once("templates/header.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
-    die("Conexao invalida.");
+    die("Conexão inválida.");
 }
 
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+}
+
+function fmtDateBr($value): string
+{
+    if (!$value) {
+        return '-';
+    }
+    $timestamp = strtotime((string)$value);
+    return $timestamp ? date('d/m/Y', $timestamp) : '-';
+}
+
+function visitText($value): string
+{
+    $text = trim((string)$value);
+    return $text !== '' ? $text : 'Sem registro.';
+}
+
+function visitTextHtml($value): string
+{
+    return nl2br(e(visitText($value)));
+}
+
+function evolucaoOptionScope(array $filters, array $exclude = []): array
+{
+    $skip = array_fill_keys($exclude, true);
+    $where = ["v.data_visita_vis IS NOT NULL"];
+    $params = [];
+
+    if (empty($skip['ano']) && !empty($filters['ano'])) {
+        $where[] = "YEAR(v.data_visita_vis) = :opt_ano";
+        $params[':opt_ano'] = (int)$filters['ano'];
+    }
+    if (empty($skip['mes']) && !empty($filters['mes'])) {
+        $where[] = "MONTH(v.data_visita_vis) = :opt_mes";
+        $params[':opt_mes'] = (int)$filters['mes'];
+    }
+    if (empty($skip['internado']) && ($filters['internado'] ?? '') !== '') {
+        $where[] = "i.internado_int = :opt_internado";
+        $params[':opt_internado'] = $filters['internado'];
+    }
+    if (empty($skip['hospital_id']) && !empty($filters['hospital_id'])) {
+        $where[] = "i.fk_hospital_int = :opt_hospital_id";
+        $params[':opt_hospital_id'] = (int)$filters['hospital_id'];
+    }
+    if (empty($skip['paciente_id']) && !empty($filters['paciente_id'])) {
+        $where[] = "i.fk_paciente_int = :opt_paciente_id";
+        $params[':opt_paciente_id'] = (int)$filters['paciente_id'];
+    }
+
+    return [$where, $params];
+}
+
+function evolucaoFetchOptions(PDO $conn, string $valueExpr, string $labelExpr, string $joins, array $filters, array $exclude = []): array
+{
+    [$where, $params] = evolucaoOptionScope($filters, $exclude);
+    $sql = "
+        SELECT {$valueExpr} AS value, {$labelExpr} AS label, COUNT(DISTINCT v.id_visita) AS total
+        FROM tb_visita v
+        JOIN tb_internacao i ON i.id_internacao = v.fk_internacao_vis
+        {$joins}
+        WHERE " . implode(' AND ', $where) . "
+          AND {$valueExpr} IS NOT NULL
+          AND {$labelExpr} IS NOT NULL
+          AND {$labelExpr} <> ''
+        GROUP BY value, label
+        ORDER BY label
+    ";
+    $stmt = $conn->prepare($sql);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+    }
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 }
 
 $internado = trim((string)(filter_input(INPUT_GET, 'internado') ?? ''));
@@ -25,12 +98,18 @@ if ($internado === '' && !filter_has_var(INPUT_GET, 'internado')) {
 }
 $pacienteId = filter_input(INPUT_GET, 'paciente_id', FILTER_VALIDATE_INT) ?: null;
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$anos = $conn->query("SELECT DISTINCT YEAR(data_visita_vis) AS ano FROM tb_visita WHERE data_visita_vis IS NOT NULL ORDER BY ano DESC")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$pacientes = $conn->query("SELECT id_paciente, nome_pac FROM tb_paciente ORDER BY nome_pac")
-    ->fetchAll(PDO::FETCH_ASSOC);
+$optionFilters = [
+    'internado' => $internado,
+    'hospital_id' => $hospitalId,
+    'mes' => $mes,
+    'ano' => $ano,
+    'paciente_id' => $pacienteId,
+];
+
+$hospitais = evolucaoFetchOptions($conn, 'h.id_hospital', 'h.nome_hosp', 'JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int', $optionFilters, ['hospital_id']);
+$anos = array_column(evolucaoFetchOptions($conn, 'YEAR(v.data_visita_vis)', 'YEAR(v.data_visita_vis)', '', $optionFilters, ['ano']), 'value');
+rsort($anos, SORT_NUMERIC);
+$pacientes = evolucaoFetchOptions($conn, 'pa.id_paciente', 'pa.nome_pac', 'JOIN tb_paciente pa ON pa.id_paciente = i.fk_paciente_int', $optionFilters, ['paciente_id']);
 
 $where = "v.data_visita_vis IS NOT NULL";
 $params = [];
@@ -86,9 +165,9 @@ foreach ($rows as $row) {
     if (!isset($internacoes[$id])) {
         $internacoes[$id] = [
             'paciente' => $row['paciente'] ?? 'Paciente',
-            'hospital' => $row['hospital'] ?? 'Sem informacoes',
+            'hospital' => $row['hospital'] ?? 'Sem informações',
             'data_internacao' => $row['data_intern_int'] ?? '',
-            'acomodacao' => $row['acomodacao_int'] ?? 'Sem informacoes',
+            'acomodacao' => $row['acomodacao_int'] ?? 'Sem informações',
             'visitas' => [],
         ];
     }
@@ -99,20 +178,22 @@ foreach ($rows as $row) {
         'programacao' => $row['programacao_enf'] ?? '',
     ];
 }
+$totalVisitas = count($rows);
+$totalInternacoes = count($internacoes);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-evolucao-layout-4">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Evolucao</h1>
-            <div style="color: var(--bi-muted); font-size: 0.95rem;">Historico de visitas e relatorios por internacao.</div>
+            <h1 class="bi-title">Evolução</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Histórico de visitas e relatórios por internação.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -125,7 +206,7 @@ foreach ($rows as $row) {
                 <select name="internado">
                     <option value="" <?= $internado === '' ? 'selected' : '' ?>>Todos</option>
                     <option value="s" <?= $internado === 's' ? 'selected' : '' ?>>Sim</option>
-                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Nao</option>
+                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Não</option>
                 </select>
             </div>
             <div class="bi-filter">
@@ -133,14 +214,14 @@ foreach ($rows as $row) {
                 <select name="hospital_id">
                     <option value="">Todos</option>
                     <?php foreach ($hospitais as $h): ?>
-                        <option value="<?= (int)$h['id_hospital'] ?>" <?= $hospitalId == $h['id_hospital'] ? 'selected' : '' ?>>
-                            <?= e($h['nome_hosp']) ?>
+                        <option value="<?= (int)$h['value'] ?>" <?= $hospitalId == $h['value'] ? 'selected' : '' ?>>
+                            <?= e($h['label']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="bi-filter">
-                <label>Mes</label>
+                <label>Mês</label>
                 <select name="mes">
                     <option value="">Todos</option>
                     <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -164,41 +245,97 @@ foreach ($rows as $row) {
                 <select name="paciente_id">
                     <option value="">Todos</option>
                     <?php foreach ($pacientes as $p): ?>
-                        <option value="<?= (int)$p['id_paciente'] ?>" <?= $pacienteId == $p['id_paciente'] ? 'selected' : '' ?>>
-                            <?= e($p['nome_pac']) ?>
+                        <option value="<?= (int)$p['value'] ?>" <?= $pacienteId == $p['value'] ? 'selected' : '' ?>>
+                            <?= e($p['label']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="bi-actions">
                 <button class="bi-btn" type="submit">Aplicar filtros</button>
+                <a class="bi-btn bi-btn-reset" href="<?= $BASE_URL ?>bi/evolucao">Limpar filtros</a>
             </div>
         </div>
     </form>
 
-    <div class="bi-panel">
-        <h3>Relatorio de visitas</h3>
+    <section class="bi-evolution-summary">
+        <div class="bi-evolution-stat">
+            <span class="bi-evolution-stat-icon"><i class="bi bi-clipboard2-pulse"></i></span>
+            <div>
+                <small>Internações</small>
+                <strong><?= number_format($totalInternacoes, 0, ',', '.') ?></strong>
+            </div>
+        </div>
+        <div class="bi-evolution-stat">
+            <span class="bi-evolution-stat-icon"><i class="bi bi-journal-medical"></i></span>
+            <div>
+                <small>Visitas registradas</small>
+                <strong><?= number_format($totalVisitas, 0, ',', '.') ?></strong>
+            </div>
+        </div>
+        <div class="bi-evolution-stat">
+            <span class="bi-evolution-stat-icon"><i class="bi bi-calendar3"></i></span>
+            <div>
+                <small>Período</small>
+                <strong><?= $mes ? str_pad((string)$mes, 2, '0', STR_PAD_LEFT) . '/' : '' ?><?= $ano ?: 'Todos' ?></strong>
+            </div>
+        </div>
+    </section>
+
+    <div class="bi-panel bi-evolution-panel">
+        <div class="bi-evolution-panel-head">
+            <div>
+                <h3>Relatório de visitas</h3>
+                <p>Histórico agrupado por internação, com evolução assistencial e programação registrada.</p>
+            </div>
+        </div>
         <?php if (!$internacoes): ?>
-            <div class="bi-empty" style="padding:16px;">Sem informacoes com os filtros atuais.</div>
+            <div class="bi-empty" style="padding:16px;">Sem informações com os filtros atuais.</div>
         <?php else: ?>
-            <?php foreach ($internacoes as $internacao): ?>
-                <div class="bi-panel" style="margin-bottom:16px;">
-                    <div style="font-weight:600; margin-bottom:8px;">
-                        Paciente: <?= e($internacao['paciente']) ?> |
-                        Data Internacao: <?= $internacao['data_internacao'] ? e(date('d/m/Y', strtotime($internacao['data_internacao']))) : '-' ?> |
-                        Acomodacao: <?= e($internacao['acomodacao']) ?> |
-                        Hospital: <?= e($internacao['hospital']) ?>
-                    </div>
-                    <?php foreach ($internacao['visitas'] as $visita): ?>
-                        <div style="border-top:1px solid rgba(255,255,255,0.15); padding-top:10px; margin-top:10px;">
-                            <div style="font-weight:600;">Data Visita: <?= $visita['data'] ? e(date('d/m/Y', strtotime($visita['data']))) : '-' ?></div>
-                            <div><strong>Relatorio:</strong> <?= e($visita['relatorio']) ?></div>
-                            <div><strong>Acoes Auditoria:</strong> <?= e($visita['acoes']) ?></div>
-                            <div><strong>Programacao Terapeutica:</strong> <?= e($visita['programacao']) ?></div>
+            <div class="bi-evolution-list">
+                <?php foreach ($internacoes as $internacao): ?>
+                    <article class="bi-evolution-card">
+                        <header class="bi-evolution-card-head">
+                            <div class="bi-evolution-patient-title">
+                                <span class="bi-evolution-eyebrow">Paciente</span>
+                                <strong><?= e($internacao['paciente']) ?></strong>
+                            </div>
+                            <span class="bi-evolution-count"><?= count($internacao['visitas']) ?> visita<?= count($internacao['visitas']) === 1 ? '' : 's' ?></span>
+                        </header>
+                        <div class="bi-evolution-meta">
+                            <span><i class="bi bi-calendar-event"></i> Internação: <?= e(fmtDateBr($internacao['data_internacao'])) ?></span>
+                            <span><i class="bi bi-door-open"></i> Acomodação: <?= e(visitText($internacao['acomodacao'])) ?></span>
+                            <span><i class="bi bi-hospital"></i> <?= e($internacao['hospital']) ?></span>
                         </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
+                        <div class="bi-evolution-visits">
+                            <?php foreach ($internacao['visitas'] as $visita): ?>
+                                <section class="bi-evolution-visit">
+                                    <div class="bi-evolution-visit-date">
+                                        <i class="bi bi-calendar-check"></i>
+                                        <span><?= e(fmtDateBr($visita['data'])) ?></span>
+                                    </div>
+                                    <div class="bi-evolution-visit-content">
+                                        <div class="bi-evolution-field bi-evolution-field-main">
+                                            <small>Relatório</small>
+                                            <p><?= visitTextHtml($visita['relatorio']) ?></p>
+                                        </div>
+                                        <div class="bi-evolution-field-grid">
+                                            <div class="bi-evolution-field">
+                                                <small>Ações de auditoria</small>
+                                                <p><?= visitTextHtml($visita['acoes']) ?></p>
+                                            </div>
+                                            <div class="bi-evolution-field">
+                                                <small>Programação terapêutica</small>
+                                                <p><?= visitTextHtml($visita['programacao']) ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            <?php endforeach; ?>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
     </div>
 </div>

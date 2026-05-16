@@ -6,6 +6,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
@@ -17,12 +19,6 @@ $hospitalId = filter_input(INPUT_GET, 'hospital_id', FILTER_VALIDATE_INT) ?: nul
 $seguradoraId = filter_input(INPUT_GET, 'seguradora_id', FILTER_VALIDATE_INT) ?: null;
 $patologiaId = filter_input(INPUT_GET, 'patologia_id', FILTER_VALIDATE_INT) ?: null;
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$seguradoras = $conn->query("SELECT id_seguradora, seguradora_seg FROM tb_seguradora ORDER BY seguradora_seg")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$patologias = $conn->query("SELECT id_patologia, patologia_pat FROM tb_patologia ORDER BY patologia_pat")
-    ->fetchAll(PDO::FETCH_ASSOC);
 $anos = $conn->query("SELECT DISTINCT YEAR(data_intern_int) AS ano FROM tb_internacao WHERE data_intern_int IS NOT NULL AND data_intern_int <> '0000-00-00' ORDER BY ano DESC")
     ->fetchAll(PDO::FETCH_COLUMN);
 
@@ -31,6 +27,21 @@ if ($ano === null && !filter_has_var(INPUT_GET, 'ano')) {
 }
 
 $dateExpr = "COALESCE(NULLIF(ca.data_inicial_capeante,'0000-00-00'), NULLIF(ca.data_digit_capeante,'0000-00-00'), NULLIF(ca.data_fech_capeante,'0000-00-00'))";
+$filterScope = [
+    'ano' => $ano,
+    'hospital_id' => $hospitalId,
+    'seguradora_id' => $seguradoraId,
+];
+$hospitais = array_map(fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $filterScope, [
+    'date_expr' => $dateExpr,
+]));
+$seguradoras = array_map(fn($r) => ['id_seguradora' => $r['value'], 'seguradora_seg' => $r['label']], bi_fetch_filter_options($conn, 'seguradora', $filterScope, [
+    'date_expr' => $dateExpr,
+]));
+$patologias = bi_fetch_cid_options($conn, $filterScope, [
+    'date_expr' => $dateExpr,
+    'join_capeante' => true,
+]);
 $where = "YEAR(ref_date) = :ano";
 $params = [':ano' => (int)$ano];
 if (!empty($hospitalId)) {
@@ -42,7 +53,7 @@ if (!empty($seguradoraId)) {
     $params[':seguradora_id'] = (int)$seguradoraId;
 }
 if (!empty($patologiaId)) {
-    $where .= " AND fk_patologia_int = :patologia_id";
+    $where .= " AND fk_cid_int = :patologia_id";
     $params[':patologia_id'] = (int)$patologiaId;
 }
 
@@ -59,6 +70,7 @@ $sql = "
             ca.valor_final_capeante,
             {$dateExpr} AS ref_date,
             ac.fk_hospital_int,
+            ac.fk_cid_int,
             ac.fk_patologia_int,
             pa.fk_seguradora_pac
         FROM tb_capeante ca
@@ -95,9 +107,9 @@ $totalGlosa = array_sum($series['valor_glosa']);
 $totalApresentado = array_sum($series['valor_apresentado']);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -133,7 +145,7 @@ $totalApresentado = array_sum($series['valor_apresentado']);
             </select>
         </div>
         <div class="bi-filter">
-            <label>Patologia</label>
+            <label>CID</label>
             <select name="patologia_id">
                 <option value="">Todas</option>
                 <?php foreach ($patologias as $p): ?>

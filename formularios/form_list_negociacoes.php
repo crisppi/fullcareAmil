@@ -176,7 +176,7 @@ sort($tiposDisponiveis);
                 </div>
                 <div class="col-md-2 d-flex align-items-end gap-2">
                     <button class="btn btn-sm btn-primary" style="background:#5e2363;border:none;">Filtrar</button>
-                    <a href="<?= $BASE_URL ?>negociacoes" class="btn btn-sm btn-outline-secondary btn-filtro-limpar">Limpar</a>
+                    <a href="<?= $BASE_URL ?>negociacoes" class="btn btn-sm btn-outline-secondary btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar</a>
                 </div>
             </form>
         </div>

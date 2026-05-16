@@ -6,6 +6,8 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
+require_once __DIR__ . '/app/bi_cid_options.php';
+
 function e($v)
 {
     return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
@@ -65,18 +67,26 @@ $antecedenteId = filter_input(INPUT_GET, 'antecedente_id', FILTER_VALIDATE_INT) 
 $sexo = trim((string)(filter_input(INPUT_GET, 'sexo') ?? ''));
 $faixaEtaria = trim((string)(filter_input(INPUT_GET, 'faixa_etaria') ?? ''));
 
-$hospitais = $conn->query("SELECT id_hospital, nome_hosp FROM tb_hospital ORDER BY nome_hosp")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$tiposInt = $conn->query("SELECT DISTINCT tipo_admissao_int FROM tb_internacao WHERE tipo_admissao_int IS NOT NULL AND tipo_admissao_int <> '' ORDER BY tipo_admissao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$modos = $conn->query("SELECT DISTINCT modo_internacao_int FROM tb_internacao WHERE modo_internacao_int IS NOT NULL AND modo_internacao_int <> '' ORDER BY modo_internacao_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$patologias = $conn->query("SELECT id_patologia, patologia_pat FROM tb_patologia ORDER BY patologia_pat")
-    ->fetchAll(PDO::FETCH_ASSOC);
-$grupos = $conn->query("SELECT DISTINCT grupo_patologia_int FROM tb_internacao WHERE grupo_patologia_int IS NOT NULL AND grupo_patologia_int <> '' ORDER BY grupo_patologia_int")
-    ->fetchAll(PDO::FETCH_COLUMN);
-$antecedentes = $conn->query("SELECT id_antecedente, antecedente_ant FROM tb_antecedente WHERE antecedente_ant IS NOT NULL AND antecedente_ant <> '' ORDER BY antecedente_ant")
-    ->fetchAll(PDO::FETCH_ASSOC);
+$filterScope = [
+    'ano' => $ano,
+    'mes' => $mes,
+    'hospital_id' => $hospitalId,
+    'tipo_internacao' => $tipoInternacao,
+    'modo_internacao' => $modoInternacao,
+    'grupo_patologia' => $grupoPatologia,
+    'internado' => $internado,
+    'uti' => $uti,
+    'antecedente_id' => $antecedenteId,
+    'sexo' => $sexo,
+    'faixa_etaria' => $faixaEtaria,
+];
+
+$hospitais = array_map(fn($r) => ['id_hospital' => $r['value'], 'nome_hosp' => $r['label']], bi_fetch_filter_options($conn, 'hospital', $filterScope));
+$tiposInt = array_column(bi_fetch_filter_options($conn, 'tipo_internacao', $filterScope), 'label');
+$modos = array_column(bi_fetch_filter_options($conn, 'modo_internacao', $filterScope), 'label');
+$patologias = bi_fetch_cid_options($conn, $filterScope);
+$grupos = array_column(bi_fetch_filter_options($conn, 'grupo_patologia', $filterScope), 'label');
+$antecedentes = array_map(fn($r) => ['id_antecedente' => $r['value'], 'antecedente_ant' => $r['label']], bi_fetch_filter_options($conn, 'antecedente', $filterScope));
 $anos = $conn->query("SELECT DISTINCT YEAR(data_intern_int) AS ano FROM tb_internacao WHERE data_intern_int IS NOT NULL AND data_intern_int <> '0000-00-00' ORDER BY ano DESC")
     ->fetchAll(PDO::FETCH_COLUMN);
 
@@ -134,7 +144,7 @@ function build_where_internacao(array $filters, array &$params, bool $applyUti):
         $params[':modo_internacao'] = $filters['modo_internacao'];
     }
     if (!empty($filters['patologia_id'])) {
-        $where .= " AND i.fk_patologia_int = :patologia_id";
+        $where .= " AND i.fk_cid_int = :patologia_id";
         $params[':patologia_id'] = (int)$filters['patologia_id'];
     }
     if (!empty($filters['grupo_patologia'])) {
@@ -197,7 +207,7 @@ function build_where_financeiro(array $filters, array &$params, bool $applyUti):
         $params[':modo_internacao'] = $filters['modo_internacao'];
     }
     if (!empty($filters['patologia_id'])) {
-        $where .= " AND fk_patologia_int = :patologia_id";
+        $where .= " AND fk_cid_int = :patologia_id";
         $params[':patologia_id'] = (int)$filters['patologia_id'];
     }
     if (!empty($filters['grupo_patologia'])) {
@@ -298,6 +308,7 @@ function financeiro_stats(PDO $conn, array $filters): array
                 i.fk_hospital_int,
                 i.tipo_admissao_int,
                 i.modo_internacao_int,
+                i.fk_cid_int,
                 i.fk_patologia_int,
                 i.grupo_patologia_int,
                 i.fk_patologia2,
@@ -393,8 +404,8 @@ $comparisons = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-bi-layout-3">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .bi-header {
@@ -424,18 +435,34 @@ $comparisons = [
     gap: 12px;
 }
 .bi-compare-card {
-    background: rgba(10, 32, 52, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 14px;
-    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(17, 48, 73, 0.78), rgba(18, 78, 105, 0.46));
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 10px;
+    padding: 14px 15px 13px;
+    box-shadow: 0 12px 24px rgba(5, 28, 47, 0.18);
+}
+.bi-compare-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: rgba(255, 255, 255, 0.2);
 }
 .bi-compare-card.is-better {
     border-color: rgba(90, 224, 138, 0.85);
-    box-shadow: 0 0 0 1px rgba(90, 224, 138, 0.25);
+    box-shadow: 0 0 0 1px rgba(90, 224, 138, 0.22), 0 12px 24px rgba(5, 28, 47, 0.18);
+}
+.bi-compare-card.is-better::before {
+    background: #5ae08a;
 }
 .bi-compare-card.is-worse {
     border-color: rgba(255, 120, 120, 0.85);
-    box-shadow: 0 0 0 1px rgba(255, 120, 120, 0.25);
+    box-shadow: 0 0 0 1px rgba(255, 120, 120, 0.22), 0 12px 24px rgba(5, 28, 47, 0.18);
+}
+.bi-compare-card.is-worse::before {
+    background: #ff7a7a;
 }
 .bi-compare-title {
     font-weight: 600;
@@ -445,6 +472,7 @@ $comparisons = [
 .bi-compare-values {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
     font-size: 0.85rem;
     color: rgba(234, 246, 255, 0.85);
 }
@@ -459,14 +487,84 @@ $comparisons = [
 .bi-compare-delta.is-worse {
     color: #ff7a7a;
 }
+.bi-strategy-summary {
+    align-items: stretch;
+}
+.bi-strategy-card {
+    padding: 14px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.055));
+}
+.bi-strategy-card-selected {
+    border-color: rgba(126, 215, 218, 0.52);
+}
+.bi-strategy-card-global {
+    border-color: rgba(255, 174, 201, 0.48);
+}
+.bi-strategy-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px !important;
+    text-align: left !important;
+    letter-spacing: 0.02em;
+}
+.bi-strategy-heading::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    margin-left: 12px;
+    background: linear-gradient(90deg, rgba(234, 246, 255, 0.28), transparent);
+}
+.bi-strategy-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px;
+    justify-items: stretch !important;
+}
+.bi-strategy-kpi.bi-kpi.kpi-compact {
+    position: relative;
+    max-width: none;
+    min-height: 78px;
+    padding: 12px 12px 11px;
+    text-align: left;
+    border-radius: 10px;
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 20px rgba(6, 31, 51, 0.18);
+}
+.bi-strategy-card-selected .bi-strategy-kpi {
+    background: linear-gradient(145deg, rgba(46, 94, 176, 0.92), rgba(42, 158, 155, 0.42));
+}
+.bi-strategy-card-global .bi-strategy-kpi {
+    background: linear-gradient(145deg, rgba(139, 58, 88, 0.9), rgba(89, 55, 126, 0.48));
+}
+.bi-strategy-kpi small {
+    color: rgba(234, 246, 255, 0.68);
+    font-size: 0.56rem;
+    line-height: 1.25;
+}
+.bi-strategy-kpi strong {
+    color: #ffffff;
+    font-size: clamp(0.98rem, 1.15vw, 1.18rem);
+    line-height: 1.15;
+    margin-top: 8px;
+}
+@media (max-width: 1320px) {
+    .bi-strategy-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+@media (max-width: 760px) {
+    .bi-strategy-kpis {
+        grid-template-columns: 1fr !important;
+    }
+}
 </style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
-        <h1 class="bi-title">Estrategia Terapeutica</h1>
+        <h1 class="bi-title">Estratégia Terapêutica</h1>
         <div class="bi-header-actions bi-header-floating">
             <div class="text-end text-muted"></div>
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <svg viewBox="0 0 16 16" aria-hidden="true">
                     <circle cx="3" cy="3" r="1.2"></circle>
                     <circle cx="8" cy="3" r="1.2"></circle>
@@ -482,7 +580,7 @@ $comparisons = [
         </div>
     </div>
 
-    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact" method="get">
+    <form class="bi-panel bi-filters bi-filters-wrap bi-filters-compact bi-strategy-filters" method="get">
         <div class="bi-filter">
             <label>Hospital</label>
             <select name="hospital_id">
@@ -517,7 +615,7 @@ $comparisons = [
             </select>
         </div>
         <div class="bi-filter">
-            <label>Patologia</label>
+            <label>CID</label>
             <select name="patologia_id">
                 <option value="">Todos</option>
                 <?php foreach ($patologias as $p): ?>
@@ -588,7 +686,7 @@ $comparisons = [
             </select>
         </div>
         <div class="bi-filter">
-            <label>Mes</label>
+            <label>Mês</label>
             <select name="mes">
                 <option value="">Todos</option>
                 <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -596,7 +694,9 @@ $comparisons = [
                 <?php endfor; ?>
             </select>
         </div>
-        <div class="bi-actions"><button class="bi-btn" type="submit">Aplicar</button></div>
+        <div class="bi-actions">
+            <button class="bi-btn" type="submit">Aplicar</button>
+        </div>
     </form>
 
     <div class="bi-panel" style="margin-top:16px; text-align:center;">
@@ -606,31 +706,31 @@ $comparisons = [
         </div>
     </div>
 
-    <div class="bi-grid fixed-2" style="margin-top:16px;">
-        <div class="bi-panel">
-            <h3 class="text-center">Selecionado</h3>
-            <div class="bi-kpis kpi-compact">
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Total internações</small><strong><?= fmt_num($selInternacao['total_internacoes'], 0) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Custo médio diária</small><strong><?= fmt_money($selCustoMedioDiaria) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>MP</small><strong><?= fmt_num($selInternacao['mp'], 2) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Custo médio diária UTI</small><strong><?= fmt_money($selCustoMedioDiariaUti) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Internação UTI</small><strong><?= fmt_num($selUti['total_internacoes'], 0) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Custo médio por conta</small><strong><?= fmt_money($selCustoMedioConta) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Média permanência UTI</small><strong><?= fmt_num($selUti['mp'], 2) ?></strong></div>
-                <div class="bi-kpi kpi-indigo kpi-compact"><small>Valor apresentado</small><strong><?= fmt_money($selFinanceiro['valor_apresentado']) ?></strong></div>
+    <div class="bi-grid fixed-2 bi-strategy-summary" style="margin-top:16px;">
+        <div class="bi-panel bi-strategy-card bi-strategy-card-selected">
+            <h3 class="bi-strategy-heading">Selecionado</h3>
+            <div class="bi-kpis kpi-compact bi-strategy-kpis">
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Total internações</small><strong><?= fmt_num($selInternacao['total_internacoes'], 0) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Custo médio diária</small><strong><?= fmt_money($selCustoMedioDiaria) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>MP</small><strong><?= fmt_num($selInternacao['mp'], 2) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Custo médio diária UTI</small><strong><?= fmt_money($selCustoMedioDiariaUti) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Internação UTI</small><strong><?= fmt_num($selUti['total_internacoes'], 0) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Custo médio por conta</small><strong><?= fmt_money($selCustoMedioConta) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Média permanência UTI</small><strong><?= fmt_num($selUti['mp'], 2) ?></strong></div>
+                <div class="bi-kpi kpi-indigo kpi-compact bi-strategy-kpi"><small>Valor apresentado</small><strong><?= fmt_money($selFinanceiro['valor_apresentado']) ?></strong></div>
             </div>
         </div>
-        <div class="bi-panel">
-            <h3 class="text-center">Global</h3>
-            <div class="bi-kpis kpi-compact">
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Total internações</small><strong><?= fmt_num($globalInternacao['total_internacoes'], 0) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Custo médio diária</small><strong><?= fmt_money($globalCustoMedioDiaria) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>MP</small><strong><?= fmt_num($globalInternacao['mp'], 2) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Custo médio diária UTI</small><strong><?= fmt_money($globalCustoMedioDiariaUti) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Internação UTI</small><strong><?= fmt_num($globalUti['total_internacoes'], 0) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Custo médio por conta</small><strong><?= fmt_money($globalCustoMedioConta) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Média permanência UTI</small><strong><?= fmt_num($globalUti['mp'], 2) ?></strong></div>
-                <div class="bi-kpi kpi-rose kpi-compact"><small>Valor apresentado</small><strong><?= fmt_money($globalFinanceiro['valor_apresentado']) ?></strong></div>
+        <div class="bi-panel bi-strategy-card bi-strategy-card-global">
+            <h3 class="bi-strategy-heading">Global</h3>
+            <div class="bi-kpis kpi-compact bi-strategy-kpis">
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Total internações</small><strong><?= fmt_num($globalInternacao['total_internacoes'], 0) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Custo médio diária</small><strong><?= fmt_money($globalCustoMedioDiaria) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>MP</small><strong><?= fmt_num($globalInternacao['mp'], 2) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Custo médio diária UTI</small><strong><?= fmt_money($globalCustoMedioDiariaUti) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Internação UTI</small><strong><?= fmt_num($globalUti['total_internacoes'], 0) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Custo médio por conta</small><strong><?= fmt_money($globalCustoMedioConta) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Média permanência UTI</small><strong><?= fmt_num($globalUti['mp'], 2) ?></strong></div>
+                <div class="bi-kpi kpi-rose kpi-compact bi-strategy-kpi"><small>Valor apresentado</small><strong><?= fmt_money($globalFinanceiro['valor_apresentado']) ?></strong></div>
             </div>
         </div>
     </div>

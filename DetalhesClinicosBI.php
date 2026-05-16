@@ -69,8 +69,8 @@ function runRows(PDO $conn, string $sql, array $params): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 }
 
-$rowsHosp = runRows($conn, "SELECT COALESCE(NULLIF(h.nome_hosp,''),'Sem informacoes') AS label, COUNT(DISTINCT i.id_internacao) AS total {$sqlBase} GROUP BY label ORDER BY total DESC LIMIT 12", $params);
-$rowsPat = runRows($conn, "SELECT COALESCE(NULLIF(p.patologia_pat,''),'Sem informacoes') AS label, COUNT(DISTINCT i.id_internacao) AS total {$sqlBase} GROUP BY label ORDER BY total DESC LIMIT 12", $params);
+$rowsHosp = runRows($conn, "SELECT COALESCE(NULLIF(h.nome_hosp,''),'Sem informações') AS label, COUNT(DISTINCT i.id_internacao) AS total {$sqlBase} GROUP BY label ORDER BY total DESC LIMIT 12", $params);
+$rowsPat = runRows($conn, "SELECT COALESCE(NULLIF(p.patologia_pat,''),'Sem informações') AS label, COUNT(DISTINCT i.id_internacao) AS total {$sqlBase} GROUP BY label ORDER BY total DESC LIMIT 12", $params);
 $programacaoRow = runRows($conn, "SELECT SUM(CASE WHEN COALESCE(v.visitas_programacao,0) > 0 THEN 1 ELSE 0 END) AS total {$sqlBase}", $params);
 $rowsCob = [
     ['label' => 'Relatório detalhado', 'total' => (int)($kpi['com_relatorio'] ?? 0)],
@@ -78,9 +78,9 @@ $rowsCob = [
     ['label' => 'Programação terapêutica', 'total' => (int)($programacaoRow[0]['total'] ?? 0)],
 ];
 $rowsTable = runRows($conn, "
-    SELECT COALESCE(NULLIF(pa.nome_pac,''), 'Sem informacoes') AS paciente,
-           COALESCE(NULLIF(h.nome_hosp,''), 'Sem informacoes') AS hospital,
-           COALESCE(NULLIF(p.patologia_pat,''), 'Sem informacoes') AS patologia,
+    SELECT COALESCE(NULLIF(pa.nome_pac,''), 'Sem informações') AS paciente,
+           COALESCE(NULLIF(h.nome_hosp,''), 'Sem informações') AS hospital,
+           COALESCE(NULLIF(p.patologia_pat,''), 'Sem informações') AS patologia,
            COALESCE(v.total_visitas,0) AS visitas,
            COALESCE(NULLIF(i.rel_int,''), '-') AS relatorio,
            COALESCE(NULLIF(i.acoes_int,''), '-') AS acoes
@@ -92,7 +92,7 @@ $rowsTable = runRows($conn, "
 function labelsValues(array $rows): array
 {
     return [
-        array_map(fn($r) => $r['label'] ?? 'Sem informacoes', $rows),
+        array_map(fn($r) => $r['label'] ?? 'Sem informações', $rows),
         array_map(fn($r) => (float)($r['total'] ?? 0), $rows),
     ];
 }
@@ -101,9 +101,9 @@ function labelsValues(array $rows): array
 [$labelsCob, $valuesCob] = labelsValues($rowsCob);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -132,7 +132,7 @@ function labelsValues(array $rows): array
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Relatório detalhado</h3>
         <table class="bi-table"><thead><tr><th>Paciente</th><th>Hospital</th><th>Patologia</th><th>Visitas</th><th>Relatório</th><th>Ações</th></tr></thead><tbody>
-        <?php if (!$rowsTable): ?><tr><td colspan="6">Sem informacoes para o filtro selecionado.</td></tr><?php endif; ?>
+        <?php if (!$rowsTable): ?><tr><td colspan="6">Sem informações para o filtro selecionado.</td></tr><?php endif; ?>
         <?php foreach ($rowsTable as $row): ?><tr><td><?= e($row['paciente']) ?></td><td><?= e($row['hospital']) ?></td><td><?= e($row['patologia']) ?></td><td><?= (int)$row['visitas'] ?></td><td><?= e($row['relatorio']) ?></td><td><?= e($row['acoes']) ?></td></tr><?php endforeach; ?>
         </tbody></table>
     </div>

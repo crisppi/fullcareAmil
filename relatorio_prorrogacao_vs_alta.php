@@ -152,55 +152,71 @@ $altasComPrazo = $altasDentro + $altasFora;
 .report-wrapper {
     width: 100%;
     max-width: none;
-    margin: 12px 0 60px;
+    margin: 8px 0 44px;
     padding: 0 24px;
 }
 .report-header {
     background: linear-gradient(120deg, #fef6ff, #f3e6f9);
     border-radius: 18px;
-    padding: 24px;
+    padding: 18px 22px;
     border: 1px solid rgba(94, 35, 99, .12);
-    margin-bottom: 22px;
+    margin-bottom: 16px;
 }
 .report-header h1 {
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     font-weight: 700;
     color: #4b2054;
+    font-size: 1.06rem;
 }
 .report-card {
     background: #fff;
     border-radius: 16px;
-    padding: 18px 20px;
+    padding: 14px 18px;
     border: 1px solid rgba(94, 35, 99, .08);
     box-shadow: 0 10px 24px rgba(45, 18, 70, .08);
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+}
+.report-wrapper .text-muted,
+.report-wrapper .form-label,
+.report-wrapper .form-control,
+.report-wrapper .form-select,
+.report-wrapper .table,
+.report-wrapper small {
+    font-size: .78rem;
+}
+.report-wrapper .row.g-3 {
+    --bs-gutter-y: .6rem;
+    --bs-gutter-x: .8rem;
 }
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 16px;
+    gap: 12px;
 }
 .summary-card {
     background: #f8f3fb;
     border-radius: 14px;
-    padding: 14px 16px;
+    padding: 11px 14px;
     border: 1px solid rgba(94, 35, 99, .08);
 }
 .summary-card h6 {
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     color: #4b2054;
-    font-size: .85rem;
+    font-size: .72rem;
     text-transform: uppercase;
     letter-spacing: .08em;
 }
 .summary-card div {
-    font-size: 1.4rem;
+    font-size: 1.08rem;
     font-weight: 700;
     color: #2f1c37;
 }
 .table thead th {
     background: #f8f3fb;
     color: #4b2054;
+    font-size: .7rem;
+    padding-top: .65rem;
+    padding-bottom: .65rem;
 }
 </style>
 

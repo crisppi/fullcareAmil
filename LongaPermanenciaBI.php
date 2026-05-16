@@ -95,8 +95,8 @@ $stmt = $conn->prepare($sqlStats);
 $stmt->execute($params);
 $stats = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 
-$totalInternações = (int)($stats['total_internacoes'] ?? 0);
-$totalDiárias = (int)($stats['total_diarias'] ?? 0);
+$totalInternacoes = (int)($stats['total_internacoes'] ?? 0);
+$totalDiarias = (int)($stats['total_diarias'] ?? 0);
 $maiorPermanencia = (int)($stats['maior_permanencia'] ?? 0);
 $mp = (float)($stats['mp'] ?? 0);
 
@@ -111,7 +111,7 @@ $stmtHosp->execute($params);
 $hospRows = $stmtHosp->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $sqlTable = "
-    SELECT diarias, nome_hosp, data_intern_int,
+    SELECT id_internacao, diarias, nome_hosp, data_intern_int,
            COALESCE(NULLIF(rel_int,''), 'Sem relatório') AS relatorio
     FROM ({$sqlLonga}) x
     ORDER BY diarias DESC
@@ -121,35 +121,79 @@ $stmtTable = $conn->prepare($sqlTable);
 $stmtTable->execute($params);
 $tableRows = $stmtTable->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-$hospTotals = [];
-foreach ($hospRows as $row) {
-    $name = $row['label'] ?? 'Sem informações';
-    $hospTotals[$name] = (int)($row['total'] ?? 0);
-}
-$labelsHosp = array_map(fn($r) => $r['nome_hosp'], $hospitais);
-$valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais);
+$chartRows = array_slice($hospRows, 0, 12);
+$labelsHosp = array_map(
+    static fn($r) => (string)($r['label'] ?? 'Sem informações'),
+    $chartRows
+);
+$valuesHosp = array_map(
+    static fn($r) => (int)($r['total'] ?? 0),
+    $chartRows
+);
+$lpChartHeight = max(220, count($labelsHosp) * 34);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .lp-chart-compact {
-    min-height: 140px;
-    height: 140px;
+    min-height: 220px;
+    height: <?= (int)$lpChartHeight ?>px;
 }
 
 .lp-chart-compact canvas {
-    height: 140px !important;
+    height: <?= (int)$lpChartHeight ?>px !important;
+}
+
+.lp-page .bi-sidebar {
+    flex: 0 0 252px;
+    max-width: 252px;
+}
+
+.lp-page .bi-filter-card {
+    background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
+    box-shadow: var(--bi-shadow);
+}
+
+.lp-page .bi-filter-card-header {
+    background: linear-gradient(135deg, rgba(90,43,99,.96), rgba(56,26,69,.96));
+}
+
+.lp-page .bi-filter-card-body {
+    gap: 10px;
+}
+
+.lp-page .bi-filter-actions {
+    margin-top: 4px;
+}
+
+.lp-page .bi-table-wrapper {
+    overflow-x: auto;
+}
+
+.lp-page .bi-empty {
+    color: var(--bi-muted);
+    margin: 0;
+}
+
+@media (max-width: 992px) {
+    .lp-page .bi-sidebar {
+        max-width: 100%;
+        width: 100%;
+    }
 }
 </style>
 
-<div class="bi-wrapper bi-theme">
+<div class="bi-wrapper bi-theme lp-page">
     <div class="bi-header">
-        <h1 class="bi-title">Longa Permanência</h1>
+        <div>
+            <h1 class="bi-title">Longa Permanência</h1>
+            <div style="color: var(--bi-muted); font-size: 0.95rem;">Internações acima do limiar da seguradora ou do parâmetro selecionado.</div>
+        </div>
         <div class="bi-header-actions">
-            <div class="text-end text-muted"></div>
+            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>longa_permanencia_gestao.php">Gestão clínica</a>
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
@@ -207,40 +251,65 @@ $valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais)
                     </div>
                     <form id="lp-form" method="get">
                         <input type="hidden" name="limiar" value="<?= $limiarSelecionado !== null ? (int)$limiarSelecionado : '' ?>">
-                        <button class="bi-filter-btn" type="submit">Aplicar</button>
+                        <div class="bi-filter-actions">
+                            <button class="bi-filter-btn" type="submit">Aplicar</button>
+                            <a class="bi-filter-btn bi-filter-btn-secondary" href="<?= $BASE_URL ?>bi/longa-permanencia">Limpar</a>
+                        </div>
                     </form>
                 </div>
             </div>
         </aside>
 
         <section class="bi-main bi-stack">
-            <div class="bi-kpis kpi-compact">
-                <div class="bi-kpi kpi-indigo kpi-compact">
-                    <small>Internações</small>
-                    <strong><?= number_format($totalInternações, 0, ',', '.') ?></strong>
+            <div class="bi-panel">
+                <div class="bi-kpis kpi-dashboard-v2">
+                <div class="bi-kpi kpi-card-v2 kpi-card-v2-1">
+                    <div class="kpi-card-v2-head">
+                        <span class="kpi-card-v2-icon"><i class="bi bi-hospital"></i></span>
+                        <small>Internações</small>
+                    </div>
+                    <strong><?= number_format($totalInternacoes, 0, ',', '.') ?></strong>
+                    <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-clipboard2-pulse"></i>Casos no recorte</span>
                 </div>
-                <div class="bi-kpi kpi-amber kpi-compact">
-                    <small>Diárias</small>
-                    <strong><?= number_format($totalDiárias, 0, ',', '.') ?></strong>
+                <div class="bi-kpi kpi-card-v2 kpi-card-v2-2">
+                    <div class="kpi-card-v2-head">
+                        <span class="kpi-card-v2-icon"><i class="bi bi-calendar2-week"></i></span>
+                        <small>Diárias</small>
+                    </div>
+                    <strong><?= number_format($totalDiarias, 0, ',', '.') ?></strong>
+                    <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-clock-history"></i>Total acumulado</span>
                 </div>
-                <div class="bi-kpi kpi-teal kpi-compact">
-                    <small>MP</small>
+                <div class="bi-kpi kpi-card-v2 kpi-card-v2-3">
+                    <div class="kpi-card-v2-head">
+                        <span class="kpi-card-v2-icon"><i class="bi bi-speedometer2"></i></span>
+                        <small>MP</small>
+                    </div>
                     <strong><?= number_format($mp, 1, ',', '.') ?></strong>
+                    <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-activity"></i>Média por internação</span>
                 </div>
-                <div class="bi-kpi kpi-rose kpi-compact">
-                    <small>Maior Permanência</small>
+                <div class="bi-kpi kpi-card-v2 kpi-card-v2-4">
+                    <div class="kpi-card-v2-head">
+                        <span class="kpi-card-v2-icon"><i class="bi bi-trophy"></i></span>
+                        <small>Maior Permanência</small>
+                    </div>
                     <strong><?= number_format($maiorPermanencia, 0, ',', '.') ?></strong>
+                    <span class="kpi-trend kpi-trend-neutral"><i class="bi bi-hourglass-split"></i>Pico observado</span>
+                </div>
                 </div>
             </div>
 
             <div class="bi-panel">
                 <h3>Hospital</h3>
-                <div class="bi-chart lp-chart-compact"><canvas id="chartLongaHosp"></canvas></div>
+                <?php if (empty($labelsHosp)): ?>
+                    <p class="bi-empty">Sem dados para exibir no gráfico com os filtros atuais.</p>
+                <?php else: ?>
+                    <div class="bi-chart lp-chart-compact"><canvas id="chartLongaHosp"></canvas></div>
+                <?php endif; ?>
             </div>
 
             <div class="bi-panel">
                 <h3>Diárias</h3>
-                <div class="table-responsive">
+                <div class="table-responsive bi-table-wrapper">
                     <table class="bi-table">
                         <thead>
                             <tr>
@@ -248,12 +317,13 @@ $valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais)
                                 <th>Hospital</th>
                                 <th>Data Internação</th>
                                 <th>Relatório</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!$tableRows): ?>
                                 <tr>
-                                    <td colspan="4">Sem informações</td>
+                                    <td colspan="5">Sem informações</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($tableRows as $row): ?>
@@ -268,6 +338,9 @@ $valuesHosp = array_map(fn($r) => $hospTotals[$r['nome_hosp']] ?? 0, $hospitais)
                                             <?php endif; ?>
                                         </td>
                                         <td><?= e($row['relatorio'] ?? 'Sem relatório') ?></td>
+                                        <td style="white-space:nowrap;">
+                                            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>longa_permanencia_editar.php?id_internacao=<?= (int)($row['id_internacao'] ?? 0) ?>">Gerir caso</a>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -296,9 +369,11 @@ if (limiarList && limiarInput) {
 </script>
 
 <script>
-const lpLabels = <?= json_encode($labelsHosp) ?>;
-const lpValues = <?= json_encode($valuesHosp) ?>;
-new Chart(document.getElementById('chartLongaHosp'), {
+const lpLabels = <?= json_encode($labelsHosp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+const lpValues = <?= json_encode($valuesHosp, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+const lpChartEl = document.getElementById('chartLongaHosp');
+if (lpChartEl && lpLabels.length) {
+new Chart(lpChartEl, {
   type: 'horizontalBar',
   data: {
     labels: lpLabels,
@@ -315,7 +390,7 @@ new Chart(document.getElementById('chartLongaHosp'), {
     legend: { display: false },
     scales: {
       xAxes: [{
-        ticks: { fontColor: '#e8f1ff' },
+        ticks: { fontColor: '#e8f1ff', beginAtZero: true, precision: 0 },
         gridLines: { display: false }
       }],
       yAxes: [{
@@ -325,6 +400,7 @@ new Chart(document.getElementById('chartLongaHosp'), {
     }
   }
 });
+}
 </script>
 
 <?php require_once("templates/footer.php"); ?>

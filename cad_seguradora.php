@@ -10,7 +10,7 @@ $seguradoraDao = new seguradoraDAO($conn, $BASE_URL);
 $id_seguradora = filter_input(INPUT_GET, "id_seguradora");
 ?>
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;
@@ -317,23 +317,12 @@ $id_seguradora = filter_input(INPUT_GET, "id_seguradora");
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var backLink = document.querySelector('.js-friendly-back');
-        if (!backLink) return;
-        var fallbackUrl = backLink.getAttribute('data-default-return') || backLink.href;
-        var returnUrl = null;
-        try {
-            returnUrl = sessionStorage.getItem('return_flow_url');
-        } catch (e) {
-            returnUrl = null;
-        }
-        if (returnUrl && returnUrl !== window.location.href) {
-            backLink.href = returnUrl;
-            backLink.textContent = 'Voltar ao fluxo anterior';
-        } else {
-            backLink.href = fallbackUrl;
-            backLink.textContent = 'Voltar para lista';
-        }
-    });
+    var backLink = document.querySelector('.js-friendly-back');
+    if (!backLink) return;
+    var fallbackUrl = backLink.getAttribute('data-default-return') || backLink.href;
+    backLink.href = fallbackUrl;
+    backLink.textContent = 'Voltar para lista';
+});
 
     const imagem = document.querySelector("#logo_seg");
 

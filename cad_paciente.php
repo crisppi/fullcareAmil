@@ -59,8 +59,8 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
 
 <!-- Ícones via pacote local Font Awesome Free -->
 <link rel="stylesheet" href="diversos/CoolAdmin-master/vendor/font-awesome-5/css/fontawesome-all.min.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/form_cad_internacao.css">
+<link rel="stylesheet" href="css/style.css?v=<?= @filemtime(__DIR__ . '/css/style.css') ?>">
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(__DIR__ . '/css/form_cad_internacao.css') ?>">
 <style>
     #main-container.internacao-page {
         margin: 2px 0 0 !important;
@@ -72,14 +72,14 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .internacao-page__hero {
-        min-height: 58px !important;
-        margin: 0 0 5px !important;
-        padding: 14px 14px !important;
-        border-radius: 18px !important;
+        min-height: 50px !important;
+        margin: 0 0 4px !important;
+        padding: 10px 12px !important;
+        border-radius: 16px !important;
     }
 
     #main-container.internacao-page .internacao-page__hero h1 {
-        font-size: 1.2rem !important;
+        font-size: 1.02rem !important;
         line-height: 1.1 !important;
     }
 
@@ -93,10 +93,10 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         border-radius: 999px;
         border: 1px solid #d9c3f4;
         color: #5e2363;
-        padding: 6px 12px;
+        padding: 5px 10px;
         text-decoration: none;
         font-weight: 600;
-        font-size: .78rem;
+        font-size: .72rem;
         background: #f4ecfb;
     }
 
@@ -133,7 +133,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .internacao-card__title {
-        font-size: .9rem !important;
+        font-size: .82rem !important;
         line-height: 1.1 !important;
     }
 
@@ -171,7 +171,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .entity-step-title {
-        font-size: .92rem !important;
+        font-size: .84rem !important;
         line-height: 1.1 !important;
     }
 
@@ -186,26 +186,28 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
 
     #main-container.internacao-page .entity-form .form-group label {
         margin-bottom: 3px !important;
-        font-size: .7rem !important;
+        font-size: .64rem !important;
         line-height: 1.1 !important;
     }
 
     #multi-step-form .form-control {
-        min-height: 40px !important;
-        height: 40px !important;
+        min-height: 36px !important;
+        height: 36px !important;
         border-radius: 9px;
-        font-size: .78rem !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
+        font-size: .72rem !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
     }
 
     #multi-step-form select.form-control {
-        height: 40px !important;
-        min-height: 40px !important;
+        height: 36px !important;
+        min-height: 36px !important;
     }
 
     #multi-step-form textarea.form-control {
-        min-height: 68px !important;
+        min-height: 58px !important;
         height: auto !important;
         border-radius: 9px;
     }
@@ -221,10 +223,10 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
     }
 
     #main-container.internacao-page .entity-actions-bar .btn {
-        min-height: 40px !important;
-        padding: 7px 16px !important;
+        min-height: 36px !important;
+        padding: 6px 14px !important;
         border-radius: 10px !important;
-        font-size: .78rem !important;
+        font-size: .72rem !important;
     }
 </style>
 
@@ -612,19 +614,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var backLink = document.querySelector('.js-friendly-back');
     if (!backLink) return;
     var fallbackUrl = backLink.getAttribute('data-default-return') || backLink.href;
-    var returnUrl = null;
-    try {
-        returnUrl = sessionStorage.getItem('return_flow_url');
-    } catch (e) {
-        returnUrl = null;
-    }
-    if (returnUrl && returnUrl !== window.location.href) {
-        backLink.href = returnUrl;
-        backLink.textContent = 'Voltar ao fluxo anterior';
-    } else {
-        backLink.href = fallbackUrl;
-        backLink.textContent = 'Voltar para lista';
-    }
+    backLink.href = fallbackUrl;
+    backLink.textContent = 'Voltar para lista';
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>

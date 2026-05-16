@@ -142,14 +142,14 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 [$labelsAcom, $valuesAcom] = labelsAndValues($rowsAcom);
 [$labelsCusto, $valuesCusto] = labelsAndValues($rowsCusto);
 [$labelsIntern, $valuesIntern] = labelsAndValues($rowsIntern);
-[$labelsDiárias, $valuesDiárias] = labelsAndValues($rowsDiárias);
+[$labelsDiarias, $valuesDiarias] = labelsAndValues($rowsDiárias);
 [$labelsMp, $valuesMp] = labelsAndValues($rowsMp);
 [$labelsCustoMedio, $valuesCustoMedio] = labelsAndValues($rowsCustoMedio);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
@@ -168,9 +168,6 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
     <div class="bi-header">
         <h1 class="bi-title">Dashboard Patologia</h1>
         <div class="bi-header-actions">
-            <div class="text-end text-muted small">
-                <?= isset($fonte_conexao) ? 'Fonte: ' . e($fonte_conexao) : '' ?>
-            </div>
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
@@ -269,7 +266,7 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 
     <div class="bi-panel" style="margin-top:16px;">
         <h3>Diárias por patologia</h3>
-        <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartDiárias"></canvas></div>
+        <div class="bi-chart bi-patologia-chart-sm"><canvas id="chartDiarias"></canvas></div>
     </div>
 </div>
 
@@ -284,8 +281,8 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
     const valuesIntern = <?= json_encode($valuesIntern) ?>;
     const labelsMp = <?= json_encode($labelsMp) ?>;
     const valuesMp = <?= json_encode($valuesMp) ?>;
-    const labelsDiárias = <?= json_encode($labelsDiárias) ?>;
-    const valuesDiárias = <?= json_encode($valuesDiárias) ?>;
+    const labelsDiarias = <?= json_encode($labelsDiarias) ?>;
+    const valuesDiarias = <?= json_encode($valuesDiarias) ?>;
 
     function buildScales(yTickCallback) {
         const scales = window.biChartScales ? window.biChartScales() : {
@@ -395,7 +392,7 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
     barChart(document.getElementById('chartCustoMedio'), labelsCustoMedio, valuesCustoMedio, 'rgba(208, 113, 176, 0.7)', window.biMoneyTick);
     barChart(document.getElementById('chartIntern'), labelsIntern, valuesIntern, 'rgba(121, 199, 255, 0.7)');
     barChart(document.getElementById('chartMp'), labelsMp, valuesMp, 'rgba(111, 223, 194, 0.7)');
-    barChart(document.getElementById('chartDiárias'), labelsDiárias, valuesDiárias, 'rgba(255, 198, 108, 0.7)');
+    barChart(document.getElementById('chartDiarias'), labelsDiarias, valuesDiarias, 'rgba(255, 198, 108, 0.7)');
 </script>
 
 <?php require_once("templates/footer.php"); ?>

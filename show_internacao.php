@@ -1960,36 +1960,51 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
     }
 
     .v2-avatar {
-        width: 64px;
-        height: 64px;
+        width: 54px;
+        height: 54px;
         border-radius: 50%;
         background: #ecd5f9;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        color: #5e2363
+        color: #5e2363;
+        font-size: 1.45rem;
+    }
+
+    .header-card .card-body {
+        padding: .9rem 1.1rem;
+    }
+
+    .header-card h4 {
+        font-size: 1.02rem;
+        margin-bottom: .2rem !important;
+    }
+
+    .header-card .small,
+    .header-card .text-secondary {
+        font-size: .76rem !important;
     }
 
     .ux-summary-strip {
         display: grid;
         grid-template-columns: repeat(4, minmax(180px, 1fr));
-        gap: 10px;
+        gap: 8px;
     }
 
     .ux-summary-chip {
         border: 1px solid #eadcf3;
         background: #fbf7fe;
         border-radius: 12px;
-        padding: 8px 10px;
+        padding: 6px 9px;
         display: flex;
         align-items: baseline;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
     }
 
     .ux-chip-label {
-        font-size: .75rem;
+        font-size: .68rem;
         letter-spacing: .02em;
         color: #6b7280;
         text-transform: uppercase;
@@ -1997,13 +2012,13 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
 
     .ux-chip-value {
         color: #5e2363;
-        font-size: .95rem;
+        font-size: .88rem;
         font-weight: 700;
     }
 
     .ux-chip-sub {
         color: #6b7280;
-        font-size: .8rem;
+        font-size: .72rem;
     }
 
     .ux-priority-chip .ux-chip-value {
@@ -2040,12 +2055,12 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 22px;
-        height: 20px;
+        min-width: 18px;
+        height: 18px;
         border-radius: 999px;
-        padding: 0 6px;
-        margin-left: 8px;
-        font-size: 0.72rem;
+        padding: 0 5px;
+        margin-left: 6px;
+        font-size: 0.64rem;
         font-weight: 700;
         border: 1px solid #ddcfe8;
         background: #f5edf9;
@@ -2066,14 +2081,21 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         background: #fff;
         border: 1px solid #ece7f1;
         border-radius: 12px;
-        padding: 10px;
+        padding: 8px;
+    }
+
+    #internTabs .nav-link {
+        padding: .65rem .95rem;
+        font-size: .86rem;
+        font-weight: 700;
+        border-radius: 14px;
     }
 
     .ov-card .ov-head {
         display: flex;
         align-items: center;
         gap: .5rem;
-        margin-bottom: .5rem
+        margin-bottom: .4rem
     }
 
     #main-container .ov-card {
@@ -2082,27 +2104,28 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
     }
 
     #main-container .ov-card .card-body {
-        padding: 1rem 1.1rem;
+        padding: .8rem .95rem;
     }
 
     #main-container .ov-title {
-        font-size: 1rem;
+        font-size: .9rem;
         font-weight: 700;
         color: #2b2f36;
     }
 
     #main-container .btn-sm {
-        min-height: 34px;
-        padding: 0.33rem 0.78rem;
+        min-height: 31px;
+        padding: 0.28rem 0.66rem;
         font-weight: 600;
         line-height: 1.2;
+        font-size: .76rem;
     }
 
     #main-container .form-label.small {
-        font-size: .78rem;
+        font-size: .72rem;
         font-weight: 600;
         color: #667085 !important;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.18rem;
     }
 
     .ux-table-wrap {
@@ -2133,16 +2156,17 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
     }
 
     .ux-data-table td {
-        padding-top: 0.58rem;
-        padding-bottom: 0.58rem;
+        padding-top: 0.48rem;
+        padding-bottom: 0.48rem;
         vertical-align: middle;
+        font-size: .76rem;
     }
 
     .ux-empty-state {
         border: 1px dashed #d9cbe7;
         background: #faf7fd;
         border-radius: 12px;
-        padding: 14px 16px;
+        padding: 11px 13px;
     }
 
     .ux-empty-title {
@@ -2153,18 +2177,19 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
 
     .ux-empty-text {
         color: #6f6790;
-        font-size: .92rem;
+        font-size: .78rem;
     }
 
     .ux-focus-text {
         border: 1px solid #e8e1f0;
         background: #fcfbfe;
         border-radius: 12px;
-        padding: 14px;
+        padding: 11px 12px;
         white-space: pre-wrap;
         max-height: 60vh;
         overflow: auto;
-        line-height: 1.45;
+        line-height: 1.38;
+        font-size: .78rem;
     }
     .ov-head-space {
         display: flex;
@@ -2210,8 +2235,8 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
     }
 
     .ov-card .ov-icon {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border-radius: 10px;
         display: inline-flex;
         align-items: center;
@@ -2247,7 +2272,7 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         border-radius: 16px;
         background: linear-gradient(180deg, #fbfcff 0%, #f4f8ff 100%);
         box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
-        padding: 14px 16px;
+        padding: 11px 13px;
     }
 
     .ux-recent-header {
@@ -2255,13 +2280,13 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 14px;
+        gap: 10px;
+        margin-bottom: 10px;
     }
 
     .ux-recent-title {
         text-transform: uppercase;
-        font-size: .86rem;
+        font-size: .78rem;
         font-weight: 700;
         letter-spacing: .04em;
         color: #64707d;
@@ -2273,13 +2298,13 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         border-radius: 14px;
         background: #fff;
         box-shadow: 0 4px 16px rgba(17, 24, 39, 0.04);
-        padding: 16px 18px;
+        padding: 12px 14px;
     }
 
     .ux-recent-meta {
         display: grid;
         grid-template-columns: repeat(3, minmax(140px, 1fr));
-        gap: 8px 12px;
+        gap: 6px 10px;
         align-items: start;
     }
 
@@ -2291,7 +2316,7 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
     }
 
     .ux-recent-meta-label {
-        font-size: .72rem;
+        font-size: .66rem;
         line-height: 1;
         text-transform: uppercase;
         letter-spacing: .06em;
@@ -2314,14 +2339,14 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         border: 1px solid #e5e7eb;
         background: #f8fafc;
         color: #4b5563;
-        font-size: .82rem;
+        font-size: .74rem;
         font-weight: 700;
     }
 
     .ux-recent-date-chip {
         display: inline-block;
         width: fit-content;
-        padding: 3px 11px;
+        padding: 2px 9px;
         border-radius: 999px;
         background: #f2e8f7;
         color: #4b1c50;
@@ -2332,8 +2357,9 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
         border: 1px solid #e7e9f0;
         border-radius: 10px;
         background: #fdfefe;
-        padding: 12px 14px;
-        line-height: 1.55;
+        padding: 10px 12px;
+        line-height: 1.42;
+        font-size: .78rem;
     }
 
     .btn-ultimas-visitas {
@@ -2351,12 +2377,12 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
 
     .btn-visitas-row .btn {
         min-width: 170px;
-        height: 52px;
+        height: 44px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 0.4rem 0.9rem;
+        padding: 0.35rem 0.8rem;
         white-space: nowrap;
     }
 

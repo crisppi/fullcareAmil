@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Alto Risco de Readmissao';
+$pageTitle = 'Alto Risco de Readmissão';
 $pageSlug = 'bi/risco-readmissao';
 $clearUrl = 'bi/risco-readmissao';
 require_once("bi_rede_bootstrap.php");
@@ -23,18 +23,18 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Alto Risco de Readmissao</h1>
+            <h1 class="bi-title">Alto Risco de Readmissão</h1>
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Pacientes com idade alta, readmissoes e permanencia elevada.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -49,9 +49,9 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <tr>
                     <th>Paciente</th>
                     <th>Idade</th>
-                    <th>Internacoes</th>
-                    <th>Readmissao 30d</th>
-                    <th>Permanencia media</th>
+                    <th>Internações</th>
+                    <th>Readmissão 30d</th>
+                    <th>Permanência média</th>
                     <th>Score risco</th>
                 </tr>
             </thead>
@@ -79,7 +79,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         }
                         ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($idade) ?></td>
                             <td><?= fmtInt($internacoes) ?></td>
                             <td><?= fmtInt($readm30) ?></td>

@@ -97,8 +97,8 @@ $stmt->execute();
 $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -108,7 +108,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Resumo da primeira visita registrada.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -121,7 +121,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
                 <select name="internado">
                     <option value="" <?= $internado === '' ? 'selected' : '' ?>>Todos</option>
                     <option value="s" <?= $internado === 's' ? 'selected' : '' ?>>Sim</option>
-                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Nao</option>
+                    <option value="n" <?= $internado === 'n' ? 'selected' : '' ?>>Não</option>
                 </select>
             </div>
             <div class="bi-filter">
@@ -136,7 +136,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
                 </select>
             </div>
             <div class="bi-filter">
-                <label>Mes</label>
+                <label>Mês</label>
                 <select name="mes">
                     <option value="">Todos</option>
                     <?php for ($m = 1; $m <= 12; $m++): ?>
@@ -175,7 +175,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     <div class="bi-panel">
         <h3>Detalhes da internacao</h3>
         <?php if (!$row): ?>
-            <div class="bi-empty" style="padding:16px;">Sem informacoes com os filtros atuais.</div>
+            <div class="bi-empty" style="padding:16px;">Sem informações com os filtros atuais.</div>
         <?php else: ?>
             <div class="bi-kpis kpi-grid-4">
                 <div class="bi-kpi kpi-compact">
@@ -219,7 +219,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     <div class="bi-panel">
         <h3>Relatorio de visita</h3>
         <?php if (!$row): ?>
-            <div class="bi-empty" style="padding:16px;">Sem informacoes.</div>
+            <div class="bi-empty" style="padding:16px;">Sem informações.</div>
         <?php else: ?>
             <div><strong>Data Visita:</strong> <?= !empty($row['data_visita_vis']) ? e(date('d/m/Y', strtotime($row['data_visita_vis']))) : '-' ?></div>
             <div style="margin-top:8px;"><strong>Relatorio:</strong> <?= e($row['rel_visita_vis'] ?? '') ?></div>

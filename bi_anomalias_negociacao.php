@@ -78,8 +78,8 @@ foreach ($rows as &$row) {
 unset($row);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
@@ -89,7 +89,7 @@ unset($row);
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Hospitais com excesso de negociacoes ou prorrogações.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -113,7 +113,7 @@ unset($row);
                 <strong><?= fmtMoney($savingTotal) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Internacoes analisadas</small>
+                <small>Internações analisadas</small>
                 <strong><?= fmtInt($internacoes) ?></strong>
             </div>
         </div>
@@ -128,7 +128,7 @@ unset($row);
                     <th>Negociacoes</th>
                     <th>Prorrogacoes</th>
                     <th>Saving total</th>
-                    <th>Indice por internacao</th>
+                    <th>Índice por internacao</th>
                 </tr>
             </thead>
             <tbody>
@@ -145,7 +145,7 @@ unset($row);
                         $indice = $ints > 0 ? (($neg + $pr) / $ints) : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($neg) ?></td>
                             <td><?= fmtInt($pr) ?></td>
                             <td><?= fmtMoney((float)($row['saving_total'] ?? 0)) ?></td>

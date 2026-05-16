@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Readmissao Precoce';
+$pageTitle = 'Readmissão Precoce';
 $pageSlug = 'bi/anomalias-readmissao';
 require_once("templates/bi_rede_bootstrap.php");
 
@@ -24,18 +24,18 @@ $rowsStmt->execute();
 $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260501">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260501"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
         <div>
-            <h1 class="bi-title">Readmissao Precoce</h1>
+            <h1 class="bi-title">Readmissão Precoce</h1>
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Retorno rapido do paciente apos alta.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao BI">
+            <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação BI">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
         </div>
@@ -47,11 +47,11 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         <h3>Indicadores-chave</h3>
         <div class="bi-kpis kpi-grid-4">
             <div class="bi-kpi kpi-compact">
-                <small>Readmissao 7d</small>
+                <small>Readmissão 7d</small>
                 <strong><?= fmtPct($readm7Pct, 1) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
-                <small>Readmissao 3d</small>
+                <small>Readmissão 3d</small>
                 <strong><?= fmtPct($readm3Pct, 1) ?></strong>
             </div>
             <div class="bi-kpi kpi-compact">
@@ -71,7 +71,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             <thead>
                 <tr>
                     <th>Hospital</th>
-                    <th>Readmissao 7d</th>
+                    <th>Readmissão 7d</th>
                     <th>Taxa 7d</th>
                     <th>Altas</th>
                 </tr>
@@ -89,7 +89,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         $rate = $total > 0 ? ($r7 / $total) * 100 : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['hospital'] ?? 'Sem informacoes') ?></td>
+                            <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($r7) ?></td>
                             <td><?= fmtPct($rate, 1) ?></td>
                             <td><?= fmtInt($total) ?></td>

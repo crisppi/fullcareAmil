@@ -176,7 +176,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                     <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/list_internacao_cap_par.php', ENT_QUOTES, 'UTF-8') ?>"
                         class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
                         title="Limpar filtros" aria-label="Limpar filtros">
-                        <i class="bi bi-x-lg"></i>
+                        <i class="bi bi-trash3"></i>
                     </a>
                 </div>
         </form>

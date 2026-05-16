@@ -202,8 +202,8 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
     border-bottom: none;
     font-weight: 600;
     color: #3A3A3A;
-    font-size: .84rem;
-    padding: 10px 14px 0;
+    font-size: .78rem;
+    padding: 9px 12px 0;
 }
 .filter-chip {
     border-radius: 999px;
@@ -217,21 +217,21 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
     border-color: transparent;
 }
 .chart-container {
-    min-height: 220px;
+    min-height: 200px;
 }
 </style>
 <style>
     .container-fluid.py-4 {
-        padding-top: 14px !important;
-        padding-bottom: 24px !important;
+        padding-top: 10px !important;
+        padding-bottom: 18px !important;
     }
 
     .container-fluid .mb-4 {
-        margin-bottom: 1rem !important;
+        margin-bottom: .8rem !important;
     }
 
     .container-fluid h4 {
-        font-size: 1.2rem;
+        font-size: 1.04rem;
     }
 
     .container-fluid .text-muted,
@@ -243,11 +243,11 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
     }
 
     .dashboard-card.p-3 {
-        padding: .85rem !important;
+        padding: .72rem !important;
     }
 
     .dashboard-card h3 {
-        font-size: 1.35rem;
+        font-size: 1.14rem;
     }
 </style>
 <div class="container-fluid py-4">

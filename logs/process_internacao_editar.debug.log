@@ -684,3 +684,45 @@
 [2026-04-28 23:28:58] PRORROG update ok id_int=822 id_pror=439
 [2026-04-28 23:28:58] PRORROG update ok id_int=822 id_pror=440
 [2026-04-28 23:28:58] COMMIT ok id_int=822
+[2026-05-16 01:48:06] START id_int=731 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-16 01:48:06] GESTAO skip id_int=731 select_gestao=n evento=n
+[2026-05-16 01:48:06] NEGOC fallback post rows=1 id_int=731
+[2026-05-16 01:48:06] PRORROG input id_int=731 rows=2
+[2026-05-16 01:48:06] PRORROG update ok id_int=731 id_pror=300
+[2026-05-16 01:48:06] PRORROG update ok id_int=731 id_pror=301
+[2026-05-16 01:48:06] PRORROG alta inline ok id_int=731
+[2026-05-16 01:48:06] COMMIT ok id_int=731
+[2026-05-16 01:51:46] START id_int=842 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-16 01:51:46] GESTAO skip id_int=842 select_gestao=n evento=n
+[2026-05-16 01:51:46] NEGOC fallback post rows=1 id_int=842
+[2026-05-16 01:51:46] PRORROG input id_int=842 rows=1
+[2026-05-16 01:51:46] PRORROG update ok id_int=842 id_pror=453
+[2026-05-16 01:51:46] PRORROG alta inline ok id_int=842
+[2026-05-16 01:51:46] COMMIT ok id_int=842
+[2026-05-16 01:58:25] START id_int=687 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-16 01:58:26] GESTAO skip id_int=687 select_gestao=n evento=n
+[2026-05-16 01:58:26] NEGOC fallback post rows=1 id_int=687
+[2026-05-16 01:58:26] PRORROG input id_int=687 rows=3
+[2026-05-16 01:58:26] PRORROG skip invalid id_int=687 id_pror=303 reasons=acomodacao_vazia,data_final_invalida ini=2026-04-09 fim=
+[2026-05-16 01:58:26] PRORROG update ok id_int=687 id_pror=227
+[2026-05-16 01:58:26] PRORROG update ok id_int=687 id_pror=304
+[2026-05-16 01:58:26] PRORROG alta inline ok id_int=687
+[2026-05-16 01:58:26] COMMIT ok id_int=687
+[2026-05-16 02:24:15] START id_int=680 type=edit_negociacao select_gestao=n evento_adverso_ges=s id_gestao=52
+[2026-05-16 02:24:15] GESTAO update ok id_int=680 id_gestao=52 evento=s
+[2026-05-16 02:24:15] NEGOC fallback post rows=1 id_int=680
+[2026-05-16 02:24:15] PRORROG input id_int=680 rows=6
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=230
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=316
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=317
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=318
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=370
+[2026-05-16 02:24:15] PRORROG update ok id_int=680 id_pror=371
+[2026-05-16 02:24:15] COMMIT ok id_int=680
+[2026-05-16 02:38:50] START id_int=770 type=edit_negociacao select_gestao=n evento_adverso_ges=s id_gestao=53
+[2026-05-16 02:38:50] GESTAO update ok id_int=770 id_gestao=53 evento=s
+[2026-05-16 02:38:50] NEGOC fallback post rows=1 id_int=770
+[2026-05-16 02:38:50] PRORROG input id_int=770 rows=2
+[2026-05-16 02:38:50] PRORROG update ok id_int=770 id_pror=387
+[2026-05-16 02:38:50] PRORROG update ok id_int=770 id_pror=388
+[2026-05-16 02:38:50] COMMIT ok id_int=770

@@ -138,6 +138,387 @@ function mobileListAdmissions(PDO $conn, array $authUser, string $query): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 }
 
+function mobileListHomeCareCases(PDO $conn, array $authUser, string $query): array
+{
+    [$scopeSql, $scopeParams] = mobileUserScopeWhere($authUser, 'p');
+    $params = $scopeParams;
+    $where = " WHERE COALESCE(i.internado_int, 's') = 's' ";
+
+    if ($query !== '') {
+        $where .= " AND (
+            p.nome_pac LIKE :query_patient
+            OR h.nome_hosp LIKE :query_hospital
+            OR s.seguradora_seg LIKE :query_insurance
+        ) ";
+        $like = '%' . $query . '%';
+        $params[':query_patient'] = $like;
+        $params[':query_hospital'] = $like;
+        $params[':query_insurance'] = $like;
+    }
+
+    $sql = "
+        SELECT
+            i.id_internacao AS admission_id,
+            p.nome_pac AS patient_name,
+            s.seguradora_seg AS insurance_name,
+            h.nome_hosp AS hospital_name,
+            i.data_intern_int AS admission_date,
+            GREATEST(1, DATEDIFF(CURRENT_DATE(), i.data_intern_int) + 1) AS days,
+            hc.id_home_care AS update_id,
+            hc.data_atualizacao_hc AS updated_at,
+            hc.status_hc AS status,
+            hc.modalidade_aprovada_hc AS approved_mode,
+            hc.modalidade_sugerida_hc AS suggested_mode,
+            hc.previsao_implantacao_hc AS expected_date,
+            hc.barreira_principal_hc AS main_barrier,
+            hc.fornecedor_hc AS supplier,
+            hc.plano_transicao_hc AS transition_plan,
+            hc.observacoes_hc AS notes,
+            hc.nead_classificacao_hc AS nead_classification,
+            hc.nead_elegivel_hc AS nead_eligible,
+            CASE
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM tb_gestao g
+                    WHERE g.fk_internacao_ges = i.id_internacao
+                      AND (g.home_care_ges = 's' OR g.desospitalizacao_ges = 's')
+                ) THEN 's'
+                ELSE 'n'
+            END AS flagged_home_care
+        FROM tb_internacao i
+        LEFT JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
+        LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+        LEFT JOIN tb_seguradora s ON s.id_seguradora = p.fk_seguradora_pac
+        LEFT JOIN (
+            SELECT hc1.*
+            FROM tb_home_care_avaliacao hc1
+            INNER JOIN (
+                SELECT fk_internacao_hc, MAX(id_home_care) AS max_id
+                FROM tb_home_care_avaliacao
+                GROUP BY fk_internacao_hc
+            ) last_hc ON last_hc.max_id = hc1.id_home_care
+        ) hc ON hc.fk_internacao_hc = i.id_internacao
+        {$where}
+          {$scopeSql}
+        ORDER BY
+            CASE
+                WHEN hc.id_home_care IS NOT NULL THEN 0
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM tb_gestao g
+                    WHERE g.fk_internacao_ges = i.id_internacao
+                      AND (g.home_care_ges = 's' OR g.desospitalizacao_ges = 's')
+                ) THEN 1
+                ELSE 2
+            END ASC,
+            COALESCE(hc.nead_elegivel_hc, 'n') DESC,
+            GREATEST(1, DATEDIFF(CURRENT_DATE(), i.data_intern_int) + 1) DESC,
+            i.data_intern_int ASC
+        LIMIT 100
+    ";
+
+    $stmt = $conn->prepare($sql);
+    mobileBindAll($stmt, $params);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
+
+function mobileListLongStayCases(PDO $conn, array $authUser, string $query): array
+{
+    [$scopeSql, $scopeParams] = mobileUserScopeWhere($authUser, 'p');
+    $params = array_merge([':limiar_padrao' => 30], $scopeParams);
+    $where = " WHERE i.data_intern_int IS NOT NULL
+                  AND i.data_intern_int <> '0000-00-00'
+                  AND i.internado_int = 's' ";
+
+    if ($query !== '') {
+        $where .= " AND (
+            p.nome_pac LIKE :query_patient
+            OR h.nome_hosp LIKE :query_hospital
+            OR se.seguradora_seg LIKE :query_insurance
+            OR COALESCE(lp.status_lp, '') LIKE :query_status
+            OR COALESCE(lp.motivo_principal_lp, '') LIKE :query_reason
+        ) ";
+        $like = '%' . $query . '%';
+        $params[':query_patient'] = $like;
+        $params[':query_hospital'] = $like;
+        $params[':query_insurance'] = $like;
+        $params[':query_status'] = $like;
+        $params[':query_reason'] = $like;
+    }
+
+    $sql = "
+        SELECT *
+        FROM (
+            SELECT
+                i.id_internacao AS admission_id,
+                p.nome_pac AS patient_name,
+                se.seguradora_seg AS insurance_name,
+                h.nome_hosp AS hospital_name,
+                i.data_intern_int AS admission_date,
+                GREATEST(1, DATEDIFF(CURRENT_DATE(), i.data_intern_int) + 1) AS days,
+                COALESCE(NULLIF(se.longa_permanencia_seg, 0), :limiar_padrao) AS threshold_days,
+                lp.id_longa_perm AS update_id,
+                lp.data_atualizacao_lp AS updated_at,
+                lp.status_lp AS status,
+                lp.motivo_principal_lp AS main_reason,
+                lp.responsavel_lp AS owner,
+                lp.proxima_revisao_lp AS next_review_date,
+                lp.previsao_alta_lp AS expected_discharge_date,
+                lp.necessita_escalonamento_lp AS escalated_flag,
+                lp.risco_sinistro_lp AS risk_level,
+                lp.barreira_clinica_lp AS clinical_barrier,
+                lp.barreira_administrativa_lp AS administrative_barrier,
+                lp.plano_acao_lp AS action_plan,
+                lp.observacoes_lp AS notes,
+                lp.potencial_desospitalizacao_lp AS dehospitalization_flag
+            FROM tb_internacao i
+            LEFT JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
+            LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+            LEFT JOIN tb_seguradora se ON se.id_seguradora = p.fk_seguradora_pac
+            LEFT JOIN (
+                SELECT lp1.*
+                FROM tb_longa_permanencia_gestao lp1
+                INNER JOIN (
+                    SELECT fk_internacao_lp, MAX(id_longa_perm) AS max_id
+                    FROM tb_longa_permanencia_gestao
+                    GROUP BY fk_internacao_lp
+                ) latest ON latest.max_id = lp1.id_longa_perm
+            ) lp ON lp.fk_internacao_lp = i.id_internacao
+            {$where}
+            {$scopeSql}
+        ) fila
+        WHERE fila.days >= fila.threshold_days
+        ORDER BY
+            CASE
+                WHEN COALESCE(fila.escalated_flag, 'n') = 's' THEN 0
+                WHEN COALESCE(fila.status, '') = '' THEN 1
+                ELSE 2
+            END ASC,
+            (fila.days - fila.threshold_days) DESC,
+            fila.admission_date ASC
+        LIMIT 150
+    ";
+
+    $stmt = $conn->prepare($sql);
+    mobileBindAll($stmt, $params);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
+
+function mobileListLongStayStatuses(PDO $conn): array
+{
+    require_once __DIR__ . '/../../../dao/longaPermanenciaDao.php';
+    $dao = new LongaPermanenciaDAO($conn, '');
+    return array_keys($dao->getStatusOptions());
+}
+
+function mobileListLongStayReasons(PDO $conn): array
+{
+    require_once __DIR__ . '/../../../dao/longaPermanenciaDao.php';
+    $dao = new LongaPermanenciaDAO($conn, '');
+    return array_keys($dao->getMotivoOptions());
+}
+
+function mobileListLongStayRisks(PDO $conn): array
+{
+    require_once __DIR__ . '/../../../dao/longaPermanenciaDao.php';
+    $dao = new LongaPermanenciaDAO($conn, '');
+    return array_keys($dao->getRiscoOptions());
+}
+
+function mobileCreateLongStayUpdate(PDO $conn, array $authUser, array $input): array
+{
+    require_once __DIR__ . '/../../../dao/longaPermanenciaDao.php';
+
+    $dao = new LongaPermanenciaDAO($conn, '');
+    $payload = [
+        'fk_internacao_lp' => (int)($input['admission_id'] ?? 0),
+        'fk_usuario_lp' => (int)($authUser['id'] ?? 0),
+        'status_lp' => trim((string)($input['status'] ?? '')),
+        'motivo_principal_lp' => trim((string)($input['main_reason'] ?? '')),
+        'barreira_clinica_lp' => trim((string)($input['clinical_barrier'] ?? '')),
+        'barreira_administrativa_lp' => trim((string)($input['administrative_barrier'] ?? '')),
+        'plano_acao_lp' => trim((string)($input['action_plan'] ?? '')),
+        'responsavel_lp' => trim((string)($input['owner'] ?? '')),
+        'prazo_acao_lp' => trim((string)($input['deadline_date'] ?? '')),
+        'previsao_alta_lp' => trim((string)($input['expected_discharge_date'] ?? '')),
+        'proxima_revisao_lp' => trim((string)($input['next_review_date'] ?? '')),
+        'potencial_desospitalizacao_lp' => trim((string)($input['dehospitalization_flag'] ?? 'n')),
+        'necessita_escalonamento_lp' => trim((string)($input['escalated_flag'] ?? 'n')),
+        'risco_sinistro_lp' => trim((string)($input['risk_level'] ?? '')),
+        'observacoes_lp' => trim((string)($input['notes'] ?? '')),
+    ];
+
+    $dao->createUpdate($payload);
+    $items = mobileListLongStayCases($conn, $authUser, '');
+    foreach ($items as $item) {
+        if ((int)($item['admission_id'] ?? 0) === (int)$payload['fk_internacao_lp']) {
+            return $item;
+        }
+    }
+
+    return ['admission_id' => (int)$payload['fk_internacao_lp']];
+}
+
+function mobileCreateHomeCareUpdate(PDO $conn, array $authUser, array $input): array
+{
+    require_once __DIR__ . '/../../../dao/homeCareDao.php';
+
+    $dao = new HomeCareDAO($conn, '');
+    $payload = [
+        'fk_internacao_hc' => (int)($input['admission_id'] ?? 0),
+        'fk_usuario_hc' => (int)($authUser['id'] ?? 0),
+        'status_hc' => trim((string)($input['status'] ?? '')),
+        'fornecedor_hc' => trim((string)($input['supplier'] ?? '')),
+        'modalidade_aprovada_hc' => trim((string)($input['approved_mode'] ?? '')),
+        'previsao_implantacao_hc' => trim((string)($input['expected_date'] ?? '')),
+        'barreira_principal_hc' => trim((string)($input['main_barrier'] ?? '')),
+        'plano_transicao_hc' => trim((string)($input['transition_plan'] ?? '')),
+        'observacoes_hc' => trim((string)($input['notes'] ?? '')),
+    ];
+
+    $dao->createUpdate($payload);
+    $items = mobileListHomeCareCases($conn, $authUser, '');
+    foreach ($items as $item) {
+        if ((int)($item['admission_id'] ?? 0) === (int)$payload['fk_internacao_hc']) {
+            return $item;
+        }
+    }
+
+    return ['admission_id' => (int)$payload['fk_internacao_hc']];
+}
+
+function mobileListAdverseEventCases(PDO $conn, array $authUser, string $query): array
+{
+    [$scopeSql, $scopeParams] = mobileUserScopeWhere($authUser, 'p');
+    $params = $scopeParams;
+    $where = " WHERE COALESCE(i.internado_int, 's') = 's' ";
+
+    if ($query !== '') {
+        $where .= " AND (
+            p.nome_pac LIKE :query_patient
+            OR h.nome_hosp LIKE :query_hospital
+            OR s.seguradora_seg LIKE :query_insurance
+            OR COALESCE(ge.tipo_evento_adverso_gest, '') LIKE :query_type
+        ) ";
+        $like = '%' . $query . '%';
+        $params[':query_patient'] = $like;
+        $params[':query_hospital'] = $like;
+        $params[':query_insurance'] = $like;
+        $params[':query_type'] = $like;
+    }
+
+    $sql = "
+        SELECT
+            i.id_internacao AS admission_id,
+            p.nome_pac AS patient_name,
+            s.seguradora_seg AS insurance_name,
+            h.nome_hosp AS hospital_name,
+            i.data_intern_int AS admission_date,
+            GREATEST(1, DATEDIFF(CURRENT_DATE(), i.data_intern_int) + 1) AS days,
+            ge.id_gestao AS update_id,
+            ge.evento_data_ges AS event_date,
+            ge.tipo_evento_adverso_gest AS event_type,
+            ge.rel_evento_adverso_ges AS report,
+            ge.evento_sinalizado_ges AS signaled_flag,
+            ge.evento_concluido_ges AS concluded_flag,
+            ge.evento_encerrar_ges AS close_flag
+        FROM tb_internacao i
+        LEFT JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
+        LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+        LEFT JOIN tb_seguradora s ON s.id_seguradora = p.fk_seguradora_pac
+        LEFT JOIN (
+            SELECT g1.*
+            FROM tb_gestao g1
+            INNER JOIN (
+                SELECT fk_internacao_ges, MAX(id_gestao) AS max_id
+                FROM tb_gestao
+                WHERE COALESCE(evento_adverso_ges, 'n') = 's'
+                GROUP BY fk_internacao_ges
+            ) latest ON latest.max_id = g1.id_gestao
+        ) ge ON ge.fk_internacao_ges = i.id_internacao
+        {$where}
+        {$scopeSql}
+        ORDER BY
+            CASE
+                WHEN COALESCE(ge.evento_adverso_ges, 'n') = 's' THEN 0
+                ELSE 1
+            END ASC,
+            COALESCE(ge.evento_data_ges, i.data_intern_int) DESC,
+            i.id_internacao DESC
+        LIMIT 100
+    ";
+
+    $stmt = $conn->prepare($sql);
+    mobileBindAll($stmt, $params);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
+
+function mobileListAdverseEventTypes(): array
+{
+    require __DIR__ . '/../../../array_dados.php';
+
+    $items = is_array($dados_tipo_evento ?? null) ? $dados_tipo_evento : [];
+    $items = array_values(array_filter(array_map(
+        static fn ($item): string => trim((string)$item),
+        $items
+    ), static fn (string $item): bool => $item !== ''));
+    sort($items, SORT_NATURAL | SORT_FLAG_CASE);
+
+    return $items;
+}
+
+function mobileCreateAdverseEventUpdate(PDO $conn, array $authUser, array $input): array
+{
+    $stmt = $conn->prepare("
+        INSERT INTO tb_gestao (
+            fk_internacao_ges,
+            fk_user_ges,
+            evento_adverso_ges,
+            tipo_evento_adverso_gest,
+            rel_evento_adverso_ges,
+            evento_data_ges,
+            evento_sinalizado_ges,
+            evento_concluido_ges,
+            evento_encerrar_ges
+        ) VALUES (
+            :admission_id,
+            :user_id,
+            's',
+            :event_type,
+            :report,
+            :event_date,
+            :signaled_flag,
+            :concluded_flag,
+            :close_flag
+        )
+    ");
+    $stmt->bindValue(':admission_id', (int)($input['admission_id'] ?? 0), PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', (int)($authUser['id'] ?? 0), PDO::PARAM_INT);
+    $stmt->bindValue(':event_type', trim((string)($input['event_type'] ?? '')), PDO::PARAM_STR);
+    $stmt->bindValue(':report', trim((string)($input['report'] ?? '')), PDO::PARAM_STR);
+    $eventDate = trim((string)($input['event_date'] ?? '')) ?: date('Y-m-d');
+    $stmt->bindValue(':event_date', $eventDate, PDO::PARAM_STR);
+    $stmt->bindValue(':signaled_flag', trim((string)($input['signaled_flag'] ?? 's')) === 's' ? 's' : 'n', PDO::PARAM_STR);
+    $stmt->bindValue(':concluded_flag', trim((string)($input['concluded_flag'] ?? 'n')) === 's' ? 's' : 'n', PDO::PARAM_STR);
+    $stmt->bindValue(':close_flag', trim((string)($input['close_flag'] ?? 'n')) === 's' ? 's' : 'n', PDO::PARAM_STR);
+    $stmt->execute();
+
+    $items = mobileListAdverseEventCases($conn, $authUser, '');
+    foreach ($items as $item) {
+        if ((int)($item['admission_id'] ?? 0) === (int)($input['admission_id'] ?? 0)) {
+            return $item;
+        }
+    }
+
+    return ['admission_id' => (int)($input['admission_id'] ?? 0)];
+}
+
 function mobileFindAdmission(PDO $conn, array $authUser, int $admissionId): ?array
 {
     if ($admissionId <= 0) {

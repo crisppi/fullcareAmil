@@ -596,16 +596,16 @@
 
     <div class="internacao-page">
         <div class="internacao-page__hero">
-            <div>
+            <div class="internacao-page__hero-main">
+                <p class="internacao-page__eyebrow">Fluxo assistencial</p>
                 <h1>Editar internação</h1>
             </div>
             <span class="internacao-page__tag">Campos obrigatórios em destaque</span>
         </div>
         <div class="internacao-page__content">
             <div class="internacao-card internacao-card--general">
-                <div class="internacao-card__header">
+                    <div class="internacao-card__header">
                     <div class="internacao-card__title-wrap">
-                        <p class="internacao-card__eyebrow">Etapa 1</p>
                         <h2 class="internacao-card__title">Dados da internação</h2>
                     </div>
                     <span class="internacao-card__tag internacao-card__tag--critical">Campos principais</span>
@@ -932,26 +932,29 @@
                 <div>
                     <br>
                 </div>
-                <div class="form-group" style="margin-left:0px; margin-top:-15px">
-                    <div>
-                        <label for="rel_int">Relatório de Auditoria</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
+                <div class="form-group edit-clinical-block" style="margin-left:0px; margin-top:-15px">
+                    <div class="clinical-text-field clinical-text-field--compact">
+                        <div class="clinical-text-field__head">
+                            <label for="rel_int">Relatório de Auditoria</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="rel_int">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="rel_int">Organizar com IA</button>
+                            </div>
                         </div>
                         <textarea id="rel_int" name="rel_int" maxlength="5000" class="form-control" style="resize:none"
-                            rows="2" onclick="aumentarText('rel_int')" onblur="reduzirText('rel_int', 2)"><?= htmlspecialchars($intern['rel_int'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
-</textarea>
+                            rows="2" onclick="aumentarText('rel_int')" onblur="reduzirText('rel_int', 2)"><?= htmlspecialchars($intern['rel_int'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></textarea>
                         <div class="d-flex justify-content-end mt-1">
                             <small class="text-muted" data-counter-for="rel_int">0/5000</small>
                         </div>
                     </div>
 
-                    <div style="margin-top: 10px;">
-                        <label for="acoes_int">Ações da Auditoria</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int">Organizar com IA</button>
+                    <div class="clinical-text-field clinical-text-field--compact" style="margin-top: 8px;">
+                        <div class="clinical-text-field__head">
+                            <label for="acoes_int">Ações da Auditoria</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="acoes_int">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="acoes_int">Organizar com IA</button>
+                            </div>
                         </div>
                         <textarea id="acoes_int" name="acoes_int" rows="2" maxlength="5000" class="form-control"
                             style="resize:none" onclick="aumentarText('acoes_int')"
@@ -961,12 +964,13 @@
                         </div>
                     </div>
 
-
-                    <div style="margin-top: 10px;">
-                        <label for="programacao_int">Programação Terapêutica</label>
-                        <div class="d-flex justify-content-end flex-wrap gap-2 mb-2">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_int">Limpar formatação</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_int">Organizar com IA</button>
+                    <div class="clinical-text-field clinical-text-field--compact" style="margin-top: 8px;">
+                        <div class="clinical-text-field__head">
+                            <label for="programacao_int">Programação Terapêutica</label>
+                            <div class="clinical-text-field__actions">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-clean-text="programacao_int">Limpar formatação</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-ai-improve="programacao_int">Organizar com IA</button>
+                            </div>
                         </div>
                         <textarea type="textarea" style="resize:none" maxlength="5000" rows="2"
                             onclick="aumentarText('programacao_int')" onblur="reduzirText('programacao_int', 2)"
@@ -2039,44 +2043,61 @@
 
         .internacao-page {
             width: 100%;
-            margin: 42px 0 0;
-            padding: 0;
+            margin: 0;
+            padding: 0 0 28px;
             background: #fff;
+            font-size: .88rem;
         }
 
         .internacao-page__hero {
-            background: linear-gradient(135deg, #5a2f78, #a06bd4);
+            background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
             color: #fff;
-            border-radius: 32px;
-            padding: 18px 26px;
-            box-shadow: 0 25px 50px rgba(24, 0, 30, 0.35);
+            border-radius: 24px;
+            padding: 8px 14px;
+            box-shadow: 0 8px 16px rgba(37, 18, 54, 0.12);
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
-            gap: 24px;
-            margin: 0 0 8px;
+            gap: 8px;
+            margin: 0;
+            border: 1px solid rgba(255, 255, 255, 0.16);
         }
 
         .internacao-page__hero h1 {
-            margin: 0 0 6px;
-            font-size: 1.6rem;
+            margin: 0;
+            font-size: 1.08rem;
             letter-spacing: .02em;
             color: #fff;
+            font-weight: 800;
         }
 
         .internacao-page__tag {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #f7efff;
+            padding: 3px 8px;
             border-radius: 999px;
-            font-weight: 600;
-            font-size: .8rem;
+            font-weight: 700;
+            font-size: .54rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            align-self: flex-start;
         }
 
         .internacao-page__content {
-            margin-top: 4px;
+            margin-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 0;
+            gap: 12px;
+        }
+
+        .edit-clinical-block .clinical-text-field {
+            padding: 6px 8px 5px;
+            gap: 3px;
+        }
+
+        .edit-clinical-block .clinical-text-field textarea.form-control {
+            min-height: 70px !important;
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
         }
 
         .internacao-card {
