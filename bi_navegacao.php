@@ -223,7 +223,7 @@ $navGroups = [
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi-navegacao.css?v=20260110">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme', 'bi-navegacao'));</script>
 
 <div class="bi-wrapper bi-theme">

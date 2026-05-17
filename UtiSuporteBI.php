@@ -80,8 +80,32 @@ function lv(array $rows): array
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
+<style>
+    .uti-support-chart-grid {
+        display: grid !important;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .uti-support-chart-grid .bi-chart {
+        height: 176px;
+        min-height: 176px;
+    }
+
+    .uti-support-chart-grid > .bi-panel {
+        max-width: none;
+        min-width: 0;
+        width: auto;
+    }
+
+    @media (max-width: 1100px) {
+        .uti-support-chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 <div class="bi-wrapper bi-theme">
     <div class="bi-header">
@@ -101,12 +125,10 @@ function lv(array $rows): array
         <div class="bi-kpi kpi-amber kpi-compact"><small>VM</small><strong><?= number_format((int)($kpi['vm'] ?? 0), 0, ',', '.') ?></strong></div>
         <div class="bi-kpi kpi-rose kpi-compact"><small>DVA</small><strong><?= number_format((int)($kpi['dva'] ?? 0), 0, ',', '.') ?></strong></div>
     </div></div>
-    <div class="bi-grid fixed-3" style="margin-top:16px;">
+    <div class="bi-grid uti-support-chart-grid" style="margin-top:16px;">
         <div class="bi-panel"><h3>Ventilação mecânica</h3><div class="bi-chart"><canvas id="chartVm"></canvas></div></div>
         <div class="bi-panel"><h3>DVA</h3><div class="bi-chart"><canvas id="chartDva"></canvas></div></div>
         <div class="bi-panel"><h3>Suporte ventilatório</h3><div class="bi-chart"><canvas id="chartSuporte"></canvas></div></div>
-    </div>
-    <div class="bi-grid fixed-3" style="margin-top:16px;">
         <div class="bi-panel"><h3>Glasgow</h3><div class="bi-chart"><canvas id="chartGlasgow"></canvas></div></div>
         <div class="bi-panel"><h3>Critérios</h3><div class="bi-chart"><canvas id="chartCriterios"></canvas></div></div>
         <div class="bi-panel"><h3>Hospitais</h3><div class="bi-chart"><canvas id="chartHosp"></canvas></div></div>
@@ -122,6 +144,7 @@ const chartData = {
     chartCriterios: [<?= json_encode($labelsCriterios) ?>, <?= json_encode($valuesCriterios) ?>, 'rgba(139, 159, 255, 0.7)'],
     chartHosp: [<?= json_encode($labelsHosp) ?>, <?= json_encode($valuesHosp) ?>, 'rgba(106, 201, 255, 0.7)']
 };
+
 Object.keys(chartData).forEach((id) => {
     const [labels, data, color] = chartData[id];
     new Chart(document.getElementById(id), {type:'bar', data:{labels, datasets:[{data, backgroundColor:color}]}, options:{responsive:true, maintainAspectRatio:false, legend:{display:false}, scales: window.biChartScales ? window.biChartScales() : undefined}});

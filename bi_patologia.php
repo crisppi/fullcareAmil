@@ -149,18 +149,18 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>
 <style>
     .bi-patologia-chart-sm {
-        min-height: 200px;
-        height: 200px;
+        min-height: 260px;
+        height: 260px;
     }
 
     .bi-patologia-chart-sm canvas {
-        height: 200px !important;
+        height: 260px !important;
     }
 </style>
 
@@ -284,6 +284,11 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
     const labelsDiarias = <?= json_encode($labelsDiarias) ?>;
     const valuesDiarias = <?= json_encode($valuesDiarias) ?>;
 
+    function shortAxisLabel(value) {
+        const text = String(value || '');
+        return text.length > 28 ? text.slice(0, 25) + '...' : text;
+    }
+
     function buildScales(yTickCallback) {
         const scales = window.biChartScales ? window.biChartScales() : {
             xAxes: [{
@@ -329,6 +334,7 @@ function labelsAndValues(array $rows, bool $formatMoney = false): array
 
     function barChart(ctx, labels, data, color, yTickCallback) {
         const scales = buildScales(yTickCallback);
+        scales.xAxes[0].ticks.callback = shortAxisLabel;
         return new Chart(ctx, {
             type: 'bar',
             data: {

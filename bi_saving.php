@@ -104,6 +104,21 @@ $stmt->execute();
 $mensalRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+$monthFullNames = [
+    1 => 'Janeiro',
+    2 => 'Fevereiro',
+    3 => 'Março',
+    4 => 'Abril',
+    5 => 'Maio',
+    6 => 'Junho',
+    7 => 'Julho',
+    8 => 'Agosto',
+    9 => 'Setembro',
+    10 => 'Outubro',
+    11 => 'Novembro',
+    12 => 'Dezembro',
+];
+$selectedMonthLabel = $mes >= 1 && $mes <= 12 ? $monthFullNames[$mes] : '';
 $labelsMes = $monthNames;
 $savingMensalMap = array_fill(1, 12, 0.0);
 foreach ($mensalRows as $row) {
@@ -214,7 +229,7 @@ foreach ($tipoLabels as $tipoLabel) {
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .saving-type-grid {
@@ -270,13 +285,27 @@ foreach ($tipoLabels as $tipoLabel) {
 .saving-section-stack .bi-panel + .bi-panel {
     margin-top: 0;
 }
+.saving-period-chip {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(64, 37, 75, 0.16);
+    border-radius: 999px;
+    color: #35123c;
+    display: inline-flex;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1.2;
+    min-height: 34px;
+    padding: .45rem .8rem;
+    white-space: nowrap;
+}
 </style>
 
 <div class="bi-wrapper bi-theme bi-ie-page">
     <div class="bi-header">
         <h1 class="bi-title">Saving por Hospital</h1>
         <div class="bi-header-actions">
-            <div class="text-end text-muted">Ano <?= e($ano) ?><?= $mes > 0 ? ' • Mês ' . e($mes) : '' ?></div>
+            <div class="saving-period-chip">Ano <?= e($ano) ?><?= $selectedMonthLabel !== '' ? ' • ' . e($selectedMonthLabel) : '' ?></div>
             <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>bi/saving-por-auditor" title="Saving por Auditor">Saving por Auditor</a>
         </div>
     </div>
@@ -297,9 +326,9 @@ foreach ($tipoLabels as $tipoLabel) {
             <label>Mês</label>
             <select name="mes">
                 <option value="0">Todos</option>
-                <?php for ($m = 1; $m <= 12; $m++): ?>
-                    <option value="<?= $m ?>" <?= $mes === $m ? 'selected' : '' ?>><?= $m ?></option>
-                <?php endfor; ?>
+                <?php foreach ($monthFullNames as $m => $monthName): ?>
+                    <option value="<?= $m ?>" <?= $mes === $m ? 'selected' : '' ?>><?= e($monthName) ?></option>
+                <?php endforeach; ?>
             </select>
         </div>
         <div class="bi-filter">

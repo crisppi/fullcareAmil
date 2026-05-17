@@ -146,7 +146,7 @@ $earlyPct = $totalAltas > 0 ? ($totalEarly / $totalAltas) * 100 : 0.0;
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260509-filter-icons"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">

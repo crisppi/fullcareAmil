@@ -62,6 +62,77 @@ if (typeof Chart !== 'undefined') {
     return gradient;
   };
 
+  const biDrawRoundedBar = function (bar) {
+    const chart = bar && bar._chart;
+    const view = bar && bar._view;
+    const ctx = chart && chart.ctx;
+    const type = chart && chart.config && chart.config.type;
+
+    if (!ctx || !view || !['bar', 'horizontalBar'].includes(type) || (chart.options && chart.options.biRoundedBars === false)) {
+      return false;
+    }
+
+    const radiusBase = chart.options && Number.isFinite(Number(chart.options.biBarRadius))
+      ? Number(chart.options.biBarRadius)
+      : 4;
+    const borderWidth = view.borderWidth || 0;
+
+    ctx.beginPath();
+    ctx.fillStyle = view.backgroundColor;
+    ctx.strokeStyle = view.borderColor;
+    ctx.lineWidth = borderWidth;
+
+    if (type === 'horizontalBar') {
+      const halfHeight = view.height / 2;
+      const left = Math.min(view.x, view.base);
+      const right = Math.max(view.x, view.base);
+      const top = view.y - halfHeight;
+      const bottom = view.y + halfHeight;
+      const radius = Math.min(radiusBase, (right - left) / 2, (bottom - top) / 2);
+
+      ctx.moveTo(left, top);
+      ctx.lineTo(right - radius, top);
+      ctx.quadraticCurveTo(right, top, right, top + radius);
+      ctx.lineTo(right, bottom - radius);
+      ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
+      ctx.lineTo(left, bottom);
+      ctx.closePath();
+    } else {
+      const halfWidth = view.width / 2;
+      const left = view.x - halfWidth;
+      const right = view.x + halfWidth;
+      const top = Math.min(view.y, view.base);
+      const bottom = Math.max(view.y, view.base);
+      const radius = Math.min(radiusBase, (right - left) / 2, (bottom - top) / 2);
+
+      ctx.moveTo(left, bottom);
+      ctx.lineTo(left, top + radius);
+      ctx.quadraticCurveTo(left, top, left + radius, top);
+      ctx.lineTo(right - radius, top);
+      ctx.quadraticCurveTo(right, top, right, top + radius);
+      ctx.lineTo(right, bottom);
+      ctx.closePath();
+    }
+
+    ctx.fill();
+    if (borderWidth) {
+      ctx.stroke();
+    }
+    return true;
+  };
+
+  if (Chart.elements && Chart.elements.Rectangle && !Chart.elements.Rectangle.prototype._biRoundedDraw) {
+    const Rectangle = Chart.elements.Rectangle;
+    const originalRectangleDraw = Rectangle.prototype.draw;
+    Rectangle.prototype._biRoundedDraw = true;
+    Rectangle.prototype.draw = function () {
+      if (biDrawRoundedBar(this)) {
+        return;
+      }
+      originalRectangleDraw.apply(this, arguments);
+    };
+  }
+
   const biStyleBars = function (chart) {
     const type = chart.config && chart.config.type;
     if (!['bar', 'horizontalBar'].includes(type) || (chart.options && chart.options.biBarTheme === false)) {
