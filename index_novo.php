@@ -353,13 +353,17 @@
     }
 
     .login-insight-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         min-height: 58px;
         padding: 10px 11px;
         border-radius: 13px;
         background: linear-gradient(145deg, rgba(255, 255, 255, .86), rgba(246, 249, 255, .72));
         border: 1px solid rgba(117, 143, 174, .15);
         box-shadow: 0 14px 28px rgba(59, 66, 92, .08);
-        text-align: left;
+        text-align: center;
     }
 
     .login-insight-card small {
@@ -379,64 +383,6 @@
         font-size: 12px;
         font-weight: 800;
         line-height: 1.15;
-    }
-
-    .login-side-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        margin-bottom: 10px;
-        padding: 6px 11px;
-        border-radius: 999px;
-        background: rgba(66, 24, 73, .07);
-        border: 1px solid rgba(66, 24, 73, .1);
-        color: rgba(66, 24, 73, .74);
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-    }
-
-    .login-side-kicker::before {
-        content: "";
-        width: 7px;
-        height: 7px;
-        border-radius: 999px;
-        background: #76cfc4;
-        box-shadow: 0 0 0 4px rgba(118, 207, 196, .16);
-    }
-
-    .login-flow-strip {
-        width: min(100%, 380px);
-        display: grid;
-        grid-template-columns: 1fr auto 1fr auto 1fr;
-        align-items: center;
-        gap: 8px;
-        margin: 16px auto -2px;
-        color: #ffffff;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-    }
-
-    .login-flow-strip span {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 28px;
-        padding: 0 10px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, rgba(94, 38, 112, .92), rgba(66, 24, 73, .9));
-        border: 1px solid rgba(255, 255, 255, .22);
-        box-shadow: 0 10px 20px rgba(66, 24, 73, .14);
-        white-space: nowrap;
-    }
-
-    .login-flow-strip i {
-        width: 20px;
-        height: 1px;
-        background: linear-gradient(90deg, rgba(94, 38, 112, .12), rgba(94, 38, 112, .42), rgba(94, 38, 112, .12));
     }
 
     .side-panel h3,
@@ -587,9 +533,6 @@
             width: min(100%, 420px);
         }
 
-        .login-flow-strip {
-            width: min(100%, 360px);
-        }
     }
 
     @media (max-width: 600px) {
@@ -722,7 +665,6 @@
 
         <div class="side-panel">
             <div class="side-panel-content">
-                <div class="login-side-kicker">FullCare inteligência</div>
                 <h3>Sistema inteligente de auditoria médica</h3>
                 <p>BI e IA transformam dados assistenciais em acompanhamento objetivo de internações, contas e indicadores.</p>
                 <div class="login-insight-row" aria-label="Indicadores em destaque">
@@ -732,19 +674,12 @@
                     </div>
                     <div class="login-insight-card">
                         <small>IA</small>
-                        <strong>Leitura assistencial</strong>
+                        <strong>Insights clínicos inteligentes</strong>
                     </div>
                     <div class="login-insight-card">
                         <small>Gestão</small>
                         <strong>Decisão mais rápida</strong>
                     </div>
-                </div>
-                <div class="login-flow-strip" aria-label="Fluxo de auditoria">
-                    <span>Internação</span>
-                    <i aria-hidden="true"></i>
-                    <span>Auditoria</span>
-                    <i aria-hidden="true"></i>
-                    <span>Resultado</span>
                 </div>
                 <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/producao_preview.png?v=20260516-login-preview-pro" alt="Preview do dashboard de producao" class="monitor-image" />
             </div>
