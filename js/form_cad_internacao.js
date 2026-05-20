@@ -1,6 +1,14 @@
 (function(window, document) {
     'use strict';
     const config = window.formInternacaoConfig || {};
+    function normalizeCargoRole(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '');
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-toggle="dropdown"]').forEach(function(el) {
@@ -1392,8 +1400,9 @@ function mirrorVisitMedFromFk() {
     const fk = document.getElementById('fk_usuario_int')?.value || '';
     const tipo = document.getElementById('resp_tipo')?.value || '';
     const sessionId = config.idSessao || '';
-    const cargoSessaoNorm = String(config.cargoSessao || '').toLowerCase().replace(/[\s-]+/g, '_');
-    const sessionTipo = cargoSessaoNorm.indexOf('med') === 0 ? 'med' : (cargoSessaoNorm.indexOf('enf') === 0 ? 'enf' : '');
+    const cargoSessaoNorm = config.cargoSessaoNorm || normalizeCargoRole(config.cargoSessao);
+    const isDiretoriaSessao = cargoSessaoNorm.indexOf('diretor') !== -1 || cargoSessaoNorm.indexOf('diretoria') !== -1;
+    const sessionTipo = (cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao) ? 'med' : ((cargoSessaoNorm.indexOf('enf') === 0 || cargoSessaoNorm.indexOf('enfer') === 0) ? 'enf' : '');
     const effectiveTipo = tipo || sessionTipo;
     const effectiveFk = fk || sessionId;
     const medHidden = document.getElementById('visita_auditor_prof_med');
@@ -1417,6 +1426,7 @@ function mirrorVisitMedFromFk() {
     updateGroup('#fk_user_uti');
 }
 document.addEventListener('DOMContentLoaded', mirrorVisitMedFromFk);
+window.mirrorVisitMedFromFk = mirrorVisitMedFromFk;
 document.addEventListener('DOMContentLoaded', function() {
     const formInternacao = document.getElementById('myForm');
     if (formInternacao) {
@@ -1442,9 +1452,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const idSessao = config.idSessao || "";
     const cargoSessao = config.cargoSessao || "";
-    const cargoSessaoNorm = String(cargoSessao).toLowerCase().replace(/[\s-]+/g, '_');
-    const isMedSessao = cargoSessaoNorm.indexOf('med') !== -1;
-    const isEnfSessao = cargoSessaoNorm.indexOf('enf') !== -1;
+    const cargoSessaoNorm = config.cargoSessaoNorm || normalizeCargoRole(cargoSessao);
+    const isDiretoriaSessao = cargoSessaoNorm.indexOf('diretor') !== -1 || cargoSessaoNorm.indexOf('diretoria') !== -1;
+    const isMedSessao = cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao;
+    const isEnfSessao = cargoSessaoNorm.indexOf('enf') === 0 || cargoSessaoNorm.indexOf('enfer') === 0;
     const clearInvalid = (el) => {
         if (el) el.classList.remove('is-invalid');
     };
