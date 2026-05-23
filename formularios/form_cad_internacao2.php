@@ -71,8 +71,23 @@ try {
 echo "\n<!-- via findMedicosEnfermeiros | med=" . count($medicosAud) . " enf=" . count($enfsAud) . " -->\n";
 
 /* ===== Mostrar Cadastro Central APENAS se NÃO for médico nem enfermeiro ===== */
-$normCargo = mb_strtolower(str_replace([' ', '-'], '_', (string)$cargoSessao), 'UTF-8');
-$mostrarCadastroCentral = !in_array($normCargo, ['med_auditor', 'medico_auditor', 'enf_auditor', 'enfer_auditor'], true);
+$normalizeCargoRole = static function ($cargo): string {
+    $cargo = mb_strtolower((string)$cargo, 'UTF-8');
+    $cargo = strtr($cargo, [
+        'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+        'ç' => 'c',
+    ]);
+    $cargo = preg_replace('/[^a-z0-9]+/', '_', $cargo);
+    return trim((string)$cargo, '_');
+};
+$normCargo = $normalizeCargoRole($cargoSessao);
+$isMedSessao = strpos($normCargo, 'med') === 0 || strpos($normCargo, 'medico') === 0;
+$isEnfSessao = strpos($normCargo, 'enf') === 0 || strpos($normCargo, 'enfer') === 0;
+$mostrarCadastroCentral = !($isMedSessao || $isEnfSessao);
 ?>
 <link href="<?= $BASE_URL ?>css/style.css" rel="stylesheet">
 
@@ -250,10 +265,10 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="hidden" value="0" id="visita_no_int" name="visita_no_int">
 
             <!-- Flags do responsável (atualizadas pelo JS unificado) -->
-            <input type="hidden" id="visita_enf_int" name="visita_enf_int" value="n">
-            <input type="hidden" id="visita_med_int" name="visita_med_int" value="n">
-            <input type="hidden" id="visita_auditor_prof_enf" name="visita_auditor_prof_enf" value="">
-            <input type="hidden" id="visita_auditor_prof_med" name="visita_auditor_prof_med" value="">
+            <input type="hidden" id="visita_enf_int" name="visita_enf_int" value="<?= $isEnfSessao ? 's' : 'n' ?>">
+            <input type="hidden" id="visita_med_int" name="visita_med_int" value="<?= $isMedSessao ? 's' : 'n' ?>">
+            <input type="hidden" id="visita_auditor_prof_enf" name="visita_auditor_prof_enf" value="<?= $isEnfSessao ? htmlspecialchars((string)$idSessao) : '' ?>">
+            <input type="hidden" id="visita_auditor_prof_med" name="visita_auditor_prof_med" value="<?= $isMedSessao ? htmlspecialchars((string)$idSessao) : '' ?>">
         </div>
 
         <!-- ===== CADASTRO CENTRAL (só aparece se NÃO for med/enf) ===== -->
@@ -708,7 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <hr>
 
         <div class="form-group row d-flex justify-content-center align-items-end" style="gap: 15px;">
-            <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
+            <?php if ($isMedSessao || stripos((string)$cargoSessao, 'Diretoria') !== false) { ?>
             <div class="form-group col-sm-2">
                 <label class="control-label" style="font-weight: bold;" for="select_tuss">Tuss</label>
                 <select class="form-control-sm form-control select-purple" id="select_tuss" name="select_tuss">
@@ -745,7 +760,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </select>
             </div>
 
-            <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
+            <?php if ($isMedSessao || stripos((string)$cargoSessao, 'Diretoria') !== false) { ?>
             <div class="form-group col-sm-2">
                 <label class="control-label" style="font-weight: bold;" for="select_negoc">Negociações</label>
                 <select class="form-control-sm form-control select-purple" id="select_negoc" name="select_negoc">
@@ -1196,6 +1211,8 @@ document.addEventListener('DOMContentLoaded', mirrorVisitMedFromFk);
 
     const idSessao = "<?= htmlspecialchars($idSessao) ?>";
     const cargoSessao = "<?= addslashes($cargoSessao) ?>";
+    const isMedSessao = <?= $isMedSessao ? 'true' : 'false' ?>;
+    const isEnfSessao = <?= $isEnfSessao ? 'true' : 'false' ?>;
 
     function refreshPicker(el) {
         if (window.$ && $.fn.selectpicker && el && $(el).hasClass('selectpicker')) {
@@ -1224,8 +1241,8 @@ document.addEventListener('DOMContentLoaded', mirrorVisitMedFromFk);
     function resetToSessionUser() {
         if (!fkUsuario) return;
         fkUsuario.value = idSessao || '';
-        if (flgMed) flgMed.value = (cargoSessao === 'Med_auditor') ? 's' : 'n';
-        if (flgEnf) flgEnf.value = (cargoSessao === 'Enf_Auditor') ? 's' : 'n';
+        if (flgMed) flgMed.value = isMedSessao ? 's' : 'n';
+        if (flgEnf) flgEnf.value = isEnfSessao ? 's' : 'n';
         if (emailMed) emailMed.value = ''; // será setado por mirrorVisitMedFromFk
         if (emailEnf) emailEnf.value = '';
         mirrorVisitMedFromFk();

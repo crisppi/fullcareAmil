@@ -228,6 +228,52 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         border-radius: 10px !important;
         font-size: .72rem !important;
     }
+
+    #main-container.internacao-page .entity-step-card--collapsible .entity-step-header {
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 6px 8px;
+        transition: background .15s ease, color .15s ease;
+    }
+
+    #main-container.internacao-page .entity-step-card--collapsible .entity-step-header:hover {
+        background: rgba(94, 35, 99, .06);
+    }
+
+    #main-container.internacao-page .entity-step-toggle {
+        border: 1px solid rgba(94, 35, 99, .22);
+        background: #fff;
+        color: #5e2363;
+        border-radius: 999px;
+        padding: 4px 9px;
+        font-size: .62rem;
+        font-weight: 700;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    #main-container.internacao-page .entity-step-toggle::after {
+        content: "\f078";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: .58rem;
+        transition: transform .15s ease;
+    }
+
+    #main-container.internacao-page .entity-step-card--collapsible:not(.is-collapsed) .entity-step-toggle::after {
+        transform: rotate(180deg);
+    }
+
+    #main-container.internacao-page .entity-step-card--collapsible.is-collapsed {
+        padding-bottom: 4px !important;
+    }
+
+    #main-container.internacao-page .entity-step-panel {
+        padding-top: 4px;
+    }
 </style>
 
 <div class="internacao-page cadastro-layout" id="main-container">
@@ -388,15 +434,16 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
         </div>
 
         <!-- Step 2: Address Information -->
-        <div id="step-2" class="step entity-step-card">
-            <div class="entity-step-header">
+        <div id="step-2" class="step entity-step-card entity-step-card--collapsible is-collapsed">
+            <div class="entity-step-header" role="button" tabindex="0" aria-expanded="false" aria-controls="step-2-panel">
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 2</div>
                     <h3 class="entity-step-title">Endereço</h3>
                     <p class="entity-step-desc">Use o CEP para completar os campos automaticamente e ajuste apenas o que for necessário.</p>
                 </div>
-                <span class="entity-step-badge">Localização</span>
+                <span class="entity-step-toggle">Abrir</span>
             </div>
+            <div class="entity-step-panel" id="step-2-panel" hidden>
             <div class="row">
                 <div class="form-group col-md-3 mb-3">
                     <label for="cep_pac">CEP</label>
@@ -466,18 +513,20 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <div id="enderecosHiddenContainer"></div>
             </div>
             <hr>
+            </div>
         </div>
 
         <!-- Step 3: Contact & Other Information -->
-        <div id="step-3" class="step entity-step-card">
-            <div class="entity-step-header">
+        <div id="step-3" class="step entity-step-card entity-step-card--collapsible is-collapsed">
+            <div class="entity-step-header" role="button" tabindex="0" aria-expanded="false" aria-controls="step-3-panel">
                 <div class="entity-step-copy">
                     <div class="entity-step-kicker">Passo 3</div>
                     <h3 class="entity-step-title">Contato e observações</h3>
                     <p class="entity-step-desc">Finalize com os canais de contato e registre qualquer contexto importante para o time assistencial.</p>
                 </div>
-                <span class="entity-step-badge">Fechamento</span>
+                <span class="entity-step-toggle">Abrir</span>
             </div>
+            <div class="entity-step-panel" id="step-3-panel" hidden>
             <div class="row">
                 <div class="form-group col-md-6 mb-3">
                     <label for="email01_pac">Email Principal</label>
@@ -551,6 +600,7 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
                 <label for="obs_pac">Observações</label>
                 <textarea rows="5" class="form-control" id="obs_pac" name="obs_pac"></textarea>
             </div>
+            </div>
             <div class="entity-actions-bar">
                 <button type="submit" class="btn btn-primary" id="finalizar_etapa1" name="finalizar_etapa1">
                     <i class="fas fa-check"></i> Cadastrar
@@ -612,10 +662,39 @@ $id_hospital = filter_input(INPUT_GET, "id_hospital");
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var backLink = document.querySelector('.js-friendly-back');
-    if (!backLink) return;
-    var fallbackUrl = backLink.getAttribute('data-default-return') || backLink.href;
-    backLink.href = fallbackUrl;
-    backLink.textContent = 'Voltar para lista';
+    if (backLink) {
+        var fallbackUrl = backLink.getAttribute('data-default-return') || backLink.href;
+        backLink.href = fallbackUrl;
+        backLink.textContent = 'Voltar para lista';
+    }
+
+    document.querySelectorAll('.entity-step-card--collapsible').forEach(function(card) {
+        var header = card.querySelector('.entity-step-header');
+        var panelId = header ? header.getAttribute('aria-controls') : '';
+        var panel = panelId ? document.getElementById(panelId) : null;
+        var toggle = card.querySelector('.entity-step-toggle');
+        if (!header || !panel) return;
+
+        function setExpanded(expanded) {
+            card.classList.toggle('is-collapsed', !expanded);
+            panel.hidden = !expanded;
+            header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            if (toggle) toggle.textContent = expanded ? 'Recolher' : 'Abrir';
+        }
+
+        header.addEventListener('click', function() {
+            setExpanded(panel.hidden);
+        });
+
+        header.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setExpanded(panel.hidden);
+            }
+        });
+
+        setExpanded(false);
+    });
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>

@@ -239,21 +239,31 @@ $cargoSessao = $_SESSION['cargo'] ?? '';
 function isProfissionalAssistencial(string $cargo): bool
 {
     $norm = mb_strtolower(trim($cargo), 'UTF-8');
-    $norm = preg_replace('/[\s\-]+/', '_', $norm);
-    if (in_array($norm, ['med_auditor', 'enf_auditor', 'adm'], true)) {
+    $norm = strtr($norm, [
+        'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+        'ç' => 'c',
+    ]);
+    $norm = trim((string)preg_replace('/[^a-z0-9]+/', '_', $norm), '_');
+    if (in_array($norm, ['med_auditor', 'medico_auditor', 'enf_auditor', 'enfer_auditor', 'adm'], true)) {
         return true;
     }
-    return (bool) preg_match('/^(med|enf)_?auditor$|^adm$/i', $norm);
+    return (bool) preg_match('/^(med|medico|enf|enfer)_?auditor$|^adm$/i', $norm);
 }
 $cadastroCentralDefault = isProfissionalAssistencial($cargoSessao) ? 'n' : 's';
 
 $isMed = function ($cargo) {
     $c = mb_strtolower((string)$cargo, 'UTF-8');
-    return in_array($c, ['med_auditor', 'medico_auditor'], true);
+    $c = trim((string)preg_replace('/[^a-z0-9]+/', '_', strtr($c, ['é' => 'e', 'ê' => 'e', 'á' => 'a', 'ç' => 'c'])), '_');
+    return strpos($c, 'med') === 0 || strpos($c, 'medico') === 0;
 };
 $isEnf = function ($cargo) {
     $c = mb_strtolower((string)$cargo, 'UTF-8');
-    return in_array($c, ['enf_auditor', 'enfer_auditor'], true);
+    $c = trim((string)preg_replace('/[^a-z0-9]+/', '_', strtr($c, ['é' => 'e', 'ê' => 'e', 'á' => 'a', 'ç' => 'c'])), '_');
+    return strpos($c, 'enf') === 0 || strpos($c, 'enfer') === 0;
 };
 $isAdm = function ($cargo) {
     $c = mb_strtolower((string)$cargo, 'UTF-8');

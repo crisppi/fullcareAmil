@@ -726,3 +726,9 @@
 [2026-05-16 02:38:50] PRORROG update ok id_int=770 id_pror=387
 [2026-05-16 02:38:50] PRORROG update ok id_int=770 id_pror=388
 [2026-05-16 02:38:50] COMMIT ok id_int=770
+[2026-05-23 00:36:44] START id_int=859 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-23 00:36:44] GESTAO skip id_int=859 select_gestao=n evento=n
+[2026-05-23 00:36:44] NEGOC fallback post rows=1 id_int=859
+[2026-05-23 00:36:44] PRORROG input id_int=859 rows=1
+[2026-05-23 00:36:44] PRORROG skip invalid id_int=859 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-01 fim=
+[2026-05-23 00:36:44] COMMIT ok id_int=859
