@@ -62,7 +62,7 @@ if ($__docroot !== '' && strpos($__appDir, $__docroot) === 0) {
 $__host   = $_SERVER['HTTP_HOST']   ?? '';
 $__script = $_SERVER['SCRIPT_NAME'] ?? '';
 if ($APP_BASE_PATH === '/' && $__host && stripos($__host, 'localhost') !== false) {
-    if (preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $__script, $match)) {
+    if (preg_match('#^/(FullCareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $__script, $match)) {
         $APP_BASE_PATH = '/' . trim($match[1], '/') . '/';
     }
 }

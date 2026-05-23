@@ -8,7 +8,7 @@ if (!function_exists('fullcare_login_index_url')) {
     function fullcare_login_index_url(): string
     {
         $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
-        if (preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $script, $m)) {
+        if (preg_match('#^/(FullCareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $script, $m)) {
             return '/' . trim($m[1], '/') . '/index.php';
         }
         return '/index.php';
