@@ -407,6 +407,7 @@
 
 .bi-navegacao [data-theme="resumo"] { --nav-color: #315cbd; }
 .bi-navegacao [data-theme="essenciais"] { --nav-color: #65799f; }
+.bi-navegacao [data-theme="estrategico"] { --nav-color: #21a2b8; }
 .bi-navegacao [data-theme="clinico"] { --nav-color: #0b8ca0; }
 .bi-navegacao [data-theme="auditoria"] { --nav-color: #5a55df; }
 .bi-navegacao [data-theme="operacional"] { --nav-color: #168d88; }

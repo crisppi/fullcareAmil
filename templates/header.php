@@ -15,7 +15,7 @@ if ($basePathFromBaseUrl === '//') {
     $basePathFromBaseUrl = '/';
 }
 $requestUriPath = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
-if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $requestUriPath, $mBaseApp)) {
+if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $requestUriPath, $mBaseApp)) {
     $isHttpsHeader = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443)
         || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
@@ -947,6 +947,25 @@ if (!empty($sessionIdUsuario)) {
                                                     class="bi bi-grid-3x3-gap"
                                                     style="font-size: 1rem;margin-right:5px; color:#9fd7ff;"></i>
                                                 Navegação BI</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item bi-dropdown-featured" href="<?= $BASE_URL ?>bi/resultados"><i
+                                                    class="bi bi-graph-up-arrow"
+                                                    style="font-size: 1rem;margin-right:5px; color:#7ee3c8;"></i>
+                                                BI Resultados</a></li>
+                                        <li><a class="dropdown-item bi-dropdown-featured" href="<?= $BASE_URL ?>bi/produtividade"><i
+                                                    class="bi bi-clipboard2-check"
+                                                    style="font-size: 1rem;margin-right:5px; color:#9fd7ff;"></i>
+                                                BI Produtividade</a></li>
+                                        <li><a class="dropdown-item bi-dropdown-featured" href="<?= $BASE_URL ?>bi/qualidade-360"><i
+                                                    class="bi bi-award"
+                                                    style="font-size: 1rem;margin-right:5px; color:#b897ff;"></i>
+                                                BI Qualidade</a></li>
+                                        <li><a class="dropdown-item bi-dropdown-featured" href="<?= $BASE_URL ?>bi/preditivo"><i
+                                                    class="bi bi-bullseye"
+                                                    style="font-size: 1rem;margin-right:5px; color:#ffd36e;"></i>
+                                                BI Preditivo</a></li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>

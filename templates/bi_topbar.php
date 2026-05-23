@@ -27,6 +27,12 @@ $biSections = [
         ['label' => 'Óbitos por Hospital', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=obitos-hospital', 'file' => 'IndicadoresEssenciaisItemBI.php'],
         ['label' => 'Qualidade Hospitalar', 'href' => 'IndicadoresEssenciaisItemBI.php?slug=qualidade-hospital', 'file' => 'IndicadoresEssenciaisItemBI.php'],
     ],
+    'BI Estratégico' => [
+        ['label' => 'BI Resultados', 'href' => 'bi/resultados', 'file' => 'BIResultados.php'],
+        ['label' => 'BI Produtividade', 'href' => 'bi/produtividade', 'file' => 'BIProdutividade.php'],
+        ['label' => 'BI Qualidade', 'href' => 'bi/qualidade-360', 'file' => 'BIQualidade360.php'],
+        ['label' => 'BI Preditivo', 'href' => 'bi/preditivo', 'file' => 'BIPreditivo.php'],
+    ],
     'Clínico' => [
         ['label' => 'Patologia', 'href' => 'bi/patologia', 'file' => 'bi_patologia.php'],
         ['label' => 'Grupo Patologia', 'href' => 'bi/grupo-patologia', 'file' => 'GrupoPatologia.php'],
@@ -785,6 +791,7 @@ $sectionDisplay = [
     'Negociação & Rede' => 'Negociação & Rede',
     'Qualidade & Desfecho' => 'Qualidade & Desfecho',
     'Indicadores Essenciais' => 'Indicadores Essenciais',
+    'BI Estratégico' => 'BI Estratégico',
 ];
 $activeSection = $currentSection ?: array_key_first($biSections);
 $navUrl = $BASE_URL . 'bi/navegacao';

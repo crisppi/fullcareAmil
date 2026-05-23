@@ -40,6 +40,16 @@ $navGroups = [
         ],
     ],
     [
+        'title' => 'BI Estratégico',
+        'key' => 'estrategico',
+        'items' => [
+            ['label' => 'BI Resultados', 'href' => 'bi/resultados'],
+            ['label' => 'BI Produtividade', 'href' => 'bi/produtividade'],
+            ['label' => 'BI Qualidade', 'href' => 'bi/qualidade-360'],
+            ['label' => 'BI Preditivo', 'href' => 'bi/preditivo'],
+        ],
+    ],
+    [
         'title' => 'Clínico',
         'key' => 'clinico',
         'items' => [
@@ -223,6 +233,7 @@ $navGroups = [
 $groupIcons = [
     'resumo' => 'bi-speedometer2',
     'essenciais' => 'bi-stars',
+    'estrategico' => 'bi-columns-gap',
     'clinico' => 'bi-heart-pulse',
     'auditoria' => 'bi-clipboard2-check',
     'operacional' => 'bi-kanban',
@@ -241,10 +252,10 @@ $groupIcons = [
 ];
 
 $featuredLinks = [
-    ['label' => 'Consolidado Gestão', 'caption' => 'Visão executiva', 'href' => 'bi/consolidado', 'icon' => 'bi-speedometer2', 'theme' => 'resumo'],
-    ['label' => 'Indicadores Essenciais', 'caption' => 'KPIs de auditoria', 'href' => 'IndicadoresEssenciaisHubBI.php', 'icon' => 'bi-stars', 'theme' => 'essenciais'],
-    ['label' => 'Auditoria Produtividade', 'caption' => 'Performance do time', 'href' => 'bi/auditoria-produtividade', 'icon' => 'bi-clipboard2-check', 'theme' => 'auditoria'],
-    ['label' => 'Controle de Gastos', 'caption' => 'Custo, saving e risco', 'href' => 'bi/gastos-hospital', 'icon' => 'bi-piggy-bank', 'theme' => 'gastos'],
+    ['label' => 'BI Resultados', 'caption' => 'Financeiro e executivo', 'href' => 'bi/resultados', 'icon' => 'bi-graph-up-arrow', 'theme' => 'estrategico'],
+    ['label' => 'BI Produtividade', 'caption' => 'Auditoria e ciclo', 'href' => 'bi/produtividade', 'icon' => 'bi-clipboard2-check', 'theme' => 'auditoria'],
+    ['label' => 'BI Qualidade', 'caption' => 'Eventos e desfechos', 'href' => 'bi/qualidade-360', 'icon' => 'bi-award', 'theme' => 'qualidade'],
+    ['label' => 'BI Preditivo', 'caption' => 'Risco e prevenção', 'href' => 'bi/preditivo', 'icon' => 'bi-bullseye', 'theme' => 'prevencao'],
 ];
 
 $totalLinks = array_sum(array_map(static fn($group) => count($group['items']), $navGroups));

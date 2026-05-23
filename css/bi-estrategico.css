@@ -1,0 +1,139 @@
+.bi-strategic-page .bi-strategic-subtitle {
+    margin-top: 5px;
+    color: var(--bi-muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+.bi-strategic-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 12px;
+}
+
+.bi-strategic-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--bi-text);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.bi-strategic-nav a:hover,
+.bi-strategic-nav a.is-active {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.56);
+    color: #ffffff;
+}
+
+.bi-strategic-filters {
+    margin-bottom: 12px;
+}
+
+.bi-strategic-kpis {
+    margin: 12px 0;
+}
+
+.bi-strategic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 392px;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.bi-strategic-grid > .bi-panel {
+    height: 100%;
+    min-height: 0;
+    margin-top: 0 !important;
+    overflow: hidden;
+}
+
+.bi-strategic-table,
+.bi-strategic-chart {
+    display: flex;
+    flex-direction: column;
+}
+
+.bi-strategic-table h3,
+.bi-strategic-chart h3 {
+    flex: 0 0 auto;
+    margin-bottom: 10px;
+}
+
+.bi-strategic-table .table-responsive {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.bi-strategic-chart .bi-chart {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.bi-strategic-section-title {
+    margin: 14px 0 10px;
+    color: var(--bi-text);
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.bi-risk-pill {
+    display: inline-flex;
+    min-width: 62px;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.bi-risk-high {
+    background: rgba(238, 93, 108, 0.34);
+}
+
+.bi-risk-mid {
+    background: rgba(255, 209, 102, 0.28);
+}
+
+.bi-risk-low {
+    background: rgba(121, 230, 196, 0.24);
+}
+
+@media (max-width: 1100px) {
+    .bi-strategic-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+    }
+
+    .bi-strategic-grid > .bi-panel {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .bi-strategic-table .table-responsive {
+        max-height: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .bi-strategic-nav {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}

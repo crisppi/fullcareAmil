@@ -32,6 +32,10 @@ RewriteEngine On
 # BI friendly URLs
 RewriteRule ^bi/?$ bi_navegacao.php [L,QSA]
 RewriteRule ^bi/navegacao/?$ bi_navegacao.php [L,QSA]
+RewriteRule ^bi/resultados/?$ BIResultados.php [L,QSA]
+RewriteRule ^bi/produtividade/?$ BIProdutividade.php [L,QSA]
+RewriteRule ^bi/qualidade-360/?$ BIQualidade360.php [L,QSA]
+RewriteRule ^bi/preditivo/?$ BIPreditivo.php [L,QSA]
 RewriteRule ^bi/rede-comparativa/?$ bi_rede_comparativa.php [L,QSA]
 RewriteRule ^bi/rede-custo/?$ bi_rede_custo.php [L,QSA]
 RewriteRule ^bi/rede-glosa/?$ bi_rede_glosa.php [L,QSA]
