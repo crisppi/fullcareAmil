@@ -219,10 +219,39 @@ $navGroups = [
         ],
     ],
 ];
+
+$groupIcons = [
+    'resumo' => 'bi-speedometer2',
+    'essenciais' => 'bi-stars',
+    'clinico' => 'bi-heart-pulse',
+    'auditoria' => 'bi-clipboard2-check',
+    'operacional' => 'bi-kanban',
+    'rede' => 'bi-hospital',
+    'financeiro' => 'bi-cash-coin',
+    'producao' => 'bi-graph-up-arrow',
+    'tops' => 'bi-trophy',
+    'gastos' => 'bi-piggy-bank',
+    'anomalias' => 'bi-exclamation-triangle',
+    'conformidade' => 'bi-shield-check',
+    'risco' => 'bi-bullseye',
+    'prevencao' => 'bi-diagram-3',
+    'negociacao' => 'bi-arrow-left-right',
+    'qualidade' => 'bi-award',
+    'inteligencia' => 'bi-cpu',
+];
+
+$featuredLinks = [
+    ['label' => 'Consolidado Gestão', 'caption' => 'Visão executiva', 'href' => 'bi/consolidado', 'icon' => 'bi-speedometer2', 'theme' => 'resumo'],
+    ['label' => 'Indicadores Essenciais', 'caption' => 'KPIs de auditoria', 'href' => 'IndicadoresEssenciaisHubBI.php', 'icon' => 'bi-stars', 'theme' => 'essenciais'],
+    ['label' => 'Auditoria Produtividade', 'caption' => 'Performance do time', 'href' => 'bi/auditoria-produtividade', 'icon' => 'bi-clipboard2-check', 'theme' => 'auditoria'],
+    ['label' => 'Controle de Gastos', 'caption' => 'Custo, saving e risco', 'href' => 'bi/gastos-hospital', 'icon' => 'bi-piggy-bank', 'theme' => 'gastos'],
+];
+
+$totalLinks = array_sum(array_map(static fn($group) => count($group['items']), $navGroups));
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi-navegacao.css?v=20260110">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi-navegacao.css?v=20260523-productive-nav">
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme', 'bi-navegacao'));</script>
 
@@ -238,44 +267,93 @@ $navGroups = [
     </div>
 
     <div class="bi-panel">
-        <div class="bi-nav-search-wrap">
-            <label class="bi-nav-search-label" for="bi-nav-search">Navegação geral</label>
-            <div class="bi-nav-search-box">
-                <i class="bi bi-search"></i>
-                <input
-                    type="search"
-                    id="bi-nav-search"
-                    class="bi-nav-search-input"
-                    placeholder="Pesquisar por nome, módulo ou tema"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
+        <div class="bi-nav-toolbar">
+            <div class="bi-nav-search-wrap">
+                <label class="bi-nav-search-label" for="bi-nav-search">Buscar painel</label>
+                <div class="bi-nav-search-box">
+                    <i class="bi bi-search"></i>
+                    <input
+                        type="search"
+                        id="bi-nav-search"
+                        class="bi-nav-search-input"
+                        placeholder="Digite hospital, custo, glosa, risco, auditor..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                </div>
+                <div class="bi-nav-search-meta">
+                    <span id="bi-nav-search-count">Exibindo <?= (int)$totalLinks ?> atalhos</span>
+                </div>
             </div>
-            <div class="bi-nav-search-meta">
-                <span id="bi-nav-search-count">Exibindo todos os atalhos</span>
+            <div class="bi-nav-kpi-strip" aria-label="Resumo da navegação">
+                <div class="bi-nav-kpi">
+                    <strong><?= count($navGroups) ?></strong>
+                    <span>categorias</span>
+                </div>
+                <div class="bi-nav-kpi">
+                    <strong><?= (int)$totalLinks ?></strong>
+                    <span>atalhos</span>
+                </div>
             </div>
         </div>
-        <div class="bi-nav-groups-grid">
-            <?php foreach ($navGroups as $idx => $group): ?>
-                <?php $isOpen = $idx < 4; ?>
-                <details class="bi-nav-group" data-theme="<?= e($group['key']) ?>" data-group-title="<?= e($group['title']) ?>" <?= $isOpen ? 'open' : '' ?>>
-                    <summary class="bi-nav-group-summary">
-                        <span class="bi-nav-group-title"><?= e($group['title']) ?></span>
-                        <span class="bi-nav-group-count"><?= count($group['items']) ?></span>
-                    </summary>
-                    <div class="bi-nav-grid">
-                        <?php foreach ($group['items'] as $link): ?>
-                            <a
-                                class="bi-nav-card"
-                                href="<?= $BASE_URL . e($link['href']) ?>"
-                                data-search-text="<?= e(mb_strtolower($group['title'] . ' ' . $link['label'], 'UTF-8')) ?>"
-                            >
-                                <?= e($link['label']) ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </details>
+
+        <div class="bi-nav-featured" aria-label="Atalhos principais">
+            <?php foreach ($featuredLinks as $link): ?>
+                <a class="bi-nav-featured-card" data-theme="<?= e($link['theme']) ?>" href="<?= $BASE_URL . e($link['href']) ?>">
+                    <span class="bi-nav-featured-icon"><i class="bi <?= e($link['icon']) ?>"></i></span>
+                    <span class="bi-nav-featured-copy">
+                        <strong><?= e($link['label']) ?></strong>
+                        <small><?= e($link['caption']) ?></small>
+                    </span>
+                    <i class="bi bi-arrow-right-short"></i>
+                </a>
             <?php endforeach; ?>
+        </div>
+
+        <div class="bi-nav-layout">
+            <nav class="bi-nav-index" aria-label="Categorias BI">
+                <?php foreach ($navGroups as $group): ?>
+                    <?php $icon = $groupIcons[$group['key']] ?? 'bi-folder2-open'; ?>
+                    <a class="bi-nav-index-link" data-theme="<?= e($group['key']) ?>" href="#bi-nav-<?= e($group['key']) ?>">
+                        <i class="bi <?= e($icon) ?>"></i>
+                        <span><?= e($group['title']) ?></span>
+                        <strong><?= count($group['items']) ?></strong>
+                    </a>
+                <?php endforeach; ?>
+            </nav>
+
+            <div class="bi-nav-groups-grid">
+                <?php foreach ($navGroups as $group): ?>
+                    <?php $icon = $groupIcons[$group['key']] ?? 'bi-folder2-open'; ?>
+                    <details
+                        id="bi-nav-<?= e($group['key']) ?>"
+                        class="bi-nav-group"
+                        data-theme="<?= e($group['key']) ?>"
+                        data-group-title="<?= e($group['title']) ?>"
+                        open
+                    >
+                        <summary class="bi-nav-group-summary">
+                            <span class="bi-nav-group-heading">
+                                <i class="bi <?= e($icon) ?>"></i>
+                                <span class="bi-nav-group-title"><?= e($group['title']) ?></span>
+                            </span>
+                            <span class="bi-nav-group-count"><?= count($group['items']) ?></span>
+                        </summary>
+                        <div class="bi-nav-grid">
+                            <?php foreach ($group['items'] as $link): ?>
+                                <a
+                                    class="bi-nav-card"
+                                    href="<?= $BASE_URL . e($link['href']) ?>"
+                                    data-search-text="<?= e(mb_strtolower($group['title'] . ' ' . $link['label'], 'UTF-8')) ?>"
+                                >
+                                    <span><?= e($link['label']) ?></span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </details>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 </div>

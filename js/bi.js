@@ -604,6 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navSearchCount = document.getElementById('bi-nav-search-count');
   if (navSearchInput) {
     const groups = Array.from(document.querySelectorAll('.bi-nav-group'));
+    const indexLinks = Array.from(document.querySelectorAll('.bi-nav-index-link'));
     const normalize = (value) => (value || '')
       .toString()
       .normalize('NFD')
@@ -636,6 +637,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const shouldShowGroup = visibleInGroup > 0;
         group.classList.toggle('is-hidden', !shouldShowGroup);
+        indexLinks
+          .filter((link) => link.getAttribute('href') === '#' + group.id)
+          .forEach((link) => {
+            link.classList.toggle('is-hidden', !shouldShowGroup);
+            const linkCount = link.querySelector('strong');
+            if (linkCount) {
+              linkCount.textContent = String(visibleInGroup);
+            }
+          });
         if (term !== '' && shouldShowGroup) {
           group.open = true;
         }
@@ -643,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (navSearchCount) {
         navSearchCount.textContent = term === ''
-          ? 'Exibindo todos os atalhos'
+          ? 'Exibindo ' + visibleCards + ' atalhos'
           : 'Resultados encontrados: ' + visibleCards;
       }
     };
