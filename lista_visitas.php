@@ -553,8 +553,31 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         --brand-100: <?= htmlspecialchars($brandSoftColor, ENT_QUOTES, 'UTF-8') ?>;
     }
 
+    .visitas-page {
+        padding-top: 1rem;
+    }
+
+    .visitas-page-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: .8rem;
+        padding: .15rem .15rem 0;
+    }
+
     .page-title {
-        color: #3A3A3A;
+        color: #303038;
+        font-size: 1.38rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0;
+    }
+
+    .page-subtitle {
+        color: #71717a;
+        font-size: .86rem;
+        margin-top: .2rem;
     }
 
     .card {
@@ -565,20 +588,132 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         box-shadow: 0 8px 24px rgba(0, 0, 0, .06) !important;
     }
 
-    .btn-outline-brand {
+    .visitas-toolbar {
+        background: linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
+        border: 1px solid #e8e3ee;
+    }
+
+    .visitas-toolbar-head {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: .85rem;
+    }
+
+    .visitas-toolbar-title {
+        color: #3f3f46;
+        font-size: 1rem;
+    }
+
+    .visitas-toolbar-subtitle {
+        color: #71717a;
+        font-size: .82rem;
+    }
+
+    .field-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: .5rem;
+        align-items: center;
+    }
+
+    .btn-soft-action {
+        border: 1px solid #d9dce5;
+        background: #fff;
+        color: #3f3f46;
+        border-radius: 8px;
+        font-weight: 600;
+        min-height: 34px;
+    }
+
+    .btn-soft-action:hover {
         border-color: var(--brand);
         color: var(--brand);
+        background: #f8faff;
+    }
+
+    .field-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+        gap: .55rem;
+        margin-bottom: 1.15rem;
+        padding: .75rem;
+        border: 1px solid #eceff5;
+        border-radius: 10px;
+        background:
+            linear-gradient(#ffffff, #ffffff) padding-box,
+            linear-gradient(90deg, rgba(11, 61, 145, .08), rgba(60, 160, 210, .12)) border-box;
+    }
+
+    .field-option {
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+        min-height: 40px;
+        margin: 0;
+        padding: .55rem .7rem;
+        border: 1px solid #e2e5ec;
+        border-radius: 8px;
         background: #fff;
+        color: #45454f;
+        cursor: pointer;
+        transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
     }
 
-    .btn-outline-brand:hover {
-        background: var(--brand-100);
+    .field-option:hover {
+        border-color: #b9c4dc;
+        background: #f9fbff;
     }
 
-    .btn-check:checked+.btn-outline-brand {
-        background: var(--brand);
-        color: #fff;
+    .field-option .form-check-input {
+        width: 1rem;
+        height: 1rem;
+        margin: 0;
+        border-color: #b9bfcc;
+        flex: 0 0 auto;
+    }
+
+    .field-option .form-check-input:checked {
+        background-color: var(--brand);
         border-color: var(--brand);
+    }
+
+    .field-option i {
+        color: #6b7280;
+        font-size: .95rem;
+    }
+
+    .field-option-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: .88rem;
+        font-weight: 600;
+    }
+
+    .field-option:has(.form-check-input:checked) {
+        border-color: rgba(11, 61, 145, .38);
+        background: var(--brand-100);
+        box-shadow: 0 0 0 1px rgba(11, 61, 145, .08);
+    }
+
+    .field-option:has(.form-check-input:checked) i,
+    .field-option:has(.form-check-input:checked) .field-option-text {
+        color: var(--brand);
+    }
+
+    .filters-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(128px, 1fr));
+        align-items: stretch;
+    }
+
+    .filters-actions .btn {
+        width: 100%;
+        min-height: 34px;
+        border-radius: 8px;
+        font-weight: 600;
     }
 
     .sticky-actions {
@@ -667,6 +802,63 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     .table .col-id_visita {
         width: 95px;
     }
+    .visit-table-wrap {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: auto;
+        max-height: calc(100vh - 320px);
+    }
+    .visit-table {
+        margin-bottom: 0;
+        min-width: 1240px;
+        font-size: .82rem;
+    }
+    .visit-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: .82rem .75rem;
+        vertical-align: middle;
+        color: #fff;
+        font-size: .76rem;
+        font-weight: 700;
+        letter-spacing: .02em;
+        white-space: nowrap;
+    }
+    .visit-table tbody td {
+        padding: .72rem .75rem;
+        line-height: 1.35;
+        vertical-align: middle;
+        color: #34343c;
+    }
+    .visit-table tbody tr {
+        min-height: 44px;
+    }
+    .visit-table tbody tr:nth-child(odd) td {
+        background-color: #ffffff;
+    }
+    .visit-table tbody tr:nth-child(even) td {
+        background-color: #f6f3fb;
+    }
+    .visit-table tbody tr:hover td {
+        background-color: #eef5ff;
+    }
+    .visit-table .col-hospital,
+    .visit-table .col-nome_paciente,
+    .visit-table .col-auditor_medico {
+        min-width: 190px;
+    }
+    .visit-table .col-matricula,
+    .visit-table .col-cnpj_hospital {
+        min-width: 150px;
+    }
+    .visit-table .col-valor_liberado,
+    .visit-table .col-data_internacao,
+    .visit-table .col-data_visita,
+    .visit-table .col-data_lancamento,
+    .visit-table .col-data_alta {
+        min-width: 125px;
+    }
     .th-sortable {
         display: flex;
         align-items: center;
@@ -689,6 +881,9 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     }
 
     @media (min-width: 1200px) {
+        .field-selector {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
         .filters-inline {
             display: grid;
             grid-template-columns: minmax(180px, 1.4fr) minmax(180px, 1.4fr) minmax(160px, 1fr) minmax(160px, 1fr) auto;
@@ -712,11 +907,45 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
             min-width: 0;
         }
     }
+
+    @media (min-width: 1600px) {
+        .field-selector {
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .visitas-page {
+            padding-top: .75rem;
+        }
+        .visitas-page-heading,
+        .visitas-toolbar-head {
+            display: block;
+        }
+        .field-actions {
+            grid-template-columns: 1fr 1fr;
+            margin-top: .75rem;
+        }
+        .filters-actions {
+            grid-template-columns: 1fr;
+        }
+        .field-selector {
+            grid-template-columns: 1fr;
+        }
+        .visit-table-wrap {
+            max-height: none;
+        }
+    }
 </style>
 
-<div class="container-fluid" style="margin-top:-10px;">
-    <h4 class="page-title mt-0 mb-2"><?= h($pageTitle) ?></h4>
-    <hr class="mt-1 mb-3">
+<div class="container-fluid visitas-page">
+    <div class="visitas-page-heading">
+        <div>
+            <h4 class="page-title"><?= h($pageTitle) ?></h4>
+            <div class="page-subtitle">Consulta, filtros e exportação das visitas registradas</div>
+        </div>
+        <div class="text-muted small"><?= (int)$total ?> registro(s)</div>
+    </div>
 
     <?php if ($DEBUG): ?>
         <div class="alert alert-warning">
@@ -750,25 +979,32 @@ $fieldIcons = [
     ];
     ?>
 
-    <form method="get" class="card p-3 mb-3 shadow-sm border-0" id="form-visitas">
-        <div class="mb-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <label class="form-label fw-semibold m-0 fs-5">Campos a exibir/exportar</label>
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-light btn-sm" id="btn-check-all"><i
+    <form method="get" class="card visitas-toolbar p-3 mb-3 shadow-sm" id="form-visitas">
+        <div class="visitas-toolbar-head">
+            <div>
+                <label class="form-label fw-semibold m-0 visitas-toolbar-title">Colunas da tabela e exportação</label>
+                <div class="visitas-toolbar-subtitle">
+                    <span id="field-selected-count"><?= count($selected) ?></span> de <?= count($fieldsMap) ?> campos selecionados
+                </div>
+            </div>
+            <div class="field-actions">
+                <button type="button" class="btn btn-soft-action btn-sm w-100" id="btn-check-all"><i
                         class="bi bi-check2-all me-1"></i>Selecionar todos</button>
-                <button type="button" class="btn btn-light btn-sm btn-filtro-limpar" id="btn-uncheck-all"><i
+                <button type="button" class="btn btn-soft-action btn-sm w-100" id="btn-uncheck-all"><i
                         class="bi bi-x-lg me-1"></i>Limpar</button>
             </div>
         </div>
 
-        <div class="field-chips d-flex flex-wrap gap-2 mb-3">
+        <div class="field-selector">
             <?php foreach ($fieldsMap as $key => $meta):
                 $checked = in_array($key, $selected, true);
                 $icon = $fieldIcons[$key] ?? 'bi-check'; ?>
-                <input type="checkbox" class="btn-check field-check" id="f_<?= h($key) ?>" name="fields[]"
-                    value="<?= h($key) ?>" <?= $checked ? 'checked' : '' ?>>
-                <label class="btn btn-outline-brand btn-sm rounded-pill px-3" for="f_<?= h($key) ?>"><i
-                        class="bi <?= $icon ?> me-1"></i><?= h($meta['label']) ?></label>
+                <label class="field-option" for="f_<?= h($key) ?>" title="<?= h($meta['label']) ?>">
+                    <input type="checkbox" class="form-check-input field-check" id="f_<?= h($key) ?>" name="fields[]"
+                        value="<?= h($key) ?>" <?= $checked ? 'checked' : '' ?>>
+                    <i class="bi <?= $icon ?>"></i>
+                    <span class="field-option-text"><?= h($meta['label']) ?></span>
+                </label>
             <?php endforeach; ?>
         </div>
 
@@ -892,9 +1128,9 @@ $fieldIcons = [
         </div>
     <?php endif; ?>
 
-    <div class="card p-3">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
+    <div class="card p-3 shadow-sm border-0">
+        <div class="table-responsive visit-table-wrap">
+            <table class="table table-hover align-middle visit-table">
                 <thead>
                     <tr>
                         <?php if ($isFaturamentoView): ?>
@@ -1015,10 +1251,17 @@ $fieldIcons = [
             });
         };
         const fieldCheckboxes = document.querySelectorAll('.field-check');
+        const fieldCountEl = document.getElementById('field-selected-count');
+        const updateFieldCount = () => {
+            if (!fieldCountEl) return;
+            fieldCountEl.textContent = Array.from(fieldCheckboxes).filter(chk => chk.checked).length.toString();
+        };
         fieldCheckboxes.forEach(updateColumnVisibility);
+        updateFieldCount();
         document.addEventListener('change', e => {
             if (e.target.classList.contains('field-check')) {
                 updateColumnVisibility(e.target);
+                updateFieldCount();
             }
         });
         document.getElementById('btn-check-all')?.addEventListener('click', () => {
@@ -1028,6 +1271,7 @@ $fieldIcons = [
                     updateColumnVisibility(chk);
                 }
             });
+            updateFieldCount();
         });
         document.getElementById('btn-uncheck-all')?.addEventListener('click', () => {
             fieldCheckboxes.forEach(chk => {
@@ -1036,6 +1280,7 @@ $fieldIcons = [
                     updateColumnVisibility(chk);
                 }
             });
+            updateFieldCount();
         });
 
         const actionBox = document.getElementById('faturamentoActionBox');
