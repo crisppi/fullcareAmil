@@ -90,8 +90,10 @@
         border: 1px solid rgba(87, 57, 115, .26);
         border-radius: 22px;
         box-shadow:
-            0 46px 104px rgba(30, 37, 58, .34),
-            0 22px 46px rgba(77, 40, 104, .18),
+            0 0 0 1px rgba(255, 255, 255, .72),
+            0 18px 54px rgba(31, 42, 63, .18),
+            0 46px 110px rgba(31, 42, 63, .26),
+            0 34px 34px -30px rgba(31, 35, 52, .48),
             0 0 0 1px rgba(255, 255, 255, .96) inset,
             0 1px 0 rgba(255, 255, 255, .98) inset;
         backdrop-filter: blur(8px) saturate(1.04);
@@ -103,6 +105,19 @@
     .login-container > * {
         position: relative;
         z-index: 2;
+    }
+
+    .login-container .login-ground {
+        position: absolute;
+        left: 42px;
+        right: 42px;
+        bottom: 0;
+        height: 96px;
+        background:
+            radial-gradient(ellipse at 50% 100%, rgba(74, 28, 94, .18), transparent 0 64%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(228, 218, 238, .22));
+        z-index: 1;
+        pointer-events: none;
     }
 
     .login-container .side-panel::before {
@@ -668,6 +683,7 @@
 
 <body>
     <div class="login-container">
+        <div class="login-ground" aria-hidden="true"></div>
         <div class="login-form">
             <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/LogoFullCare.png" alt="FullCare Gestao em Saude" class="login-form-logo" />
             <div class="form-content">
