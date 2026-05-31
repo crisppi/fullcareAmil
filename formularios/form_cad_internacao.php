@@ -73,7 +73,8 @@
         return trim((string) $cargo, '_');
     };
     $normCargoSessao = $normalizeCargoSessao($cargoSessao);
-    $isMedSessao = strpos($normCargoSessao, 'med') === 0 || strpos($normCargoSessao, 'medico') === 0;
+    $isCrisppiSessao = mb_strtolower(trim((string)$emailSessao), 'UTF-8') === 'crisppi@fullcare.com.br';
+    $isMedSessao = strpos($normCargoSessao, 'med') === 0 || strpos($normCargoSessao, 'medico') === 0 || $isCrisppiSessao;
     $isEnfSessao = strpos($normCargoSessao, 'enf') === 0 || strpos($normCargoSessao, 'enfer') === 0;
     $isMedOuEnf = $isMedSessao || $isEnfSessao;
     $cargoSessaoLower = mb_strtolower((string) $cargoSessao, 'UTF-8');
@@ -81,8 +82,8 @@
         || (mb_stripos($cargoSessaoLower, 'diretoria') !== false)
         || in_array($nivelSessaoRaw, ['1', '-1'], true);
     $isCadastroCentralUser = (mb_stripos($cargoSessaoLower, 'analista') !== false);
-    $usaUsuarioSessaoComoResponsavel = $isMedOuEnf || $isDiretorSessao;
-    $cadastroCentralObrigatorio = $isCadastroCentralUser;
+    $usaUsuarioSessaoComoResponsavel = $isMedOuEnf || $isDiretorSessao || $isCrisppiSessao;
+    $cadastroCentralObrigatorio = $isCadastroCentralUser && !$usaUsuarioSessaoComoResponsavel;
     $mostrarCadastroCentral = $cadastroCentralObrigatorio || !$usaUsuarioSessaoComoResponsavel;
 
     $dataAtual = date('Y-m-d');
@@ -593,9 +594,9 @@
 
                             <!-- Flags do responsável (atualizadas pelo JS unificado) -->
                             <input type="hidden" id="visita_enf_int" name="visita_enf_int" value="<?= $isEnfSessao ? 's' : 'n' ?>">
-                            <input type="hidden" id="visita_med_int" name="visita_med_int" value="<?= ($isMedSessao || $isDiretorSessao) ? 's' : 'n' ?>">
+                            <input type="hidden" id="visita_med_int" name="visita_med_int" value="<?= ($isMedSessao || $isDiretorSessao || $isCrisppiSessao) ? 's' : 'n' ?>">
                             <input type="hidden" id="visita_auditor_prof_enf" name="visita_auditor_prof_enf" value="<?= $isEnfSessao ? htmlspecialchars((string) $idSessao) : '' ?>">
-                            <input type="hidden" id="visita_auditor_prof_med" name="visita_auditor_prof_med" value="<?= ($isMedSessao || $isDiretorSessao) ? htmlspecialchars((string) $idSessao) : '' ?>">
+                            <input type="hidden" id="visita_auditor_prof_med" name="visita_auditor_prof_med" value="<?= ($isMedSessao || $isDiretorSessao || $isCrisppiSessao) ? htmlspecialchars((string) $idSessao) : '' ?>">
                             <input type="hidden" id="cad_central_obrigatorio" name="cad_central_obrigatorio"
                                 value="<?= $cadastroCentralObrigatorio ? '1' : '0' ?>">
                         </div>
@@ -952,7 +953,7 @@
                         <option value="n">Não</option>
                     </select>
                 </div>
-                <?php if ($isMedSessao || $isDiretorSessao) { ?>
+                <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
                     <div class="form-group tabelas-col">
                         <label class="control-label" for="select_tuss">Tuss</label>
                         <select class="input-lg-fullcare form-control select-purple" id="select_tuss" name="select_tuss">
@@ -990,7 +991,7 @@
                     </select>
                 </div>
 
-                <?php if ($isMedSessao || $isDiretorSessao) { ?>
+                <?php if ($cargoSessao === 'Med_auditor' || $cargoSessao === 'Diretoria') { ?>
                     <div class="form-group tabelas-col">
                         <label class="control-label" for="select_negoc">Negociações</label>
                         <select class="input-lg-fullcare form-control select-purple" id="select_negoc" name="select_negoc">
@@ -1101,7 +1102,8 @@
             prefillPacienteId: <?= $id_paciente_get > 0 ? (int)$id_paciente_get : 'null' ?>,
             idSessao: <?= json_encode((string) $idSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             cargoSessao: <?= json_encode((string) $cargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-            cargoSessaoNorm: <?= json_encode((string) $normCargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+            cargoSessaoNorm: <?= json_encode((string) $normCargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            emailSessao: <?= json_encode((string) $emailSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
         });
     </script>
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js?v=<?= filemtime(__DIR__ . '/../js/form_cad_internacao.js') ?>"></script>

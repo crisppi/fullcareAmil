@@ -193,17 +193,59 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 <style>
+body {
+    background: #f4f6fb;
+}
+.monthly-dashboard {
+    min-height: calc(100vh - 160px);
+    color: #251636;
+}
+.monthly-dashboard .monthly-header {
+    background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%);
+    border: 1px solid rgba(94, 35, 99, .18);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 18px 36px rgba(94, 35, 99, .14);
+}
+.monthly-dashboard .monthly-header h4 {
+    color: #3b1d4f !important;
+    font-weight: 800;
+}
+.monthly-dashboard .monthly-header .text-muted {
+    color: #5c5266 !important;
+}
+.monthly-dashboard .form-select {
+    border-color: #d9d2e4;
+    color: #2f2639;
+    box-shadow: 0 8px 18px rgba(40, 26, 66, .06);
+}
 .dashboard-card {
-    border: none;
+    border: 1px solid #d9d2e4;
     border-radius: 12px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 12px 28px rgba(40, 26, 66, .13);
+    background: #fff;
+    overflow: hidden;
+}
+.dashboard-card.kpi-card {
+    position: relative;
+    height: 100%;
+    min-height: 82px;
+    justify-content: center;
+}
+.dashboard-card.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #5e2363, #35bae1);
 }
 .dashboard-card .card-header {
-    border-bottom: none;
-    font-weight: 600;
-    color: #3A3A3A;
+    border-bottom: 1px solid #e9e3ef;
+    font-weight: 800;
+    color: #3b1d4f;
     font-size: .78rem;
-    padding: 9px 12px 0;
+    padding: 11px 12px;
+    background: #f8f3fb !important;
 }
 .filter-chip {
     border-radius: 999px;
@@ -217,7 +259,25 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
     border-color: transparent;
 }
 .chart-container {
-    min-height: 200px;
+    min-height: 230px;
+    padding: 18px 18px 14px;
+}
+.monthly-dashboard .card small.text-muted,
+.monthly-dashboard .text-muted,
+.monthly-dashboard .small {
+    color: #5f6876 !important;
+}
+.monthly-dashboard .text-uppercase {
+    color: #5e2363 !important;
+    font-weight: 800;
+    letter-spacing: .04em;
+}
+.monthly-dashboard .dashboard-card h3 {
+    color: #20102f;
+    font-weight: 800;
+}
+.monthly-dashboard canvas {
+    max-width: 100%;
 }
 </style>
 <style>
@@ -250,10 +310,10 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
         font-size: 1.14rem;
     }
 </style>
-<div class="container-fluid py-4">
-    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
+<div class="container-fluid py-4 monthly-dashboard">
+    <div class="monthly-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
         <div>
-            <h4 class="mb-0" style="color:#3A3A3A;">Painel mensal</h4>
+            <h4 class="mb-0">Painel mensal</h4>
             <span class="text-muted">Resumo dos últimos <?= $monthsWindow ?> meses</span>
         </div>
         <form method="get" class="row g-2 align-items-center mt-3 mt-lg-0">
@@ -292,25 +352,25 @@ $internacoesPorHospital = $stmtHosp->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="row g-3 mb-4">
         <div class="col-lg-3 col-md-6">
-            <div class="card dashboard-card p-3">
+            <div class="card dashboard-card kpi-card p-3">
                 <small class="text-muted text-uppercase">Total de internações</small>
                 <h3 class="mt-2 mb-0"><?= number_format($stats['internacoes_total'], 0, ',', '.') ?></h3>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card dashboard-card p-3">
+            <div class="card dashboard-card kpi-card p-3">
                 <small class="text-muted text-uppercase">Número de diárias</small>
                 <h3 class="mt-2 mb-0"><?= number_format($stats['diarias_total'], 0, ',', '.') ?></h3>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card dashboard-card p-3">
+            <div class="card dashboard-card kpi-card p-3">
                 <small class="text-muted text-uppercase">MP (Diárias/Internações)</small>
                 <h3 class="mt-2 mb-0"><?= number_format($stats['mp_global'], 2, ',', '.') ?></h3>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card dashboard-card p-3">
+            <div class="card dashboard-card kpi-card p-3">
                 <small class="text-muted text-uppercase">Valor apresentado</small>
                 <h3 class="mt-2 mb-0">R$ <?= number_format($stats['valor_apresentado_total'], 2, ',', '.') ?></h3>
                 <small class="text-muted">Glosa total: R$ <?= number_format($stats['glosa_total'], 2, ',', '.') ?></small>

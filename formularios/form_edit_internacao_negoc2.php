@@ -65,6 +65,7 @@ $fallbackAcomodacoes = [
     ['id_acomodacao' => 0, 'acomodacao_aco' => 'UTI', 'valor_aco' => 0],
     ['id_acomodacao' => 0, 'acomodacao_aco' => 'Semi', 'valor_aco' => 0],
     ['id_acomodacao' => 0, 'acomodacao_aco' => 'Apto', 'valor_aco' => 0],
+    ['id_acomodacao' => 0, 'acomodacao_aco' => 'Day Clinic', 'valor_aco' => 0],
 ];
 
 if (!function_exists('normalizeNegAcomodPhp')) {
@@ -86,6 +87,7 @@ if (!function_exists('negotiationDefaultsPhp')) {
         if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto', 'use_alta' => true];
         if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi', 'use_alta' => true];
         if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto', 'use_alta' => true];
+        if ($tipo === 'TROCA APTO/DAY') return ['troca_de' => 'Apto', 'troca_para' => 'Day Clinic', 'use_alta' => true];
         if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI', 'use_alta' => false];
         if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi', 'use_alta' => false];
         if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {
@@ -142,10 +144,58 @@ foreach (array_merge($acomodacoesNegocList, $fallbackAcomodacoes) as $acItem) {
         }
     }
 }
+
+$hospitalAcomodValorMap = [];
+try {
+    if (isset($conn) && $conn instanceof PDO) {
+        $hospitalIdNeg = (int)($intern['fk_hospital_int'] ?? 0);
+        if ($hospitalIdNeg > 0) {
+            $stmtAcomodNeg = $conn->prepare('
+                SELECT id_acomodacao, acomodacao_aco, valor_aco
+                  FROM tb_acomodacao
+                 WHERE fk_hospital = :hospital
+            ');
+            $stmtAcomodNeg->bindValue(':hospital', $hospitalIdNeg, PDO::PARAM_INT);
+            $stmtAcomodNeg->execute();
+            foreach ($stmtAcomodNeg->fetchAll(PDO::FETCH_ASSOC) ?: [] as $rowAcomodNeg) {
+                $nomeAcomodNeg = trim((string)($rowAcomodNeg['acomodacao_aco'] ?? ''));
+                $keyAcomodNeg = normalizeNegAcomodPhp($nomeAcomodNeg);
+                if ($keyAcomodNeg === '') {
+                    continue;
+                }
+                $valorAcomodNeg = (float)($rowAcomodNeg['valor_aco'] ?? 0);
+                $hospitalAcomodValorMap[$keyAcomodNeg] = $valorAcomodNeg;
+                $acomodValorMap[$keyAcomodNeg] = $valorAcomodNeg;
+
+                $alreadyListed = false;
+                foreach ($acomodJsList as $existingIndexAcomodNeg => $existingAcomodNeg) {
+                    if (normalizeNegAcomodPhp($existingAcomodNeg['acomodacao_aco'] ?? '') === $keyAcomodNeg) {
+                        $alreadyListed = true;
+                        $acomodJsList[$existingIndexAcomodNeg]['id_acomodacao'] = (int)($rowAcomodNeg['id_acomodacao'] ?? 0);
+                        $acomodJsList[$existingIndexAcomodNeg]['acomodacao_aco'] = $nomeAcomodNeg;
+                        $acomodJsList[$existingIndexAcomodNeg]['valor_aco'] = $valorAcomodNeg;
+                        break;
+                    }
+                }
+                if (!$alreadyListed) {
+                    $acomodJsList[] = [
+                        'id_acomodacao' => (int)($rowAcomodNeg['id_acomodacao'] ?? 0),
+                        'acomodacao_aco' => $nomeAcomodNeg,
+                        'valor_aco' => $valorAcomodNeg,
+                    ];
+                }
+            }
+        }
+    }
+} catch (Throwable $e) {
+    $hospitalAcomodValorMap = [];
+}
+
 $fcNegValMap = [
     'UTI' => 0.0,
     'Semi' => 0.0,
     'Apto' => 0.0,
+    'Day' => 0.0,
 ];
 foreach ($acomodJsList as $item) {
     $nomeCanon = mb_strtolower(trim((string)($item['acomodacao_aco'] ?? '')));
@@ -159,6 +209,9 @@ foreach ($acomodJsList as $item) {
     }
     if ($fcNegValMap['Apto'] <= 0 && ($nomeCanon === 'apto' || $nomeCanon === 'apartamento')) {
         $fcNegValMap['Apto'] = $valorCanon;
+    }
+    if ($fcNegValMap['Day'] <= 0 && ($nomeCanon === 'day' || $nomeCanon === 'day clinic' || $nomeCanon === 'day-clinic')) {
+        $fcNegValMap['Day'] = $valorCanon;
     }
 }
 foreach ($acomodJsList as $item) {
@@ -176,6 +229,9 @@ foreach ($acomodJsList as $item) {
         strpos($nomeCanon, 'enferm') !== false
     )) {
         $fcNegValMap['Apto'] = $valorCanon;
+    }
+    if ($fcNegValMap['Day'] <= 0 && strpos($nomeCanon, 'day') !== false) {
+        $fcNegValMap['Day'] = $valorCanon;
     }
 }
 $acomodacoesNegocRenderList = $acomodJsList;
@@ -216,6 +272,7 @@ if (!function_exists('optionsTipoNegociacao')) {
             'TROCA UTI/APTO',
             'TROCA UTI/SEMI',
             'TROCA SEMI/APTO',
+            'TROCA APTO/DAY',
             'VESPERA',
             'GLOSA UTI',
             'GLOSA APTO',
@@ -403,35 +460,49 @@ if (!function_exists('sel')) {
             for (var j = 0; j < list.length; j++) {
                 var exactItem = list[j] || {};
                 var exactNome = ((exactItem.acomodacao_aco || '') + '').trim().toLowerCase();
-                if (exactNome === wanted) return parseFloat(exactItem.valor_aco || 0) || 0;
+                if (exactNome === wanted) {
+                    var exactValor = parseFloat(exactItem.valor_aco || 0) || 0;
+                    if (exactValor > 0) return exactValor;
+                }
                 if (wanted === 'apto' && (exactNome === 'apartamento' || exactNome === 'apto')) {
-                    return parseFloat(exactItem.valor_aco || 0) || 0;
+                    var exactAptoValor = parseFloat(exactItem.valor_aco || 0) || 0;
+                    if (exactAptoValor > 0) return exactAptoValor;
                 }
             }
             for (var i = 0; i < list.length; i++) {
                 var item = list[i] || {};
                 var nome = ((item.acomodacao_aco || '') + '').trim().toLowerCase();
-                if (nome === wanted) return parseFloat(item.valor_aco || 0) || 0;
+                if (nome === wanted) {
+                    var valorExato = parseFloat(item.valor_aco || 0) || 0;
+                    if (valorExato > 0) return valorExato;
+                }
                 if (wanted === 'apto' && (nome.indexOf('apart') !== -1 || nome.indexOf('apto') !== -1 || nome.indexOf('enferm') !== -1)) {
-                    return parseFloat(item.valor_aco || 0) || 0;
+                    var valorApto = parseFloat(item.valor_aco || 0) || 0;
+                    if (valorApto > 0) return valorApto;
                 }
                 if (wanted === 'semi' && nome.indexOf('semi') !== -1) {
-                    return parseFloat(item.valor_aco || 0) || 0;
+                    var valorSemi = parseFloat(item.valor_aco || 0) || 0;
+                    if (valorSemi > 0) return valorSemi;
                 }
                 if (wanted === 'uti' && nome === 'uti') {
-                    return parseFloat(item.valor_aco || 0) || 0;
+                    var valorUtiExato = parseFloat(item.valor_aco || 0) || 0;
+                    if (valorUtiExato > 0) return valorUtiExato;
                 }
                 if (wanted === 'uti' && nome.indexOf('uti') !== -1) {
-                    return parseFloat(item.valor_aco || 0) || 0;
+                    var valorUti = parseFloat(item.valor_aco || 0) || 0;
+                    if (valorUti > 0) return valorUti;
                 }
             }
             var values = window.fcNegValMap || {};
+            if (wanted === 'day clinic' || wanted === 'day-clinic' || wanted === 'day') {
+                return parseFloat(values.Day || values['Day Clinic'] || 0) || 0;
+            }
             return parseFloat(values[label] || 0) || 0;
         }
         function buildSelect(select, chosenLabel) {
             if (!select) return;
             var chosen = (chosenLabel || '').toString();
-            var labels = ['UTI', 'Semi', 'Apto'];
+            var labels = ['UTI', 'Semi', 'Apto', 'Day Clinic'];
             select.innerHTML = '<option value=""></option>';
             for (var i = 0; i < labels.length; i++) {
                 var label = labels[i];
@@ -491,6 +562,7 @@ if (!function_exists('sel')) {
         if (tipo === 'TROCA UTI/APTO') { trocaDe = 'UTI'; trocaPara = 'Apto'; useAlta = true; }
         else if (tipo === 'TROCA UTI/SEMI') { trocaDe = 'UTI'; trocaPara = 'Semi'; useAlta = true; }
         else if (tipo === 'TROCA SEMI/APTO') { trocaDe = 'Semi'; trocaPara = 'Apto'; useAlta = true; }
+        else if (tipo === 'TROCA APTO/DAY') { trocaDe = 'Apto'; trocaPara = 'Day Clinic'; useAlta = true; }
         else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = false; }
         else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = false; }
         else if (tipo === 'GLOSA APTO' || tipo === '1/2 DIARIA APTO' || tipo === 'TARDIA APTO' || tipo === 'DIARIA ADM') {
@@ -592,6 +664,10 @@ if (!function_exists('sel')) {
                 $deValor = (float)($acomodValorMap[normalizeNegAcomodPhp($trocaDeNeg)] ?? 0);
                 $paraValor = (float)($acomodValorMap[normalizeNegAcomodPhp($trocaParaNeg)] ?? 0);
                 $tipoUpper = mb_strtoupper($tipoNeg);
+                if ($tipoUpper === 'TROCA APTO/DAY') {
+                    $deValor = (float)($acomodValorMap['apto'] ?? $deValor);
+                    $paraValor = (float)($acomodValorMap['day clinic'] ?? $acomodValorMap['day'] ?? $paraValor);
+                }
                 if (strpos($tipoUpper, 'TROCA') === 0) {
                     $savingNeg = number_format(($deValor - $paraValor) * max(0, $qtdNeg), 2, '.', '');
                 } elseif (strpos($tipoUpper, '1/2 DIARIA') !== false) {
@@ -626,10 +702,6 @@ if (!function_exists('sel')) {
                 </div>
 
                 <div class="form-group col-sm-2">
-                    <?php /* DEBUG */
-                    echo '<!-- valor banco: [', h($neg['troca_de'] ?? ''), '] -->';
-                    ?>
-
                     <label>Acomod. Solicitada</label>
                     <select name="troca_de" class="form-control" data-current="<?= h($trocaDeNeg) ?>">
                         <?= optionsAcomod($acomodacoesNegocRenderList, $trocaDeNeg) ?>
@@ -736,7 +808,17 @@ if (!function_exists('sel')) {
     window.__NEGOC_ACOMODACOES = <?= json_encode($acomodJsList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     window.__NEGOC_ACOMODACOES = Array.isArray(window.__NEGOC_ACOMODACOES) ? window.__NEGOC_ACOMODACOES : [];
     window.__NEGOC_DELETE_IDS = Array.isArray(window.__NEGOC_DELETE_IDS) ? window.__NEGOC_DELETE_IDS : [];
-    ['UTI', 'Semi', 'Apto'].forEach(function(label) {
+    window.__NEGOC_HOSPITAL_VALORES = <?= json_encode($hospitalAcomodValorMap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    window.__NEGOC_HOSPITAL_VALORES = window.__NEGOC_HOSPITAL_VALORES || {};
+    if (window.__NEGOC_HOSPITAL_VALORES.apto > 0) {
+        window.fcNegValMap = window.fcNegValMap || {};
+        window.fcNegValMap.Apto = safeNum(window.__NEGOC_HOSPITAL_VALORES.apto);
+    }
+    if (window.__NEGOC_HOSPITAL_VALORES['day clinic'] > 0 || window.__NEGOC_HOSPITAL_VALORES.day > 0) {
+        window.fcNegValMap = window.fcNegValMap || {};
+        window.fcNegValMap.Day = safeNum(window.__NEGOC_HOSPITAL_VALORES['day clinic'] || window.__NEGOC_HOSPITAL_VALORES.day);
+    }
+    ['UTI', 'Semi', 'Apto', 'Day Clinic'].forEach(function(label) {
         var exists = window.__NEGOC_ACOMODACOES.some(function(item) {
             return normalizeNegValue((item && item.acomodacao_aco) || '') === normalizeNegValue(label);
         });
@@ -835,7 +917,12 @@ if (!function_exists('sel')) {
         const para = resolveNegotiationValueByLabel(paraLabel);
         const qtd = parseInt(qtdEl.value, 10) || 0;
         let s = 0;
-        if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
+        if (tipo === 'TROCA APTO/DAY') {
+            const values = window.fcNegValMap || {};
+            const apto = safeNum(values.Apto) || de;
+            const day = safeNum(values.Day) || para;
+            s = (apto - day) * qtd;
+        } else if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
         else if (tipo.includes('1/2 DIARIA')) s = qtd * (de / 2);
         else s = qtd * de;
 
@@ -907,6 +994,7 @@ if (!function_exists('sel')) {
         if (tipo === 'TROCA UTI/APTO') { trocaDe = 'UTI'; trocaPara = 'Apto'; useAlta = true; }
         else if (tipo === 'TROCA UTI/SEMI') { trocaDe = 'UTI'; trocaPara = 'Semi'; useAlta = true; }
         else if (tipo === 'TROCA SEMI/APTO') { trocaDe = 'Semi'; trocaPara = 'Apto'; useAlta = true; }
+        else if (tipo === 'TROCA APTO/DAY') { trocaDe = 'Apto'; trocaPara = 'Day Clinic'; useAlta = true; }
         else if (tipo === 'GLOSA UTI' || tipo === 'TARDIA UTI') { trocaDe = 'UTI'; trocaPara = 'UTI'; useAlta = false; }
         else if (tipo === 'GLOSA SEMI') { trocaDe = 'Semi'; trocaPara = 'Semi'; useAlta = false; }
         else if (tipo === 'GLOSA APTO' || tipo === '1/2 DIARIA APTO' || tipo === 'TARDIA APTO' || tipo === 'DIARIA ADM') {
@@ -916,7 +1004,7 @@ if (!function_exists('sel')) {
         function buildOptions(select, selectedLabel) {
             if (!select) return;
             var selectedNorm = normalizeNegValue(selectedLabel || '');
-            var base = ['UTI', 'Semi', 'Apto'];
+            var base = ['UTI', 'Semi', 'Apto', 'Day Clinic'];
             var extra = (window.__NEGOC_ACOMODACOES || []).map(function(item) {
                 return ((item && item.acomodacao_aco) || '').toString().trim();
             }).filter(Boolean);
@@ -1045,6 +1133,12 @@ if (!function_exists('sel')) {
                 return nome === 'apartamento' || nome === 'apto';
             }) || null;
         }
+        if (wanted === 'day') {
+            return list.find(function(item) {
+                const nome = normalizeNegValue((item && item.acomodacao_aco) || '');
+                return nome === 'day clinic' || nome === 'day-clinic' || nome === 'day';
+            }) || null;
+        }
         return null;
     }
 
@@ -1062,6 +1156,7 @@ if (!function_exists('sel')) {
         if (norm === 'uti') return safeNum(values.UTI);
         if (norm === 'semi') return safeNum(values.Semi);
         if (norm === 'apto' || norm === 'apartamento') return safeNum(values.Apto);
+        if (norm === 'day' || norm === 'day clinic' || norm === 'day-clinic') return safeNum(values.Day);
         return 0;
     }
 
@@ -1118,6 +1213,7 @@ if (!function_exists('sel')) {
         if (t === 'TROCA UTI/APTO') return { trocaDe: 'UTI', trocaPara: 'Apto', useAlta: true };
         if (t === 'TROCA UTI/SEMI') return { trocaDe: 'UTI', trocaPara: 'Semi', useAlta: true };
         if (t === 'TROCA SEMI/APTO') return { trocaDe: 'Semi', trocaPara: 'Apto', useAlta: true };
+        if (t === 'TROCA APTO/DAY') return { trocaDe: 'Apto', trocaPara: 'Day Clinic', useAlta: true };
         if (t === 'GLOSA UTI' || t === 'TARDIA UTI') return { trocaDe: 'UTI', trocaPara: 'UTI', useAlta: false };
         if (t === 'GLOSA SEMI') return { trocaDe: 'Semi', trocaPara: 'Semi', useAlta: false };
         if (t === 'GLOSA APTO' || t === '1/2 DIARIA APTO' || t === 'TARDIA APTO' || t === 'DIARIA ADM') {
@@ -1182,7 +1278,12 @@ if (!function_exists('sel')) {
         const para = resolveNegotiationValueByLabel(paraLabel);
         const qtd = parseInt($c.find('[name="qtd"]').val(), 10) || 0;
         let s = 0;
-        if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
+        if (tipo === 'TROCA APTO/DAY') {
+            const values = window.fcNegValMap || {};
+            const apto = safeNum(values.Apto) || de;
+            const day = safeNum(values.Day) || para;
+            s = (apto - day) * qtd;
+        } else if (tipo.startsWith('TROCA')) s = (de - para) * qtd;
         else if (tipo.includes('1/2 DIARIA')) s = qtd * (de / 2);
         else s = qtd * de;
         $c.find('[name="saving"]').val(s.toFixed(2));

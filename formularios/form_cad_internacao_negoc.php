@@ -217,6 +217,7 @@ if (isset($acomodacao) && is_array($acomodacao)) {
                         <option value="TROCA UTI/APTO">TROCA UTI/APTO</option>
                         <option value="TROCA UTI/SEMI">TROCA UTI/SEMI</option>
                         <option value="TROCA SEMI/APTO">TROCA SEMI/APTO</option>
+                        <option value="TROCA APTO/DAY">TROCA APTO/DAY</option>
                         <option value="VESPERA">VESPERA</option>
                         <option value="GLOSA UTI">GLOSA UTI</option>
                         <option value="GLOSA APTO">GLOSA APTO</option>
@@ -302,7 +303,8 @@ function jsNorm(s) {
 const TOKEN_SYNONYMS = {
     UTI: ['uti', 'cti', 'intensiv', 'terapia intensiva'],
     APTO: ['apto', 'apart', 'apartamento'],
-    SEMI: ['semi', 'semi-intens', 'semi intens', 'semiintens']
+    SEMI: ['semi', 'semi-intens', 'semi intens', 'semiintens'],
+    DAY: ['day', 'day clinic', 'day-clinic']
 };
 
 // encontra a melhor opção do <select> que “contém” algum sinônimo do token
@@ -349,6 +351,25 @@ function findOptionValueByToken(selectEl, token) {
     return best ? best.value : '';
 }
 
+function ensureOptionValueByToken(selectEl, token) {
+    const existing = findOptionValueByToken(selectEl, token);
+    if (existing) return existing;
+
+    const fallbackLabels = {
+        UTI: 'UTI',
+        APTO: 'Apto',
+        SEMI: 'Semi',
+        DAY: 'Day Clinic'
+    };
+    const label = fallbackLabels[token] || token;
+    const option = document.createElement('option');
+    option.value = label;
+    option.text = label;
+    option.setAttribute('data-valor', '0');
+    selectEl.appendChild(option);
+    return option.value;
+}
+
 // aplica regra de TROCA no container atual
 function setTrocaFromTipo($container) {
     const tipoSel = $container.find('select[name="tipo_negociacao"]')[0];
@@ -367,8 +388,8 @@ function setTrocaFromTipo($container) {
         const FROM = (parts[0] || '').trim(); // "UTI"
         const TO = (parts[1] || '').trim(); // "APTO"
 
-        const valDe = findOptionValueByToken(selDe, FROM);
-        const valPara = findOptionValueByToken(selPara, TO);
+        const valDe = ensureOptionValueByToken(selDe, FROM);
+        const valPara = ensureOptionValueByToken(selPara, TO);
 
         if (valDe) selDe.value = valDe;
         if (valPara) selPara.value = valPara;
@@ -417,7 +438,12 @@ function calculateSaving(container) {
         .toUpperCase().trim();
 
     let saving = 0;
-    if (tipoNegociacao.startsWith("TROCA")) {
+    if (tipoNegociacao === "TROCA APTO/DAY") {
+        const map = window.__NEG_ACOMOD_VALOR_MAP || {};
+        const apto = parseFloat(map.apto ?? map.apartamento ?? trocaDe) || trocaDe;
+        const day = parseFloat(map['day clinic'] ?? map.day ?? trocaPara) || trocaPara;
+        saving = (apto - day) * quantidade;
+    } else if (tipoNegociacao.startsWith("TROCA")) {
         saving = (trocaDe - trocaPara) * quantidade;
     } else if (tipoNegociacao.includes("1/2 DIARIA")) {
         saving = quantidade * (trocaDe / 2);
@@ -446,6 +472,7 @@ function addNegotiationField() {
           <option value="TROCA UTI/APTO">TROCA UTI/APTO</option>
           <option value="TROCA UTI/SEMI">TROCA UTI/SEMI</option>
           <option value="TROCA SEMI/APTO">TROCA SEMI/APTO</option>
+          <option value="TROCA APTO/DAY">TROCA APTO/DAY</option>
           <option value="VESPERA">VESPERA</option>
           <option value="GLOSA UTI">GLOSA UTI</option>
           <option value="GLOSA APTO">GLOSA APTO</option>
@@ -554,6 +581,7 @@ function acomodToken(v) {
     if (n.includes('uti') || n.includes('cti') || n.includes('intensiv')) return 'UTI';
     if (n.includes('semi')) return 'SEMI';
     if (n.includes('apto') || n.includes('apart')) return 'APTO';
+    if (n.includes('day')) return 'DAY';
     return '';
 }
 

@@ -732,3 +732,135 @@
 [2026-05-23 00:36:44] PRORROG input id_int=859 rows=1
 [2026-05-23 00:36:44] PRORROG skip invalid id_int=859 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-01 fim=
 [2026-05-23 00:36:44] COMMIT ok id_int=859
+[2026-05-31 20:38:40] START id_int=812 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 20:38:40] GESTAO skip id_int=812 select_gestao=n evento=n
+[2026-05-31 20:38:40] NEGOC fallback post rows=1 id_int=812
+[2026-05-31 20:38:40] PRORROG input id_int=812 rows=1
+[2026-05-31 20:38:40] PRORROG skip invalid id_int=812 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-04-21 fim=
+[2026-05-31 20:38:40] COMMIT ok id_int=812
+[2026-05-31 20:38:59] START id_int=812 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 20:38:59] GESTAO skip id_int=812 select_gestao=n evento=n
+[2026-05-31 20:38:59] NEGOC fallback post rows=1 id_int=812
+[2026-05-31 20:38:59] PRORROG input id_int=812 rows=1
+[2026-05-31 20:38:59] PRORROG skip invalid id_int=812 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-04-21 fim=
+[2026-05-31 20:38:59] COMMIT ok id_int=812
+[2026-05-31 20:40:35] START id_int=859 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 20:40:35] GESTAO skip id_int=859 select_gestao=n evento=n
+[2026-05-31 20:40:35] NEGOC fallback post rows=1 id_int=859
+[2026-05-31 20:40:35] PRORROG input id_int=859 rows=1
+[2026-05-31 20:40:35] PRORROG skip invalid id_int=859 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-01 fim=
+[2026-05-31 20:40:35] COMMIT ok id_int=859
+[2026-05-31 21:34:59] START id_int=894 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:34:59] GESTAO skip id_int=894 select_gestao=n evento=n
+[2026-05-31 21:34:59] NEGOC fallback post rows=1 id_int=894
+[2026-05-31 21:34:59] PRORROG input id_int=894 rows=1
+[2026-05-31 21:34:59] PRORROG skip invalid id_int=894 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-19 fim=
+[2026-05-31 21:34:59] COMMIT ok id_int=894
+[2026-05-31 21:35:24] START id_int=895 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:35:24] GESTAO skip id_int=895 select_gestao=n evento=n
+[2026-05-31 21:35:24] NEGOC fallback post rows=1 id_int=895
+[2026-05-31 21:35:24] PRORROG input id_int=895 rows=1
+[2026-05-31 21:35:24] PRORROG skip invalid id_int=895 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-19 fim=
+[2026-05-31 21:35:24] COMMIT ok id_int=895
+[2026-05-31 21:35:53] START id_int=896 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:35:53] GESTAO skip id_int=896 select_gestao=n evento=n
+[2026-05-31 21:35:53] NEGOC fallback post rows=1 id_int=896
+[2026-05-31 21:35:53] PRORROG input id_int=896 rows=1
+[2026-05-31 21:35:53] PRORROG skip invalid id_int=896 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-25 fim=
+[2026-05-31 21:35:54] COMMIT ok id_int=896
+[2026-05-31 21:36:51] START id_int=897 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:36:51] GESTAO skip id_int=897 select_gestao=n evento=n
+[2026-05-31 21:36:51] NEGOC fallback post rows=1 id_int=897
+[2026-05-31 21:36:51] PRORROG input id_int=897 rows=1
+[2026-05-31 21:36:51] PRORROG skip invalid id_int=897 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-25 fim=
+[2026-05-31 21:36:51] COMMIT ok id_int=897
+[2026-05-31 21:37:19] START id_int=898 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:37:19] GESTAO skip id_int=898 select_gestao=n evento=n
+[2026-05-31 21:37:19] NEGOC fallback post rows=1 id_int=898
+[2026-05-31 21:37:19] PRORROG input id_int=898 rows=1
+[2026-05-31 21:37:19] PRORROG skip invalid id_int=898 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-25 fim=
+[2026-05-31 21:37:19] COMMIT ok id_int=898
+[2026-05-31 21:37:54] START id_int=890 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:37:54] GESTAO skip id_int=890 select_gestao=n evento=n
+[2026-05-31 21:37:54] NEGOC fallback post rows=1 id_int=890
+[2026-05-31 21:37:54] PRORROG input id_int=890 rows=1
+[2026-05-31 21:37:54] PRORROG skip invalid id_int=890 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-25 fim=
+[2026-05-31 21:37:54] COMMIT ok id_int=890
+[2026-05-31 21:38:21] START id_int=900 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:38:21] GESTAO skip id_int=900 select_gestao=n evento=n
+[2026-05-31 21:38:21] NEGOC fallback post rows=1 id_int=900
+[2026-05-31 21:38:21] PRORROG input id_int=900 rows=1
+[2026-05-31 21:38:21] PRORROG skip invalid id_int=900 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-14 fim=
+[2026-05-31 21:38:22] COMMIT ok id_int=900
+[2026-05-31 21:38:52] START id_int=900 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:38:52] GESTAO skip id_int=900 select_gestao=n evento=n
+[2026-05-31 21:38:52] NEGOC fallback post rows=1 id_int=900
+[2026-05-31 21:38:53] PRORROG input id_int=900 rows=1
+[2026-05-31 21:38:53] PRORROG skip invalid id_int=900 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-14 fim=
+[2026-05-31 21:38:53] COMMIT ok id_int=900
+[2026-05-31 21:39:30] START id_int=901 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:39:31] GESTAO skip id_int=901 select_gestao=n evento=n
+[2026-05-31 21:39:31] NEGOC fallback post rows=1 id_int=901
+[2026-05-31 21:39:31] PRORROG input id_int=901 rows=1
+[2026-05-31 21:39:31] PRORROG skip invalid id_int=901 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-25 fim=
+[2026-05-31 21:39:31] COMMIT ok id_int=901
+[2026-05-31 21:40:05] START id_int=902 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:40:05] GESTAO skip id_int=902 select_gestao=n evento=n
+[2026-05-31 21:40:05] NEGOC fallback post rows=1 id_int=902
+[2026-05-31 21:40:05] PRORROG input id_int=902 rows=1
+[2026-05-31 21:40:05] PRORROG skip invalid id_int=902 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-04-29 fim=
+[2026-05-31 21:40:05] COMMIT ok id_int=902
+[2026-05-31 21:41:14] START id_int=888 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:41:14] GESTAO skip id_int=888 select_gestao=n evento=n
+[2026-05-31 21:41:14] NEGOC fallback post rows=1 id_int=888
+[2026-05-31 21:41:14] PRORROG input id_int=888 rows=1
+[2026-05-31 21:41:14] PRORROG skip invalid id_int=888 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-11 fim=
+[2026-05-31 21:41:14] COMMIT ok id_int=888
+[2026-05-31 21:41:54] START id_int=903 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:41:54] GESTAO skip id_int=903 select_gestao=n evento=n
+[2026-05-31 21:41:54] NEGOC fallback post rows=1 id_int=903
+[2026-05-31 21:41:54] PRORROG input id_int=903 rows=1
+[2026-05-31 21:41:54] PRORROG skip invalid id_int=903 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-11 fim=
+[2026-05-31 21:41:55] COMMIT ok id_int=903
+[2026-05-31 21:44:36] START id_int=887 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:44:36] GESTAO skip id_int=887 select_gestao=n evento=n
+[2026-05-31 21:44:36] NEGOC fallback post rows=1 id_int=887
+[2026-05-31 21:44:36] PRORROG input id_int=887 rows=1
+[2026-05-31 21:44:36] PRORROG skip invalid id_int=887 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-21 fim=
+[2026-05-31 21:44:36] COMMIT ok id_int=887
+[2026-05-31 21:45:43] START id_int=882 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:45:44] GESTAO skip id_int=882 select_gestao=n evento=n
+[2026-05-31 21:45:44] NEGOC fallback post rows=1 id_int=882
+[2026-05-31 21:45:44] PRORROG input id_int=882 rows=1
+[2026-05-31 21:45:44] PRORROG update ok id_int=882 id_pror=472
+[2026-05-31 21:45:44] COMMIT ok id_int=882
+[2026-05-31 21:47:22] START id_int=881 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:47:22] GESTAO skip id_int=881 select_gestao=n evento=n
+[2026-05-31 21:47:22] NEGOC fallback post rows=1 id_int=881
+[2026-05-31 21:47:22] PRORROG input id_int=881 rows=1
+[2026-05-31 21:47:22] PRORROG update ok id_int=881 id_pror=471
+[2026-05-31 21:47:22] COMMIT ok id_int=881
+[2026-05-31 21:47:44] START id_int=889 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:47:44] GESTAO skip id_int=889 select_gestao=n evento=n
+[2026-05-31 21:47:44] NEGOC fallback post rows=1 id_int=889
+[2026-05-31 21:47:44] PRORROG input id_int=889 rows=1
+[2026-05-31 21:47:44] PRORROG skip invalid id_int=889 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-17 fim=
+[2026-05-31 21:47:44] COMMIT ok id_int=889
+[2026-05-31 21:48:18] START id_int=884 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:48:18] GESTAO skip id_int=884 select_gestao=n evento=n
+[2026-05-31 21:48:18] NEGOC fallback post rows=1 id_int=884
+[2026-05-31 21:48:18] PRORROG input id_int=884 rows=1
+[2026-05-31 21:48:18] PRORROG update ok id_int=884 id_pror=474
+[2026-05-31 21:48:18] COMMIT ok id_int=884
+[2026-05-31 21:49:18] START id_int=891 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:49:18] GESTAO skip id_int=891 select_gestao=n evento=n
+[2026-05-31 21:49:18] NEGOC fallback post rows=1 id_int=891
+[2026-05-31 21:49:18] PRORROG input id_int=891 rows=1
+[2026-05-31 21:49:18] PRORROG skip invalid id_int=891 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-18 fim=
+[2026-05-31 21:49:18] COMMIT ok id_int=891
+[2026-05-31 21:49:44] START id_int=892 type=edit_negociacao select_gestao=n evento_adverso_ges=n id_gestao=
+[2026-05-31 21:49:44] GESTAO skip id_int=892 select_gestao=n evento=n
+[2026-05-31 21:49:44] NEGOC fallback post rows=1 id_int=892
+[2026-05-31 21:49:44] PRORROG input id_int=892 rows=1
+[2026-05-31 21:49:44] PRORROG skip invalid id_int=892 id_pror=0 reasons=acomodacao_vazia,data_final_invalida ini=2026-05-19 fim=
+[2026-05-31 21:49:44] COMMIT ok id_int=892

@@ -367,3 +367,5 @@
 [2026-05-23 00:34:17] VISITA create ok id_int=886 id_visita=879
 [2026-05-23 00:34:17] GESTAO skip id_int=886 select= evento=n tipo=
 [2026-05-23 00:34:17] END ok id=886
+[2026-05-31 23:24:33] START type=create select_gestao= evento_adverso_ges=n tipo_evento=
+[2026-05-31 23:24:48] START type=create select_gestao= evento_adverso_ges=n tipo_evento=

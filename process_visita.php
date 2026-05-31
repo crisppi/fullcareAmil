@@ -57,11 +57,27 @@ function fullcareResolveUserId(PDO $conn, ?int ...$candidates): ?int
 function fullcareNormalizeVisitResponsible(array $payload): array
 {
     $cargoSessao = (string)($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
-    $cargoNorm = mb_strtolower(str_replace([' ', '-'], '_', $cargoSessao), 'UTF-8');
-    $isMedSessao = strpos($cargoNorm, 'med') === 0;
-    $isEnfSessao = strpos($cargoNorm, 'enf') === 0;
+    $cargoNorm = mb_strtolower($cargoSessao, 'UTF-8');
+    $cargoNorm = strtr($cargoNorm, [
+        'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
+        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+        'ç' => 'c',
+    ]);
+    $cargoNorm = trim((string)preg_replace('/[^a-z0-9]+/', '_', $cargoNorm), '_');
+    $emailSessao = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
+    $isCrisppiSessao = $emailSessao === 'crisppi@fullcare.com.br';
+    $isDiretoriaSessao = strpos($cargoNorm, 'diretor') !== false || strpos($cargoNorm, 'diretoria') !== false;
+    $isMedSessao = strpos($cargoNorm, 'med') === 0 || strpos($cargoNorm, 'medico') === 0 || $isDiretoriaSessao || $isCrisppiSessao;
+    $isEnfSessao = strpos($cargoNorm, 'enf') === 0 || strpos($cargoNorm, 'enfer') === 0;
 
     $resolvedUsuarioVis = (int)($payload['fk_usuario_vis'] ?? 0);
+    if ($resolvedUsuarioVis <= 0 && ($isMedSessao || $isEnfSessao)) {
+        $resolvedUsuarioVis = (int)($_SESSION['id_usuario'] ?? 0);
+        $payload['fk_usuario_vis'] = $resolvedUsuarioVis ?: null;
+    }
     $auditorMed = trim((string)($payload['visita_auditor_prof_med'] ?? ''));
     $auditorEnf = trim((string)($payload['visita_auditor_prof_enf'] ?? ''));
 

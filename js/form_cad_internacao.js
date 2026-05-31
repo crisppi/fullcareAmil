@@ -1401,8 +1401,9 @@ function mirrorVisitMedFromFk() {
     const tipo = document.getElementById('resp_tipo')?.value || '';
     const sessionId = config.idSessao || '';
     const cargoSessaoNorm = config.cargoSessaoNorm || normalizeCargoRole(config.cargoSessao);
+    const isCrisppiSessao = String(config.emailSessao || '').trim().toLowerCase() === 'crisppi@fullcare.com.br';
     const isDiretoriaSessao = cargoSessaoNorm.indexOf('diretor') !== -1 || cargoSessaoNorm.indexOf('diretoria') !== -1;
-    const sessionTipo = (cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao) ? 'med' : ((cargoSessaoNorm.indexOf('enf') === 0 || cargoSessaoNorm.indexOf('enfer') === 0) ? 'enf' : '');
+    const sessionTipo = (cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao || isCrisppiSessao) ? 'med' : ((cargoSessaoNorm.indexOf('enf') === 0 || cargoSessaoNorm.indexOf('enfer') === 0) ? 'enf' : '');
     const effectiveTipo = tipo || sessionTipo;
     const effectiveFk = fk || sessionId;
     const medHidden = document.getElementById('visita_auditor_prof_med');
@@ -1453,8 +1454,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const idSessao = config.idSessao || "";
     const cargoSessao = config.cargoSessao || "";
     const cargoSessaoNorm = config.cargoSessaoNorm || normalizeCargoRole(cargoSessao);
+    const isCrisppiSessao = String(config.emailSessao || '').trim().toLowerCase() === 'crisppi@fullcare.com.br';
     const isDiretoriaSessao = cargoSessaoNorm.indexOf('diretor') !== -1 || cargoSessaoNorm.indexOf('diretoria') !== -1;
-    const isMedSessao = cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao;
+    const isMedSessao = cargoSessaoNorm.indexOf('med') === 0 || cargoSessaoNorm.indexOf('medico') === 0 || isDiretoriaSessao || isCrisppiSessao;
     const isEnfSessao = cargoSessaoNorm.indexOf('enf') === 0 || cargoSessaoNorm.indexOf('enfer') === 0;
     const clearInvalid = (el) => {
         if (el) el.classList.remove('is-invalid');

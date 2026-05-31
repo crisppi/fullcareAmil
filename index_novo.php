@@ -353,7 +353,7 @@
         color: #705519;
         font-size: 12px;
         line-height: 1.35;
-        text-align: left;
+        text-align: center;
         box-shadow: 0 8px 18px rgba(87, 69, 28, .08);
     }
 

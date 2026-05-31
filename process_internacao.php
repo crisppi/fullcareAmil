@@ -268,6 +268,10 @@ if (!function_exists('calcNegotiationSavingValue')) {
         $para = (float)($map[normalizeNegotiationAcomodacao($trocaPara)] ?? 0);
         $tipoNorm = mb_strtoupper(trim((string)$tipo), 'UTF-8');
 
+        if ($tipoNorm === 'TROCA APTO/DAY') {
+            $de = (float)($map['apto'] ?? $de);
+            $para = (float)($map['day clinic'] ?? $map['day'] ?? $para);
+        }
         if (strpos($tipoNorm, 'TROCA') === 0) {
             return ($de - $para) * $qtd;
         }
@@ -284,6 +288,7 @@ if (!function_exists('internacaoNegotiationDefaults')) {
         if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto'];
         if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi'];
         if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto'];
+        if ($tipo === 'TROCA APTO/DAY') return ['troca_de' => 'Apto', 'troca_para' => 'Day Clinic'];
         if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI'];
         if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi'];
         if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {
@@ -457,8 +462,10 @@ if ($type === "create") {
     $timer_int = ($timer_int_raw !== false && $timer_int_raw !== null) ? max(0, $timer_int_raw) : null;
 
     $cargoSessao = normalizeSessionCargoRole($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
+    $emailSessao = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
+    $isCrisppiSessao = $emailSessao === 'crisppi@fullcare.com.br';
     $isDiretoriaSessao = strpos($cargoSessao, 'diretor') !== false || strpos($cargoSessao, 'diretoria') !== false;
-    $isMedSessao = strpos($cargoSessao, 'med') === 0 || strpos($cargoSessao, 'medico') === 0 || $isDiretoriaSessao;
+    $isMedSessao = strpos($cargoSessao, 'med') === 0 || strpos($cargoSessao, 'medico') === 0 || $isDiretoriaSessao || $isCrisppiSessao;
     $isEnfSessao = strpos($cargoSessao, 'enf') === 0 || strpos($cargoSessao, 'enfer') === 0;
 
     $senha_int = filter_input(INPUT_POST, "senha_int");
@@ -474,8 +481,10 @@ if ($type === "create") {
     }
 
     $cargoSessao = normalizeSessionCargoRole($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
+    $emailSessao = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
+    $isCrisppiSessao = $emailSessao === 'crisppi@fullcare.com.br';
     $isDiretoriaSessao = strpos($cargoSessao, 'diretor') !== false || strpos($cargoSessao, 'diretoria') !== false;
-    $isMedSessao = strpos($cargoSessao, 'med') === 0 || strpos($cargoSessao, 'medico') === 0 || $isDiretoriaSessao;
+    $isMedSessao = strpos($cargoSessao, 'med') === 0 || strpos($cargoSessao, 'medico') === 0 || $isDiretoriaSessao || $isCrisppiSessao;
     $isEnfSessao = strpos($cargoSessao, 'enf') === 0 || strpos($cargoSessao, 'enfer') === 0;
 
     $usuario_create_int = filter_input(INPUT_POST, "usuario_create_int");
@@ -829,8 +838,10 @@ if ($type === "create") {
         $visita = new visita();
         $cargoSessaoVisita = (string)($_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? ''));
         $cargoSessaoVisitaNorm = normalizeSessionCargoRole($cargoSessaoVisita);
+        $emailSessaoVisita = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
+        $isCrisppiSessaoVisita = $emailSessaoVisita === 'crisppi@fullcare.com.br';
         $isDiretoriaSessaoVisita = strpos($cargoSessaoVisitaNorm, 'diretor') !== false || strpos($cargoSessaoVisitaNorm, 'diretoria') !== false;
-        $isMedSessaoVisita = strpos($cargoSessaoVisitaNorm, 'med') === 0 || strpos($cargoSessaoVisitaNorm, 'medico') === 0 || $isDiretoriaSessaoVisita;
+        $isMedSessaoVisita = strpos($cargoSessaoVisitaNorm, 'med') === 0 || strpos($cargoSessaoVisitaNorm, 'medico') === 0 || $isDiretoriaSessaoVisita || $isCrisppiSessaoVisita;
         $isEnfSessaoVisita = strpos($cargoSessaoVisitaNorm, 'enf') === 0 || strpos($cargoSessaoVisitaNorm, 'enfer') === 0;
         $resolvedVisitaUsuario = $fk_usuario_int ?: ((int)($_SESSION['id_usuario'] ?? 0) ?: null);
         $resolvedVisitaMed = trim((string)$visita_auditor_prof_med);

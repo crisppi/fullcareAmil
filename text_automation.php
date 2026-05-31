@@ -412,7 +412,7 @@ include_once("templates/header.php");
     </main>
 
 <script>
-document.title = 'Assistente de Auditoria Médica com IA | FullCare Amil';
+document.title = 'Assistente de Auditoria Médica com IA | FullCare';
 
 (function initAutomationInfo() {
     const button = document.getElementById('automation_info_button');

@@ -269,9 +269,14 @@ try {
 
     mobileJsonResponse(['success' => false, 'message' => 'Rota nao encontrada.'], 404);
 } catch (Throwable $exception) {
-    mobileJsonResponse([
+    $payload = [
         'success' => false,
         'message' => 'Erro interno ao processar a requisicao.',
-        'details' => $exception->getMessage(),
-    ], 500);
+    ];
+
+    if (filter_var(getenv('MOBILE_API_DEBUG') ?: '', FILTER_VALIDATE_BOOL)) {
+        $payload['details'] = $exception->getMessage();
+    }
+
+    mobileJsonResponse($payload, 500);
 }

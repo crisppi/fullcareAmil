@@ -1933,6 +1933,16 @@
                         }
                     }
 
+                    if (wanted === 'day' || wanted === 'day clinic' || wanted === 'day-clinic') {
+                        const day = (acomodacoes || []).find(ac => {
+                            const nome = normalizeAcomod(ac && ac.acomodacao_aco);
+                            return nome === 'day' || nome === 'day clinic' || nome === 'day-clinic';
+                        });
+                        if (day) {
+                            return parseFloat(String(day.valor_aco || '0').replace(',', '.')) || 0;
+                        }
+                    }
+
                     return 0;
                 }
 
@@ -1954,6 +1964,9 @@
                     if (window.fcNegValMap['Semi'] <= 0 && norm === 'semi') {
                         window.fcNegValMap['Semi'] = valorNum;
                     }
+                    if (window.fcNegValMap['Day'] <= 0 && (norm === 'day' || norm === 'day clinic' || norm === 'day-clinic')) {
+                        window.fcNegValMap['Day'] = valorNum;
+                    }
                 });
 
                 acomodacoes.forEach(ac => {
@@ -1966,6 +1979,9 @@
                     }
                     if (window.fcNegValMap['Semi'] <= 0 && norm.indexOf('semi') !== -1) {
                         window.fcNegValMap['Semi'] = valorNum;
+                    }
+                    if (window.fcNegValMap['Day'] <= 0 && norm.indexOf('day') !== -1) {
+                        window.fcNegValMap['Day'] = valorNum;
                     }
                 });
 

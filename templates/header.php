@@ -29,16 +29,20 @@ $isOperationalIntelligencePage =
     preg_match('#/inteligencia(/|$)#i', $requestUriPath) === 1
     || in_array($currentScriptName, [
         'dashboard_operacional.php',
+        'dashboard_performance.php',
         'faturamento_previsao.php',
         'dashboard_mensal.php',
         'inteligencia_operadora.php',
         'relatorio_tmp.php',
+        'relatorio_prorrogacao_vs_alta.php',
         'relatorio_motivos_prorrogacao.php',
         'relatorio_backlog_autorizacoes.php',
+        'operational_intelligence.php',
+        'permanencia_alertas.php',
         'explicabilidade_insights.php',
         'risco_glosa.php',
         'clusterizacao_clinica.php',
-        'dashboard_performance.php',
+        'text_automation.php',
         'inteligencia_logs_usuario.php',
     ], true);
 
@@ -571,12 +575,51 @@ if (!empty($sessionIdUsuario)) {
         }
 
 <?php if ($isOperationalIntelligencePage): ?>
+        body {
+            background: #f4f6fb !important;
+        }
+
+        .report-wrapper,
+        .performance-wrapper,
+        .forecast-wrapper,
+        .dashboard-wrapper,
+        .container-fluid.monthly-dashboard,
+        main.container-fluid.mt-5.pt-4,
+        body > .container-fluid {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+        }
+
+        .report-header,
+        .perf-hero,
+        .forecast-hero,
+        .dash-hero,
+        .monthly-header,
+        .automation-title-card,
+        body > .container-fluid > .row:first-child {
+            background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%) !important;
+            border: 1px solid rgba(94, 35, 99, .18) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 18px 36px rgba(94, 35, 99, .14) !important;
+        }
+
+        body > .container-fluid > .row:first-child {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            margin-bottom: 14px !important;
+            padding: 18px 20px !important;
+        }
+
         .report-header h1,
+        .perf-hero h1,
         .forecast-hero h1,
-        .dash-hero h1 {
+        .dash-hero h1,
+        .automation-title-row h1 {
             font-size: clamp(1.2rem, 1.7vw, 1.65rem) !important;
             line-height: 1.08 !important;
             margin-bottom: 0.2rem !important;
+            color: #3b1d4f !important;
+            font-weight: 800 !important;
         }
 
         .container-fluid h2.fw-semibold,
@@ -586,19 +629,116 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .container-fluid h4,
-        .dashboard-wrapper h4 {
+        .dashboard-wrapper h4,
+        .perf-panel h2,
+        .insight-card h4,
+        .automation-card h4 {
             font-size: clamp(0.95rem, 1.2vw, 1.12rem) !important;
             line-height: 1.12 !important;
+            color: #3b1d4f !important;
+            font-weight: 800 !important;
         }
 
         .report-header .text-muted,
+        .perf-hero p,
         .forecast-hero .text-muted,
         .dash-hero p,
+        .automation-title-card .text-muted,
         .container-fluid > .row .text-muted,
         .container-fluid .alert,
         .container-fluid .alert strong {
             font-size: clamp(0.78rem, 1vw, 0.92rem) !important;
             line-height: 1.3 !important;
+            color: #5c5266 !important;
+        }
+
+        .report-card,
+        .insight-card,
+        .dashboard-card,
+        .dash-table-card,
+        .perf-card,
+        .perf-panel,
+        .automation-card,
+        .automation-panel,
+        .automation-context-card {
+            background: #fff !important;
+            border: 1px solid #d9d2e4 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 12px 28px rgba(40, 26, 66, .13) !important;
+        }
+
+        .report-card,
+        .insight-card,
+        .perf-panel,
+        .automation-card,
+        .automation-panel {
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            border-radius: 10px !important;
+        }
+
+        .table thead th,
+        .report-wrapper .table thead th,
+        .insight-card .table thead th,
+        .perf-table th {
+            background: #f1eaf8 !important;
+            color: #5e2363 !important;
+            border-bottom: 1px solid rgba(94, 35, 99, .35) !important;
+            font-weight: 800 !important;
+            letter-spacing: .04em !important;
+        }
+
+        .table td,
+        .perf-table td {
+            border-color: #e9e3ef !important;
+            color: #3f3b46 !important;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) > *,
+        .table-hover > tbody > tr:hover > * {
+            --bs-table-accent-bg: #fbf8fd !important;
+            color: #3f3b46 !important;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #d9d2e4 !important;
+            color: #2f2639 !important;
+        }
+
+        .form-label,
+        .text-uppercase,
+        .report-wrapper .form-label {
+            color: #5e2363 !important;
+            font-weight: 800 !important;
+            letter-spacing: .04em !important;
+        }
+
+        .btn-primary {
+            background: #5e2363 !important;
+            border-color: #5e2363 !important;
+            box-shadow: 0 8px 18px rgba(94, 35, 99, .18) !important;
+        }
+
+        .alert-info {
+            background: #eef9fd !important;
+            border-color: #bfeaf7 !important;
+            color: #224657 !important;
+        }
+
+        @media (max-width: 768px) {
+            .report-wrapper,
+            .performance-wrapper,
+            .forecast-wrapper,
+            .dashboard-wrapper,
+            .container-fluid.monthly-dashboard,
+            main.container-fluid.mt-5.pt-4,
+            body > .container-fluid {
+                padding-left: 14px !important;
+                padding-right: 14px !important;
+            }
         }
 <?php endif; ?>
     </style>

@@ -15,8 +15,16 @@ API para o app mobile nativo, usando o mesmo banco de dados do FullCare web.
 
 ## Autenticacao
 
-Use `Authorization: Bearer <token>`.
+Use exclusivamente o cabecalho `Authorization: Bearer <token>`.
+
+Nao envie token por query string, porque URLs podem ficar gravadas em historico,
+logs de proxy, analytics e rastreamentos de erro.
 
 ## Observacao
 
-Para producao, defina `MOBILE_API_SECRET` no ambiente para substituir o segredo padrao de desenvolvimento.
+Para producao:
+
+- defina `MOBILE_API_SECRET` no ambiente para substituir o segredo padrao de desenvolvimento;
+- publique a API somente em HTTPS;
+- mantenha `MOBILE_API_DEBUG` desativado para nao expor detalhes internos em respostas de erro;
+- configure o app Flutter com `--dart-define=FULLCARE_API_BASE_URL=https://sistema.fullcareaudit.com.br/api/mobile/index.php`.

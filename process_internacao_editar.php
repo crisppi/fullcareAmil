@@ -222,6 +222,10 @@ if (!function_exists('calcNegotiationSavingValue')) {
         $para = (float)($map[normalizeAcomodacaoNegociacao($trocaPara)] ?? 0);
         $tipoNorm = mb_strtoupper(trim((string)$tipo), 'UTF-8');
 
+        if ($tipoNorm === 'TROCA APTO/DAY') {
+            $de = (float)($map['apto'] ?? $de);
+            $para = (float)($map['day clinic'] ?? $map['day'] ?? $para);
+        }
         if (strpos($tipoNorm, 'TROCA') === 0) {
             return ($de - $para) * $qtd;
         }
@@ -238,6 +242,7 @@ if (!function_exists('internacaoEditNegotiationDefaults')) {
         if ($tipo === 'TROCA UTI/APTO') return ['troca_de' => 'UTI', 'troca_para' => 'Apto'];
         if ($tipo === 'TROCA UTI/SEMI') return ['troca_de' => 'UTI', 'troca_para' => 'Semi'];
         if ($tipo === 'TROCA SEMI/APTO') return ['troca_de' => 'Semi', 'troca_para' => 'Apto'];
+        if ($tipo === 'TROCA APTO/DAY') return ['troca_de' => 'Apto', 'troca_para' => 'Day Clinic'];
         if ($tipo === 'GLOSA UTI' || $tipo === 'TARDIA UTI') return ['troca_de' => 'UTI', 'troca_para' => 'UTI'];
         if ($tipo === 'GLOSA SEMI') return ['troca_de' => 'Semi', 'troca_para' => 'Semi'];
         if (in_array($tipo, ['GLOSA APTO', '1/2 DIARIA APTO', 'TARDIA APTO', 'DIARIA ADM'], true)) {

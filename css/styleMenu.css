@@ -60,7 +60,7 @@
 .lista_menu h4 {
     color: rgb(255, 255, 255);
     /* text-shadow: #bbbaba 2px 3px 2px; */
-    font-weight: 700;
+    font-weight: 400;
     /* font-family: var(--bs-font-sans-serif); */
     padding: 5px;
 }
@@ -70,8 +70,8 @@ li {
 }
 
 .lista_menu a {
-    color: #181818;
-    font-weight: 700;
+    color: #0a4fa3;
+    font-weight: 400;
     font-size: 1em;
     padding-bottom: 10px;
     text-decoration: none;
@@ -80,9 +80,9 @@ li {
 }
 
 .lista_menu li a {
-    color: #3A3A3A;
+    color: #0a4fa3;
     /* text-shadow: #bbbaba 2px 3px 2px; */
-    font-weight: 500;
+    font-weight: 400;
     font-size: 1em;
     padding-bottom: 20px;
     text-decoration: none;
@@ -90,7 +90,7 @@ li {
 }
 
 .lista_menu a:hover {
-    color: #BE4342;
+    color: #063b7a;
     /* font-size: 1.1em; */
     transition: 1;
 }
@@ -121,6 +121,19 @@ li {
     /* Box shadow elegante */
 }
 
+.navbar-light.nav_bar_custom .navbar-nav .nav-link,
+.navbar-light.nav_bar_custom .navbar-nav .nav-link:visited,
+.navbar-light.nav_bar_custom .navbar-nav .nav-link.show {
+    color: #0a4fa3 !important;
+    font-weight: 400;
+}
+
+.navbar-light.nav_bar_custom .navbar-nav .nav-link:hover,
+.navbar-light.nav_bar_custom .navbar-nav .nav-link:focus,
+.navbar-light.nav_bar_custom .navbar-nav .nav-link.active {
+    color: #063b7a !important;
+}
+
 .navbar.nav_bar_custom.fixed-top {
     z-index: 3000 !important;
 }
@@ -146,7 +159,7 @@ li {
 }
 
 .navbar .dropdown-menu .bi-dropdown-featured {
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .navbar .dropdown-menu {
@@ -160,7 +173,7 @@ li {
 }
 
 .navbar .dropdown-menu .dropdown-item {
-    color: #2b2234;
+    color: #0a4fa3;
     border-radius: 10px;
     margin: 1px 6px;
     padding: 6px 12px;
@@ -172,7 +185,7 @@ li {
 .navbar .dropdown-menu .dropdown-item:hover,
 .navbar .dropdown-menu .dropdown-item:focus {
     background: linear-gradient(90deg, rgba(94, 35, 99, 0.10), rgba(53, 186, 225, 0.10));
-    color: #4a1d55;
+    color: #063b7a;
 }
 
 .navbar .dropdown-menu .dropdown-divider {
@@ -226,11 +239,11 @@ li {
 
 .bi-dropdown.bi-mega .bi-mega-title {
     display: block !important;
-    font-weight: 700 !important;
+    font-weight: 400 !important;
     text-transform: uppercase !important;
     font-size: 0.72rem !important;
     letter-spacing: 0.08em !important;
-    color: #7b8ca3 !important;
+    color: #315b8f !important;
     margin-bottom: 8px !important;
 }
 

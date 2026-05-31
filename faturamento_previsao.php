@@ -107,30 +107,36 @@ for ($i = 0; $i < 4; $i++) {
 ?>
 
 <style>
+body {
+    background: #f4f6fb;
+}
 .forecast-wrapper {
     width: 100%;
     max-width: none;
+    min-height: calc(100vh - 160px);
     margin: 12px 0 56px;
     padding: 0 24px;
     font-family: 'Inter', sans-serif;
+    color: #251636;
 }
 .forecast-hero {
-    background: linear-gradient(120deg, #f6f8ff, #fef1ff);
-    border-radius: 24px;
-    padding: 24px 28px;
-    border: 1px solid rgba(59, 35, 99, .08);
-    box-shadow: 0 25px 55px rgba(33, 17, 56, .12);
-    margin-bottom: 20px;
+    background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%);
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid rgba(94, 35, 99, .18);
+    box-shadow: 0 18px 36px rgba(94, 35, 99, .14);
+    margin-bottom: 18px;
 }
 .forecast-hero h1 {
     font-size: 1.05rem;
     font-weight: 800;
-    color: #2e1d49;
+    color: #3b1d4f;
     margin-bottom: 6px;
 }
 .forecast-hero p {
     font-size: .76rem;
     line-height: 1.4;
+    color: #5c5266 !important;
 }
 .cards-grid {
     display: grid;
@@ -139,68 +145,111 @@ for ($i = 0; $i < 4; $i++) {
     margin-bottom: 18px;
 }
 .forecast-card {
+    position: relative;
     background: #fff;
-    border-radius: 18px;
-    padding: 14px 18px;
-    border: 1px solid rgba(27, 11, 53, .08);
-    box-shadow: 0 12px 25px rgba(18, 9, 29, .08);
+    border-radius: 12px;
+    padding: 16px 18px 15px;
+    border: 1px solid #d9d2e4;
+    box-shadow: 0 12px 28px rgba(40, 26, 66, .13);
+    overflow: hidden;
+}
+.forecast-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #5e2363, #35bae1);
 }
 .forecast-card h3 {
     font-size: .72rem;
     text-transform: uppercase;
-    letter-spacing: .08em;
-    margin: 0 0 4px;
-    color: #7b6c8f;
+    letter-spacing: .06em;
+    margin: 0 0 7px;
+    color: #5e2363;
+    font-weight: 800;
 }
 .forecast-card strong {
-    font-size: 1.18rem;
-    color: #24172f;
+    font-size: 1.3rem;
+    line-height: 1.1;
+    color: #20102f;
 }
 .forecast-card small {
     font-size: .72rem;
     line-height: 1.35;
+    color: #5f6876 !important;
+}
+.forecast-table-wrap {
+    margin-top: 8px;
+    border-radius: 14px;
+    border: 1px solid #d9d2e4;
+    background: #fff;
+    box-shadow: 0 14px 30px rgba(40, 26, 66, .12);
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 .forecast-table {
     width: 100%;
+    min-width: 980px;
     border-collapse: collapse;
-    margin-top: 8px;
     font-size: .82rem;
     background: #fff;
-    border-radius: 20px;
-    border: 1px solid rgba(27, 11, 53, .08);
     overflow: hidden;
-    box-shadow: 0 20px 45px rgba(31, 17, 46, .12);
 }
 .forecast-table th,
 .forecast-table td {
-    padding: 11px 16px;
-    border-bottom: 1px solid #f2eff7;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9e3ef;
     text-align: left;
+    color: #3f3b46;
 }
 .forecast-table th {
     text-transform: uppercase;
     font-size: .68rem;
-    letter-spacing: .08em;
-    color: #85769a;
-    background: #faf7ff;
+    letter-spacing: .06em;
+    color: #5e2363;
+    background: #f1eaf8;
+    font-weight: 800;
+}
+.forecast-table tbody tr:nth-child(even) {
+    background: #fbfcff;
+}
+.forecast-table tbody tr:hover {
+    background: #f6f1fb;
+}
+.forecast-table tbody tr:last-child td {
+    border-bottom: 0;
 }
 .scenario-label {
-    font-weight: 600;
-    color: #4c2e6c;
+    font-weight: 800;
+    color: #3b1d4f !important;
 }
 .badge-pill {
-    padding: 2px 10px;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
     border-radius: 999px;
     font-size: .68rem;
-    font-weight: 600;
+    font-weight: 800;
+    border: 1px solid transparent;
 }
 .badge-optimistic {
-    background: rgba(16,185,129,.15);
-    color: #0f8f61;
+    background: #dff7ec;
+    color: #0b6f4b;
+    border-color: #b7ebd2;
 }
 .badge-conservative {
-    background: rgba(245,158,11,.15);
-    color: #a95a00;
+    background: #fff1d9;
+    color: #8a4b00;
+    border-color: #ffdba3;
+}
+@media (max-width: 768px) {
+    .forecast-wrapper {
+        padding: 0 14px;
+    }
+
+    .forecast-hero {
+        padding: 16px 18px;
+    }
 }
 </style>
 
@@ -234,36 +283,38 @@ for ($i = 0; $i < 4; $i++) {
         </div>
     </div>
 
-    <table class="forecast-table">
-        <thead>
-            <tr>
-                <th>Mês projetado</th>
-                <th class="scenario-label">Otimista</th>
-                <th>Volume</th>
-                <th>Receita líquida</th>
-                <th>Glosa (%)</th>
-                <th class="scenario-label">Conservador</th>
-                <th>Volume</th>
-                <th>Receita líquida</th>
-                <th>Glosa (%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($projecoes as $proj): ?>
-            <tr>
-                <td><strong><?= $proj['mes'] ?></strong></td>
-                <td><span class="badge-pill badge-optimistic">Otimista</span></td>
-                <td><?= number_format($proj['volume_ot']) ?></td>
-                <td>R$ <?= number_format($proj['valor_ot'], 2, ',', '.') ?></td>
-                <td><?= number_format($proj['glosa_ot'] * 100, 1, ',', '.') ?>%</td>
-                <td><span class="badge-pill badge-conservative">Conservador</span></td>
-                <td><?= number_format($proj['volume_cs']) ?></td>
-                <td>R$ <?= number_format($proj['valor_cs'], 2, ',', '.') ?></td>
-                <td><?= number_format($proj['glosa_cs'] * 100, 1, ',', '.') ?>%</td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="forecast-table-wrap">
+        <table class="forecast-table">
+            <thead>
+                <tr>
+                    <th>Mês projetado</th>
+                    <th class="scenario-label">Otimista</th>
+                    <th>Volume</th>
+                    <th>Receita líquida</th>
+                    <th>Glosa (%)</th>
+                    <th class="scenario-label">Conservador</th>
+                    <th>Volume</th>
+                    <th>Receita líquida</th>
+                    <th>Glosa (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($projecoes as $proj): ?>
+                <tr>
+                    <td><strong><?= $proj['mes'] ?></strong></td>
+                    <td><span class="badge-pill badge-optimistic">Otimista</span></td>
+                    <td><?= number_format($proj['volume_ot']) ?></td>
+                    <td>R$ <?= number_format($proj['valor_ot'], 2, ',', '.') ?></td>
+                    <td><?= number_format($proj['glosa_ot'] * 100, 1, ',', '.') ?>%</td>
+                    <td><span class="badge-pill badge-conservative">Conservador</span></td>
+                    <td><?= number_format($proj['volume_cs']) ?></td>
+                    <td>R$ <?= number_format($proj['valor_cs'], 2, ',', '.') ?></td>
+                    <td><?= number_format($proj['glosa_cs'] * 100, 1, ',', '.') ?>%</td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <?php require_once("templates/footer.php"); ?>

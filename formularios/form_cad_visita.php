@@ -11,26 +11,15 @@ function fmtDmy(?string $s): string
 
 $idSessao = (int)($_SESSION['id_usuario'] ?? 0);
 $cargoSessao = $_SESSION['cargo'] ?? ($_SESSION['cargo_user'] ?? '');
+$emailSessao = mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8');
 
 include_once("dao/usuarioDao.php");
 $usuarioDao = new UserDAO($conn, $BASE_URL);
 
-$normalizeCargoRole = static function ($cargo): string {
-    $cargo = mb_strtolower((string)$cargo, 'UTF-8');
-    $cargo = strtr($cargo, [
-        'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a',
-        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
-        'í' => 'i', 'ì' => 'i', 'î' => 'i', 'ï' => 'i',
-        'ó' => 'o', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o',
-        'ú' => 'u', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
-        'ç' => 'c',
-    ]);
-    $cargo = preg_replace('/[^a-z0-9]+/', '_', $cargo);
-    return trim((string)$cargo, '_');
-};
-$normCargoSessao = $normalizeCargoRole($cargoSessao);
-$isMedSessao = strpos($normCargoSessao, 'med') === 0 || strpos($normCargoSessao, 'medico') === 0;
-$isEnfSessao = strpos($normCargoSessao, 'enf') === 0 || strpos($normCargoSessao, 'enfer') === 0;
+$normCargoSessao = mb_strtolower(str_replace([' ', '-'], '_', (string)$cargoSessao), 'UTF-8');
+$isCrisppiSessao = $emailSessao === 'crisppi@fullcare.com.br';
+$isMedSessao = strpos($normCargoSessao, 'med') === 0 || $isCrisppiSessao;
+$isEnfSessao = strpos($normCargoSessao, 'enf') === 0;
 $mostrarCadastroCentral = !($isMedSessao || $isEnfSessao);
 
 $medicosAud = [];

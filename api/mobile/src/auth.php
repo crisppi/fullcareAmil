@@ -67,16 +67,86 @@ function mobileParseToken(string $token): ?array
 function mobileAuthorizationToken(): string
 {
     $header = (string)($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? $_SERVER['HTTP_X_AUTH_TOKEN'] ?? '');
+    if ($header === '' && function_exists('getallheaders')) {
+        $headers = getallheaders();
+        if (is_array($headers)) {
+            foreach ($headers as $name => $value) {
+                $normalized = strtolower((string)$name);
+                if ($normalized === 'authorization' || $normalized === 'x-auth-token') {
+                    $header = (string)$value;
+                    break;
+                }
+            }
+        }
+    }
+
     if (stripos($header, 'Bearer ') === 0) {
         return trim(substr($header, 7));
     }
 
-    $queryToken = trim((string)($_GET['token'] ?? ''));
-    if ($queryToken !== '') {
-        return $queryToken;
+    return $header !== '' ? trim($header) : '';
+}
+
+function mobileClientKey(): string
+{
+    $ip = (string)($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    return preg_replace('/[^a-zA-Z0-9_.:-]/', '_', $ip);
+}
+
+function mobileLoginAttemptFile(string $email): string
+{
+    $key = hash('sha256', strtolower(trim($email)) . '|' . mobileClientKey());
+    return sys_get_temp_dir() . '/fullcare_mobile_login_' . $key . '.json';
+}
+
+function mobileReadLoginAttempts(string $email): array
+{
+    $file = mobileLoginAttemptFile($email);
+    if (!is_file($file)) {
+        return [];
     }
 
-    return $header !== '' ? trim($header) : '';
+    $decoded = json_decode((string)file_get_contents($file), true);
+    return is_array($decoded) ? $decoded : [];
+}
+
+function mobileWriteLoginAttempts(string $email, array $attempts): void
+{
+    file_put_contents(mobileLoginAttemptFile($email), json_encode(array_values($attempts)));
+}
+
+function mobileAssertLoginAllowed(string $email): void
+{
+    $windowSeconds = 15 * 60;
+    $now = time();
+    $attempts = array_values(array_filter(
+        mobileReadLoginAttempts($email),
+        static fn ($timestamp): bool => is_numeric($timestamp) && ((int)$timestamp) > ($now - $windowSeconds)
+    ));
+
+    if (count($attempts) >= 5) {
+        mobileJsonResponse([
+            'success' => false,
+            'message' => 'Muitas tentativas de acesso. Aguarde alguns minutos e tente novamente.',
+        ], 429);
+    }
+
+    mobileWriteLoginAttempts($email, $attempts);
+}
+
+function mobileRegisterFailedLogin(string $email): void
+{
+    $attempts = mobileReadLoginAttempts($email);
+    $attempts[] = time();
+    mobileWriteLoginAttempts($email, $attempts);
+}
+
+function mobileClearFailedLogins(string $email): void
+{
+    $file = mobileLoginAttemptFile($email);
+    if (is_file($file)) {
+        @unlink($file);
+    }
 }
 
 function mobileFindUserByEmail(PDO $conn, string $email): ?array
@@ -138,14 +208,20 @@ function mobileHandleLogin(PDO $conn, array $input): void
         mobileJsonResponse(['success' => false, 'message' => 'Informe e-mail e senha.'], 422);
     }
 
+    mobileAssertLoginAllowed($email);
+
     $user = mobileFindUserByEmail($conn, $email);
     if ($user === null || ($user['ativo_user'] ?? 'n') !== 's') {
+        mobileRegisterFailedLogin($email);
         mobileJsonResponse(['success' => false, 'message' => 'Credenciais invalidas.'], 401);
     }
 
     if (!password_verify($password, (string)($user['senha_user'] ?? ''))) {
+        mobileRegisterFailedLogin($email);
         mobileJsonResponse(['success' => false, 'message' => 'Credenciais invalidas.'], 401);
     }
+
+    mobileClearFailedLogins($email);
 
     $token = mobileGenerateToken($user);
     mobileJsonResponse([
