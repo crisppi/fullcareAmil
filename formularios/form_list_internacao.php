@@ -678,7 +678,7 @@ try {
 #table-content thead th {
     padding-top: 7px;
     padding-bottom: 7px;
-    background: linear-gradient(90deg, #5e2363 0%, #69407f 100%);
+    background: linear-gradient(90deg, #0f5f95 0%, #197fac 55%, #35a6d2 100%);
     border-bottom: none;
     color: #fff;
     font-size: .54rem;
