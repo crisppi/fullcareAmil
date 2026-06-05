@@ -275,6 +275,22 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Selects azuis - Tabelas Adicionais (nativo) */
+        #main-container .tabelas-adicionais-card select.select-purple,
+        #main-container .tabelas-adicionais-card select.detail-select {
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border-color: #8fc7f5 !important;
+        }
+        /* Selects azuis - bootstrap-select: alvo é o BOTÃO */
+        #main-container .tabelas-adicionais-card .tabelas-selects .bootstrap-select > button.dropdown-toggle,
+        #main-container .tabelas-adicionais-card .tabelas-selects .bootstrap-select > button.dropdown-toggle .filter-option-inner-inner {
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border-color: #8fc7f5 !important;
+            font-weight: 400 !important;
+        }
     </style>
 
 
@@ -1110,7 +1126,7 @@
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="<?= $BASE_URL ?>js/uti_audit_ai.js"></script>
+    <script src="<?= $BASE_URL ?>js/uti_audit_ai.js?v=<?= filemtime(__DIR__ . '/../js/uti_audit_ai.js') ?>"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function syncAssistClearButtons() {

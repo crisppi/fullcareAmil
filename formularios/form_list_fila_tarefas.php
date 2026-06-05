@@ -243,33 +243,6 @@ try {
 
     <div class="container-fluid" id="main-container" style="margin-top:-5px">
         <style>
-            .fila-hero {
-                background: linear-gradient(135deg, #5e2363, #9b70d1);
-                color: #fff;
-                border-radius: 28px;
-                padding: 18px 24px;
-                box-shadow: 0 20px 40px rgba(24, 0, 30, 0.25);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 16px;
-                margin-bottom: 14px;
-            }
-            .fila-hero h1 {
-                margin: 0;
-                font-size: 1.4rem;
-                letter-spacing: .02em;
-                color: #fff;
-            }
-            .fila-hero__tag {
-                background: rgba(255, 255, 255, 0.2);
-                padding: 6px 14px;
-                border-radius: 999px;
-                font-weight: 600;
-                font-size: .78rem;
-                color: #fff;
-                white-space: nowrap;
-            }
             .fila-subtitle {
                 color: #6c757d;
                 margin: 4px 0 0;
@@ -314,11 +287,16 @@ try {
                 font-size: .72rem;
             }
         </style>
-        <div class="fila-hero">
-            <h1>Fila de Tarefas</h1>
-            <span class="fila-hero__tag">Pendências</span>
+        <div class="fc-module-header fc-module-header--gestao">
+            <div class="fc-module-header__copy">
+                <p class="fc-module-header__kicker">Gestão</p>
+                <h1 class="fc-module-header__title">Fila de Tarefas</h1>
+                <p class="fc-module-header__subtitle">Visitas e contas pendentes, com filtros por periodo, convenio e responsavel.</p>
+            </div>
+            <div class="fc-module-header__actions">
+                <span class="badge rounded-pill bg-light text-primary">Pendências</span>
+            </div>
         </div>
-        <p class="fila-subtitle">Visitas e contas pendentes, com filtros por periodo, convenio e responsavel.</p>
 
     <form method="GET" class="row g-2 align-items-end mb-3 fila-filter-row">
         <div class="col-sm-2 fila-filter-date">

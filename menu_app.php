@@ -608,7 +608,6 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     <title>Gráficos de Internações</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Fontfaces CSS-->
-    <link href="diversos/CoolAdmin-master/css/font-face.css" rel="stylesheet" media="all">
     <link href="diversos/CoolAdmin-master/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet"
         media="all">
     <link href="diversos/CoolAdmin-master/vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet"
@@ -649,14 +648,14 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #3f2a59;
+    color: #24384f;
     border-radius: 18px;
     background:
-        radial-gradient(circle at 12% 110%, rgba(90, 197, 255, 0.16), transparent 55%),
-        linear-gradient(145deg, #f5f0ff, #ece6f7);
+        radial-gradient(circle at 12% 110%, rgba(91, 180, 216, 0.18), transparent 55%),
+        linear-gradient(145deg, #f4faff 0%, #eaf4fb 100%);
     min-height: 120px;
-    box-shadow: 0 8px 18px rgba(39, 24, 58, 0.10);
-    border: 1px solid rgba(134, 155, 204, 0.22);
+    box-shadow: 0 8px 18px rgba(35, 102, 147, 0.10);
+    border: 1px solid rgba(76, 142, 187, 0.20);
     overflow: hidden;
     padding: 10px 0;
     transition: transform .15s ease, box-shadow .15s ease;
@@ -664,7 +663,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
 .grid-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 24px rgba(39, 24, 58, 0.14);
+    box-shadow: 0 14px 24px rgba(35, 102, 147, 0.14);
 }
 
 .grid-item-filter {
@@ -672,7 +671,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 }
 
 .grid-item-kpi.kpi-neutral {
-    border-left: 4px solid #6d49ab;
+    border-left: 4px solid #2f6f9f;
 }
 
 .grid-item-kpi.kpi-info {
@@ -691,7 +690,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at top left, rgba(122, 89, 170, 0.16), transparent 58%);
+    background: radial-gradient(circle at top left, rgba(75, 144, 189, 0.14), transparent 58%);
     opacity: 0.65;
     pointer-events: none;
 }
@@ -703,7 +702,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, rgba(150, 129, 214, 0.95), rgba(120, 210, 245, 0.95));
+    background: linear-gradient(90deg, rgba(47, 111, 159, 0.95), rgba(94, 180, 216, 0.95));
     opacity: 0.9;
 }
 
@@ -721,7 +720,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     text-align: left;
     line-height: 1.2;
     font-size: 0.92rem;
-    color: #34204f;
+    color: #24384f;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .02em;
@@ -739,14 +738,14 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     left: 16px;
     font-size: .95rem;
     color: #ffffff;
-    background: linear-gradient(145deg, #8354ba, #5e3a8a);
+    background: linear-gradient(145deg, #2f6f9f, #5eb4d8);
     border-radius: 50%;
     width: 34px;
     height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 12px rgba(46, 28, 70, 0.18);
+    box-shadow: 0 6px 12px rgba(35, 102, 147, 0.18);
     opacity: .9;
 }
 
@@ -762,7 +761,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     justify-content: center;
     line-height: 1;
     font-weight: 800;
-    color: #452b63 !important;
+    color: #29435c !important;
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 255, 0.78)) !important;
     padding: 6px clamp(10px, 1.6vw, 14px);
     border-radius: 999px;
@@ -840,7 +839,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 }
 
 .badge-item.badge-neutral {
-    color: #452b63 !important;
+    color: #29435c !important;
 }
 
 .badge-item.badge-info {
@@ -901,7 +900,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     left: 14px;
     right: 14px;
     font-size: .72rem;
-    color: #6a5a84;
+    color: #5d6f82;
     font-weight: 600;
     line-height: 1.2;
 }
@@ -912,7 +911,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     left: 14px;
     right: 14px;
     font-size: .72rem;
-    color: #6a5a84;
+    color: #5d6f82;
     font-weight: 600;
     line-height: 1.2;
 }
@@ -964,14 +963,14 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     align-items: center;
     background: rgba(255, 255, 255, 0.93);
     border-radius: 18px;
-    border: 1px solid rgba(118, 77, 150, 0.35);
-    box-shadow: 0 8px 18px rgba(27, 10, 36, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(76, 142, 187, 0.28);
+    box-shadow: 0 8px 18px rgba(35, 102, 147, 0.12), inset 0 2px 0 rgba(255, 255, 255, 0.9);
     padding: 4px 4px 4px 12px;
     gap: 10px;
 }
 
 .select-chevron {
-    color: #8a6aa8;
+    color: #4b7fa5;
     font-size: 1rem;
     pointer-events: none;
 }
@@ -1000,7 +999,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     flex: 1;
     border: none;
     background: transparent;
-    color: #432654;
+    color: #29435c;
     padding: 0.55rem 0.4rem;
     font-size: 0.95rem;
 }
@@ -1010,22 +1009,22 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 }
 
 .select-hospital option {
-    color: #3b1d4a;
-    background: #f7f1ff;
+    color: #29435c;
+    background: #f4faff;
 }
 
 .select-hospital option:checked,
 .select-hospital option:focus {
-    background: #6b3d7d;
+    background: #2f6f9f;
     color: #fff;
 }
 
 .header_div {
-    background: linear-gradient(135deg, #5a2f78, #a06bd4);
+    background: linear-gradient(135deg, #1f5f8f 0%, #2f7fad 58%, #3f9fc8 100%);
     color: #fff;
     border-radius: 32px;
     padding: 18px 26px;
-    box-shadow: 0 25px 50px rgba(24, 0, 30, 0.35);
+    box-shadow: 0 14px 28px rgba(35, 102, 147, 0.22);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1044,18 +1043,18 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     border-radius: 999px;
     font-size: 0.82rem;
     font-weight: 700;
-    background: #f3edff;
-    border: 1px solid #d6c5f7;
-    color: #5e2363;
+    background: #eef7fc;
+    border: 1px solid rgba(76, 142, 187, 0.28);
+    color: #2f6f9f;
 }
 
 .user-patient-strip {
     margin: 10px 0 12px;
     padding: 12px;
     border-radius: 16px;
-    background: linear-gradient(130deg, #edf7ff 0%, #f8f1ff 52%, #eefdf8 100%);
+    background: linear-gradient(130deg, #edf7ff 0%, #f6fbff 52%, #eef8fc 100%);
     border: 1px solid rgba(96, 133, 188, 0.24);
-    box-shadow: 0 8px 20px rgba(39, 24, 58, 0.08);
+    box-shadow: 0 8px 20px rgba(35, 102, 147, 0.08);
 }
 
 .user-patient-title {
@@ -1080,17 +1079,17 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     padding: 11px 12px;
     min-height: 56px;
     background: linear-gradient(140deg, #ffffff, #edf4ff);
-    color: #2f1f45;
+    color: #24384f;
     font-weight: 800;
     font-size: 0.9rem;
     text-align: left;
-    box-shadow: 0 4px 10px rgba(39, 24, 58, 0.07);
+    box-shadow: 0 4px 10px rgba(35, 102, 147, 0.07);
     transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
 
 .user-hospital-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 14px rgba(39, 24, 58, 0.12);
+    box-shadow: 0 8px 14px rgba(35, 102, 147, 0.12);
     border-color: rgba(73, 104, 170, 0.45);
 }
 
@@ -1194,7 +1193,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     .grid-item {
         min-height: 104px;
         border-radius: 14px;
-        box-shadow: 0 6px 14px rgba(39, 24, 58, 0.08);
+        box-shadow: 0 6px 14px rgba(35, 102, 147, 0.08);
     }
 
     .title-item {
@@ -1303,6 +1302,8 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
     #dash-visitas-atraso .table thead th,
     #dash-longa-perm .table thead th {
+        background: #2f6f9f !important;
+        background-image: none !important;
         font-size: .52rem !important;
         font-weight: 500 !important;
         letter-spacing: .04em;
@@ -1516,7 +1517,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                     </div>
                 </div>
                 <table class="table table-sm table-striped table-hover table-condensed" style="margin-top:10px;">
-                    <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">
+                    <thead style="background: #2f6f9f; background-image: none; color: #fff;">
                         <tr>
                             <th style="width:18%">Hospital</th>
                             <th style="width:22%">Paciente</th>
@@ -1629,7 +1630,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 data: {
                     labels: ["2010", "2011", "2012", "2013", "2014", "2015", "2016"],
                     type: 'line',
-                    defaultFontFamily: 'Poppins',
+                    defaultFontFamily: 'Inter',
                     datasets: [{
                         label: "Foods",
                         data: [0, 30, 10, 120, 50, 63, 10],
@@ -1660,8 +1661,8 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                         titleFontColor: '#000',
                         bodyFontColor: '#000',
                         backgroundColor: '#fff',
-                        titleFontFamily: 'Poppins',
-                        bodyFontFamily: 'Poppins',
+                        titleFontFamily: 'Inter',
+                        bodyFontFamily: 'Inter',
                         cornerRadius: 3,
                         intersect: false
                     },
@@ -1669,7 +1670,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                         display: false,
                         labels: {
                             usePointStyle: true,
-                            fontFamily: 'Poppins'
+                            fontFamily: 'Inter'
                         }
                     },
                     scales: {
@@ -1684,7 +1685,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                                 labelString: 'Month'
                             },
                             ticks: {
-                                fontFamily: "Poppins"
+                                fontFamily: "Inter"
                             }
                         }],
                         yAxes: [{
@@ -1696,10 +1697,10 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Value',
-                                fontFamily: "Poppins"
+                                fontFamily: "Inter"
                             },
                             ticks: {
-                                fontFamily: "Poppins"
+                                fontFamily: "Inter"
                             }
                         }]
                     },
@@ -1963,7 +1964,9 @@ canvas {
     position: sticky;
     top: 0;
     z-index: 2;
-    background: linear-gradient(135deg, #7a3a80, #5a296a);
+    background: #2f6f9f !important;
+    background-image: none !important;
+    color: #ffffff;
 }
 
 .th-sortable {

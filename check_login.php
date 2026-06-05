@@ -113,6 +113,10 @@ try {
     ";
 
     $loginIdentifier = mb_strtolower($email_login, 'UTF-8');
+    $loginAliases = [
+        'diretor@fullcare.com.br' => 'diretor@minas.com',
+    ];
+    $loginLookupIdentifier = $loginAliases[$loginIdentifier] ?? $loginIdentifier;
 
     $stmt = $conn->prepare($userSelect . "
         WHERE LOWER(TRIM(email_user)) = :email_identifier
@@ -121,10 +125,10 @@ try {
            OR LOWER(TRIM(usuario_user)) = :user_identifier
         LIMIT 1
     ");
-    $stmt->bindValue(':email_identifier', $loginIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':email2_identifier', $loginIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':login_identifier', $loginIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':user_identifier', $loginIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':email_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':email2_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':login_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+    $stmt->bindValue(':user_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 

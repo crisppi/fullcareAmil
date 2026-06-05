@@ -20,7 +20,7 @@ include_once("templates/header.php");
             background: #fff;
             margin: 0.35rem 0 0.8rem;
             padding: 1rem 1.1rem;
-            box-shadow: 0 10px 25px rgba(95,35,99,0.08);
+            box-shadow: 0 10px 25px rgba(76, 142, 187,0.08);
         }
         .container-fluid {
             margin-top: 12px !important;
@@ -47,12 +47,30 @@ include_once("templates/header.php");
         .factor-chip {
             display: inline-flex;
             align-items: center;
-            background: #f5f3ff;
-            color: #4b1c50;
+            background: #eef7fc;
+            color: #24384f;
             font-size: 0.76rem;
             border-radius: 999px;
             padding: 0.18rem 0.62rem;
             margin: 0.15rem;
+        }
+        .insight-card .table tbody tr:nth-child(odd),
+        .insight-card .table tbody tr:nth-child(odd) > * {
+            background: #fff !important;
+            --bs-table-bg: #fff !important;
+            --bs-table-accent-bg: #fff !important;
+        }
+        .insight-card .table tbody tr:nth-child(even),
+        .insight-card .table tbody tr:nth-child(even) > * {
+            background: #f4faff !important;
+            --bs-table-bg: #f4faff !important;
+            --bs-table-accent-bg: #f4faff !important;
+        }
+        .insight-card .table-hover tbody tr:hover,
+        .insight-card .table-hover tbody tr:hover > * {
+            background: #e8f4fb !important;
+            --bs-table-bg: #e8f4fb !important;
+            --bs-table-accent-bg: #e8f4fb !important;
         }
     </style>
 </head>
@@ -60,7 +78,7 @@ include_once("templates/header.php");
     <div class="container-fluid" style="margin-top:24px; padding:0 0 16px;">
         <div class="row mb-2">
             <div class="col-12">
-                <h2 class="mb-0 fw-semibold" style="color:#5e2363;">Insights explicáveis</h2>
+                <h2 class="mb-0 fw-semibold" style="color:#2f6f9f;">Insights explicáveis</h2>
             </div>
         </div>
         <div class="row mb-2">

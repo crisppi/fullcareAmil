@@ -10,6 +10,29 @@
     /* Adiciona a barra de rolagem se o conteúdo exceder a altura */
 }
 
+.chat-page .chat-sidebar-title {
+    margin-bottom: 14px;
+}
+
+.chat-page .chat-sidebar-title h2 {
+    margin: 0 0 4px;
+    color: #1f2d3d;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.chat-page .chat-sidebar-title p,
+.chat-page .chat-recipient-meta {
+    margin: 0;
+    color: #667085;
+    font-size: 0.85rem;
+}
+
+.chat-page .chat-empty-users {
+    color: #667085;
+    font-size: 0.9rem;
+}
+
 .chat-page .user-list {
     list-style: none;
     /* Remove as bolinhas da lista */

@@ -8,12 +8,12 @@
             z-index: 1055;
         }
 
-        /* Selects roxos (tabelas adicionais) */
+        /* Selects azuis (tabelas adicionais) */
         .select-purple,
         .select-purple:focus {
-            background-color: #5e2363 !important;
-            color: #fff !important;
-            border: 1px solid #5e2363 !important;
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border: 1px solid #8fc7f5 !important;
         }
 
         .select-purple,
@@ -34,7 +34,7 @@
         .detail-select:focus,
         #relatorio-detalhado,
         #relatorio-detalhado:focus {
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>") !important;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23111827'><path d='M7 10l5 5 5-5z'/></svg>") !important;
         }
 
         .bootstrap-select .dropdown-toggle.select-purple,
@@ -42,25 +42,25 @@
         .bootstrap-select .dropdown-toggle.select-purple .filter-option-inner,
         .bootstrap-select .dropdown-toggle.select-purple .filter-option-inner-inner,
         .bootstrap-select .dropdown-toggle.select-purple.btn {
-            background-color: #5e2363 !important;
-            color: #fff !important;
-            border: 1px solid #5e2363 !important;
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border: 1px solid #8fc7f5 !important;
             font-weight: 600 !important;
             box-shadow: none !important;
         }
 
         .detail-select,
         .detail-select:focus {
-            background-color: #5e2363 !important;
-            color: #fff !important;
-            border: 1px solid #5e2363 !important;
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border: 1px solid #8fc7f5 !important;
             font-weight: 700;
             box-shadow: none !important;
         }
 
         .detail-select option {
-            background-color: #5e2363 !important;
-            color: #fff !important;
+            background-color: #f8fbff !important;
+            color: #111827 !important;
             font-weight: 700;
         }
 
@@ -296,14 +296,14 @@
         #internado_int,
         #data_alta_alt,
         #tipo_alta_alt {
-            min-height: 42px !important;
-            height: 42px !important;
+            min-height: 36px !important;
+            height: 36px !important;
         }
 
         #data_alta_alt,
         #tipo_alta_alt {
-            padding-top: 8px;
-            padding-bottom: 8px;
+            padding-top: 3px;
+            padding-bottom: 3px;
             line-height: 24px;
         }
 
@@ -798,11 +798,11 @@
         }
 
         .internacao-page__hero {
-            background: linear-gradient(135deg, #0f5f95 0%, #197fac 55%, #35a6d2 100%);
+            background: linear-gradient(135deg, #2f6f9f 0%, #4b90bd 54%, #5eb4d8 100%);
             color: #fff;
-            border-radius: 24px;
+            border-radius: 12px;
             padding: 8px 14px;
-            box-shadow: 0 8px 16px rgba(37, 18, 54, 0.12);
+            box-shadow: 0 8px 16px rgba(35, 102, 147, 0.16);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -854,18 +854,18 @@
         }
 
         .internacao-page__content {
-            margin-top: 12px;
+            margin-top: 6px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 7px;
         }
 
         .internacao-card {
             background: linear-gradient(180deg, #f8f7fc 0%, #f3f4f8 100%);
-            border-radius: 22px;
-            padding: 12px 14px 14px;
+            border-radius: 12px;
+            padding: 8px 10px 10px;
             border: 1px solid #e6e1ef;
-            box-shadow: 0 10px 26px rgba(37, 18, 54, .08);
+            box-shadow: 0 8px 18px rgba(37, 18, 54, .06);
             margin: 0;
             width: 100%;
         }
@@ -875,9 +875,9 @@
             align-items: flex-start;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 8px;
-            padding-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 5px;
+            padding-bottom: 4px;
             border-bottom: 1px solid rgba(111, 69, 162, 0.10);
         }
 
@@ -907,8 +907,8 @@
         .internacao-card__tag {
             background: #f1ebfb;
             color: #5c3687;
-            padding: 4px 9px;
-            border-radius: 999px;
+            padding: 3px 8px;
+            border-radius: 8px;
             font-weight: 700;
             font-size: .56rem;
             border: 1px solid #e2d4f6;
@@ -1210,7 +1210,7 @@
         .internacao-card__body {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
             padding: 0;
         }
 
@@ -1239,7 +1239,7 @@
         .internacao-head-grid {
             display: grid !important;
             grid-template-columns: repeat(18, minmax(0, 1fr));
-            gap: 8px 8px !important;
+            gap: 5px 6px !important;
             align-items: start !important;
             margin-top: 0;
         }
@@ -1318,12 +1318,60 @@
             display: none;
         }
 
+        .internacao-head-grid > .form-group > .form-control,
+        .internacao-head-grid > .form-group > select.form-control,
+        .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle {
+            min-height: 36px !important;
+            height: 36px !important;
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+            line-height: 1.25 !important;
+        }
+
+        .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle .filter-option,
+        .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle .filter-option-inner {
+            min-height: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+            line-height: 24px !important;
+        }
+
+        .internacao-head-grid > .hospital-col .control-label,
+        .internacao-head-grid > .patient-col .control-label {
+            color: #2f4767;
+            font-size: .82rem;
+            font-weight: 800;
+        }
+
+        .internacao-head-grid > .patient-col .control-label {
+            color: #5e2363;
+        }
+
         .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle,
         .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle,
         .internacao-head-grid > .hospital-col select,
         .internacao-head-grid > .patient-col select {
             font-size: .84rem !important;
             font-weight: 600 !important;
+            background: linear-gradient(180deg, #f2f8ff 0%, #ffffff 100%) !important;
+            border-color: rgba(70, 118, 166, .32) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85) !important;
+        }
+
+        .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle,
+        .internacao-head-grid > .patient-col select {
+            background: linear-gradient(180deg, #fbf7ff 0%, #ffffff 100%) !important;
+            border-color: rgba(94, 35, 99, .30) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85) !important;
+        }
+
+        .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle .filter-option-inner-inner,
+        .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+            font-weight: 600 !important;
+            color: #1f2937 !important;
         }
 
         @media (max-width: 1399.98px) {
@@ -1390,7 +1438,7 @@
         }
 
         .internacao-card--fields .internacao-card__body {
-            gap: 10px;
+            gap: 6px;
         }
 
         .internacao-card--fields .internacao-card__body .row,
@@ -1399,12 +1447,12 @@
         }
 
         .internacao-card--fields .form-group {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .internacao-card--fields .form-group.row {
-            margin-top: 2px;
-            margin-bottom: 2px;
+            margin-top: 0;
+            margin-bottom: 0;
         }
 
         .internacao-card--fields .form-check {
@@ -1547,7 +1595,7 @@
             justify-content: space-between;
             margin-bottom: 8px;
             padding-bottom: 6px;
-            border-bottom: 1px solid rgba(111, 69, 162, .10);
+            border-bottom: 1px solid rgba(47, 111, 159, .15);
         }
 
         .tabelas-adicionais-card__eyebrow {
@@ -1557,14 +1605,14 @@
             font-size: .58rem;
             font-weight: 800;
             line-height: 1.1;
-            color: #6e4a96;
+            color: #2f6f9f;
         }
 
         .tabelas-adicionais-card__title {
             margin: 0;
             font-size: .82rem;
             font-weight: 800;
-            color: #2a1b43;
+            color: #0d3052;
         }
 
         .patient-inline-actions {
@@ -1619,10 +1667,18 @@
         .internacao-card .bootstrap-select > .dropdown-toggle,
         .tabelas-adicionais-card .form-control,
         .detalhes-card .form-control {
-            border-radius: 12px !important;
+            border-radius: 8px !important;
             border-color: #d8dbe5 !important;
             box-shadow: none !important;
             background-color: #fff !important;
+        }
+
+        /* select-purple dentro do card tabelas: azul, sobrepõe o #fff acima */
+        .tabelas-adicionais-card .form-control.select-purple,
+        .tabelas-adicionais-card .bootstrap-select > .dropdown-toggle.select-purple {
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border-color: #8fc7f5 !important;
         }
 
         .internacao-card .form-control:focus,
@@ -1697,6 +1753,7 @@
         .tabelas-selects .bootstrap-select > .dropdown-toggle .filter-option,
         .tabelas-selects .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
             font-size: .82rem !important;
+            font-weight: 400 !important;
         }
 
         .tabelas-selects .tabelas-col {
@@ -1735,7 +1792,7 @@
         .tabelas-selects > .tabelas-col .detail-select,
         .tabelas-selects > .tabelas-col .select-purple {
             border-radius: 14px !important;
-            font-weight: 800 !important;
+            font-weight: 400 !important;
             transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
         }
 
@@ -1747,30 +1804,30 @@
 
         .tabelas-selects > .tabelas-col #relatorio-detalhado,
         .tabelas-selects > .tabelas-col .detail-select {
-            background: linear-gradient(180deg, #ecfff1 0%, #dcfce7 100%) !important;
-            border: 1px solid #7ccf95 !important;
-            color: #14532d !important;
-            box-shadow: 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+            background: linear-gradient(180deg, #eef7ff 0%, #d7ebff 100%) !important;
+            border: 1px solid #8fc7f5 !important;
+            color: #111827 !important;
+            box-shadow: 0 6px 14px rgba(59, 130, 246, 0.12) !important;
         }
 
         .tabelas-selects > .tabelas-col #relatorio-detalhado:focus,
         .tabelas-selects > .tabelas-col .detail-select:focus {
-            border-color: #3ea76a !important;
-            box-shadow: 0 0 0 .18rem rgba(62, 167, 106, 0.18), 0 6px 14px rgba(34, 197, 94, 0.14) !important;
+            border-color: #5aa8e8 !important;
+            box-shadow: 0 0 0 .18rem rgba(90, 168, 232, 0.18), 0 6px 14px rgba(59, 130, 246, 0.12) !important;
         }
 
         .tabelas-selects > .tabelas-col .select-purple,
         .tabelas-selects > .tabelas-col select[id^="select_"] {
-            background: linear-gradient(180deg, #f4ecff 0%, #eadbff 100%) !important;
-            border: 1px solid #b89ae7 !important;
-            color: #512b81 !important;
-            box-shadow: 0 8px 16px rgba(111, 69, 162, 0.14) !important;
+            background: linear-gradient(180deg, #eef7ff 0%, #d7ebff 100%) !important;
+            border: 1px solid #8fc7f5 !important;
+            color: #111827 !important;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.12) !important;
         }
 
         .tabelas-selects > .tabelas-col .select-purple:focus,
         .tabelas-selects > .tabelas-col select[id^="select_"]:focus {
-            border-color: #8450bf !important;
-            box-shadow: 0 0 0 .18rem rgba(132, 80, 191, 0.18), 0 8px 16px rgba(111, 69, 162, 0.14) !important;
+            border-color: #5aa8e8 !important;
+            box-shadow: 0 0 0 .18rem rgba(90, 168, 232, 0.18), 0 8px 16px rgba(59, 130, 246, 0.12) !important;
         }
 
         /* Padronização completa das tabelas adicionais (Internação) */
@@ -2046,6 +2103,7 @@
             min-height: 42px !important;
             height: 42px !important;
             min-width: 42px !important;
+            font-weight: 400 !important;
         }
 
         /* Placeholder unificado em campos do formulario */
@@ -2056,7 +2114,7 @@
             opacity: 1;
             font-size: .78rem !important;
             font-weight: 500 !important;
-            font-family: "Poppins", sans-serif !important;
+            font-family: var(--app-font-family) !important;
             letter-spacing: 0 !important;
         }
 
@@ -2066,7 +2124,7 @@
             color: #c4c4c4 !important;
             font-size: .78rem !important;
             font-weight: 500 !important;
-            font-family: "Poppins", sans-serif !important;
+            font-family: var(--app-font-family) !important;
             letter-spacing: 0 !important;
         }
 
@@ -2085,7 +2143,7 @@
             color: #c4c4c4 !important;
             font-size: .78rem !important;
             font-weight: 500 !important;
-            font-family: "Poppins", sans-serif !important;
+            font-family: var(--app-font-family) !important;
             letter-spacing: 0 !important;
         }
 
@@ -2117,7 +2175,7 @@
             color: #c4c4c4 !important;
             font-weight: 500 !important;
             font-size: .78rem !important;
-            font-family: "Poppins", sans-serif !important;
+            font-family: var(--app-font-family) !important;
             letter-spacing: 0 !important;
         }
 
@@ -2322,9 +2380,13 @@
             overflow: hidden;
         }
 
+        .entity-form .table-responsive thead {
+            background: #2f6f9f;
+        }
+
         .entity-form .table-responsive thead th {
-            background: #f5effa;
-            color: #4a345f;
+            background: transparent;
+            color: #fff;
             border-bottom-width: 1px;
             font-size: .68rem;
             text-transform: uppercase;
@@ -2397,10 +2459,10 @@
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-page__hero {
-            min-height: 58px !important;
-            margin: 0 0 5px !important;
-            padding: 14px !important;
-            border-radius: 18px !important;
+            min-height: 50px !important;
+            margin: 0 0 3px !important;
+            padding: 9px 12px !important;
+            border-radius: 12px !important;
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-page__hero h1 {
@@ -2431,25 +2493,30 @@
 
         #main-container.internacao-page.cadastro-layout .internacao-page__content {
             display: block !important;
+            margin-top: 4px !important;
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-page__tag,
         #main-container.internacao-page.cadastro-layout .internacao-card__tag,
         #main-container.internacao-page.cadastro-layout .entity-step-badge {
-            padding: 4px 8px !important;
+            padding: 3px 8px !important;
+            border-radius: 8px !important;
             font-size: .6rem !important;
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-card {
             border: 0 !important;
-            border-radius: 0 !important;
+            border-radius: 10px !important;
             background: transparent !important;
             box-shadow: none !important;
+            padding-top: 6px !important;
+            padding-bottom: 8px !important;
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-card__header {
-            padding: 8px 8px 2px !important;
+            padding: 4px 8px 1px !important;
             border-bottom: 0 !important;
+            margin-bottom: 3px !important;
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-card__title {
@@ -2458,8 +2525,8 @@
         }
 
         #main-container.internacao-page.cadastro-layout .internacao-card__body {
-            gap: 5px !important;
-            padding: 4px 8px 10px !important;
+            gap: 3px !important;
+            padding: 2px 8px 6px !important;
             background: transparent !important;
         }
 
@@ -2506,7 +2573,7 @@
         #main-container.internacao-page.cadastro-layout .entity-form .form-group,
         #main-container.internacao-page.cadastro-layout .entity-form [class*="col-md-"].form-group,
         #main-container.internacao-page.cadastro-layout .entity-form [class*="col-sm-"].form-group {
-            margin-bottom: 8px !important;
+            margin-bottom: 4px !important;
         }
 
         #main-container.internacao-page.cadastro-layout .entity-form .form-group label {
@@ -2521,11 +2588,11 @@
         #main-container.internacao-page.cadastro-layout #add-movie-form .form-control,
         #main-container.internacao-page.cadastro-layout #multi-step-form select.form-control,
         #main-container.internacao-page.cadastro-layout #add-movie-form select.form-control {
-            min-height: 40px !important;
-            height: 40px !important;
-            padding-top: 5px !important;
-            padding-bottom: 5px !important;
-            border-radius: 9px !important;
+            min-height: 36px !important;
+            height: 36px !important;
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+            border-radius: 8px !important;
             font-size: .78rem !important;
         }
 
@@ -2566,4 +2633,158 @@
             font-weight: 800 !important;
             line-height: 1 !important;
             box-shadow: 0 8px 16px rgba(94, 35, 99, .14);
+        }
+
+        /* Compactacao visual do cadastro de internacao */
+        .internacao-page > .internacao-page__hero {
+            margin-bottom: 4px !important;
+            border-radius: 10px !important;
+            padding: 8px 12px !important;
+        }
+
+        .internacao-page > .internacao-page__content {
+            margin-top: 5px !important;
+            gap: 6px !important;
+        }
+
+        .internacao-page .internacao-card {
+            border-radius: 10px !important;
+            padding: 7px 9px 9px !important;
+            box-shadow: 0 7px 16px rgba(37, 18, 54, .055) !important;
+        }
+
+        .internacao-page .internacao-card__header {
+            margin-bottom: 4px !important;
+            padding-bottom: 3px !important;
+        }
+
+        .internacao-page .internacao-card__body {
+            gap: 5px !important;
+        }
+
+        .internacao-page .internacao-head-grid,
+        .internacao-page .assistenciais-row-full,
+        .internacao-page .form-group.row {
+            gap: 5px 6px !important;
+            row-gap: 4px !important;
+        }
+
+        .internacao-page .form-group,
+        .internacao-page .internacao-card--fields .form-group {
+            margin-bottom: 2px !important;
+        }
+
+        .internacao-page .internacao-card label,
+        .internacao-page .entity-form .form-group label {
+            margin-bottom: 2px !important;
+            line-height: 1.08 !important;
+        }
+
+        .internacao-page .internacao-head-grid > .form-group > label,
+        .internacao-page .internacao-head-grid > .hospital-col > .d-flex.mb-1,
+        .internacao-page .internacao-head-grid > .patient-col > .d-flex.mb-1 {
+            height: 24px !important;
+            min-height: 24px !important;
+            margin-bottom: 2px !important;
+            align-items: flex-end !important;
+        }
+
+        .internacao-page .internacao-head-grid > .patient-col > .d-flex.mb-1 {
+            justify-content: space-between !important;
+        }
+
+        .internacao-page .internacao-head-grid .patient-label-actions {
+            height: 24px !important;
+            margin-bottom: 0 !important;
+            align-items: center !important;
+        }
+
+        .internacao-page .internacao-head-grid .patient-inline-link {
+            min-height: 22px !important;
+            height: 22px !important;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        .internacao-page .internacao-card .form-control,
+        .internacao-page .entity-form .form-control,
+        .internacao-page .entity-form .form-control-sm,
+        .internacao-page .internacao-card .bootstrap-select > .dropdown-toggle,
+        .internacao-page .entity-form .bootstrap-select > .dropdown-toggle {
+            min-height: 36px !important;
+            height: 36px !important;
+            border-radius: 8px !important;
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+        }
+
+        .internacao-page .internacao-head-grid > .form-group > .form-control,
+        .internacao-page .internacao-head-grid > .form-group > select.form-control,
+        .internacao-page .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle {
+            font-size: .84rem !important;
+            font-weight: 500 !important;
+            line-height: 20px !important;
+            vertical-align: middle !important;
+        }
+
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-datetime-edit,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit,
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-datetime-edit-text,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-text,
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-datetime-edit-day-field,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-datetime-edit-month-field,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-datetime-edit-year-field,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-year-field,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+            font-family: var(--app-font-family) !important;
+            font-size: .84rem !important;
+            font-weight: 500 !important;
+            line-height: 20px !important;
+        }
+
+        .internacao-page .internacao-head-grid input[type="date"]::-webkit-calendar-picker-indicator,
+        .internacao-page .internacao-head-grid input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            width: 16px !important;
+            height: 16px !important;
+            margin: 0 !important;
+        }
+
+        .internacao-page .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle,
+        .internacao-page .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle,
+        .internacao-page .internacao-head-grid > .hospital-col select,
+        .internacao-page .internacao-head-grid > .patient-col select {
+            min-height: 36px !important;
+            height: 36px !important;
+            padding-top: 3px !important;
+            padding-bottom: 3px !important;
+            line-height: 1.25 !important;
+            box-shadow: none !important;
+        }
+
+        .internacao-page .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle .filter-option,
+        .internacao-page .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle .filter-option,
+        .internacao-page .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle .filter-option-inner,
+        .internacao-page .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle .filter-option-inner {
+            min-height: 0 !important;
+            height: auto !important;
+            line-height: 20px !important;
+        }
+
+        .internacao-page .internacao-head-grid > .hospital-col .bootstrap-select > .dropdown-toggle .filter-option-inner-inner,
+        .internacao-page .internacao-head-grid > .patient-col .bootstrap-select > .dropdown-toggle .filter-option-inner-inner {
+            line-height: 20px !important;
+        }
+
+        .internacao-page textarea.form-control,
+        .internacao-page .entity-form textarea.form-control {
+            min-height: 58px !important;
+            height: auto !important;
+        }
+
+        .internacao-page .internacao-card__tag,
+        .internacao-page .internacao-page__tag {
+            border-radius: 8px !important;
         }

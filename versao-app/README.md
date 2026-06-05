@@ -20,7 +20,7 @@ Aplicacao enxuta para operacao de internacao, TUSS e prorrogacao, isolada do res
 
 ## Como usar
 
-1. Abra `http://localhost/FullCare/versao-app/`
+1. Abra `http://localhost/fullcareAmil/versao-app/`
 2. Cadastre uma internacao
 3. Vincule itens TUSS
 4. Registre a prorrogacao

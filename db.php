@@ -94,7 +94,7 @@ if (!function_exists('db_try_local_profile')) {
                                     ];
                                 }
                             }
-                        } catch (Throwable $e) {
+                        } catch (Throwable $_e) {
                             // segue tentando outras combinacoes locais
                         }
                     }
@@ -108,36 +108,8 @@ if (!function_exists('db_try_local_profile')) {
 if (!function_exists('db_legacy_profiles')) {
     function db_legacy_profiles(): array
     {
-        // Modo de compatibilidade para evitar quebra após pull em ambientes sem .env.
-        return [
-            [
-                'host' => 'srv953.hstgr.io',
-                'name' => 'u650318666_mydb_accert_ho',
-                'user' => 'u650318666_diretoria10',
-                'pass' => 'FullCare@BD2025!',
-                'port' => 3306,
-                'charset' => 'utf8',
-                'label' => 'LegacyHostinger',
-            ],
-            [
-                'host' => 'mydb-accert-new.mysql.uhserver.com',
-                'name' => 'mydb_accert_new',
-                'user' => 'diretoria5',
-                'pass' => 'Fullcare12@',
-                'port' => 3306,
-                'charset' => 'utf8',
-                'label' => 'LegacyUolNew',
-            ],
-            [
-                'host' => 'mdb-accert.mysql.uhserver.com',
-                'name' => 'mydb_accert',
-                'user' => 'diretoria2',
-                'pass' => 'Guga@0401',
-                'port' => 3306,
-                'charset' => 'utf8',
-                'label' => 'LegacyUolFallback',
-            ],
-        ];
+        // Perfis legados lidos do .env — sem credenciais hardcoded.
+        return [];
     }
 }
 

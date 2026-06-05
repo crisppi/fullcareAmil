@@ -12,7 +12,7 @@
             background: #ffffff;
             padding: 32px 0 16px;
             border-top: 1px solid #e0e0e0;
-            font-family: "Inter", "Segoe UI", sans-serif;
+            font-family: "Inter", Arial, Helvetica, sans-serif;
             width: 100%;
         }
 

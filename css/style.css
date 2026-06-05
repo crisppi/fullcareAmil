@@ -3,7 +3,12 @@
     --select-focus: blue;
     --select-arrow: var(--select-border);
     --app-zoom: 0.9;
+    --app-font-family: "Inter", Arial, Helvetica, sans-serif;
+    --bs-font-sans-serif: var(--app-font-family);
     --header-offset: 112px;
+    --fullcare-blue-gradient: linear-gradient(135deg, #2f6f9f 0%, #4b90bd 54%, #5eb4d8 100%);
+    --fullcare-table-head-bg: #2f6f9f;
+    --fullcare-blue-border: #2d6c9b;
 }
 
 * {
@@ -18,10 +23,23 @@
 /* Certifique-se de que o corpo da página tenha padding suficiente */
 
 body {
+    font-family: var(--app-font-family);
     padding-top: var(--header-offset);
     zoom: 90%;
 
     /* Ajuste este valor de acordo com a altura real do seu header */
+}
+
+button,
+input,
+select,
+textarea,
+.btn,
+.form-control,
+.form-select,
+.dropdown-menu,
+.table {
+    font-family: var(--app-font-family);
 }
 
 @supports (zoom: 1) {
@@ -124,7 +142,12 @@ p {
 }
 
 .page-title {
-    color: #000;
+    display: inline-flex;
+    align-items: center;
+    color: #fff;
+    background: var(--fullcare-blue-gradient);
+    border-radius: 18px;
+    padding: 8px 16px;
     margin-top: 1.25rem;
     margin-bottom: 0.75rem;
 }
@@ -192,8 +215,8 @@ p {
 }
 
 .table thead {
-    background-color: #197fac;
-    border-color: #197fac;
+    background: var(--fullcare-table-head-bg);
+    border-color: var(--fullcare-blue-border);
     height: 37px;
     vertical-align: middle;
 }
@@ -426,7 +449,7 @@ p {
 
 .select2-container--default .select2-results__option {
     font-size: 0.7em !important;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--app-font-family);
     color: rgb(122, 121, 121);
 }
 
@@ -574,17 +597,17 @@ select {
 }
 
 
-/* Select fechado: fundo lilás */
+/* Select fechado: fundo azul */
 .select-purple,
 .select-purple:focus {
-    background-color: #5e2363 !important;
+    background-color: #2f6f9f !important;
     color: #fff !important;
-    border: 1px solid #5e2363 !important;
+    border: 1px solid #2f6f9f !important;
 }
 
-/* Dropdown das opções (funciona no Firefox e em navegadores compatíveis) */
+/* Dropdown das opções */
 .select-purple option {
-    background-color: #5e2363 !important;
+    background-color: #2f6f9f !important;
     color: #fff !important;
 }
 
@@ -715,7 +738,7 @@ select.select-placeholder-empty option[value=""] {
     opacity: 1;
     font-size: .78rem !important;
     font-weight: 500 !important;
-    font-family: "Poppins", sans-serif !important;
+    font-family: "Inter", Arial, Helvetica, sans-serif !important;
     font-style: normal !important;
     letter-spacing: 0 !important;
 }
@@ -724,7 +747,7 @@ select.select-placeholder-empty option {
     color: #333 !important;
     font-style: normal !important;
     font-weight: 400 !important;
-    font-family: "Poppins", sans-serif !important;
+    font-family: "Inter", Arial, Helvetica, sans-serif !important;
 }
 
 select:invalid,
@@ -907,11 +930,10 @@ input:invalid {
     min-width: 190px;
     left: auto;
     right: 0;
-    background: rgba(255, 255, 255, 0.98);
+    background: #ffffff;
     border: 1px solid rgba(94, 35, 99, 0.16);
     box-shadow: 0 18px 40px rgba(29, 18, 42, 0.18);
     border-radius: 14px;
-    backdrop-filter: blur(10px);
 }
 
 .fc-list-action .dropdown-menu li,
@@ -933,10 +955,13 @@ input:invalid {
     color: #2b2234;
     justify-content: flex-start;
     text-align: left;
-    padding: 6px 12px;
+    padding: 7px 12px;
     margin: 1px 6px;
     border-radius: 10px;
     font-weight: 400;
+    line-height: 1.28;
+    text-rendering: optimizeLegibility;
+    text-transform: none !important;
 }
 
 .fc-list-action .dropdown-menu .btn-default:hover,
@@ -999,4 +1024,24 @@ input:invalid {
         width: 100%;
         max-width: none;
     }
+}
+
+/* Dashboard inicial: diferencia o filtro de hospital dos cards de indicadores. */
+#main-container .grid-container > .grid-item.grid-item-filter {
+    background:
+        radial-gradient(circle at 8% 110%, rgba(47, 111, 159, 0.18), transparent 58%),
+        linear-gradient(145deg, #d9eaf5 0%, #c8e1f0 58%, #dbeef8 100%) !important;
+    border-color: rgba(47, 111, 159, 0.28) !important;
+    box-shadow: 0 10px 22px rgba(35, 102, 147, 0.16) !important;
+}
+
+#main-container .grid-container > .grid-item.grid-item-filter::before {
+    background: radial-gradient(circle at top left, rgba(47, 111, 159, 0.20), transparent 56%) !important;
+    opacity: 0.75 !important;
+}
+
+#main-container .grid-container > .grid-item.grid-item-filter .select-shell {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: rgba(47, 111, 159, 0.36) !important;
+    box-shadow: 0 8px 18px rgba(35, 102, 147, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
 }

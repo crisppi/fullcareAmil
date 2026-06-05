@@ -12,14 +12,6 @@
 #container-tuss .btn-add {background-color:#007bff;color:#fff;}
 #container-tuss .btn-remove {background-color:#dc3545;color:#fff;}
 
-/* Corrige o wrapper do bootstrap-select para não criar caixa branca extra */
-#container-tuss .bootstrap-select.form-control,
-#container-tuss .bootstrap-select.form-control-sm {
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-}
-
 #container-tuss .adicional-card {
     background:#f5f5f9;
     border-radius:22px;
@@ -134,16 +126,13 @@
             <input type="hidden" value="<?= $_SESSION["id_usuario"] ?>" id="fk_usuario_tuss" name="fk_usuario_tuss">
 
             <div class="form-group col-sm-3">
-                <label class="control-label" for="tuss_solicitado">Descrição Tuss</label>
-                <select onchange="generateTussJSON()" class="form-control-sm form-control"
-                    data-size="5" data-live-search="true" id="tuss_solicitado" name="tuss_solicitado">
-                    <option value="">...</option>
-                    <?php foreach ($tussGeral as $tuss): ?>
-                    <option value="<?= $tuss["cod_tuss"] ?>">
-                        <?= $tuss['cod_tuss'] . " - " . $tuss["terminologia_tuss"] ?>
-                    </option>
-                    <?php endforeach; ?>
-                </select>
+                <label class="control-label">Descrição Tuss</label>
+                <div class="tuss-ac-wrap" style="position:relative">
+                    <input type="text" class="form-control-sm form-control tuss-ac-text"
+                        placeholder="Digite código ou descrição" autocomplete="off">
+                    <input type="hidden" name="tuss_solicitado" class="tuss-ac-val">
+                    <div class="tuss-ac-drop"></div>
+                </div>
             </div>
 
             <div class="form-group col-sm-2">
@@ -247,14 +236,129 @@
     </div>
 </div>
 
+<style>
+.tuss-ac-drop {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+.tuss-ac-item {
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: .88rem;
+    line-height: 1.3;
+}
+.tuss-ac-item:hover, .tuss-ac-item.active {
+    background: #f0eaff;
+    color: #3a184f;
+}
+.tuss-ac-empty {
+    padding: 8px 10px;
+    color: #999;
+    font-size: .85rem;
+}
+</style>
+
 <script>
+var _tussAjaxUrl = '<?= $BASE_URL ?>ajax/search_tuss.php';
+
+function initTussAutocomplete(container) {
+    container.querySelectorAll('.tuss-ac-text').forEach(function(inp) {
+        if (inp.dataset.acInit) return;
+        inp.dataset.acInit = '1';
+
+        var wrap = inp.closest('.tuss-ac-wrap');
+        var hiddenVal = wrap.querySelector('.tuss-ac-val');
+        var drop = wrap.querySelector('.tuss-ac-drop');
+        var timer, activeIdx = -1, lastResults = [];
+
+        function closeDrop() { drop.style.display = 'none'; activeIdx = -1; }
+        function openDrop() { drop.style.display = 'block'; }
+
+        function renderResults(results) {
+            lastResults = results;
+            activeIdx = -1;
+            drop.innerHTML = '';
+            if (!results.length) {
+                drop.innerHTML = '<div class="tuss-ac-empty">Nenhum resultado</div>';
+            } else {
+                results.forEach(function(item, i) {
+                    var div = document.createElement('div');
+                    div.className = 'tuss-ac-item';
+                    div.textContent = item.text;
+                    div.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        inp.value = item.text;
+                        hiddenVal.value = item.id;
+                        closeDrop();
+                        generateTussJSON();
+                    });
+                    drop.appendChild(div);
+                });
+            }
+            openDrop();
+        }
+
+        function search(q) {
+            var url = _tussAjaxUrl + '?q=' + encodeURIComponent(q);
+            fetch(url, {credentials: 'same-origin'})
+                .then(function(r){ return r.json(); })
+                .then(function(data){ renderResults(data.results || []); })
+                .catch(function(){ closeDrop(); });
+        }
+
+        inp.addEventListener('input', function() {
+            clearTimeout(timer);
+            var q = inp.value.trim();
+            hiddenVal.value = '';
+            if (q.length < 2) { closeDrop(); return; }
+            timer = setTimeout(function(){ search(q); }, 280);
+        });
+
+        inp.addEventListener('keydown', function(e) {
+            var items = drop.querySelectorAll('.tuss-ac-item');
+            if (!items.length) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIdx = Math.max(activeIdx - 1, 0);
+            } else if (e.key === 'Enter' && activeIdx >= 0) {
+                e.preventDefault();
+                items[activeIdx].dispatchEvent(new MouseEvent('mousedown'));
+                return;
+            } else if (e.key === 'Escape') {
+                closeDrop(); return;
+            } else { return; }
+            items.forEach(function(el, i){ el.classList.toggle('active', i === activeIdx); });
+            if (items[activeIdx]) items[activeIdx].scrollIntoView({block:'nearest'});
+        });
+
+        inp.addEventListener('blur', function() {
+            setTimeout(closeDrop, 150);
+        });
+    });
+}
+
 // Mostrar/esconder container conforme select_tuss
 document.addEventListener("DOMContentLoaded", function() {
     const selectTuss = document.getElementById("select_tuss");
     const containerTuss = document.getElementById("container-tuss");
     if (selectTuss && containerTuss) {
         const toggleTussContainer = () => {
-            containerTuss.style.display = (selectTuss.value === "s") ? "block" : "none";
+            const showTuss = selectTuss.value === "s";
+            containerTuss.style.display = showTuss ? "block" : "none";
+            if (showTuss) initTussAutocomplete(document.getElementById('tussFieldsContainer'));
         };
         selectTuss.addEventListener("change", toggleTussContainer);
         toggleTussContainer();
@@ -272,14 +376,12 @@ function addTussField() {
 
       <div class="form-group col-sm-3">
         <label class="control-label">Descrição Tuss</label>
-        <select onchange="generateTussJSON()" class="form-control-sm form-control" data-size="5" data-live-search="true" name="tuss_solicitado">
-          <option value="">...</option>
-          <?php foreach ($tussGeral as $tuss): ?>
-            <option value="<?= $tuss["cod_tuss"] ?>">
-              <?= $tuss['cod_tuss'] . " - " . $tuss["terminologia_tuss"] ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
+        <div class="tuss-ac-wrap" style="position:relative">
+          <input type="text" class="form-control-sm form-control tuss-ac-text"
+              placeholder="Digite código ou descrição" autocomplete="off">
+          <input type="hidden" name="tuss_solicitado" class="tuss-ac-val">
+          <div class="tuss-ac-drop"></div>
+        </div>
       </div>
 
       <div class="form-group col-sm-2">
@@ -317,7 +419,9 @@ function addTussField() {
   `;
     tussFieldsContainer.insertAdjacentHTML("beforeend", newField);
 
-    // atualiza JSON
+    const lastRow = tussFieldsContainer.lastElementChild;
+    initTussAutocomplete(lastRow);
+
     generateTussJSON();
 }
 
@@ -369,14 +473,15 @@ function clearTussInputs() {
         if (container.hasAttribute("data-initial")) {
             // limpa valores da inicial
             container.querySelectorAll('input:not([type="hidden"])').forEach(i => i.value = '');
-            const s1 = container.querySelector('[name="tuss_solicitado"]');
-            const s2 = container.querySelector('[name="tuss_liberado_sn"]');
-            if (s1) {
-                s1.value = '';
+            var wrap = container.querySelector('.tuss-ac-wrap');
+            if (wrap) {
+                var txt = wrap.querySelector('.tuss-ac-text');
+                var val = wrap.querySelector('.tuss-ac-val');
+                if (txt) txt.value = '';
+                if (val) val.value = '';
             }
-            if (s2) {
-                s2.value = '';
-            }
+            var s2 = container.querySelector('[name="tuss_liberado_sn"]');
+            if (s2) s2.value = '';
         } else {
             container.remove();
         }

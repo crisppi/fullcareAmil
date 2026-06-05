@@ -422,6 +422,46 @@
             grid-column: span 3;
         }
 
+        .edit-head-grid .edit-head-hospital,
+        .edit-head-grid .edit-head-patient {
+            padding: 12px 14px 14px;
+            border-color: rgba(70, 118, 166, .24);
+            background: linear-gradient(180deg, #f2f8ff 0%, #ffffff 100%);
+            box-shadow: 0 10px 24px rgba(70, 118, 166, .11), inset 0 1px 0 rgba(255,255,255,.9);
+        }
+
+        .edit-head-grid .edit-head-patient {
+            border-color: rgba(94, 35, 99, .22);
+            background: linear-gradient(180deg, #fbf7ff 0%, #ffffff 100%);
+            box-shadow: 0 10px 24px rgba(94, 35, 99, .10), inset 0 1px 0 rgba(255,255,255,.9);
+        }
+
+        .edit-head-grid .edit-head-hospital label,
+        .edit-head-grid .edit-head-patient label {
+            color: #2f4767;
+            font-size: .82rem;
+            font-weight: 800;
+        }
+
+        .edit-head-grid .edit-head-patient label {
+            color: #5e2363;
+        }
+
+        .edit-head-grid .edit-head-hospital input[readonly],
+        .edit-head-grid .edit-head-patient input[readonly] {
+            color: #1f2937;
+            font-size: .96rem;
+            font-weight: 700;
+            background: #fff !important;
+            border-color: rgba(70, 118, 166, .22);
+            box-shadow: 0 1px 0 rgba(255,255,255,.8), 0 0 0 3px rgba(70, 118, 166, .08);
+        }
+
+        .edit-head-grid .edit-head-patient input[readonly] {
+            border-color: rgba(94, 35, 99, .22);
+            box-shadow: 0 1px 0 rgba(255,255,255,.8), 0 0 0 3px rgba(94, 35, 99, .08);
+        }
+
         .edit-head-medium {
             grid-column: span 2;
         }
@@ -1575,8 +1615,8 @@
                         Atualizar
                     </button>
                     <div class="edit-draft-actions">
-                        <small id="clinical-autosave-status" class="text-muted">Rascunho automático: ativo</small>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft="fields">Limpar rascunho</button>
+                        <small id="clinical-autosave-status" class="text-muted">Alterações salvam somente ao clicar em Atualizar</small>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-clinical-draft>Limpar rascunho local</button>
                     </div>
                 </div>
 
@@ -1598,13 +1638,23 @@
     </div>
 
     <script>
-        // Função para aumentar o tamanho do campo de texto do relatório de auditoria
+        // Expande visualmente os textos clínicos mesmo quando o CSS do layout fixa min-height.
         function aumentarText(textareaId) {
-            document.getElementById(textareaId).rows = 20;
+            var textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            textarea.dataset.closedRows = textarea.dataset.closedRows || textarea.getAttribute('rows') || '2';
+            textarea.rows = 20;
+            textarea.style.setProperty('height', 'auto', 'important');
+            textarea.style.setProperty('min-height', '360px', 'important');
+            textarea.style.setProperty('height', Math.max(textarea.scrollHeight, 360) + 'px', 'important');
         }
 
         function reduzirText(textareaId, originalRows) {
-            document.getElementById(textareaId).rows = originalRows;
+            var textarea = document.getElementById(textareaId);
+            if (!textarea) return;
+            textarea.rows = originalRows || parseInt(textarea.dataset.closedRows || '2', 10);
+            textarea.style.removeProperty('height');
+            textarea.style.removeProperty('min-height');
         }
         document.addEventListener('DOMContentLoaded', function() {
             var additionalSections = [{
@@ -1763,7 +1813,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="<?= $BASE_URL ?>js/uti_audit_ai.js"></script>
+    <script src="<?= $BASE_URL ?>js/uti_audit_ai.js?v=<?= filemtime(__DIR__ . '/../js/uti_audit_ai.js') ?>"></script>
 
     <!-- <script src="js/scriptDataInt.js"></script> -->
     <script src="<?= $BASE_URL ?>js/text_cad_internacao.js"></script>
@@ -1772,7 +1822,9 @@
             baseUrl: <?= json_encode((string) $BASE_URL, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             draftKey: <?= json_encode('fullcare:edit-internacao:' . (string)($intern['id_internacao'] ?? ($_GET['id_internacao'] ?? 'local')), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             fields: ['rel_int', 'acoes_int', 'programacao_int'],
-            autosaveStatusId: 'clinical-autosave-status'
+            autosaveStatusId: 'clinical-autosave-status',
+            autosave: false,
+            restoreDrafts: false
         };
     </script>
     <script src="<?= $BASE_URL ?>js/clinical_text_tools.js?v=<?= filemtime(__DIR__ . '/../js/clinical_text_tools.js') ?>"></script>
@@ -2210,38 +2262,7 @@
             font-size: .88rem;
         }
 
-        .internacao-page__hero {
-            background: linear-gradient(135deg, #4f2469 0%, #6f45a2 55%, #8e68c2 100%);
-            color: #fff;
-            border-radius: 24px;
-            padding: 8px 14px;
-            box-shadow: 0 8px 16px rgba(37, 18, 54, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin: 0;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-        }
-
-        .internacao-page__hero h1 {
-            margin: 0;
-            font-size: 1.08rem;
-            letter-spacing: .02em;
-            color: #fff;
-            font-weight: 800;
-        }
-
-        .internacao-page__tag {
-            background: rgba(255, 255, 255, 0.14);
-            color: #f7efff;
-            padding: 3px 8px;
-            border-radius: 999px;
-            font-weight: 700;
-            font-size: .54rem;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            align-self: flex-start;
-        }
+        /* hero/tag/content herdados de form_cad_internacao.css */
 
         .internacao-page__content {
             margin-top: 12px;
@@ -2261,30 +2282,33 @@
             padding-bottom: 8px !important;
         }
 
-        .internacao-card {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.9));
-            border-radius: 28px;
-            padding: 18px 10px;
-            border: 1px solid #ece6f2;
-            box-shadow: 0 20px 50px rgba(94, 35, 99, 0.08);
-            margin: 0;
-            width: 100%;
-        }
-
-        .internacao-card__body {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .internacao-card--general {
-            border-color: #c7aedc;
-            background: #fff;
-        }
+        /* internacao-card herdado de form_cad_internacao.css */
 
         #accordionInternacao .accordion-item,
         #accordionInternacao .accordion-body {
             background: #f5f5f9;
             border-color: #ebe1f5;
+        }
+
+        /* Altura mínima dos inputs para igualar ao cad */
+        #main-container .form-control:not(textarea) {
+            min-height: 42px;
+            font-size: 0.9rem;
+        }
+
+        /* Selects azuis - Tabelas Adicionais (nativo) */
+        #main-container .tabelas-adicionais-card select.select-purple,
+        #main-container .tabelas-adicionais-card select.detail-select {
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border-color: #8fc7f5 !important;
+        }
+        /* Selects azuis - bootstrap-select: alvo é o BOTÃO */
+        #main-container .tabelas-adicionais-card .tabelas-selects .bootstrap-select > button.dropdown-toggle,
+        #main-container .tabelas-adicionais-card .tabelas-selects .bootstrap-select > button.dropdown-toggle .filter-option-inner-inner {
+            background-color: #d7ebff !important;
+            color: #111827 !important;
+            border-color: #8fc7f5 !important;
+            font-weight: 400 !important;
         }
     </style>

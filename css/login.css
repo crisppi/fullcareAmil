@@ -1,10 +1,8 @@
-@import url("../diversos/CoolAdmin-master/css/font-face.css");
-
 body {
     margin: 0;
     color: #6a6f8c;
     background: #c8c8c8;
-    font: 600 16px/18px 'Poppins', sans-serif;
+    font: 600 16px/18px "Inter", Arial, Helvetica, sans-serif;
 }
 
 *,

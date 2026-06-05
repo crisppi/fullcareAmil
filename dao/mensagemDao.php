@@ -49,14 +49,20 @@ class mensagemDAO implements mensagemDAOInterface
         $mensagens = [];
 
         $stmt = $this->conn->prepare("SELECT * FROM tb_mensagem 
-                                      WHERE ((de_usuario = :de_usuario AND para_usuario = :para_usuario) 
-                                      OR (de_usuario = :para_usuario AND para_usuario = :de_usuario))
+                                      WHERE ((de_usuario = :de_usuario_1 AND para_usuario = :para_usuario_1)
+                                      OR (de_usuario = :para_usuario_2 AND para_usuario = :de_usuario_2))
                                       and id_mensagem > :ultima_msg
                                       ORDER BY data_mensagem ASC");
 
-        $stmt->bindParam(":de_usuario", $de_usuario);
-        $stmt->bindParam(":para_usuario", $para_usuario);
-        $stmt->bindParam(":ultima_msg", $ultima_msg);
+        $deUsuario = (int)$de_usuario;
+        $paraUsuario = (int)$para_usuario;
+        $ultimaMsg = (int)$ultima_msg;
+
+        $stmt->bindValue(":de_usuario_1", $deUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(":para_usuario_1", $paraUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(":para_usuario_2", $paraUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(":de_usuario_2", $deUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(":ultima_msg", $ultimaMsg, PDO::PARAM_INT);
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {

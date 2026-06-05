@@ -1,4 +1,4 @@
-const API_URL = `${window.location.origin}/FullCare/api/mobile/index.php`;
+const API_URL = `${window.location.origin}/fullcareAmil/api/mobile/index.php`;
 const TOKEN_KEY = "fullcare_mobile_web_token";
 
 const state = {

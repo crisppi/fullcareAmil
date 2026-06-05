@@ -179,16 +179,16 @@ function cc_action_label(string $action): string
 
 <div class="cc-module-shell">
     <div class="container-fluid">
-        <div class="cc-module-hero mb-4">
+        <div class="fc-module-header fc-module-header--cuidado mb-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-                <div>
-                    <div class="text-uppercase small fw-semibold" style="letter-spacing:.08em;opacity:.85;">Cuidado Continuado</div>
-                    <h1 class="h3 mt-2 mb-2">Gestão de Crônicos</h1>
-                    <p class="mb-0" style="max-width:840px;opacity:.92;">
+                <div class="fc-module-header__copy">
+                    <p class="fc-module-header__kicker">Cuidado Continuado</p>
+                    <h1 class="fc-module-header__title">Gestão de Crônicos</h1>
+                    <p class="fc-module-header__subtitle">
                         Casos sugeridos pela auditoria entram primeiro em uma pré-lista. A partir da admissão manual, o paciente passa a integrar o programa e pode receber ligação, visita médica ou visita de enfermagem.
                     </p>
                 </div>
-                <div class="d-flex gap-2 flex-wrap align-items-start">
+                <div class="fc-module-header__actions">
                     <a class="btn btn-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado') ?>">Dashboard</a>
                     <a class="btn btn-outline-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado/medicina-preventiva') ?>">Medicina Preventiva</a>
                 </div>

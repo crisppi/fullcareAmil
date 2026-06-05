@@ -198,31 +198,31 @@ body {
 }
 .monthly-dashboard {
     min-height: calc(100vh - 160px);
-    color: #251636;
+    color: #24384f;
 }
 .monthly-dashboard .monthly-header {
-    background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%);
-    border: 1px solid rgba(94, 35, 99, .18);
+    background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%);
+    border: 1px solid rgba(76, 142, 187, .22);
     border-radius: 16px;
     padding: 18px 20px;
-    box-shadow: 0 18px 36px rgba(94, 35, 99, .14);
+    box-shadow: 0 18px 36px rgba(35, 102, 147, .13);
 }
 .monthly-dashboard .monthly-header h4 {
-    color: #3b1d4f !important;
+    color: #24384f !important;
     font-weight: 800;
 }
 .monthly-dashboard .monthly-header .text-muted {
-    color: #5c5266 !important;
+    color: #5d6f82 !important;
 }
 .monthly-dashboard .form-select {
-    border-color: #d9d2e4;
-    color: #2f2639;
-    box-shadow: 0 8px 18px rgba(40, 26, 66, .06);
+    border-color: #d2e4ef;
+    color: #24384f;
+    box-shadow: 0 8px 18px rgba(35, 102, 147, .06);
 }
 .dashboard-card {
-    border: 1px solid #d9d2e4;
+    border: 1px solid rgba(76, 142, 187, .22);
     border-radius: 12px;
-    box-shadow: 0 12px 28px rgba(40, 26, 66, .13);
+    box-shadow: 0 12px 28px rgba(35, 102, 147, .11);
     background: #fff;
     overflow: hidden;
 }
@@ -237,15 +237,15 @@ body {
     position: absolute;
     inset: 0 0 auto;
     height: 4px;
-    background: linear-gradient(90deg, #5e2363, #35bae1);
+    background: linear-gradient(90deg, #2f6f9f, #5eb4d8);
 }
 .dashboard-card .card-header {
-    border-bottom: 1px solid #e9e3ef;
+    border-bottom: 1px solid #e0edf5;
     font-weight: 800;
-    color: #3b1d4f;
+    color: #24384f;
     font-size: .78rem;
     padding: 11px 12px;
-    background: #f8f3fb !important;
+    background: #f4faff !important;
 }
 .filter-chip {
     border-radius: 999px;
@@ -254,7 +254,7 @@ body {
     margin-right: 10px;
 }
 .filter-chip.active {
-    background-color: #5e2363;
+    background-color: #2f6f9f;
     color: #fff;
     border-color: transparent;
 }
@@ -268,7 +268,7 @@ body {
     color: #5f6876 !important;
 }
 .monthly-dashboard .text-uppercase {
-    color: #5e2363 !important;
+    color: #2f6f9f !important;
     font-weight: 800;
     letter-spacing: .04em;
 }
@@ -444,7 +444,7 @@ new Chart(ctxInt, {
         datasets: [{
             label: 'Internações',
             data: intData,
-            backgroundColor: '#5e2363',
+            backgroundColor: '#2f6f9f',
             borderRadius: 8,
             maxBarThickness: 50
         }]

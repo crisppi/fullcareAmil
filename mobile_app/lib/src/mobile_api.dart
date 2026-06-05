@@ -7,8 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MobileApi {
   MobileApi();
 
-  static const String _baseUrl =
-      'http://10.0.2.2/FullCare/api/mobile/index.php';
+  static const String _baseUrl = String.fromEnvironment(
+    'FULLCARE_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2/fullcareAmil/api/mobile/index.php',
+  );
   static const String _tokenKey = 'fullcare_mobile_token';
 
   String? _token;
@@ -404,15 +406,15 @@ class MobileApi {
     Map<String, dynamic>? body,
   }) async {
     final queryParameters = <String, String>{'action': action, ...?query};
-    if (_token != null && _token!.isNotEmpty) {
-      queryParameters['token'] = _token!;
-    }
-
     final uri = Uri.parse(_baseUrl).replace(queryParameters: queryParameters);
 
-    final headers = <String, String>{'Content-Type': 'application/json'};
+    final headers = <String, String>{
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
     if (_token != null && _token!.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_token';
+      headers['X-Auth-Token'] = _token!;
     }
 
     late final http.Response response;
@@ -426,7 +428,13 @@ class MobileApi {
       response = await http.get(uri, headers: headers);
     }
 
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic> decoded;
+    try {
+      decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      throw Exception('Resposta invalida do servidor.');
+    }
+
     if (response.statusCode == 401) {
       await clearSession();
       throw Exception(decoded['message'] ?? 'Sessao expirada.');

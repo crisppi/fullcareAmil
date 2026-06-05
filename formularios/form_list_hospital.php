@@ -97,7 +97,7 @@
 
     <!--filtro evento-->
     <div class="container-fluid form_container listagem-page" style="margin-top:18px;">
-        <div class="listagem-hero">
+        <div class="listagem-hero listagem-hero--module listagem-hero--cadastros">
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Hospitais</h1>
@@ -227,11 +227,10 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <button class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
-                                                    onclick="openModal('<?= $BASE_URL ?>show_hospital.php?id_hospital=<?= $id_hospital ?>')"
-                                                    data-bs-toggle="modal" data-bs-target="#myModal"><i
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/show_hospital.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>"><i
                                                         class="bi bi-eye"
-                                                        style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
+                                                        style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
@@ -262,23 +261,6 @@
                     </div>
                     <!-- paginacao que aparece abaixo da tabela -->
                     <div style="display: flex;margin-top:20px;">
-
-                        <!-- Modal para abrir tela de cadastro -->
-                        <div class="modal fade" id="myModal">
-                            <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
-                                <div class="modal-content">
-                                    <div style="padding-left:20px;padding-top:20px;">
-                                        <h4>Hospital</h4>
-                                        <!-- <p class="page-description">Informações -->
-                                        <!-- sobre o Hospital</p> -->
-                                    </div>
-                                    <div class="modal-body">
-                                        <div id="content-php"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="pagination" style="margin: 0 auto;">
                             <?php if ($total_pages ?? 1 > 1): ?>
                             <ul class="pagination">
@@ -426,22 +408,6 @@ if (typeof window.paginateHospitais !== 'function') {
 }
 </script>
 
-<style>
-.modal-backdrop {
-    display: none;
-
-}
-
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-
-}
-
-.modal-header {
-    color: white;
-    background: #35bae1;
-}
-</style>
 <script src="./js/input-estilo.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>

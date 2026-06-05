@@ -72,24 +72,24 @@ $motivos = [
     padding: 0 24px;
 }
 .report-header {
-    background: linear-gradient(120deg, #fef6ff, #f3e6f9);
+    background: linear-gradient(120deg, #f4faff, #e8f4fb);
     border-radius: 18px;
     padding: 18px 22px;
-    border: 1px solid rgba(94, 35, 99, .12);
+    border: 1px solid rgba(76, 142, 187, .12);
     margin-bottom: 16px;
 }
 .report-header h1 {
     margin: 0 0 4px;
     font-weight: 700;
-    color: #4b2054;
+    color: #24384f;
     font-size: 1.06rem;
 }
 .report-card {
     background: #fff;
     border-radius: 16px;
     padding: 14px 18px;
-    border: 1px solid rgba(94, 35, 99, .08);
-    box-shadow: 0 10px 24px rgba(45, 18, 70, .08);
+    border: 1px solid rgba(76, 142, 187, .08);
+    box-shadow: 0 10px 24px rgba(35, 102, 147, .08);
     margin-bottom: 14px;
 }
 .report-wrapper .text-muted,
@@ -105,11 +105,18 @@ $motivos = [
     --bs-gutter-x: .8rem;
 }
 .table thead th {
-    background: #f8f3fb;
-    color: #4b2054;
+    background: #2f6f9f;
+    color: #fff;
     font-size: .7rem;
     padding-top: .65rem;
     padding-bottom: .65rem;
+}
+.report-filter-btn {
+    width: 100%;
+}
+.report-wrapper .table .col-number,
+.report-wrapper .table .col-percent {
+    text-align: center !important;
 }
 </style>
 
@@ -121,11 +128,11 @@ $motivos = [
 
     <form class="report-card" method="get">
         <div class="row g-3 align-items-end">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Data inicial</label>
                 <input type="date" class="form-control" name="data_ini" value="<?= e($dataIni) ?>">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Data final</label>
                 <input type="date" class="form-control" name="data_fim" value="<?= e($dataFim) ?>">
             </div>
@@ -151,8 +158,8 @@ $motivos = [
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="col-12">
-                <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+            <div class="col-md-2">
+                <button class="btn btn-primary report-filter-btn" type="submit">Filtrar</button>
             </div>
         </div>
     </form>
@@ -164,25 +171,21 @@ $motivos = [
                 <thead>
                     <tr>
                         <th>Motivo</th>
-                        <th class="text-end">Quantidade</th>
-                        <th class="text-end">Participação</th>
+                        <th class="col-number">Quantidade</th>
+                        <th class="col-percent">Participação</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($total === 0): ?>
-                        <tr><td colspan="3" class="text-muted">Nenhum dado encontrado.</td></tr>
-                    <?php endif; ?>
                     <?php foreach ($motivos as $motivo => $qtd): ?>
                         <tr>
                             <td><?= e($motivo) ?></td>
-                            <td class="text-end"><?= $qtd ?></td>
-                            <td class="text-end"><?= $total ? round(($qtd / $total) * 100, 1) . '%' : '-' ?></td>
+                            <td class="col-number"><?= $qtd ?></td>
+                            <td class="col-percent"><?= $total ? round(($qtd / $total) * 100, 1) . '%' : '-' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-        <div class="text-muted small">Uma prorrogação pode ter mais de um motivo marcado.</div>
     </div>
 </div>
 

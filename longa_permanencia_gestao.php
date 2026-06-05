@@ -600,35 +600,17 @@ if ($semAtualizacaoLabel !== '') {
 </style>
 
 <div class="lp-shell">
-    <div class="lp-hero">
-        <section class="lp-hero__main">
-            <div class="lp-eyebrow">Cuidado continuado</div>
-            <h1>Gestão de Longa Permanência</h1>
-            <p>Priorize revisão clínica, barreiras de alta e plano de ação dos casos com maior permanência excedente.</p>
-            <div class="lp-hero__metrics">
-                <div class="lp-hero__metric">
-                    <strong><?= number_format($totais['casos'], 0, ',', '.') ?></strong>
-                    <span>casos monitorados agora</span>
-                </div>
-                <div class="lp-hero__metric">
-                    <strong><?= number_format($totais['sem_revisao'], 0, ',', '.') ?></strong>
-                    <span>sem revisão recente</span>
-                </div>
-                <div class="lp-hero__metric">
-                    <strong><?= number_format($totais['escalonados'], 0, ',', '.') ?></strong>
-                    <span>pedindo escalonamento</span>
-                </div>
-            </div>
-        </section>
-        <aside class="lp-hero__side">
-            <div>
-                <h2>Leitura rápida da fila</h2>
-                <p>Foque nos casos sem status e sem revisão recente.</p>
-            </div>
-            <div class="lp-top-actions">
-                <a class="lp-btn" href="<?= $BASE_URL ?>bi/longa-permanencia">Voltar ao BI</a>
-            </div>
-        </aside>
+    <div class="fc-module-header fc-module-header--cuidado">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Cuidado Continuado</p>
+            <h1 class="fc-module-header__title">Gestão de Longa Permanência</h1>
+            <p class="fc-module-header__subtitle">Priorize revisão clínica, barreiras de alta e plano de ação dos casos com maior permanência excedente.</p>
+        </div>
+        <div class="fc-module-header__actions">
+            <span class="badge rounded-pill bg-light text-primary"><?= number_format($totais['casos'], 0, ',', '.') ?> casos</span>
+            <span class="badge rounded-pill bg-light text-primary"><?= number_format($totais['sem_revisao'], 0, ',', '.') ?> sem revisão</span>
+            <a class="btn btn-light" href="<?= $BASE_URL ?>bi/longa-permanencia">Voltar ao BI</a>
+        </div>
     </div>
 
     <?php if ($pageError !== ''): ?>

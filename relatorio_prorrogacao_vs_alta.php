@@ -39,48 +39,27 @@ if ($seguradoraId) {
 $sqlSummary = "
     SELECT
         COUNT(DISTINCT i.id_internacao) AS total_internacoes,
-        COUNT(DISTINCT CASE WHEN pr.id_prorrogacao IS NOT NULL OR ges.seguir_prorrog = 1 THEN i.id_internacao END) AS total_indicacoes,
+        COUNT(DISTINCT CASE WHEN pr.id_prorrogacao IS NOT NULL OR ges.evento_prorrogar_ges = 's' THEN i.id_internacao END) AS total_indicacoes,
         COUNT(DISTINCT CASE WHEN alt.data_alta_alt IS NOT NULL THEN i.id_internacao END) AS total_altas,
         COUNT(DISTINCT CASE
             WHEN alt.data_alta_alt IS NOT NULL
-             AND prazo.prazo_dias IS NOT NULL
-             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) <= prazo.prazo_dias
+             AND COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0)) IS NOT NULL
+             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) <= COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0))
             THEN i.id_internacao END
         ) AS altas_dentro_prazo,
         COUNT(DISTINCT CASE
             WHEN alt.data_alta_alt IS NOT NULL
-             AND prazo.prazo_dias IS NOT NULL
-             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) > prazo.prazo_dias
+             AND COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0)) IS NOT NULL
+             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) > COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0))
             THEN i.id_internacao END
         ) AS altas_fora_prazo
     FROM tb_internacao i
-    LEFT JOIN (
-        SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt
-        FROM tb_alta
-        GROUP BY fk_id_int_alt
-    ) alt ON alt.fk_id_int_alt = i.id_internacao
-    LEFT JOIN (
-        SELECT fk_internacao_pror, MAX(id_prorrogacao) AS id_prorrogacao
-        FROM tb_prorrogacao
-        GROUP BY fk_internacao_pror
-    ) pr ON pr.fk_internacao_pror = i.id_internacao
-    LEFT JOIN (
-        SELECT fk_internacao_ges,
-               MAX(CASE WHEN evento_prorrogar_ges = 's' THEN 1 ELSE 0 END) AS seguir_prorrog
-        FROM tb_gestao
-        GROUP BY fk_internacao_ges
-    ) ges ON ges.fk_internacao_ges = i.id_internacao
     LEFT JOIN tb_paciente pa ON pa.id_paciente = i.fk_paciente_int
     LEFT JOIN tb_seguradora s ON s.id_seguradora = pa.fk_seguradora_pac
-    LEFT JOIN (
-        SELECT
-            i2.id_internacao,
-            COALESCE(NULLIF(p2.dias_pato, 0), NULLIF(s2.longa_permanencia_seg, 0)) AS prazo_dias
-        FROM tb_internacao i2
-        LEFT JOIN tb_patologia p2 ON p2.id_patologia = i2.fk_patologia_int
-        LEFT JOIN tb_paciente pa2 ON pa2.id_paciente = i2.fk_paciente_int
-        LEFT JOIN tb_seguradora s2 ON s2.id_seguradora = pa2.fk_seguradora_pac
-    ) prazo ON prazo.id_internacao = i.id_internacao
+    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
+    LEFT JOIN tb_alta alt ON alt.fk_id_int_alt = i.id_internacao
+    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao
+    LEFT JOIN tb_gestao ges ON ges.fk_internacao_ges = i.id_internacao
     WHERE {$where}
 ";
 $stmt = $conn->prepare($sqlSummary);
@@ -91,47 +70,26 @@ $sqlByConvenio = "
     SELECT
         COALESCE(s.seguradora_seg, 'Sem operadora') AS convenio,
         COUNT(DISTINCT i.id_internacao) AS total_internacoes,
-        COUNT(DISTINCT CASE WHEN pr.id_prorrogacao IS NOT NULL OR ges.seguir_prorrog = 1 THEN i.id_internacao END) AS total_indicacoes,
+        COUNT(DISTINCT CASE WHEN pr.id_prorrogacao IS NOT NULL OR ges.evento_prorrogar_ges = 's' THEN i.id_internacao END) AS total_indicacoes,
         COUNT(DISTINCT CASE
             WHEN alt.data_alta_alt IS NOT NULL
-             AND prazo.prazo_dias IS NOT NULL
-             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) <= prazo.prazo_dias
+             AND COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0)) IS NOT NULL
+             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) <= COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0))
             THEN i.id_internacao END
         ) AS altas_dentro_prazo,
         COUNT(DISTINCT CASE
             WHEN alt.data_alta_alt IS NOT NULL
-             AND prazo.prazo_dias IS NOT NULL
-             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) > prazo.prazo_dias
+             AND COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0)) IS NOT NULL
+             AND (DATEDIFF(alt.data_alta_alt, i.data_intern_int) + 1) > COALESCE(NULLIF(p.dias_pato, 0), NULLIF(s.longa_permanencia_seg, 0))
             THEN i.id_internacao END
         ) AS altas_fora_prazo
     FROM tb_internacao i
-    LEFT JOIN (
-        SELECT fk_id_int_alt, MAX(data_alta_alt) AS data_alta_alt
-        FROM tb_alta
-        GROUP BY fk_id_int_alt
-    ) alt ON alt.fk_id_int_alt = i.id_internacao
-    LEFT JOIN (
-        SELECT fk_internacao_pror, MAX(id_prorrogacao) AS id_prorrogacao
-        FROM tb_prorrogacao
-        GROUP BY fk_internacao_pror
-    ) pr ON pr.fk_internacao_pror = i.id_internacao
-    LEFT JOIN (
-        SELECT fk_internacao_ges,
-               MAX(CASE WHEN evento_prorrogar_ges = 's' THEN 1 ELSE 0 END) AS seguir_prorrog
-        FROM tb_gestao
-        GROUP BY fk_internacao_ges
-    ) ges ON ges.fk_internacao_ges = i.id_internacao
     LEFT JOIN tb_paciente pa ON pa.id_paciente = i.fk_paciente_int
     LEFT JOIN tb_seguradora s ON s.id_seguradora = pa.fk_seguradora_pac
-    LEFT JOIN (
-        SELECT
-            i2.id_internacao,
-            COALESCE(NULLIF(p2.dias_pato, 0), NULLIF(s2.longa_permanencia_seg, 0)) AS prazo_dias
-        FROM tb_internacao i2
-        LEFT JOIN tb_patologia p2 ON p2.id_patologia = i2.fk_patologia_int
-        LEFT JOIN tb_paciente pa2 ON pa2.id_paciente = i2.fk_paciente_int
-        LEFT JOIN tb_seguradora s2 ON s2.id_seguradora = pa2.fk_seguradora_pac
-    ) prazo ON prazo.id_internacao = i.id_internacao
+    LEFT JOIN tb_patologia p ON p.id_patologia = i.fk_patologia_int
+    LEFT JOIN tb_alta alt ON alt.fk_id_int_alt = i.id_internacao
+    LEFT JOIN tb_prorrogacao pr ON pr.fk_internacao_pror = i.id_internacao
+    LEFT JOIN tb_gestao ges ON ges.fk_internacao_ges = i.id_internacao
     WHERE {$where}
     GROUP BY convenio
     ORDER BY total_indicacoes DESC, total_internacoes DESC
@@ -156,24 +114,24 @@ $altasComPrazo = $altasDentro + $altasFora;
     padding: 0 24px;
 }
 .report-header {
-    background: linear-gradient(120deg, #fef6ff, #f3e6f9);
+    background: linear-gradient(120deg, #f4faff, #e8f4fb);
     border-radius: 18px;
     padding: 18px 22px;
-    border: 1px solid rgba(94, 35, 99, .12);
+    border: 1px solid rgba(76, 142, 187, .12);
     margin-bottom: 16px;
 }
 .report-header h1 {
     margin: 0 0 4px;
     font-weight: 700;
-    color: #4b2054;
+    color: #24384f;
     font-size: 1.06rem;
 }
 .report-card {
     background: #fff;
     border-radius: 16px;
     padding: 14px 18px;
-    border: 1px solid rgba(94, 35, 99, .08);
-    box-shadow: 0 10px 24px rgba(45, 18, 70, .08);
+    border: 1px solid rgba(76, 142, 187, .08);
+    box-shadow: 0 10px 24px rgba(35, 102, 147, .08);
     margin-bottom: 14px;
 }
 .report-wrapper .text-muted,
@@ -194,14 +152,14 @@ $altasComPrazo = $altasDentro + $altasFora;
     gap: 12px;
 }
 .summary-card {
-    background: #f8f3fb;
+    background: #f4faff;
     border-radius: 14px;
     padding: 11px 14px;
-    border: 1px solid rgba(94, 35, 99, .08);
+    border: 1px solid rgba(76, 142, 187, .08);
 }
 .summary-card h6 {
     margin: 0 0 4px;
-    color: #4b2054;
+    color: #24384f;
     font-size: .72rem;
     text-transform: uppercase;
     letter-spacing: .08em;
@@ -209,14 +167,23 @@ $altasComPrazo = $altasDentro + $altasFora;
 .summary-card div {
     font-size: 1.08rem;
     font-weight: 700;
-    color: #2f1c37;
+    color: #2f6f9f;
 }
 .table thead th {
-    background: #f8f3fb;
-    color: #4b2054;
+    background: #2f6f9f;
+    color: #fff;
     font-size: .7rem;
     padding-top: .65rem;
     padding-bottom: .65rem;
+}
+.report-wrapper .table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: #f4faff;
+}
+.report-wrapper .table-striped > tbody > tr:nth-of-type(even) > * {
+    --bs-table-accent-bg: #fff;
+}
+.report-wrapper .table-hover > tbody > tr:hover > * {
+    --bs-table-accent-bg: #e8f4fb;
 }
 </style>
 

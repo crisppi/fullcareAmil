@@ -887,7 +887,7 @@ function perfBadge(float $score): array
         return ['Elite', '#2563eb'];
     }
     if ($score >= 80) {
-        return ['Expert', '#7c3aed'];
+        return ['Expert', '#2f6f9f'];
     }
     if ($score >= 40) {
         return ['Focus', '#f97316'];
@@ -937,8 +937,8 @@ function perfTimerClock($seconds)
         background: linear-gradient(120deg, #eef2ff, #f1e8ff, #fde8ff);
         border-radius: 22px;
         padding: 32px;
-        border: 1px solid rgba(94, 35, 99, .12);
-        box-shadow: 0 24px 50px rgba(73, 37, 90, .12);
+        border: 1px solid rgba(76, 142, 187, .12);
+        box-shadow: 0 24px 50px rgba(35, 102, 147, .12);
         margin-bottom: 26px;
     }
 
@@ -981,8 +981,8 @@ function perfTimerClock($seconds)
         background: #fff;
         border-radius: 18px;
         padding: 20px;
-        border: 1px solid rgba(93, 35, 99, .08);
-        box-shadow: 0 10px 25px rgba(20, 11, 29, .08);
+        border: 1px solid rgba(76, 142, 187, .08);
+        box-shadow: 0 10px 25px rgba(35, 102, 147, .08);
     }
 
     .perf-card h3 {
@@ -1010,7 +1010,7 @@ function perfTimerClock($seconds)
         align-items: center;
         gap: 6px;
         font-size: .8rem;
-        background: #f3eef9;
+        background: #eef7fc;
         color: #5b3d7e;
         padding: 4px 10px;
         border-radius: 999px;
@@ -1033,8 +1033,8 @@ function perfTimerClock($seconds)
     .perf-panel {
         background: #fff;
         border-radius: 20px;
-        border: 1px solid rgba(93, 35, 99, .1);
-        box-shadow: 0 16px 32px rgba(17, 10, 25, .08);
+        border: 1px solid rgba(76, 142, 187, .1);
+        box-shadow: 0 16px 32px rgba(35, 102, 147, .08);
         padding: 24px;
     }
 
@@ -1057,7 +1057,7 @@ function perfTimerClock($seconds)
     .perf-table td {
         padding: 10px 8px;
         text-align: left;
-        border-bottom: 1px solid #f1ecf6;
+        border-bottom: 1px solid #e0edf5;
     }
     .perf-table th:not(:first-child),
     .perf-table td:not(:first-child) {
@@ -1066,7 +1066,7 @@ function perfTimerClock($seconds)
     .perf-table .summary-row td {
         background: #f8f6ff;
         font-weight: 600;
-        border-top: 2px solid #d7c9f4;
+        border-top: 2px solid #b8d8ea;
     }
 
     .perf-table th {
@@ -1103,7 +1103,7 @@ function perfTimerClock($seconds)
 
     .monthly-bar .bar-track {
         width: 100%;
-        background: #f3eef7;
+        background: #eef7fc;
         border-radius: 999px;
         height: 10px;
         margin: 6px 0;
@@ -1113,7 +1113,7 @@ function perfTimerClock($seconds)
     .monthly-bar .bar-fill {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #7c3aed, #f472b6);
+        background: linear-gradient(90deg, #2f6f9f, #5eb4d8);
         width: var(--bar, 10%);
     }
 
@@ -1126,7 +1126,7 @@ function perfTimerClock($seconds)
         justify-content: space-between;
         align-items: center;
         padding: 14px 0;
-        border-bottom: 1px solid #f0ebf5;
+        border-bottom: 1px solid #e0edf5;
     }
 
     .adm-card:last-child {
@@ -1159,7 +1159,7 @@ function perfTimerClock($seconds)
     }
 
     .perf-filter input {
-        border: 1px solid #d4c9eb;
+        border: 1px solid #b8d8ea;
         border-radius: 10px;
         padding: 6px 10px;
         font-size: .95rem;
@@ -1168,7 +1168,7 @@ function perfTimerClock($seconds)
     .perf-filter button {
         border: none;
         border-radius: 999px;
-        background: linear-gradient(120deg, #7c3aed, #9d4edd);
+        background: linear-gradient(120deg, #2f6f9f, #5eb4d8);
         color: #fff;
         padding: 10px 24px;
         font-weight: 600;
@@ -1329,20 +1329,20 @@ function perfTimerClock($seconds)
             <?php
             if (!empty($centralSummary['contas']['total'])): ?>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px;">
-                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #7c3aed;">
+                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #2f6f9f;">
                         <small style="color:#7a6a8a;font-weight:500;">Registros</small>
-                        <div style="font-size:1.5rem;font-weight:bold;color:#7c3aed;margin-top:5px;"><?= perfFmt($centralSummary['contas']['total'] ?? 0) ?></div>
+                        <div style="font-size:1.5rem;font-weight:bold;color:#2f6f9f;margin-top:5px;"><?= perfFmt($centralSummary['contas']['total'] ?? 0) ?></div>
                     </div>
-                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #7c3aed;">
+                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #2f6f9f;">
                         <small style="color:#7a6a8a;font-weight:500;">Tempo médio</small>
-                        <div style="font-size:1.5rem;font-weight:bold;color:#7c3aed;margin-top:5px;"><?= perfTimerClock($centralSummary['contas']['timer_seg'] ?? null) ?? '—' ?></div>
+                        <div style="font-size:1.5rem;font-weight:bold;color:#2f6f9f;margin-top:5px;"><?= perfTimerClock($centralSummary['contas']['timer_seg'] ?? null) ?? '—' ?></div>
                     </div>
-                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #7c3aed;">
+                    <div style="background:#f8f6ff;padding:15px;border-radius:8px;border-left:4px solid #2f6f9f;">
                         <small style="color:#7a6a8a;font-weight:500;">SLA médio</small>
-                        <div style="font-size:1.5rem;font-weight:bold;color:#7c3aed;margin-top:5px;"><?= isset($centralSummary['contas']['sla']) && $centralSummary['contas']['sla'] !== null ? perfFmt($centralSummary['contas']['sla'], 1) . ' d' : '—' ?></div>
+                        <div style="font-size:1.5rem;font-weight:bold;color:#2f6f9f;margin-top:5px;"><?= isset($centralSummary['contas']['sla']) && $centralSummary['contas']['sla'] !== null ? perfFmt($centralSummary['contas']['sla'], 1) . ' d' : '—' ?></div>
                     </div>
                 </div>
-                <hr style="margin:15px 0;border-color:#f1ecf6;">
+                <hr style="margin:15px 0;border-color:#e0edf5;">
             <?php endif; ?>
             <?php
             $centralSummaryRows = [
@@ -1396,7 +1396,7 @@ function perfTimerClock($seconds)
                     </tbody>
                 </table>
             <?php endif; ?>
-            <hr style="margin:20px 0;border-color:#f1ecf6;">
+            <hr style="margin:20px 0;border-color:#e0edf5;">
             <h2 style="font-size:1rem;margin-bottom:10px;"><i class="bi bi-graph-up"></i> Produção mensal</h2>
             <?php if (!$adminMonthly): ?>
                 <p style="color:#7a6a8a;">Ainda não há histórico suficiente.</p>

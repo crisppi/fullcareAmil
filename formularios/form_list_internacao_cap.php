@@ -323,11 +323,10 @@ if ($havePages) {
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <div class="listagem-hero">
+    <div class="listagem-hero listagem-hero--module listagem-hero--contas">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Capeantes</div>
             <h1 class="listagem-title">Listagem de capeantes</h1>
-            <p class="listagem-subtitle">Controle contas abertas, auditoria, paradas e encerramentos com uma leitura mais limpa da operação.</p>
         </div>
     </div>
     <div class="complete-table listagem-panel">

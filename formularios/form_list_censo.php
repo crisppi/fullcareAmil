@@ -180,7 +180,7 @@ $user = $_SESSION['id_usuario'];
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid form_container listagem-page" id="main-container">
-    <div class="listagem-hero">
+    <div class="listagem-hero listagem-hero--module listagem-hero--internacoes">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Censo</div>
             <h1 class="listagem-title">Listagem de censo</h1>

@@ -93,14 +93,22 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid form_container listagem-page" id='main-container' style="margin-top:4px;">
     <script src="./js/ajaxNav.js"></script>
-    <h4 class="page-title" style="font-size:.96rem;margin-bottom:6px;">Gestão Assistencial</h4>
-    <hr>
+    <div class="fc-module-header fc-module-header--gestao">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title">Gestão Assistencial</h1>
+        </div>
+    </div>
     <style>
     .listagem-page {
         padding: 4px 4px 14px;
     }
+    .listagem-page .fc-module-header {
+        margin-bottom: 0 !important;
+    }
     .complete-table {
-        padding: 8px 8px 6px;
+        margin-top: 4px;
+        padding: 0 8px 6px;
         border-radius: 16px;
         border: 1px solid #eee8f6;
         background: #fff;
@@ -126,12 +134,12 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
         min-width: 96px;
     }
     .gestao-filter-bar .filter-item.search-btn {
-        flex: 0 0 84px;
-        min-width: 84px;
+        flex: 0 0 42px;
+        min-width: 42px;
     }
     .gestao-filter-bar .filter-item.clear-btn {
-        flex: 0 0 122px;
-        min-width: 122px;
+        flex: 0 0 42px;
+        min-width: 42px;
     }
     .gestao-filter-bar .form-control,
     .gestao-filter-bar .btn {
@@ -142,12 +150,22 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
         line-height: 1.2;
         border-radius: 11px;
     }
+    .gestao-filter-bar .filter-item.search-btn .btn,
+    .gestao-filter-bar .filter-item.clear-btn .btn {
+        width: 42px !important;
+        min-width: 42px !important;
+        max-width: 42px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+        border-radius: 12px !important;
+    }
     .gestao-filter-bar .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         line-height: 1;
-        padding: 0 10px;
+        padding: 0;
+        width: 100%;
     }
     .gestao-filter-bar .form-control::placeholder {
         font-size: .72rem;
@@ -157,6 +175,11 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
         font-size: 16px !important;
         line-height: 1;
         vertical-align: middle;
+    }
+    .gestao-filter-bar .btn i {
+        margin: 0 !important;
+        font-size: 1rem;
+        line-height: 1;
     }
     .scope-badge {
         margin: 0 0 6px 0;
@@ -282,7 +305,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                     </div>
                     <div class="filter-item clear-btn">
                         <a href="<?= htmlspecialchars($BASE_URL . 'list_gestao.php', ENT_QUOTES, 'UTF-8') ?>"
-                            class="btn btn-outline-secondary w-100 btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar filtros</a>
+                            class="btn btn-outline-secondary w-100 btn-filtro-limpar" title="Limpar filtros" aria-label="Limpar filtros"><i class="bi bi-trash3" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </form>

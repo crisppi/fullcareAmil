@@ -83,9 +83,28 @@ function mp_action_label(string $action): string
 <script src="js/timeout.js"></script>
 <style>
     .mp-shell {
-        padding: 18px 12px 20px;
+        padding: 12px 12px 18px;
         background: #f7faf5;
         min-height: 100vh;
+    }
+    .mp-shell .fc-module-header {
+        margin-bottom: 6px !important;
+    }
+    .mp-shell .mb-4 {
+        margin-bottom: 7px !important;
+    }
+    .mp-shell .mb-3 {
+        margin-bottom: 5px !important;
+    }
+    .mp-shell .row.g-3 {
+        --bs-gutter-x: 10px;
+        --bs-gutter-y: 7px;
+        margin-top: 0 !important;
+        margin-bottom: 7px !important;
+    }
+    .mp-shell .row.g-2 {
+        --bs-gutter-x: 6px;
+        --bs-gutter-y: 6px;
     }
     .mp-hero {
         background: linear-gradient(135deg, #1b6a43, #3ba56b 58%, #c9e7b5);
@@ -121,17 +140,37 @@ function mp_action_label(string $action): string
         color: #6b7280;
     }
     .mp-shell .card {
-        border-radius: 16px;
+        border-radius: 10px;
     }
     .mp-shell .card-body {
-        padding: 14px;
+        padding: 8px 10px;
+    }
+    .mp-shell > .container-fluid > .card {
+        margin-top: 0 !important;
     }
     .mp-shell .text-muted.small,
     .mp-shell .small {
         font-size: .68rem !important;
     }
     .mp-shell .fs-3 {
-        font-size: 1.35rem !important;
+        font-size: 1.18rem !important;
+        line-height: 1.1;
+    }
+    .mp-shell .row.g-3 > [class*="col-"] .card-body {
+        min-height: 54px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .mp-shell .fc-module-header__title {
+        font-size: 1.02rem !important;
+        line-height: 1.12;
+        margin-bottom: 2px;
+    }
+    .mp-shell .fc-module-header__subtitle {
+        font-size: .68rem !important;
+        line-height: 1.25;
+        margin-bottom: 0;
     }
     .mp-shell .form-label {
         font-size: .68rem;
@@ -169,16 +208,16 @@ function mp_action_label(string $action): string
 
 <div class="mp-shell">
     <div class="container-fluid">
-        <div class="mp-hero mb-4">
+        <div class="fc-module-header fc-module-header--cuidado mb-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
-                <div>
-                    <div class="text-uppercase small fw-semibold" style="letter-spacing:.08em;opacity:.85;">Cuidado Continuado</div>
-                    <h1 class="h3 mt-2 mb-2">Medicina Preventiva</h1>
-                    <p class="mb-0" style="max-width:840px;opacity:.92;">
+                <div class="fc-module-header__copy">
+                    <p class="fc-module-header__kicker">Cuidado Continuado</p>
+                    <h1 class="fc-module-header__title">Medicina Preventiva</h1>
+                    <p class="fc-module-header__subtitle">
                         A Medicina Preventiva funciona como um monitoramento telefônico estruturado. Os pacientes elegíveis são admitidos no programa e passam a ter rotina de contato, orientação e acompanhamento.
                     </p>
                 </div>
-                <div class="d-flex gap-2 flex-wrap align-items-start">
+                <div class="fc-module-header__actions">
                     <a class="btn btn-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado') ?>">Dashboard</a>
                     <a class="btn btn-outline-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado/cronicos') ?>">Gestão de Crônicos</a>
                 </div>

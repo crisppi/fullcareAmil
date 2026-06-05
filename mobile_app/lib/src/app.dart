@@ -60,7 +60,7 @@ class _FullCareMobileAppState extends State<FullCareMobileApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'FullCare Mobile',
+      title: 'FullCare Audit',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -111,11 +111,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController(
-    text: 'diretor@fullcare.com.br',
-  );
-  final _passwordController = TextEditingController(text: '1234');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _submitting = false;
+  bool _acceptedPrivacy = false;
 
   @override
   void dispose() {
@@ -125,6 +124,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _submit() async {
+    if (!_acceptedPrivacy) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Leia e aceite a Politica de Privacidade para entrar.'),
+        ),
+      );
+      return;
+    }
+
     setState(() => _submitting = true);
     try {
       await widget.onLogin(
@@ -147,6 +155,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final privacyTextStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+      color: const Color(0xFF425466),
+      height: 1.35,
+    );
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -157,7 +170,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Center(
               child: ConstrainedBox(
@@ -184,18 +197,20 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 18),
                         Text(
-                          'FullCare Mobile',
+                          'FullCare Audit',
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Internacao, TUSS e prorrogacao com dados do sistema web.',
+                          'Acesso seguro para gestao de auditoria e controles operacionais.',
                         ),
                         const SizedBox(height: 20),
                         TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [AutofillHints.email],
+                          textInputAction: TextInputAction.next,
                           decoration: const InputDecoration(
                             labelText: 'E-mail',
                           ),
@@ -204,7 +219,58 @@ class _LoginPageState extends State<LoginPage> {
                         TextField(
                           controller: _passwordController,
                           obscureText: true,
+                          autofillHints: const [AutofillHints.password],
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _submitting ? null : _submit(),
                           decoration: const InputDecoration(labelText: 'Senha'),
+                        ),
+                        const SizedBox(height: 14),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF5F8FC),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: const Color(0xFFD8E3F0)),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: Checkbox(
+                                      value: _acceptedPrivacy,
+                                      onChanged:
+                                          (value) => setState(
+                                            () =>
+                                                _acceptedPrivacy =
+                                                    value ?? false,
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Declaro estar ciente da Politica de Privacidade e autorizo o uso dos meus dados para acesso e operacao segura do sistema.',
+                                      style: privacyTextStyle,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton(
+                                  onPressed: () => _showPrivacyPolicy(context),
+                                  child: const Text(
+                                    'Ver Politica de Privacidade',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 18),
                         FilledButton(
@@ -236,6 +302,39 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  Future<void> _showPrivacyPolicy(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Politica de Privacidade'),
+            content: const SingleChildScrollView(
+              child: Text(
+                'Ao acessar este aplicativo, voce concorda com o tratamento dos seus dados pessoais de acordo com a Lei Geral de Protecao de Dados Pessoais, Lei no 13.709/2018.\n\n'
+                'Coletamos e utilizamos apenas as informacoes necessarias para identificar o usuario, permitir o acesso seguro ao sistema, organizar gestao de auditoria, controles operacionais, conformidade e evidencias internas.\n\n'
+                'Os dados informados podem incluir nome, e-mail, dados de login, informacoes profissionais, perfil de acesso, permissoes e registros administrativos necessarios para auditoria e controle interno. Essas informacoes sao utilizadas exclusivamente para as finalidades do sistema e nao sao vendidas ou compartilhadas para fins comerciais.\n\n'
+                'Adotamos medidas tecnicas e administrativas para proteger os dados contra acessos nao autorizados, perda, alteracao, divulgacao indevida ou qualquer forma de tratamento inadequado. O acesso as informacoes e restrito a usuarios autorizados, conforme seu perfil e necessidade de uso.\n\n'
+                'O titular dos dados podera solicitar, quando aplicavel, confirmacao de tratamento, acesso, correcao, atualizacao, bloqueio, exclusao ou informacoes sobre o uso de seus dados, conforme previsto na LGPD.\n\n'
+                'Ao continuar, voce declara estar ciente desta Politica de Privacidade e autoriza o uso dos seus dados para as finalidades descritas.',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Fechar'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  setState(() => _acceptedPrivacy = true);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Aceitar'),
+              ),
+            ],
+          ),
+    );
+  }
 }
 
 class HomeHubPage extends StatelessWidget {
@@ -254,7 +353,7 @@ class HomeHubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FullCare Mobile'),
+        title: const Text('FullCare Audit'),
         actions: [
           IconButton(
             onPressed: () async {
@@ -265,18 +364,18 @@ class HomeHubPage extends StatelessWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF2D63A6), Color(0xFF4D8CC6)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +394,7 @@ class HomeHubPage extends StatelessWidget {
                   'Olá, ${user.name}',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 22,
+                    fontSize: 21,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -309,7 +408,7 @@ class HomeHubPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Módulos',
+            'Gestão de auditoria',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -317,110 +416,72 @@ class HomeHubPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 1.12,
-            children: [
-              _ModuleTile(
-                label: 'Internados',
-                subtitle: 'Lista operacional',
-                icon: Icons.bed_outlined,
-                backgroundColor: const Color(0xFFEEF4FB),
-                accentColor: const Color(0xFF2D63A6),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => AdmissionsHomePage(api: api),
-                    ),
-                  );
-                },
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _AuditOverviewRow(
+                    icon: Icons.assignment_outlined,
+                    title: 'Auditoria operacional',
+                    subtitle: 'Controle de atividades e responsáveis',
+                  ),
+                  Divider(height: 22),
+                  _AuditOverviewRow(
+                    icon: Icons.fact_check_outlined,
+                    title: 'Conformidade',
+                    subtitle: 'Organização de registros e evidências',
+                  ),
+                  Divider(height: 22),
+                  _AuditOverviewRow(
+                    icon: Icons.query_stats_outlined,
+                    title: 'Indicadores gerenciais',
+                    subtitle: 'Acompanhamento administrativo restrito',
+                  ),
+                ],
               ),
-              _ModuleTile(
-                label: 'Longa permanência',
-                subtitle: 'Fila estratégica',
-                icon: Icons.schedule_outlined,
-                backgroundColor: const Color(0xFFF6F0FB),
-                accentColor: const Color(0xFF5E2363),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => LongStayCasesPage(api: api),
-                    ),
-                  );
-                },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            child: ListTile(
+              dense: true,
+              leading: const Icon(
+                Icons.privacy_tip_outlined,
+                color: Color(0xFF2D63A6),
               ),
-              _ModuleTile(
-                label: 'Home Care',
-                subtitle: 'Elegibilidade e transição',
-                icon: Icons.home_work_outlined,
-                backgroundColor: const Color(0xFFECFDF5),
-                accentColor: const Color(0xFF0F766E),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => HomeCareCasesPage(api: api),
-                    ),
-                  );
-                },
-              ),
-              _ModuleTile(
-                label: 'Evento adverso',
-                subtitle: 'Segurança assistencial',
-                icon: Icons.warning_amber_rounded,
-                backgroundColor: const Color(0xFFFFF8EC),
-                accentColor: const Color(0xFF8B5E1A),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => AdverseEventCasesPage(api: api),
-                    ),
-                  );
-                },
-              ),
-              _ModuleTile(
-                label: 'Altas',
-                subtitle: 'Saída do paciente',
-                icon: Icons.logout,
-                backgroundColor: const Color(0xFFEAF7F0),
-                accentColor: const Color(0xFF1C7C54),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder:
-                          (_) => AdmissionsHomePage(
-                            api: api,
-                            title: 'Altas e internações',
-                          ),
-                    ),
-                  );
-                },
-              ),
-              _ModuleTile(
-                label: 'TUSS e prorrogações',
-                subtitle: 'Ações por internação',
-                icon: Icons.fact_check_outlined,
-                backgroundColor: const Color(0xFFF3F4F6),
-                accentColor: const Color(0xFF374151),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder:
-                          (_) => AdmissionsHomePage(
-                            api: api,
-                            title: 'Operar internações',
-                          ),
-                    ),
-                  );
-                },
-              ),
-            ],
+              title: const Text('Sobre e privacidade'),
+              subtitle: const Text('Politica de Privacidade'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showAboutAndPrivacy(context),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showAboutAndPrivacy(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('FullCare Audit'),
+            content: const SingleChildScrollView(
+              child: Text(
+                'Aplicativo de gestao de auditoria para usuarios autorizados do FullCare.\n\n'
+                'O app utiliza login individual, sessao autenticada e acesso restrito aos recursos administrativos permitidos.\n\n'
+                'Politica de Privacidade:\n'
+                'https://accertconsult.com.br/politica-privacidade-fullcare-mobile.html',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Fechar'),
+              ),
+            ],
+          ),
     );
   }
 }
@@ -429,7 +490,7 @@ class AdmissionsHomePage extends StatelessWidget {
   const AdmissionsHomePage({
     super.key,
     required this.api,
-    this.title = 'Internados',
+    this.title = 'Auditorias',
   });
 
   final MobileApi api;
@@ -502,7 +563,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
             textInputAction: TextInputAction.search,
             onSubmitted: _load,
             decoration: InputDecoration(
-              labelText: 'Pesquisar por paciente ou hospital',
+              labelText: 'Pesquisar por beneficiário ou prestador',
               suffixIcon: IconButton(
                 onPressed: () => _load(_searchController.text.trim()),
                 icon: const Icon(Icons.search),
@@ -533,7 +594,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                   contentPadding: const EdgeInsets.all(16),
                   title: Text(item.patientName),
                   subtitle: Text(
-                    'Hospital: ${item.hospitalName.isEmpty ? "-" : item.hospitalName}\nConvênio: ${item.insuranceName.isEmpty ? "-" : item.insuranceName}\nCID: ${item.cidCode.isEmpty ? "-" : item.cidCode}\nSenha: ${item.authorizationCode.isEmpty ? "-" : item.authorizationCode}',
+                    'Prestador: ${item.hospitalName.isEmpty ? "-" : item.hospitalName}\nConvênio: ${item.insuranceName.isEmpty ? "-" : item.insuranceName}\nCID: ${item.cidCode.isEmpty ? "-" : item.cidCode}\nSenha: ${item.authorizationCode.isEmpty ? "-" : item.authorizationCode}',
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () async {
@@ -622,9 +683,11 @@ class _HomeCareCasesPageState extends State<HomeCareCasesPage> {
 
   String _labelize(String value) {
     if (value.trim().isEmpty) return '-';
+    if (value == 'hospital') return 'Prestador';
     return value
         .split('_')
         .map((part) {
+          if (part == 'hospital') return 'Prestador';
           if (part.isEmpty) return part;
           return '${part[0].toUpperCase()}${part.substring(1)}';
         })
@@ -896,7 +959,7 @@ class _HomeCareCasesPageState extends State<HomeCareCasesPage> {
               textInputAction: TextInputAction.search,
               onSubmitted: _load,
               decoration: InputDecoration(
-                labelText: 'Pesquisar por paciente, hospital ou convênio',
+                labelText: 'Pesquisar por beneficiário, prestador ou convênio',
                 suffixIcon: IconButton(
                   onPressed: () => _load(_searchController.text.trim()),
                   icon: const Icon(Icons.search),
@@ -1125,9 +1188,11 @@ class _LongStayCasesPageState extends State<LongStayCasesPage> {
 
   String _labelize(String value) {
     if (value.trim().isEmpty) return '-';
+    if (value == 'hospital') return 'Prestador';
     return value
         .split('_')
         .map((part) {
+          if (part == 'hospital') return 'Prestador';
           if (part.isEmpty) return part;
           return '${part[0].toUpperCase()}${part.substring(1)}';
         })
@@ -1484,7 +1549,7 @@ class _LongStayCasesPageState extends State<LongStayCasesPage> {
               onSubmitted: _load,
               decoration: InputDecoration(
                 labelText:
-                    'Pesquisar por paciente, hospital, convênio ou status',
+                    'Pesquisar por beneficiário, prestador, convênio ou status',
                 suffixIcon: IconButton(
                   onPressed: () => _load(_searchController.text.trim()),
                   icon: const Icon(Icons.search),
@@ -1927,7 +1992,8 @@ class _AdverseEventCasesPageState extends State<AdverseEventCasesPage> {
               textInputAction: TextInputAction.search,
               onSubmitted: _load,
               decoration: InputDecoration(
-                labelText: 'Pesquisar por paciente, hospital, convênio ou tipo',
+                labelText:
+                    'Pesquisar por beneficiário, prestador, convênio ou tipo',
                 suffixIcon: IconButton(
                   onPressed: () => _load(_searchController.text.trim()),
                   icon: const Icon(Icons.search),
@@ -2811,7 +2877,7 @@ class _AdmissionDetailPageState extends State<AdmissionDetailPage> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text('Hospital: ${detail.admission.hospitalName}'),
+                            Text('Prestador: ${detail.admission.hospitalName}'),
                             Text('Convênio: ${detail.admission.insuranceName}'),
                             Text('CID: ${detail.admission.cidCode}'),
                             Text(
@@ -3016,71 +3082,55 @@ class _AdmissionDetailPageState extends State<AdmissionDetailPage> {
   }
 }
 
-class _ModuleTile extends StatelessWidget {
-  const _ModuleTile({
-    required this.label,
-    required this.subtitle,
+class _AuditOverviewRow extends StatelessWidget {
+  const _AuditOverviewRow({
     required this.icon,
-    required this.backgroundColor,
-    required this.accentColor,
-    required this.onTap,
+    required this.title,
+    required this.subtitle,
   });
 
-  final String label;
-  final String subtitle;
   final IconData icon;
-  final Color backgroundColor;
-  final Color accentColor;
-  final VoidCallback onTap;
+  final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(22),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+    return Row(
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEF4FB),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(icon, color: const Color(0xFF2D63A6), size: 23),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(14),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF1D2940),
                 ),
-                child: Icon(icon, color: accentColor),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: accentColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF5B6577),
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF5B6577),
+                ),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

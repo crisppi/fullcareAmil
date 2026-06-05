@@ -21,7 +21,7 @@ body.bi-theme,
               radial-gradient(circle at 90% 10%, rgba(216, 153, 196, 0.14), transparent 40%),
               linear-gradient(120deg, var(--bi-bg), var(--bi-bg-2));
   color: var(--bi-text);
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif);
 }
 
 .bi-theme {
@@ -87,12 +87,17 @@ body.bi-theme,
 }
 
 .bi-title {
+  display: inline-flex;
+  align-items: center;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: clamp(0.98rem, 1.8vw, 1.34rem);
   margin: 0;
-  color: var(--bi-text);
+  color: #ffffff;
+  background: linear-gradient(135deg, #2f6f9f 0%, #4b90bd 54%, #5eb4d8 100%);
+  border-radius: 18px;
+  padding: 8px 16px;
 }
 
 .bi-theme .bi-wrapper > .bi-obitos-hero .bi-obitos-header,
@@ -1149,13 +1154,17 @@ table.bi-table::after,
   display: none !important;
 }
 
+.bi-table thead {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .bi-table th {
   font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--bi-muted);
-  background: rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid var(--bi-border);
+  color: rgba(246, 251, 255, 0.92);
+  background: transparent;
+  border-bottom: 1px solid rgba(218, 239, 255, 0.18);
   padding: 7px 9px;
   text-align: left;
 }
@@ -1757,10 +1766,14 @@ table.bi-table::after,
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 20px rgba(5, 27, 48, 0.12);
 }
 
+.bi-theme .bi-table thead {
+  background: rgba(231, 244, 252, 0.14);
+}
+
 .bi-theme .bi-table th {
-  color: #dceafa;
-  background: linear-gradient(180deg, rgba(22, 54, 85, 0.92), rgba(14, 40, 66, 0.88));
-  border-bottom: 1px solid rgba(218, 239, 255, 0.22);
+  color: rgba(246, 251, 255, 0.92);
+  background: transparent;
+  border-bottom: 1px solid rgba(218, 239, 255, 0.18);
   padding: 9px 10px;
 }
 

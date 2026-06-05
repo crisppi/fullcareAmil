@@ -216,8 +216,8 @@
 
     <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
-    <div class="container-fluid form_container listagem-page" id="main-container" style="margin-top:18px;">
-        <div class="listagem-hero">
+    <div class="container-fluid form_container listagem-page" id="main-container" style="margin-top:34px;">
+        <div class="listagem-hero listagem-hero--module listagem-hero--cadastros">
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Pacientes</h1>

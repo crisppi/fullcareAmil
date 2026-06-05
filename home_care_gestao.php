@@ -576,35 +576,17 @@ if ($semAtualizacaoLabel !== '') {
 </style>
 
 <div class="hc-shell">
-    <div class="hc-hero">
-        <section class="hc-hero__main">
-            <div class="hc-eyebrow">Cuidado domiciliar</div>
-            <h1>Gestão de Home Care</h1>
-            <p>Priorize elegibilidade NEAD, implantação e transição segura do cuidado domiciliar com foco nos casos em atraso.</p>
-            <div class="hc-hero__metrics">
-                <div class="hc-hero__metric">
-                    <strong><?= number_format($totais['casos'], 0, ',', '.') ?></strong>
-                    <span>casos monitorados</span>
-                </div>
-                <div class="hc-hero__metric">
-                    <strong><?= number_format($totais['elegiveis'], 0, ',', '.') ?></strong>
-                    <span>elegíveis NEAD</span>
-                </div>
-                <div class="hc-hero__metric">
-                    <strong><?= number_format($totais['sem_revisao'], 0, ',', '.') ?></strong>
-                    <span>sem revisão recente</span>
-                </div>
-            </div>
-        </section>
-        <aside class="hc-hero__side">
-            <div>
-                <h2>Leitura rápida da fila</h2>
-                <p>Foque nos casos sem status definido e nos pacientes com implantação sem revisão há mais de 5 dias.</p>
-            </div>
-            <div class="hc-top-actions">
-                <a class="hc-btn" href="<?= $BASE_URL ?>bi/home-care">Voltar ao BI</a>
-            </div>
-        </aside>
+    <div class="fc-module-header fc-module-header--cuidado">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Cuidado Continuado</p>
+            <h1 class="fc-module-header__title">Gestão de Home Care</h1>
+            <p class="fc-module-header__subtitle">Priorize elegibilidade NEAD, implantação e transição segura do cuidado domiciliar com foco nos casos em atraso.</p>
+        </div>
+        <div class="fc-module-header__actions">
+            <span class="badge rounded-pill bg-light text-primary"><?= number_format($totais['casos'], 0, ',', '.') ?> casos</span>
+            <span class="badge rounded-pill bg-light text-primary"><?= number_format($totais['elegiveis'], 0, ',', '.') ?> elegíveis</span>
+            <a class="btn btn-light" href="<?= $BASE_URL ?>bi/home-care">Voltar ao BI</a>
+        </div>
     </div>
 
     <?php if ($pageError !== ''): ?>

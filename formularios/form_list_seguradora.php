@@ -92,7 +92,7 @@
     <!--tabela evento-->
     <div class="container-fluid form_container listagem-page" style="margin-top:18px;">
 
-        <div class="listagem-hero">
+        <div class="listagem-hero listagem-hero--module listagem-hero--cadastros">
             <div class="listagem-hero__copy">
                 <div class="listagem-kicker">Cadastros</div>
                 <h1 class="listagem-title">Seguradoras</h1>
@@ -263,25 +263,6 @@
 
                     <!-- paginacao que aparece abaixo da tabela -->
                     <div style="display: flex;margin-top:20px">
-
-                        <!-- Modal para abrir tela de cadastro -->
-                        <div class="modal fade" id="myModal">
-                            <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
-                                <div class="modal-content">
-                                    <div style="padding-left:20px;padding-top:20px;">
-                                        <h4 class="page-title">Seguradora</h4>
-                                        <p class="page-description">Informações
-                                            sobre a Seguradora</p>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div id="content-php"></div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Modal para abrir tela de cadastro -->
-
                         <div class="pagination" style="margin: 0 auto;">
                             <?php if ($total_pages ?? 1 > 1): ?>
                             <ul class="pagination">
@@ -431,22 +412,6 @@ if (typeof window.paginateSeguradoras !== 'function') {
     };
 }
 </script>
-<style>
-.modal-backdrop {
-    display: none;
-
-}
-
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-
-}
-
-.modal-header {
-    color: white;
-    background: #35bae1;
-}
-</style>
 <script src="./js/input-estilo.js"></script>
 
 <script src="./scripts/cadastro/general.js"></script>

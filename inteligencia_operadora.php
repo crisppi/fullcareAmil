@@ -256,24 +256,24 @@ include_once("templates/header.php");
             padding: 0 24px;
         }
         .report-header {
-            background: linear-gradient(120deg, #fef6ff, #f3e6f9);
+            background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%);
             border-radius: 18px;
             padding: 18px 22px;
-            border: 1px solid rgba(94, 35, 99, .12);
+            border: 1px solid rgba(76, 142, 187, .22);
             margin-bottom: 16px;
         }
         .report-header h1 {
             margin: 0 0 4px;
             font-weight: 700;
-            color: #4b2054;
+            color: #24384f;
             font-size: 1.06rem;
         }
         .report-card {
             background: #fff;
             border-radius: 16px;
             padding: 14px 18px;
-            border: 1px solid rgba(94, 35, 99, .08);
-            box-shadow: 0 10px 24px rgba(45, 18, 70, .08);
+            border: 1px solid rgba(76, 142, 187, .18);
+            box-shadow: 0 10px 24px rgba(35, 102, 147, .08);
             margin-bottom: 14px;
         }
         .report-wrapper .text-muted,
@@ -289,8 +289,8 @@ include_once("templates/header.php");
             --bs-gutter-x: .8rem;
         }
         .table thead th {
-            background: #f8f3fb;
-            color: #4b2054;
+            background: #2f6f9f;
+            color: #ffffff;
             font-size: .7rem;
             padding-top: .65rem;
             padding-bottom: .65rem;
@@ -319,9 +319,9 @@ include_once("templates/header.php");
             border-radius: 999px;
             font-size: .72rem;
             font-weight: 700;
-            background: #f3edff;
-            border: 1px solid #d6c5f7;
-            color: #5e2363;
+            background: #eef7fc;
+            border: 1px solid rgba(76, 142, 187, .28);
+            color: #2f6f9f;
         }
     </style>
 </head>

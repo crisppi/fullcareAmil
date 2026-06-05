@@ -99,11 +99,11 @@ include_once("templates/header.php");
         background: #fff;
         margin-bottom: 1rem;
         padding: 1rem 1.1rem;
-        box-shadow: 0 10px 25px rgba(95, 35, 99, 0.08);
+        box-shadow: 0 10px 25px rgba(35, 102, 147, 0.08);
     }
 
     .insight-card h4 {
-        color: #5e2363;
+        color: #2f6f9f;
         font-weight: 600;
         font-size: .96rem;
     }

@@ -566,6 +566,12 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         padding: .15rem .15rem 0;
     }
 
+    .visitas-page-heading.fc-module-header {
+        align-items: center;
+        margin-bottom: 14px;
+        padding: 10px 18px;
+    }
+
     .page-title {
         color: #303038;
         font-size: 1.38rem;
@@ -939,12 +945,15 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
 </style>
 
 <div class="container-fluid visitas-page">
-    <div class="visitas-page-heading">
-        <div>
-            <h4 class="page-title"><?= h($pageTitle) ?></h4>
-            <div class="page-subtitle">Consulta, filtros e exportação das visitas registradas</div>
+    <div class="fc-module-header fc-module-header--gestao visitas-page-heading">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title"><?= h($pageTitle) ?></h1>
+            <p class="fc-module-header__subtitle">Consulta, filtros e exportação das visitas registradas</p>
         </div>
-        <div class="text-muted small"><?= (int)$total ?> registro(s)</div>
+        <div class="fc-module-header__actions">
+            <div class="small text-white"><?= (int)$total ?> registro(s)</div>
+        </div>
     </div>
 
     <?php if ($DEBUG): ?>

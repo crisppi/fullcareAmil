@@ -147,16 +147,16 @@ function cc_fmt_datetime_dash(?string $value): string
 
 <div class="cc-shell">
     <div class="container-fluid">
-        <div class="cc-hero mb-4">
+        <div class="fc-module-header fc-module-header--cuidado mb-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-end">
-                <div>
-                    <div class="text-uppercase small fw-semibold" style="letter-spacing:.08em;opacity:.8;">Cuidado Continuado</div>
-                    <h1 class="h3 mt-2 mb-2">Gestão operacional de programas assistenciais</h1>
-                    <p class="mb-0" style="max-width:860px;opacity:.92;">
+                <div class="fc-module-header__copy">
+                    <p class="fc-module-header__kicker">Cuidado Continuado</p>
+                    <h1 class="fc-module-header__title">Gestão operacional de programas assistenciais</h1>
+                    <p class="fc-module-header__subtitle">
                         Os casos identificados pela auditoria entram primeiro em pré-lista. Depois da admissão manual, seguem para Gestão de Crônicos ou Medicina Preventiva com monitoramento e histórico de ações.
                     </p>
                 </div>
-                <div class="d-flex gap-2 flex-wrap">
+                <div class="fc-module-header__actions">
                     <a class="btn btn-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado/cronicos') ?>">Gestão de Crônicos</a>
                     <a class="btn btn-outline-light" href="<?= htmlspecialchars($BASE_URL . 'cuidado-continuado/medicina-preventiva') ?>">Medicina Preventiva</a>
                 </div>

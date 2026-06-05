@@ -63,20 +63,20 @@ include_once("templates/header.php");
         border: 1px solid #e7e7e7;
         padding: 1rem 1.1rem;
         background: #fff;
-        box-shadow: 0 10px 20px rgba(95, 35, 99, 0.07);
+        box-shadow: 0 10px 20px rgba(76, 142, 187, 0.07);
     }
 
     .automation-card h4 {
-        color: #5e2363;
+        color: #2f6f9f;
         font-weight: 600;
         font-size: .94rem;
     }
 
     .automation-title-card {
-        border: 1px solid rgba(94, 35, 99, 0.18);
+        border: 1px solid rgba(76, 142, 187, 0.18);
         border-radius: 14px;
-        background: linear-gradient(135deg, #fbf6fc 0%, #f2e7f5 100%);
-        box-shadow: 0 12px 26px rgba(95, 35, 99, 0.11);
+        background: linear-gradient(135deg, #f4faff 0%, #e8f4fb 100%);
+        box-shadow: 0 12px 26px rgba(76, 142, 187, 0.11);
         margin-bottom: 1rem;
         padding: 1rem 1.1rem;
         position: relative;
@@ -84,7 +84,7 @@ include_once("templates/header.php");
     }
 
     .automation-title-card::before {
-        background: linear-gradient(180deg, #5e2363 0%, #77cfc7 100%);
+        background: linear-gradient(180deg, #2f6f9f 0%, #77cfc7 100%);
         border-radius: 999px;
         bottom: 14px;
         content: "";
@@ -111,10 +111,10 @@ include_once("templates/header.php");
 
     .automation-info-button {
         align-items: center;
-        border: 1px solid rgba(94, 35, 99, .32);
+        border: 1px solid rgba(76, 142, 187, .32);
         border-radius: 50%;
         background: #ffffff;
-        color: #5e2363;
+        color: #2f6f9f;
         display: inline-flex;
         font-weight: 800;
         height: 32px;
@@ -126,7 +126,7 @@ include_once("templates/header.php");
     }
 
     .automation-info-text {
-        border-top: 1px solid rgba(94, 35, 99, 0.1);
+        border-top: 1px solid rgba(76, 142, 187, 0.1);
         color: #75657b;
         font-size: .82rem;
         line-height: 1.45;
@@ -135,15 +135,15 @@ include_once("templates/header.php");
     }
 
     .automation-panel {
-        border: 1px solid rgba(94, 35, 99, 0.12);
+        border: 1px solid rgba(76, 142, 187, 0.12);
         border-radius: 16px;
-        background: linear-gradient(135deg, #ffffff 0%, #fbf7fc 100%);
-        box-shadow: 0 14px 28px rgba(95, 35, 99, 0.08);
+        background: linear-gradient(135deg, #ffffff 0%, #f4faff 100%);
+        box-shadow: 0 14px 28px rgba(76, 142, 187, 0.08);
         padding: 1.1rem;
     }
 
     .automation-panel .form-label {
-        color: #5e2363;
+        color: #2f6f9f;
         font-weight: 700;
     }
 
@@ -179,7 +179,7 @@ include_once("templates/header.php");
     }
 
     .automation-search-results {
-        border: 1px solid rgba(94, 35, 99, .16);
+        border: 1px solid rgba(76, 142, 187, .16);
         border-radius: 10px;
         background: #fff;
         box-shadow: 0 12px 24px rgba(42, 28, 47, .12);
@@ -204,8 +204,8 @@ include_once("templates/header.php");
 
     .automation-result-item:hover,
     .automation-result-item:focus {
-        background: #f4ebf6;
-        color: #5e2363;
+        background: #eef7fc;
+        color: #2f6f9f;
         outline: none;
     }
 
@@ -228,7 +228,7 @@ include_once("templates/header.php");
     }
 
     .automation-context-card {
-        border: 1px solid rgba(94, 35, 99, 0.1);
+        border: 1px solid rgba(76, 142, 187, 0.1);
         border-radius: 12px;
         background: #fff;
         padding: .9rem 1rem;
@@ -255,8 +255,8 @@ include_once("templates/header.php");
 
     .automation-source-badge {
         border-radius: 999px;
-        background: #efe6f1;
-        color: #5e2363;
+        background: #eef7fc;
+        color: #2f6f9f;
         font-size: .7rem;
         font-weight: 700;
         padding: .3rem .65rem;

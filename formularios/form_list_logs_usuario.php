@@ -1,5 +1,6 @@
 <?php
 require_once("templates/header.php");
+require_once(__DIR__ . '/../utils/flow_logger.php');
 
 function eLogUser($value): string
 {
@@ -158,6 +159,221 @@ $extractRecordRef = static function (array $ctx, array $data, string $uri): stri
     return '--';
 };
 
+$appendLogEntry = static function (array $entry, string $rawLine = '') use (
+    &$rows,
+    &$summary,
+    $dateStartTs,
+    $dateEndTs,
+    $extractUserId,
+    $extractRecordRef,
+    $usersMap,
+    $userIdFilter,
+    $flowFilter,
+    $stageFilter,
+    $levelFilter,
+    $qFilter
+): void {
+    $tsRaw = (string)($entry['ts'] ?? $entry['created_at'] ?? '');
+    $ts = strtotime($tsRaw);
+    if ($ts === false || $ts < $dateStartTs || $ts > $dateEndTs) {
+        return;
+    }
+
+    $ctx = (isset($entry['ctx']) && is_array($entry['ctx'])) ? $entry['ctx'] : [];
+    $data = (isset($entry['data']) && is_array($entry['data'])) ? $entry['data'] : [];
+    $userId = $extractUserId($ctx, $data);
+
+    $flow = (string)($entry['flow'] ?? '');
+    $stage = (string)($entry['stage'] ?? '');
+    $level = strtoupper((string)($entry['level'] ?? 'INFO'));
+    $requestUri = (string)($ctx['request_uri'] ?? ($entry['request_uri'] ?? ''));
+
+    $tipoEvento = 'Sistema';
+    if ($flow === 'page_access') {
+        $tipoEvento = 'Acesso';
+    } elseif ($flow === 'auth_login') {
+        $tipoEvento = 'Login';
+    } elseif (strpos($flow, 'process_') === 0) {
+        $tipoEvento = 'Registro';
+    }
+
+    $acao = $stage !== '' ? $stage : ($flow !== '' ? $flow : '--');
+    $registroRef = $extractRecordRef($ctx, $data, $requestUri);
+
+    if ($userIdFilter > 0 && $userId !== $userIdFilter) {
+        return;
+    }
+    if ($flowFilter !== '' && stripos($flow, $flowFilter) === false) {
+        return;
+    }
+    if ($stageFilter !== '' && stripos($stage, $stageFilter) === false) {
+        return;
+    }
+    if ($levelFilter !== '' && $level !== $levelFilter) {
+        return;
+    }
+    if ($qFilter !== '') {
+        $haystack = $rawLine !== ''
+            ? $rawLine
+            : flowLogJsonEncode($entry);
+        $haystack .= ' ' . flowLogJsonEncode($ctx) . ' ' . flowLogJsonEncode($data);
+        if (stripos((string)$haystack, $qFilter) === false) {
+            return;
+        }
+    }
+
+    $displayName = 'Sem usuário';
+    if ($userId > 0 && isset($usersMap[$userId])) {
+        $displayName = $usersMap[$userId]['nome'] !== '' ? $usersMap[$userId]['nome'] : ('Usuário #' . $userId);
+    } elseif (!empty($ctx['session_user_name'])) {
+        $displayName = (string)$ctx['session_user_name'];
+    } elseif (!empty($entry['user_name'])) {
+        $displayName = (string)$entry['user_name'];
+    } elseif (!empty($data['session_user_name'])) {
+        $displayName = (string)$data['session_user_name'];
+    } elseif ($userId > 0) {
+        $displayName = 'Usuário #' . $userId;
+    }
+
+    $summaryKey = ($userId > 0) ? ('id_' . $userId) : ('name_' . md5($displayName));
+    if (!isset($summary[$summaryKey])) {
+        $summary[$summaryKey] = [
+            'user_id' => $userId,
+            'nome' => $displayName,
+            'cargo' => ($userId > 0 && isset($usersMap[$userId])) ? ($usersMap[$userId]['cargo'] ?: '--') : '--',
+            'total' => 0,
+            'info' => 0,
+            'warning' => 0,
+            'error' => 0,
+            'ultimo_ts' => 0,
+            'flows' => [],
+        ];
+    }
+
+    $summary[$summaryKey]['total']++;
+    if ($level === 'ERROR') {
+        $summary[$summaryKey]['error']++;
+    } elseif ($level === 'WARNING' || $level === 'WARN') {
+        $summary[$summaryKey]['warning']++;
+    } else {
+        $summary[$summaryKey]['info']++;
+    }
+    if ($ts > $summary[$summaryKey]['ultimo_ts']) {
+        $summary[$summaryKey]['ultimo_ts'] = $ts;
+    }
+    $summary[$summaryKey]['flows'][$flow] = true;
+
+    $rows[] = [
+        'ts' => $ts,
+        'ts_raw' => $tsRaw,
+        'user_id' => $userId,
+        'user_nome' => $displayName,
+        'tipo_evento' => $tipoEvento,
+        'acao' => $acao,
+        'registro_ref' => $registroRef,
+        'flow' => $flow,
+        'stage' => $stage,
+        'level' => $level,
+        'trace_id' => (string)($entry['trace_id'] ?? ''),
+        'request_uri' => $requestUri,
+    ];
+};
+
+$logSource = 'file';
+$dbAvailable = false;
+try {
+    $conn->query("SELECT 1 FROM tb_flow_operacional_log LIMIT 1");
+    $dbAvailable = true;
+} catch (Throwable $e) {
+    $dbAvailable = false;
+}
+
+if ($dbAvailable) {
+    $logSource = 'database';
+    try {
+        $where = ['created_at BETWEEN :data_ini AND :data_fim'];
+        $params = [
+            ':data_ini' => date('Y-m-d H:i:s', (int)$dateStartTs),
+            ':data_fim' => date('Y-m-d H:i:s', (int)$dateEndTs),
+        ];
+
+        if ($userIdFilter > 0) {
+            $where[] = 'user_id = :user_id';
+            $params[':user_id'] = $userIdFilter;
+        }
+        if ($flowFilter !== '') {
+            $where[] = 'flow LIKE :flow';
+            $params[':flow'] = '%' . $flowFilter . '%';
+        }
+        if ($stageFilter !== '') {
+            $where[] = 'stage LIKE :stage';
+            $params[':stage'] = '%' . $stageFilter . '%';
+        }
+        if ($levelFilter !== '') {
+            $where[] = 'level = :level';
+            $params[':level'] = $levelFilter;
+        }
+        if ($qFilter !== '') {
+            $where[] = '(ctx_json LIKE :q OR data_json LIKE :q OR flow LIKE :q OR stage LIKE :q OR request_uri LIKE :q)';
+            $params[':q'] = '%' . $qFilter . '%';
+        }
+
+        $sql = "
+            SELECT id_log, created_at, level, flow, stage, trace_id, user_id, user_name,
+                request_method, request_uri, ip, user_agent, ctx_json, data_json
+            FROM tb_flow_operacional_log
+            WHERE " . implode(' AND ', $where) . "
+            ORDER BY created_at DESC
+            LIMIT {$limit}
+        ";
+        $stmtLogs = $conn->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmtLogs->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $stmtLogs->execute();
+
+        while ($dbRow = $stmtLogs->fetch(PDO::FETCH_ASSOC)) {
+            $ctx = json_decode((string)($dbRow['ctx_json'] ?? ''), true);
+            $data = json_decode((string)($dbRow['data_json'] ?? ''), true);
+            if (!is_array($ctx)) {
+                $ctx = [];
+            }
+            if (!is_array($data)) {
+                $data = [];
+            }
+
+            if (!isset($ctx['session_user_id']) && !empty($dbRow['user_id'])) {
+                $ctx['session_user_id'] = (int)$dbRow['user_id'];
+            }
+            if (!isset($ctx['session_user_name']) && !empty($dbRow['user_name'])) {
+                $ctx['session_user_name'] = (string)$dbRow['user_name'];
+            }
+            if (!isset($ctx['request_uri']) && !empty($dbRow['request_uri'])) {
+                $ctx['request_uri'] = (string)$dbRow['request_uri'];
+            }
+
+            $appendLogEntry([
+                'ts' => (string)$dbRow['created_at'],
+                'created_at' => (string)$dbRow['created_at'],
+                'level' => (string)$dbRow['level'],
+                'flow' => (string)$dbRow['flow'],
+                'stage' => (string)$dbRow['stage'],
+                'trace_id' => (string)$dbRow['trace_id'],
+                'user_name' => (string)$dbRow['user_name'],
+                'request_uri' => (string)$dbRow['request_uri'],
+                'ctx' => $ctx,
+                'data' => $data,
+            ]);
+        }
+    } catch (Throwable $e) {
+        error_log('[LOGS_USUARIO][DB] ' . $e->getMessage());
+        $rows = [];
+        $summary = [];
+        $logSource = 'file';
+        $dbAvailable = false;
+    }
+}
+
 if (is_file($logFile) && is_readable($logFile)) {
     $fh = fopen($logFile, 'rb');
     if ($fh) {
@@ -171,105 +387,7 @@ if (is_file($logFile) && is_readable($logFile)) {
                 continue;
             }
 
-            $tsRaw = (string)($entry['ts'] ?? '');
-            $ts = strtotime($tsRaw);
-            if ($ts === false || $ts < $dateStartTs || $ts > $dateEndTs) {
-                continue;
-            }
-
-            $ctx = (isset($entry['ctx']) && is_array($entry['ctx'])) ? $entry['ctx'] : [];
-            $data = (isset($entry['data']) && is_array($entry['data'])) ? $entry['data'] : [];
-            $userId = $extractUserId($ctx, $data);
-
-            $flow = (string)($entry['flow'] ?? '');
-            $stage = (string)($entry['stage'] ?? '');
-            $level = strtoupper((string)($entry['level'] ?? 'INFO'));
-            $requestUri = (string)($ctx['request_uri'] ?? '');
-
-            $tipoEvento = 'Sistema';
-            if ($flow === 'page_access') {
-                $tipoEvento = 'Acesso';
-            } elseif ($flow === 'auth_login') {
-                $tipoEvento = 'Login';
-            } elseif (strpos($flow, 'process_') === 0) {
-                $tipoEvento = 'Registro';
-            }
-
-            $acao = $stage !== '' ? $stage : ($flow !== '' ? $flow : '--');
-            $registroRef = $extractRecordRef($ctx, $data, $requestUri);
-
-            if ($userIdFilter > 0 && $userId !== $userIdFilter) {
-                continue;
-            }
-            if ($flowFilter !== '' && stripos($flow, $flowFilter) === false) {
-                continue;
-            }
-            if ($stageFilter !== '' && stripos($stage, $stageFilter) === false) {
-                continue;
-            }
-            if ($levelFilter !== '' && $level !== $levelFilter) {
-                continue;
-            }
-            if ($qFilter !== '') {
-                $haystack = $line . ' ' . json_encode($ctx, JSON_UNESCAPED_UNICODE) . ' ' . json_encode($data, JSON_UNESCAPED_UNICODE);
-                if (stripos((string)$haystack, $qFilter) === false) {
-                    continue;
-                }
-            }
-
-            $displayName = 'Sem usuário';
-            if ($userId > 0 && isset($usersMap[$userId])) {
-                $displayName = $usersMap[$userId]['nome'] !== '' ? $usersMap[$userId]['nome'] : ('Usuário #' . $userId);
-            } elseif (!empty($ctx['session_user_name'])) {
-                $displayName = (string)$ctx['session_user_name'];
-            } elseif (!empty($data['session_user_name'])) {
-                $displayName = (string)$data['session_user_name'];
-            } elseif ($userId > 0) {
-                $displayName = 'Usuário #' . $userId;
-            }
-
-            $summaryKey = ($userId > 0) ? ('id_' . $userId) : ('name_' . md5($displayName));
-            if (!isset($summary[$summaryKey])) {
-                $summary[$summaryKey] = [
-                    'user_id' => $userId,
-                    'nome' => $displayName,
-                    'cargo' => ($userId > 0 && isset($usersMap[$userId])) ? ($usersMap[$userId]['cargo'] ?: '--') : '--',
-                    'total' => 0,
-                    'info' => 0,
-                    'warning' => 0,
-                    'error' => 0,
-                    'ultimo_ts' => 0,
-                    'flows' => [],
-                ];
-            }
-
-            $summary[$summaryKey]['total']++;
-            if ($level === 'ERROR') {
-                $summary[$summaryKey]['error']++;
-            } elseif ($level === 'WARNING' || $level === 'WARN') {
-                $summary[$summaryKey]['warning']++;
-            } else {
-                $summary[$summaryKey]['info']++;
-            }
-            if ($ts > $summary[$summaryKey]['ultimo_ts']) {
-                $summary[$summaryKey]['ultimo_ts'] = $ts;
-            }
-            $summary[$summaryKey]['flows'][$flow] = true;
-
-            $rows[] = [
-                'ts' => $ts,
-                'ts_raw' => $tsRaw,
-                'user_id' => $userId,
-                'user_nome' => $displayName,
-                'tipo_evento' => $tipoEvento,
-                'acao' => $acao,
-                'registro_ref' => $registroRef,
-                'flow' => $flow,
-                'stage' => $stage,
-                'level' => $level,
-                'trace_id' => (string)($entry['trace_id'] ?? ''),
-                'request_uri' => $requestUri,
-            ];
+            $appendLogEntry($entry, $line);
         }
         fclose($fh);
     }
@@ -290,18 +408,31 @@ $totalRows = count($rows);
 $totalSummaryUsers = count($summary);
 $hasFile = is_file($logFile);
 $fileMtime = $hasFile ? @filemtime($logFile) : null;
+$hasLogSource = $dbAvailable || $hasFile;
 $acessosRows = array_values(array_filter($rows, static fn($r) => in_array($r['tipo_evento'], ['Acesso', 'Login'], true)));
 $acessosRows = array_slice($acessosRows, 0, 30);
 ?>
 
 <div class="container-fluid form_container" style="margin-top:15px;">
-    <h4 class="page-title">Logs por Usuário</h4>
-    <hr style="margin-top:5px;margin-bottom:10px;">
+    <div class="fc-module-header fc-module-header--gestao">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title">Logs por Usuário</h1>
+        </div>
+    </div>
 
     <div class="alert alert-info py-2 mb-3">
-        <strong>Arquivo:</strong> <code><?= eLogUser($logFile) ?></code>
+        <?php if ($logSource === 'database'): ?>
+        <strong>Origem:</strong> <code>tb_flow_operacional_log</code>
+        <span class="ms-2">Retenção automática: <?= (int)FLOW_LOG_DB_RETENTION_DAYS ?> dias</span>
+        <?php if ($hasFile): ?>
+        <span class="ms-2">Arquivo antigo mantido como histórico/fallback.</span>
+        <?php endif; ?>
+        <?php else: ?>
+        <strong>Origem fallback:</strong> <code><?= eLogUser($logFile) ?></code>
         <?php if ($fileMtime): ?>
         <span class="ms-2">Atualizado em <?= eLogUser(date('d/m/Y H:i:s', (int)$fileMtime)) ?></span>
+        <?php endif; ?>
         <?php endif; ?>
     </div>
 
@@ -347,7 +478,7 @@ $acessosRows = array_slice($acessosRows, 0, 30);
                 </div>
                 <div class="fc-filter-item w-actions">
                     <button type="submit" class="btn btn-primary"
-                        style="background-color:#5e2363;width:42px;height:32px;border-color:#5e2363">
+                        style="background-color:#2f6f9f;width:42px;height:32px;border-color:#2f6f9f">
                         <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
                     </button>
                     <a href="<?= eLogUser($BASE_URL) ?>inteligencia/logs-usuarios" class="btn btn-light btn-sm" title="Limpar filtros">
@@ -357,8 +488,8 @@ $acessosRows = array_slice($acessosRows, 0, 30);
             </form>
         </div>
 
-        <?php if (!$hasFile): ?>
-        <div class="alert alert-warning mt-3">Arquivo de logs ainda não existe: <code><?= eLogUser($logFile) ?></code></div>
+        <?php if (!$hasLogSource): ?>
+        <div class="alert alert-warning mt-3">Ainda não há origem de logs disponível. A tabela será criada no próximo registro operacional.</div>
         <?php else: ?>
         <div class="row mt-2 mb-3">
             <div class="col-md-4">

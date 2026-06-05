@@ -1,3 +1,4 @@
 {
-    "php.validate.executablePath": "/Applications/AMPPS/apps/php74/etc/php.ini"
+    "php.validate.executablePath": "/Applications/AMPPS/apps/php74/etc/php.ini",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

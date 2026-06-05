@@ -1,5 +1,5 @@
 <?php
-// include_once ("check_logado.php");
+include_once("check_logado.php");
 include_once("db.php");
 include_once("globals.php");
 include_once("models/mensagem.php");
@@ -7,9 +7,14 @@ include_once("dao/mensagemDao.php");
 
 $mensagemDao = new mensagemDAO($conn, $BASE_URL);
 
-$de_usuario = $_GET['de_usuario'];
-$para_usuario = $_GET['para_usuario'];
-$ultima_msg = $_GET['ultima_msg'];
+$de_usuario = (int) ($_SESSION['id_usuario'] ?? 0);
+$para_usuario = isset($_GET['para_usuario']) ? (int) $_GET['para_usuario'] : 0;
+$ultima_msg = isset($_GET['ultima_msg']) ? (int) $_GET['ultima_msg'] : 0;
+
+if ($de_usuario <= 0 || $para_usuario <= 0) {
+  exit;
+}
+
 $messages = $mensagemDao->getMensagemsBetweenUsers($de_usuario, $para_usuario, $ultima_msg);
 
 foreach ($messages as $mensagem) {

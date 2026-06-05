@@ -25,9 +25,10 @@ if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCare|FullConex(?:Aud)?)(
 }
 
 $currentScriptName = strtolower((string)basename((string)($_SERVER['SCRIPT_NAME'] ?? '')));
+$isBiRequestPath = preg_match('#/bi(/|$)#i', $requestUriPath) === 1;
 $isOperationalIntelligencePage =
     preg_match('#/inteligencia(/|$)#i', $requestUriPath) === 1
-    || in_array($currentScriptName, [
+    || (!$isBiRequestPath && in_array($currentScriptName, [
         'dashboard_operacional.php',
         'dashboard_performance.php',
         'faturamento_previsao.php',
@@ -43,8 +44,10 @@ $isOperationalIntelligencePage =
         'risco_glosa.php',
         'clusterizacao_clinica.php',
         'text_automation.php',
+        'inteligenciainternacoes.php',
+        'inteligenciagraficos.php',
         'inteligencia_logs_usuario.php',
-    ], true);
+    ], true));
 
 // Caminho default da foto do usuario
 $defaultFoto = $BASE_URL . 'uploads/usuarios/default-user.jpeg';
@@ -87,6 +90,53 @@ $isDiretoria = in_array($normCargoAccess, ['diretoria', 'diretor', 'administrado
     || ($sessionNivel === -1);
 $canSeeInteligenciaMenu = $isDiretoria;
 $canSeeUsuariosCadastro = $isDiretoria && in_array($sessionNivel, [5, -1], true);
+$canSeeFullMenu = (($sessionNivel > 0) || $isDiretoria) && !$isBiHubOnly;
+$hasHeaderMenuAccess = ($sessionNivel > 0) || $isDiretoria;
+$cadastroScripts = [
+    'list_paciente.php',
+    'cad_paciente.php',
+    'edit_paciente.php',
+    'show_paciente.php',
+    'list_hospital.php',
+    'cad_hospital.php',
+    'edit_hospital.php',
+    'show_hospital.php',
+    'list_seguradora.php',
+    'cad_seguradora.php',
+    'edit_seguradora.php',
+    'show_seguradora.php',
+    'list_estipulante.php',
+    'cad_estipulante.php',
+    'edit_estipulante.php',
+    'show_estipulante.php',
+    'list_usuario.php',
+    'cad_usuario.php',
+    'edit_usuario.php',
+    'show_usuario.php',
+    'list_hospitaluser.php',
+    'cad_hospitaluser.php',
+    'edit_hospitaluser.php',
+    'list_acomodacao.php',
+    'cad_acomodacao.php',
+    'edit_acomodacao.php',
+    'show_acomodacao.php',
+    'list_patologia.php',
+    'cad_patologia.php',
+    'edit_patologia.php',
+    'show_patologia.php',
+    'list_antecedente.php',
+    'cad_antecedente.php',
+    'edit_antecedente.php',
+    'show_antecedente.php',
+];
+$isCadastroRequestPath = preg_match('#/(pacientes|hospitais|seguradoras|estipulantes|usuarios)(/|$)#i', $requestUriPath) === 1
+    || in_array($currentScriptName, $cadastroScripts, true)
+    || preg_match('/^(form_)?(list|cad|edit|show)_(paciente|hospital|hospitaluser|seguradora|estipulante|usuario|acomodacao|patologia|antecedente)\.php$/i', $currentScriptName) === 1;
+$canSeeCadastrosMenu = $canSeeFullMenu && (
+    $sessionNivel > 3
+    || $canSeeUsuariosCadastro
+    || $isCadastroRequestPath
+);
 $isPerfilMedicoMenu = $startsWithAnyAccess($normCargoAccess, ['medico', 'med']);
 $seguradoraHeaderLogoUrl = null;
 $seguradoraHeaderNome = null;
@@ -195,13 +245,6 @@ if (!empty($sessionIdUsuario)) {
         $chatUnreadCount = 0;
     }
 
-    try {
-        require_once __DIR__ . '/../app/services/AssistenteVirtualService.php';
-        $headerAssistantService = new AssistenteVirtualService($conn, $BASE_URL);
-        $chatAssistantLink = $BASE_URL . 'show_chat.php?para_usuario=' . $headerAssistantService->getAssistantUserId();
-    } catch (Throwable $th) {
-        $chatAssistantLink = $BASE_URL . 'show_chat.php';
-    }
 }
 
 ?>
@@ -226,7 +269,6 @@ if (!empty($sessionIdUsuario)) {
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <link href="<?= $BASE_URL ?>diversos/CoolAdmin-master/css/font-face.css" rel="stylesheet" media="all">
     <link href="<?= $BASE_URL ?>diversos/CoolAdmin-master/vendor/mdi-font/css/material-design-iconic-font.min.css"
         rel="stylesheet" media="all">
     <link href="<?= $BASE_URL ?>diversos/CoolAdmin-master/vendor/animsition/animsition.min.css" rel="stylesheet"
@@ -244,9 +286,13 @@ if (!empty($sessionIdUsuario)) {
     <link href="<?= $BASE_URL ?>diversos/CoolAdmin-master/css/theme.css" rel="stylesheet" media="all">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/style.css?v=<?= @filemtime(__DIR__ . '/../css/style.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/legendas.css?v=<?= @filemtime(__DIR__ . '/../css/legendas.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/styleMenu.css?v=<?= @filemtime(__DIR__ . '/../css/styleMenu.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/module_headers.css?v=<?= @filemtime(__DIR__ . '/../css/module_headers.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/style_show_internacao.css?v=<?= @filemtime(__DIR__ . '/../css/style_show_internacao.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/table_style.css?v=<?= @filemtime(__DIR__ . '/../css/table_style.css') ?>" rel="stylesheet">
     <script defer src="<?= $BASE_URL ?>js/lista_header_sort.js"></script>
@@ -324,7 +370,7 @@ if (!empty($sessionIdUsuario)) {
         .navbar .navbar-brand .brand-divider {
             width: 1px;
             height: 28px;
-            background: rgba(94, 35, 99, 0.35);
+            background: rgba(76, 142, 187, 0.35);
         }
 
         .navbar .navbar-brand .logo-seguradora {
@@ -362,6 +408,12 @@ if (!empty($sessionIdUsuario)) {
         .navbar-nav.navbar-nav-scroll {
             flex-wrap: nowrap;
             gap: 0;
+            align-items: center;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid rgba(47, 111, 159, 0.12);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(31, 76, 110, 0.10);
+            padding: 8px 10px;
             min-width: 0;
         }
 
@@ -383,9 +435,17 @@ if (!empty($sessionIdUsuario)) {
 
         .navbar-nav.navbar-nav-scroll .nav-link {
             white-space: nowrap;
-            padding: 0.24rem 0.3rem;
-            font-size: 0.78rem;
-            line-height: 1.1;
+            padding: 0.36rem 0.34rem;
+            font-family: "Inter", Arial, Helvetica, sans-serif !important;
+            font-size: 0.82rem;
+            font-weight: 400;
+            line-height: 1.18;
+            color: #111827 !important;
+            letter-spacing: 0;
+            text-rendering: auto;
+            -webkit-font-smoothing: subpixel-antialiased;
+            -moz-osx-font-smoothing: auto;
+            font-synthesis-weight: none;
         }
 
         #navbarGestorListas {
@@ -426,9 +486,9 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .header-action-btn {
-            border: 1px solid rgba(94, 35, 99, 0.28) !important;
+            border: 1px solid rgba(76, 142, 187, 0.28) !important;
             background: #fff;
-            color: #5e2363;
+            color: #24384f;
             font-size: 0.76rem;
             min-height: 34px !important;
             height: 34px !important;
@@ -436,9 +496,20 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .header-action-btn:hover {
-            border-color: rgba(94, 35, 99, 0.45) !important;
-            background: #f9f7fb;
+            border-color: rgba(47, 111, 159, 0.45) !important;
+            background: #f4faff;
         }
+
+        #navbarMenuDropdown > i { color: #24384f !important; }
+        #navbarCadastrosDropdown > i { color: #2f6f9f !important; }
+        #navbarProducaoDropdown > i { color: #0d6efd !important; }
+        #dropdownContasRah > i { color: #7c3aed !important; }
+        #navbarListasDropdown > i { color: #64748b !important; }
+        #navbarGestaoDropdown > i { color: #198754 !important; }
+        #navbarCuidadoContinuado > i { color: #d63384 !important; }
+        #navbarBiDropdown > i { color: #2f6f9f !important; }
+        #navbarInteligenciaDropdown > i { color: #5e3db8 !important; }
+        #navbarGestorListas > i { color: #2f6f9f !important; }
 
         .header-chat-launcher {
             display: inline-flex;
@@ -470,6 +541,38 @@ if (!empty($sessionIdUsuario)) {
             color: #5c5c5c;
         }
 
+        .navbar .dropdown-menu .dropdown-item.inteligencia-chat-featured {
+            width: calc(100% - 16px);
+            margin: 4px 8px;
+            border: 1px solid rgba(94, 61, 184, 0.18);
+            border-radius: 10px;
+            background: linear-gradient(90deg, rgba(94, 61, 184, 0.12), rgba(47, 111, 159, 0.12));
+            color: #25334a;
+            font-weight: 500;
+        }
+
+        .navbar .dropdown-menu .dropdown-item.inteligencia-chat-featured:hover,
+        .navbar .dropdown-menu .dropdown-item.inteligencia-chat-featured:focus {
+            background: linear-gradient(90deg, rgba(94, 61, 184, 0.18), rgba(47, 111, 159, 0.18));
+            color: #172133;
+        }
+
+        .navbar .dropdown-menu .dropdown-item.producao-ai-featured {
+            width: calc(100% - 16px);
+            margin: 4px 8px;
+            border: 1px solid rgba(32, 139, 122, 0.2);
+            border-radius: 10px;
+            background: linear-gradient(90deg, rgba(32, 139, 122, 0.14), rgba(47, 111, 159, 0.12));
+            color: #24384f;
+            font-weight: 500;
+        }
+
+        .navbar .dropdown-menu .dropdown-item.producao-ai-featured:hover,
+        .navbar .dropdown-menu .dropdown-item.producao-ai-featured:focus {
+            background: linear-gradient(90deg, rgba(32, 139, 122, 0.2), rgba(47, 111, 159, 0.18));
+            color: #172133;
+        }
+
         .account-user-trigger::after {
             display: none !important;
         }
@@ -484,8 +587,8 @@ if (!empty($sessionIdUsuario)) {
         .header-actions .account-wrap {
             padding: 3px 10px 3px 8px;
             border-radius: 999px;
-            background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(247, 243, 251, .96));
-            border: 1px solid rgba(94, 35, 99, 0.12);
+            background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(244, 250, 255, .96));
+            border: 1px solid rgba(76, 142, 187, 0.16);
             box-shadow: 0 8px 18px rgba(57, 73, 111, 0.12);
         }
 
@@ -545,6 +648,8 @@ if (!empty($sessionIdUsuario)) {
                 overflow: visible !important;
                 width: 100%;
                 align-items: flex-start !important;
+                border-radius: 12px;
+                padding: 8px;
             }
 
             .header-actions {
@@ -597,10 +702,10 @@ if (!empty($sessionIdUsuario)) {
         .monthly-header,
         .automation-title-card,
         body > .container-fluid > .row:first-child {
-            background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%) !important;
-            border: 1px solid rgba(94, 35, 99, .18) !important;
+            background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%) !important;
+            border: 1px solid rgba(76, 142, 187, .22) !important;
             border-radius: 16px !important;
-            box-shadow: 0 18px 36px rgba(94, 35, 99, .14) !important;
+            box-shadow: 0 18px 36px rgba(35, 102, 147, .13) !important;
         }
 
         body > .container-fluid > .row:first-child {
@@ -618,7 +723,7 @@ if (!empty($sessionIdUsuario)) {
             font-size: clamp(1.2rem, 1.7vw, 1.65rem) !important;
             line-height: 1.08 !important;
             margin-bottom: 0.2rem !important;
-            color: #3b1d4f !important;
+            color: #24384f !important;
             font-weight: 800 !important;
         }
 
@@ -635,7 +740,7 @@ if (!empty($sessionIdUsuario)) {
         .automation-card h4 {
             font-size: clamp(0.95rem, 1.2vw, 1.12rem) !important;
             line-height: 1.12 !important;
-            color: #3b1d4f !important;
+            color: #24384f !important;
             font-weight: 800 !important;
         }
 
@@ -649,7 +754,7 @@ if (!empty($sessionIdUsuario)) {
         .container-fluid .alert strong {
             font-size: clamp(0.78rem, 1vw, 0.92rem) !important;
             line-height: 1.3 !important;
-            color: #5c5266 !important;
+            color: #5d6f82 !important;
         }
 
         .report-card,
@@ -662,9 +767,9 @@ if (!empty($sessionIdUsuario)) {
         .automation-panel,
         .automation-context-card {
             background: #fff !important;
-            border: 1px solid #d9d2e4 !important;
+            border: 1px solid rgba(76, 142, 187, .22) !important;
             border-radius: 12px !important;
-            box-shadow: 0 12px 28px rgba(40, 26, 66, .13) !important;
+            box-shadow: 0 12px 28px rgba(35, 102, 147, .11) !important;
         }
 
         .report-card,
@@ -679,47 +784,146 @@ if (!empty($sessionIdUsuario)) {
             border-radius: 10px !important;
         }
 
+        .table thead,
+        .report-wrapper .table thead,
+        .insight-card .table thead,
+        .forecast-table thead,
+        .dash-table-card thead,
+        .perf-table thead {
+            background: #2f6f9f !important;
+        }
+
         .table thead th,
         .report-wrapper .table thead th,
         .insight-card .table thead th,
+        .forecast-table th,
+        .dash-table-card th,
         .perf-table th {
-            background: #f1eaf8 !important;
-            color: #5e2363 !important;
-            border-bottom: 1px solid rgba(94, 35, 99, .35) !important;
+            background: transparent !important;
+            background-image: none !important;
+            color: #ffffff !important;
+            border-bottom: 1px solid rgba(47, 111, 159, .35) !important;
             font-weight: 800 !important;
             letter-spacing: .04em !important;
         }
 
-        .table td,
+        .table,
+        .forecast-table,
+        .dash-table-card table,
+        .perf-table {
+            border-collapse: collapse !important;
+            font-size: .78rem !important;
+        }
+
+        .table thead th,
+        .table tbody td,
+        .forecast-table th,
+        .forecast-table td,
+        .dash-table-card th,
+        .dash-table-card td,
+        .perf-table th,
         .perf-table td {
-            border-color: #e9e3ef !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            padding: 7px 12px !important;
+            line-height: 1.25 !important;
+            vertical-align: middle !important;
+        }
+
+        .table thead th,
+        .forecast-table th,
+        .dash-table-card th,
+        .perf-table th {
+            height: 30px !important;
+            min-height: 30px !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            line-height: 1.15 !important;
+            white-space: nowrap !important;
+        }
+
+        .table tbody td,
+        .forecast-table td,
+        .dash-table-card td,
+        .perf-table td {
+            white-space: nowrap !important;
+        }
+
+        .table-sm > :not(caption) > * > * {
+            padding: 7px 12px !important;
+        }
+
+        .table thead th,
+        .forecast-table th,
+        .dash-table-card th,
+        .perf-table th {
+            height: 30px !important;
+            min-height: 30px !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            line-height: 1.15 !important;
+            white-space: nowrap !important;
+        }
+
+        .table td,
+        .forecast-table td,
+        .dash-table-card td,
+        .perf-table td {
+            border-color: #e0edf5 !important;
             color: #3f3b46 !important;
         }
 
-        .table-striped > tbody > tr:nth-of-type(odd) > *,
-        .table-hover > tbody > tr:hover > * {
-            --bs-table-accent-bg: #fbf8fd !important;
+        .table tbody tr:nth-child(odd),
+        .table tbody tr:nth-child(odd) > *,
+        .perf-table tbody tr:nth-child(odd),
+        .perf-table tbody tr:nth-child(odd) > * {
+            background: #ffffff !important;
+            --bs-table-bg: #ffffff !important;
+            --bs-table-accent-bg: #ffffff !important;
+        }
+
+        .table tbody tr:nth-child(even),
+        .table tbody tr:nth-child(even) > *,
+        .perf-table tbody tr:nth-child(even),
+        .perf-table tbody tr:nth-child(even) > * {
+            background: #f4faff !important;
+            --bs-table-bg: #f4faff !important;
+            --bs-table-accent-bg: #f4faff !important;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            --bs-table-accent-bg: #f4faff !important;
             color: #3f3b46 !important;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(even) > * {
+            --bs-table-accent-bg: #ffffff !important;
+            color: #3f3b46 !important;
+        }
+
+        .table-hover > tbody > tr:hover > * {
+            --bs-table-accent-bg: #e8f4fb !important;
+            color: #24384f !important;
         }
 
         .form-control,
         .form-select {
-            border-color: #d9d2e4 !important;
+            border-color: #d2e4ef !important;
             color: #2f2639 !important;
         }
 
         .form-label,
         .text-uppercase,
         .report-wrapper .form-label {
-            color: #5e2363 !important;
+            color: #2f6f9f !important;
             font-weight: 800 !important;
             letter-spacing: .04em !important;
         }
 
         .btn-primary {
-            background: #5e2363 !important;
-            border-color: #5e2363 !important;
-            box-shadow: 0 8px 18px rgba(94, 35, 99, .18) !important;
+            background: #2f6f9f !important;
+            border-color: #2f6f9f !important;
+            box-shadow: 0 8px 18px rgba(35, 102, 147, .18) !important;
         }
 
         .alert-info {
@@ -747,7 +951,7 @@ if (!empty($sessionIdUsuario)) {
 <body>
     <div class="col-md-12" style="padding:0 !important">
         <nav class="navbar navbar-expand-lg navbar-light bg-light nav_bar_custom fixed-top">
-            <div class="bar_color" style="position:fixed;top:0;z-index:1000;width:100%;height:5px;background-image: linear-gradient(to right, #5e2363,#5bd9f3);
+            <div class="bar_color" style="position:fixed;top:0;z-index:1000;width:100%;height:5px;background-image: linear-gradient(to right, #2f6f9f,#5bd9f3);
             ">
             </div>
             <div class="container-fluid">
@@ -770,13 +974,13 @@ if (!empty($sessionIdUsuario)) {
                         style="--bs-scroll-height: 75vh;">
                         <!-- Ícone de mensagem -->
 
-                        <?php if ($sessionNivel > 0) { ?>
+                        <?php if ($hasHeaderMenuAccess) { ?>
 
                             <?php if ($canSeeFullMenu) { ?>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarMenuDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-stack edit-icon"></i>
                                         Menu
                                     </a>
@@ -796,7 +1000,7 @@ if (!empty($sessionIdUsuario)) {
                                                 Manual</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>SolicitacaoCustomizacao.php">
                                                 <i class="bi bi-file-earmark-text"
-                                                    style="font-size: 1rem;margin-right:5px; color: #5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Solicitação de Customização
                                             </a></li>
                                         <?php if ($isDiretoria) { ?>
@@ -809,7 +1013,7 @@ if (!empty($sessionIdUsuario)) {
                                         <?php if ($isDiretoria) { ?>
                                             <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/performance-equipes"><i
                                                         class="bi bi-trophy"
-                                                        style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
+                                                        style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                     Performance equipes</a></li>
                                         <?php } ?>
                                         <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
@@ -831,12 +1035,12 @@ if (!empty($sessionIdUsuario)) {
                                 </li>
                             <?php } ?>
 
-                            <?php if ($canSeeFullMenu && ($sessionNivel > 3 || $canSeeUsuariosCadastro)) { ?>
+                            <?php if ($canSeeCadastrosMenu) { ?>
 
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarCadastrosDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-pencil-square edit-icon"></i>
                                         Cadastros
                                     </a>
@@ -881,7 +1085,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarProducaoDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-calendar3 edit-icon"></i>
                                         Produção
                                     </a>
@@ -894,6 +1098,9 @@ if (!empty($sessionIdUsuario)) {
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>censo/lista"><i class="bi bi-book"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(222, 156, 55);"></i>
                                                 Censo</a></li>
+                                        <li><a class="dropdown-item producao-ai-featured" href="<?= $BASE_URL ?>producao/ia-clinica"><i
+                                                    class="bi bi-clipboard2-pulse"
+                                                    style="font-size: 1rem;margin-right:5px; color: #208b7a;"></i> IA Cl&iacute;nica</a></li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
@@ -919,7 +1126,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="dropdownContasRah" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-journal-richtext me-1" style="color:#5e2363;"></i>Contas
+                                        <i class="bi bi-journal-richtext me-1" style="color:#4b7fa5;"></i>Contas
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownContasRah">
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_cap_rah.php">
@@ -946,7 +1153,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarListasDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-list-ul edit-icon"></i>
                                         Listas
                                     </a>
@@ -975,7 +1182,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarGestaoDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-receipt edit-icon"></i>
                                         Gestão
                                     </a>
@@ -1029,7 +1236,7 @@ if (!empty($sessionIdUsuario)) {
                                             </li>
                                             <li><a class="dropdown-item" href="<?= $BASE_URL ?>visitas/lista"><i
                                                         class="bi bi-list-check"
-                                                        style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                        style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                     Lista Visitas</a></li>
                                             <li><a class="dropdown-item" href="<?= $BASE_URL ?>faturamento_visitas.php"><i
                                                         class="bi bi-clipboard-check"
@@ -1043,7 +1250,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarCuidadoContinuado" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"
                                             class="bi bi-heart-pulse"></i>
                                         Cuidado Continuado
                                     </a>
@@ -1065,7 +1272,7 @@ if (!empty($sessionIdUsuario)) {
                                         </li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>longa_permanencia_gestao.php"><i
                                                     class="bi bi-hourglass-split"
-                                                    style="font-size: 1rem;margin-right:5px; color:#7c3aed;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Longa Permanência</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>home_care_gestao.php"><i
                                                     class="bi bi-house-heart"
@@ -1078,7 +1285,7 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarBiDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-bar-chart-line edit-icon"></i>
                                         BI
                                     </a>
@@ -1175,14 +1382,25 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle " href="#" id="navbarInteligenciaDropdown" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                             class="bi bi-robot edit-icon"></i>
                                         Inteligência Operacional
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarInteligenciaDropdown">
+                                        <li><a class="dropdown-item inteligencia-chat-featured" href="<?= $BASE_URL ?>inteligencia/assistente-internacoes"><i
+                                                    class="bi bi-chat-dots"
+                                                    style="font-size: 1rem;margin-right:5px; color:#5e3db8;"></i>
+                                                IA de Internações</a></li>
+                                        <li><a class="dropdown-item inteligencia-chat-featured" href="<?= $BASE_URL ?>inteligencia/ia-graficos"><i
+                                                    class="bi bi-bar-chart-line"
+                                                    style="font-size: 1rem;margin-right:5px; color:#20a37a;"></i>
+                                                IA Gráficos</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/dashboard-360"><i
                                                     class="bi bi-grid-3x3-gap"
-                                                    style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Dashboard 360°</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/previsao-faturamento"><i
                                                     class="bi bi-graph-up-arrow"
@@ -1190,7 +1408,7 @@ if (!empty($sessionIdUsuario)) {
                                                 Previsão faturamento</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/painel-mensal"><i
                                                     class="bi bi-graph-up-arrow"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(94, 35, 99);"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#1d9ad8;"></i>
                                                 Painel Mensal</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>inteligencia/inteligencia-operadora"><i
                                                     class="bi bi-shield-check"
@@ -1248,7 +1466,7 @@ if (!empty($sessionIdUsuario)) {
                             <?php if ($canSeeHubMenu) { ?>
                                 <li class="nav-item">
                                     <a class="nav-link" href="<?= $BASE_URL ?>pacientes">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"
                                             class="bi bi-person-badge edit-icon"></i>
                                         HUB de Pacientes
                                     </a>
@@ -1258,26 +1476,26 @@ if (!empty($sessionIdUsuario)) {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarGestorListas" role="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i style="font-size: 1rem;margin-right:5px; color:#5e2363;"
+                                        <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"
                                             class="bi bi-list edit-icon"></i>
                                         Lista
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarGestorListas">
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>menu_app.php">
                                                 <i class="bi bi-grid-1x2-fill"
-                                                    style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Dashboard Operacional</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>internacoes/lista">
                                                 <i class="bi bi-clipboard-data"
-                                                    style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Internacao</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>gestao">
                                                 <i class="bi bi-postcard-heart"
-                                                    style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Gestao Assistencial</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>listas/altas">
                                                 <i class="bi bi-clipboard-check"
-                                                    style="font-size: 1rem;margin-right:5px; color:#5e2363;"></i>
+                                                    style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Altas</a></li>
                                         <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
                                             <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
@@ -1293,7 +1511,7 @@ if (!empty($sessionIdUsuario)) {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle " href="#" id="navbarScrollingDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <i style="font-size: 1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                <i style="font-size: 1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                     class="fa-solid fa-pills edit-icon"></i>
                                 DRG
                             </a>
@@ -1313,7 +1531,7 @@ if (!empty($sessionIdUsuario)) {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle " href="#" id="navbarScrollingDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <i style="font-size:  1rem;margin-right:5px; color:#5e2363;" name="type" value="edite"
+                                <i style="font-size:  1rem;margin-right:5px; color:#4b7fa5;" name="type" value="edite"
                                     class="fa-solid fa-print edit-icon"></i>
                                 Relatórios
                             </a>
@@ -1345,9 +1563,9 @@ if (!empty($sessionIdUsuario)) {
             <div class="d-flex align-items-center gap-2 ms-auto header-actions pe-3">
                 <a href="<?= htmlspecialchars($chatAssistantLink) ?>"
                     class="btn btn-outline-secondary position-relative header-chat-launcher header-action-btn"
-                    title="Chat interno e Assistente Virtual">
+                    title="Mensagens entre usuários">
                     <i class="bi bi-chat-dots"></i>
-                    <span class="d-none d-xl-inline ms-1">Chat</span>
+                    <span class="d-none d-xl-inline ms-1">Mensagens</span>
                     <?php if ($chatUnreadCount > 0): ?>
                         <span
                             class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger chat-unread-badge">
@@ -1415,10 +1633,26 @@ if (!empty($sessionIdUsuario)) {
             </div>
         </nav>
         <?php
-        if (empty($hideBIMenu ?? false)) {
+        $shouldRenderBISidebar = empty($hideBIMenu ?? false)
+            && !$isOperationalIntelligencePage
+            && function_exists('fullcare_is_bi_request')
+            && fullcare_is_bi_request();
+        if ($shouldRenderBISidebar) {
             include_once(__DIR__ . '/bi_topbar.php');
         }
         ?>
+        <?php if ($isOperationalIntelligencePage): ?>
+            <script>
+                (function () {
+                    const cleanupBiSidebar = () => {
+                        document.body.classList.remove('bi-theme', 'bi-nav-open', 'bi-nav-collapsed', 'bi-navegacao');
+                        document.querySelectorAll('.bi-sidebar-shell, .bi-side-toggle, .bi-mobile-backdrop').forEach((el) => el.remove());
+                    };
+                    cleanupBiSidebar();
+                    document.addEventListener('DOMContentLoaded', cleanupBiSidebar);
+                })();
+            </script>
+        <?php endif; ?>
 
         <!-- notification message -->
         <?php if (session_status() !== PHP_SESSION_ACTIVE) session_start(); ?>

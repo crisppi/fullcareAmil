@@ -503,8 +503,13 @@ th.th-acoes {
 </style>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
-<div class="container-fluid form_container" style="margin-top:8px;">
-    <h4 class="page-title m-0 mb-3" style="color:#3A3A3A;">Capeantes - Jornada da Conta</h4>
+<div class="container-fluid form_container listagem-page" style="margin-top:8px;">
+    <div class="listagem-hero listagem-hero--module listagem-hero--contas">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Capeantes</div>
+            <h1 class="listagem-title">Jornada da Conta</h1>
+        </div>
+    </div>
 
     <form action="<?= htmlspecialchars($actionUrl) ?>" id="filtros-form" method="GET" class="listagem-panel">
         <div class="row legacy-filter-row align-items-end">

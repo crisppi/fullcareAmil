@@ -225,13 +225,13 @@ if (!is_array($prioridades)) {
     padding: 0 18px;
 }
 .dash-hero {
-    background: linear-gradient(120deg, #fff6fb, #fbe1f2 60%, #f3cee6);
-    color: #3b1d4f;
+    background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%);
+    color: #24384f;
     border-radius: 14px;
     padding: 16px 20px;
     margin-bottom: 12px;
-    border: 1px solid rgba(94, 35, 99, .12);
-    box-shadow: 0 20px 45px rgba(94, 35, 99, .15);
+    border: 1px solid rgba(76, 142, 187, .20);
+    box-shadow: 0 20px 45px rgba(35, 102, 147, .12);
 }
 .dash-hero h1 {
     font-weight: 800;
@@ -279,16 +279,16 @@ if (!is_array($prioridades)) {
 .dash-table-card {
     margin-top: 18px;
     border-radius: 14px;
-    border: 1px solid rgba(94, 35, 99, .1);
+    border: 1px solid rgba(76, 142, 187, .18);
     background: #fff;
     box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
 }
 .dash-table-card h4 {
     padding: 10px 14px;
     margin: 0;
-    border-bottom: 1px solid rgba(94, 35, 99, .1);
+    border-bottom: 1px solid rgba(76, 142, 187, .16);
     font-weight: 800;
-    color: #3b1d4f;
+    color: #24384f;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -308,12 +308,12 @@ if (!is_array($prioridades)) {
     text-transform: uppercase;
     letter-spacing: .06em;
     font-weight: 700;
-    color: #7a6a86;
-    border-bottom: 1px solid rgba(94, 35, 99, .08);
-    background: #fbf7ff;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(47, 111, 159, .22);
+    background: #2f6f9f;
 }
 .dash-table-card tr + tr td {
-    border-top: 1px solid rgba(94, 35, 99, .05);
+    border-top: 1px solid rgba(76, 142, 187, .10);
 }
 .badge-score {
     display: inline-flex;
@@ -324,7 +324,7 @@ if (!is_array($prioridades)) {
     font-weight: 700;
     font-size: .68rem;
     color: #fff;
-    background: linear-gradient(120deg, #5e2363, #a23ec3);
+    background: linear-gradient(120deg, #2f6f9f, #5eb4d8);
 }
 .badge-score.low { background: linear-gradient(120deg, #0d9488, #3b82f6); }
 .badge-score.mid { background: linear-gradient(120deg, #f97316, #ef4444); }

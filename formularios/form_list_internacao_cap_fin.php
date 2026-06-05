@@ -65,7 +65,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid listagem-page" id="main-container">
-    <div class="listagem-hero">
+    <div class="listagem-hero listagem-hero--module listagem-hero--contas">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Capeantes</div>
             <h1 class="listagem-title">Contas finalizadas</h1>

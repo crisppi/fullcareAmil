@@ -1,0 +1,19 @@
+Nome do app:
+FullCare Audit
+
+Breve descricao:
+Gestao de auditoria, conformidade e controles operacionais.
+
+Descricao completa:
+FullCare Audit e um aplicativo de gestao de auditoria para equipes autorizadas.
+
+O app organiza controles operacionais, atividades, evidencias internas, registros administrativos e indicadores gerenciais em ambiente de acesso restrito.
+
+Principais recursos:
+- Acesso seguro com usuario e senha.
+- Painel de gestao de auditoria.
+- Organizacao de atividades e responsaveis.
+- Acompanhamento de conformidade e evidencias.
+- Indicadores administrativos para apoio a rotina de auditoria.
+
+O FullCare Audit e destinado a usuarios profissionais previamente autorizados. O app nao permite criacao publica de contas e nao oferece atendimento medico, diagnostico, tratamento, prescricao, monitoramento clinico ou suporte a decisao clinica.

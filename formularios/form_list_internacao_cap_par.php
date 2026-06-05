@@ -57,15 +57,18 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 <style>
     .listagem-page { padding: 4px 4px 14px; }
-    .legacy-list-title { font-size:.96rem; margin-bottom:6px; }
     .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
     #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
     #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid listagem-page" id="main-container" style="margin-top:-5px">
-    <h4 class="page-title legacy-list-title">Contas paradas</h4>
-    <hr>
+<div class="container-fluid listagem-page" id="main-container">
+    <div class="listagem-hero listagem-hero--module listagem-hero--contas">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Capeantes</div>
+            <h1 class="listagem-title">Contas paradas</h1>
+        </div>
+    </div>
     <div id="navbarToggleExternalContent">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <script src="./js/ajaxNav.js"></script>

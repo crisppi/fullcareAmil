@@ -110,13 +110,17 @@ sort($tiposDisponiveis);
 </style>
 
 <div class="container-fluid form_container" id="main-container" style="margin-top:-20px;">
-    <div class="d-flex justify-content-between align-items-center">
-        <h4 class="page-title">Negociações realizadas</h4>
-        <a href="<?= $exportUrl ?>" class="btn btn-success btn-sm text-white">
-            <i class="fa-solid fa-file-excel me-2"></i>Exportar Excel
-        </a>
+    <div class="fc-module-header fc-module-header--gestao">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title">Negociações realizadas</h1>
+        </div>
+        <div class="fc-module-header__actions">
+            <a href="<?= $exportUrl ?>" class="btn btn-success btn-sm text-white">
+                <i class="fa-solid fa-file-excel me-2"></i>Exportar Excel
+            </a>
+        </div>
     </div>
-    <hr>
 
     <div class="card shadow-sm mb-3">
         <div class="card-body">

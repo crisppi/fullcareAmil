@@ -351,8 +351,12 @@ $baseParams = [
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <div class="container-fluid form_container" style="margin-top:15px;">
-    <h4 class="page-title">Prorrogações Pendentes</h4>
-    <hr style="margin-top: 5px; margin-bottom: 10px;">
+    <div class="fc-module-header fc-module-header--gestao">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title">Prorrogações Pendentes</h1>
+        </div>
+    </div>
 
     <div class="complete-table">
         <div class="table-filters fc-list-filters">

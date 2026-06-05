@@ -408,9 +408,9 @@ $urlBase = $self . '?' . $urlParams;
         }
 
         .ciclo-chip.acom-ps {
-            background: #ede7f6;
-            border-color: #b39ddb;
-            color: #4527a0;
+            background: #e7f3fb;
+            border-color: #a7cee6;
+            color: #225f86;
         }
 
         .ciclo-chip.acom-isol {
@@ -420,9 +420,9 @@ $urlBase = $self . '?' . $urlParams;
         }
 
         .ciclo-chip.acom-cc {
-            background: #f3e5f5;
-            border-color: #ce93d8;
-            color: #6a1b9a;
+            background: #eef7fc;
+            border-color: #b9d8ea;
+            color: #285d7f;
         }
 
         .ciclo-chip.acom-outros {
@@ -431,17 +431,62 @@ $urlBase = $self . '?' . $urlParams;
             color: #37474f;
         }
 
-        .table thead th {
-            font-size: .56rem;
-            letter-spacing: .08em;
-            padding: 7px 8px;
-            text-transform: uppercase;
+        .rota-paciente-table {
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .table tbody td {
-            font-size: .74rem;
-            padding: 6px 8px;
+        .rota-paciente-table thead,
+        .rota-paciente-table thead tr,
+        .rota-paciente-table thead th {
+            background: #2f6f9f !important;
+            color: #ffffff !important;
+        }
+
+        .rota-paciente-table thead th {
+            background: transparent !important;
+        }
+
+        .rota-paciente-table thead th {
+            font-size: .56rem;
+            letter-spacing: .08em;
+            height: 38px;
+            padding: 9px 10px;
+            line-height: 1.15;
+            text-transform: uppercase;
             vertical-align: middle;
+        }
+
+        .rota-paciente-table tbody tr,
+        .rota-paciente-table tbody tr>td,
+        .rota-paciente-table tbody tr>th {
+            --bs-table-bg: transparent !important;
+            --bs-table-accent-bg: transparent !important;
+        }
+
+        .rota-paciente-table tbody tr:nth-child(odd)>td,
+        .rota-paciente-table tbody tr:nth-child(odd)>th {
+            background: #ffffff !important;
+        }
+
+        .rota-paciente-table tbody tr:nth-child(even)>td,
+        .rota-paciente-table tbody tr:nth-child(even)>th {
+            background: #f4faff !important;
+        }
+
+        .rota-paciente-table tbody tr:hover>td,
+        .rota-paciente-table tbody tr:hover>th {
+            background: #e8f4fb !important;
+        }
+
+        .rota-paciente-table tbody td,
+        .rota-paciente-table tbody th {
+            font-size: .74rem;
+            height: 40px;
+            padding: 8px 10px;
+            line-height: 1.22;
+            vertical-align: middle;
+            border-bottom: 1px solid #dfeaf2;
         }
     </style>
 </head>
@@ -449,7 +494,12 @@ $urlBase = $self . '?' . $urlParams;
 <body>
 
     <div class="container-fluid" style="margin-top:8px;">
-        <h4 class="page-title m-0 mb-2 text-center" style="color:#3A3A3A;font-size:1rem;">Internações - Rota do Paciente</h4>
+        <div class="fc-module-header fc-module-header--internacoes">
+            <div class="fc-module-header__copy">
+                <p class="fc-module-header__kicker">Internações</p>
+                <h1 class="fc-module-header__title">Rota do Paciente</h1>
+            </div>
+        </div>
 
         <form action="<?= e($actionUrl) ?>" id="filtros-form" method="GET">
             <div class="filters-row pb-1">
@@ -513,7 +563,7 @@ $urlBase = $self . '?' . $urlParams;
                     <label class="form-label mb-0 small text-muted">&nbsp;</label>
                     <button type="submit"
                         class="btn btn-primary btn-compact d-inline-flex align-items-center justify-content-center"
-                        style="background-color:#5e2363;border-color:#5e2363;">
+                        style="background-color:#2f6f9f;border-color:#2f6f9f;">
                         <span class="material-icons" style="font-size:14px;line-height:1;">search</span>
                     </button>
                 </div>
@@ -523,7 +573,7 @@ $urlBase = $self . '?' . $urlParams;
 
         <div id="table-container" class="mt-3">
             <div class="table-responsive">
-                <table class="table table-sm table-striped table-hover align-middle">
+                <table class="table table-sm table-hover align-middle rota-paciente-table">
                     <thead>
                         <tr>
                             <th class="th-tight text-center">Reg</th>

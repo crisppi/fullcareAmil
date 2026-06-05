@@ -173,6 +173,8 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 
     #dash-visitas-atraso-content .table thead th,
     #dash-longa-perm-content .table thead th {
+        background: #2f6f9f !important;
+        background-image: none !important;
         padding: 6px 8px !important;
         font-size: 0.52rem !important;
         letter-spacing: 0.04em;
@@ -283,7 +285,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 <div id="dash-visitas-atraso-content">
     <div class="dash-table-scroll">
     <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
-        <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">
+        <thead style="background: #2f6f9f; background-image: none;">
             <tr>
                 <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
                     <span class="sort-icons">
@@ -389,7 +391,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 <div id="dash-longa-perm-content">
     <div class="dash-table-scroll">
     <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
-        <thead style="background: linear-gradient(135deg, #7a3a80, #5a296a);">
+        <thead style="background: #2f6f9f; background-image: none;">
             <tr>
                 <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
                     <span class="sort-icons">

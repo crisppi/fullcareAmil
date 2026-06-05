@@ -73,6 +73,8 @@ if (!function_exists('fullcare_is_inteligencia_request')) {
             'risco_glosa.php',
             'clusterizacao_clinica.php',
             'text_automation.php',
+            'InteligenciaInternacoes.php',
+            'InteligenciaGraficos.php',
             'inteligencia_logs_usuario.php',
         ];
 

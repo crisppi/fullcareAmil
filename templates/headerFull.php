@@ -19,6 +19,51 @@ $isDiretoriaHeaderFull = in_array($cargoHeaderFull, ['diretoria', 'diretor', 'ad
     || in_array($nivelHeaderFull, ['diretoria', 'diretor', 'administrador', 'admin', 'board'], true)
     || ($sessionNivelHeaderFull === -1);
 $canSeeUsuariosCadastroHeaderFull = $isDiretoriaHeaderFull && in_array($sessionNivelHeaderFull, [5, -1], true);
+$currentScriptNameHeaderFull = strtolower((string)basename((string)($_SERVER['SCRIPT_NAME'] ?? '')));
+$requestUriPathHeaderFull = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
+$cadastroScriptsHeaderFull = [
+    'list_paciente.php',
+    'cad_paciente.php',
+    'edit_paciente.php',
+    'show_paciente.php',
+    'list_hospital.php',
+    'cad_hospital.php',
+    'edit_hospital.php',
+    'show_hospital.php',
+    'list_seguradora.php',
+    'cad_seguradora.php',
+    'edit_seguradora.php',
+    'show_seguradora.php',
+    'list_estipulante.php',
+    'cad_estipulante.php',
+    'edit_estipulante.php',
+    'show_estipulante.php',
+    'list_usuario.php',
+    'cad_usuario.php',
+    'edit_usuario.php',
+    'show_usuario.php',
+    'list_hospitaluser.php',
+    'cad_hospitaluser.php',
+    'edit_hospitaluser.php',
+    'list_acomodacao.php',
+    'cad_acomodacao.php',
+    'edit_acomodacao.php',
+    'show_acomodacao.php',
+    'list_patologia.php',
+    'cad_patologia.php',
+    'edit_patologia.php',
+    'show_patologia.php',
+    'list_antecedente.php',
+    'cad_antecedente.php',
+    'edit_antecedente.php',
+    'show_antecedente.php',
+];
+$isCadastroRequestPathHeaderFull = preg_match('#/(pacientes|hospitais|seguradoras|estipulantes|usuarios)(/|$)#i', $requestUriPathHeaderFull) === 1
+    || in_array($currentScriptNameHeaderFull, $cadastroScriptsHeaderFull, true)
+    || preg_match('/^(form_)?(list|cad|edit|show)_(paciente|hospital|hospitaluser|seguradora|estipulante|usuario|acomodacao|patologia|antecedente)\.php$/i', $currentScriptNameHeaderFull) === 1;
+$canSeeCadastrosMenuHeaderFull = $sessionNivelHeaderFull > 3
+    || $canSeeUsuariosCadastroHeaderFull
+    || $isCadastroRequestPathHeaderFull;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -110,7 +155,7 @@ $canSeeUsuariosCadastroHeaderFull = $isDiretoriaHeaderFull && in_array($sessionN
                   <li><a class="dropdown-item" href="<?php $BASE_URL ?>cad_antecedente.php"><span class="bi bi-people" style="font-size: 1rem; margin-right:5px; color: rgb(155, 155, 76);"></span> Antecedente</a></li>
                 </ul>
               </li> -->
-                        <?php if ($_SESSION['nivel'] > 3 || $canSeeUsuariosCadastroHeaderFull) { ?>
+                        <?php if ($canSeeCadastrosMenuHeaderFull) { ?>
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle " href="#" id="navbarScrollingDropdown" role="button"

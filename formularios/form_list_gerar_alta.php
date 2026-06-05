@@ -50,15 +50,11 @@ sort($dadosAlta);
 ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
 
-<div class="container-fluid form_container listagem-page" id="main-container" style="margin-top:-4px;">
-    <div class="gerar-alta-hero">
-        <div>
-            <span class="gerar-alta-kicker">Internações abertas</span>
-            <h4 class="page-title gerar-alta-title">
-                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
-                Gerar altas
-            </h4>
-            <p class="gerar-alta-subtitle">Filtre os pacientes internados e gere altas em lote com data, hora e motivo.</p>
+<div class="container-fluid form_container listagem-page" id="main-container">
+    <div class="listagem-hero listagem-hero--module listagem-hero--internacoes">
+        <div class="listagem-hero__copy">
+            <div class="listagem-kicker">Internações abertas</div>
+            <h1 class="listagem-title">Gerar altas</h1>
         </div>
     </div>
 

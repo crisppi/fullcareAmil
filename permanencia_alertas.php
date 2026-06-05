@@ -20,7 +20,7 @@ include_once("templates/header.php");
             background: #fff;
             margin: 0.35rem 0 0.8rem;
             padding: 1rem 1.1rem;
-            box-shadow: 0 10px 25px rgba(95,35,99,0.08);
+            box-shadow: 0 10px 25px rgba(76, 142, 187,0.08);
         }
         .container-fluid {
             margin-top: 12px !important;
@@ -49,7 +49,7 @@ include_once("templates/header.php");
     <div class="container-fluid" style="margin-top:24px; padding:0 0 16px;">
         <div class="row mb-2">
             <div class="col-12">
-                <h2 class="mb-0 fw-semibold" style="color:#5e2363;">Previsão de permanência e alertas</h2>
+                <h2 class="mb-0 fw-semibold" style="color:#2f6f9f;">Previsão de permanência e alertas</h2>
             </div>
         </div>
         <div class="row mb-2">

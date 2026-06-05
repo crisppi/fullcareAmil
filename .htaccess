@@ -153,6 +153,9 @@ RewriteRule ^bi/faturamento-visitas/?$ faturamento_visitas.php [L,QSA]
 RewriteRule ^bi/faturamento-consolidado/?$ bi_faturamento_consolidado.php [L,QSA]
 RewriteRule ^bi/auditoria-resposta/?$ AuditoriaTempoRespostaBI.php [L,QSA]
 
+# Producao friendly URLs
+RewriteRule ^producao/ia-clinica/?$ ProducaoIAClinica.php [L,QSA]
+
 # Inteligência Operacional friendly URLs
 RewriteRule ^inteligencia/?$ dashboard_operacional.php [L,QSA]
 RewriteRule ^inteligencia/dashboard-360/?$ dashboard_operacional.php [L,QSA]
@@ -170,6 +173,8 @@ RewriteRule ^inteligencia/insights-explicaveis/?$ explicabilidade_insights.php [
 RewriteRule ^inteligencia/oportunidade-glosa/?$ risco_glosa.php [L,QSA]
 RewriteRule ^inteligencia/clusterizacao-clinica/?$ clusterizacao_clinica.php [L,QSA]
 RewriteRule ^inteligencia/assistente-textos/?$ text_automation.php [L,QSA]
+RewriteRule ^inteligencia/assistente-internacoes/?$ InteligenciaInternacoes.php [L,QSA]
+RewriteRule ^inteligencia/ia-graficos/?$ InteligenciaGraficos.php [L,QSA]
 RewriteRule ^inteligencia/logs-usuarios/?$ inteligencia_logs_usuario.php [L,QSA]
 
 RewriteRule ^pacientes/?$ list_paciente.php [L,QSA]
@@ -186,8 +191,8 @@ RewriteRule ^seguradoras/nova/?$ cad_seguradora.php [L,QSA]
 RewriteRule ^seguradoras/editar/([0-9]+)/?$ edit_seguradora.php?id_seguradora=$1 [L,QSA]
 RewriteRule ^usuarios/?$ list_usuario.php [L,QSA]
 RewriteRule ^usuarios/editar/([0-9]+)/?$ edit_usuario.php?id_usuario=$1 [L,QSA]
-RewriteRule ^internacoes/sem_conexao\.html$ /fullcareAmil/sem_conexao.html [R=302,L]
-RewriteRule ^internacoes/sem-conexao/?$ /fullcareAmil/sem_conexao.html [R=302,L]
+RewriteRule ^internacoes/sem_conexao\.html$ /FullCare/sem_conexao.html [R=302,L]
+RewriteRule ^internacoes/sem-conexao/?$ /FullCare/sem_conexao.html [R=302,L]
 RewriteRule ^internacoes/lista/?$ list_internacao.php [L,QSA]
 RewriteRule ^internacoes/visualizar/([0-9]+)/?$ show_internacao.php?id_internacao=$1 [L,QSA]
 RewriteRule ^internacoes/rah/?$ list_internacao_cap_rah.php [L,QSA]

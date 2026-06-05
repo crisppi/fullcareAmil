@@ -168,6 +168,32 @@ class censoDAO implements censoDAOInterface
     }
     public function update(censo $censo)
     {
+        $stmt = $this->conn->prepare("UPDATE tb_censo SET
+            fk_paciente_censo = :fk_paciente_censo,
+            fk_hospital_censo = :fk_hospital_censo,
+            data_censo = :data_censo,
+            senha_censo = :senha_censo,
+            acomodacao_censo = :acomodacao_censo,
+            tipo_admissao_censo = :tipo_admissao_censo,
+            modo_internacao_censo = :modo_internacao_censo,
+            usuario_create_censo = :usuario_create_censo,
+            data_create_censo = :data_create_censo,
+            titular_censo = :titular_censo
+            WHERE id_censo = :id_censo");
+
+        $stmt->bindParam(":fk_paciente_censo", $censo->fk_paciente_censo);
+        $stmt->bindParam(":fk_hospital_censo", $censo->fk_hospital_censo);
+        $stmt->bindParam(":data_censo", $censo->data_censo);
+        $stmt->bindParam(":senha_censo", $censo->senha_censo);
+        $stmt->bindParam(":acomodacao_censo", $censo->acomodacao_censo);
+        $stmt->bindParam(":tipo_admissao_censo", $censo->tipo_admissao_censo);
+        $stmt->bindParam(":modo_internacao_censo", $censo->modo_internacao_censo);
+        $stmt->bindParam(":usuario_create_censo", $censo->usuario_create_censo);
+        $stmt->bindParam(":data_create_censo", $censo->data_create_censo);
+        $stmt->bindParam(":titular_censo", $censo->titular_censo);
+        $stmt->bindParam(":id_censo", $censo->id_censo);
+
+        $stmt->execute();
     }
     public function updateCenso(censo $censo)
     {

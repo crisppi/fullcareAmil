@@ -379,8 +379,12 @@ function pendenciasUrl(array $params): string
 </style>
 
 <div class="container-fluid form_container" style="margin-top:15px;">
-    <h4 class="page-title">Pendências Operacionais</h4>
-    <hr style="margin-top: 5px; margin-bottom: 10px;">
+    <div class="fc-module-header fc-module-header--gestao">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">Gestão</p>
+            <h1 class="fc-module-header__title">Pendências Operacionais</h1>
+        </div>
+    </div>
 
     <div class="pend-card-grid">
         <div class="pend-card">

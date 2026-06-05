@@ -120,23 +120,23 @@ body {
     color: #251636;
 }
 .forecast-hero {
-    background: linear-gradient(120deg, #fff7fb 0%, #f3dff0 58%, #e9f8ff 100%);
+    background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%);
     border-radius: 16px;
     padding: 20px 24px;
-    border: 1px solid rgba(94, 35, 99, .18);
-    box-shadow: 0 18px 36px rgba(94, 35, 99, .14);
+    border: 1px solid rgba(76, 142, 187, .22);
+    box-shadow: 0 18px 36px rgba(35, 102, 147, .13);
     margin-bottom: 18px;
 }
 .forecast-hero h1 {
     font-size: 1.05rem;
     font-weight: 800;
-    color: #3b1d4f;
+    color: #24384f;
     margin-bottom: 6px;
 }
 .forecast-hero p {
     font-size: .76rem;
     line-height: 1.4;
-    color: #5c5266 !important;
+    color: #5d6f82 !important;
 }
 .cards-grid {
     display: grid;
@@ -149,8 +149,8 @@ body {
     background: #fff;
     border-radius: 12px;
     padding: 16px 18px 15px;
-    border: 1px solid #d9d2e4;
-    box-shadow: 0 12px 28px rgba(40, 26, 66, .13);
+    border: 1px solid rgba(76, 142, 187, .22);
+    box-shadow: 0 12px 28px rgba(35, 102, 147, .11);
     overflow: hidden;
 }
 .forecast-card::before {
@@ -158,14 +158,14 @@ body {
     position: absolute;
     inset: 0 0 auto;
     height: 4px;
-    background: linear-gradient(90deg, #5e2363, #35bae1);
+    background: linear-gradient(90deg, #2f6f9f, #5eb4d8);
 }
 .forecast-card h3 {
     font-size: .72rem;
     text-transform: uppercase;
     letter-spacing: .06em;
     margin: 0 0 7px;
-    color: #5e2363;
+    color: #2f6f9f;
     font-weight: 800;
 }
 .forecast-card strong {
@@ -181,9 +181,9 @@ body {
 .forecast-table-wrap {
     margin-top: 8px;
     border-radius: 14px;
-    border: 1px solid #d9d2e4;
+    border: 1px solid rgba(76, 142, 187, .22);
     background: #fff;
-    box-shadow: 0 14px 30px rgba(40, 26, 66, .12);
+    box-shadow: 0 14px 30px rgba(35, 102, 147, .11);
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -198,7 +198,7 @@ body {
 .forecast-table th,
 .forecast-table td {
     padding: 12px 16px;
-    border-bottom: 1px solid #e9e3ef;
+    border-bottom: 1px solid #e0edf5;
     text-align: left;
     color: #3f3b46;
 }
@@ -206,22 +206,22 @@ body {
     text-transform: uppercase;
     font-size: .68rem;
     letter-spacing: .06em;
-    color: #5e2363;
-    background: #f1eaf8;
+    color: #ffffff;
+    background: #2f6f9f;
     font-weight: 800;
 }
 .forecast-table tbody tr:nth-child(even) {
     background: #fbfcff;
 }
 .forecast-table tbody tr:hover {
-    background: #f6f1fb;
+    background: #f4faff;
 }
 .forecast-table tbody tr:last-child td {
     border-bottom: 0;
 }
 .scenario-label {
     font-weight: 800;
-    color: #3b1d4f !important;
+    color: #24384f !important;
 }
 .badge-pill {
     display: inline-flex;

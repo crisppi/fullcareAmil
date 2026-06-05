@@ -239,63 +239,6 @@ try {
     padding: 4px 4px 14px;
 }
 
-.internacao-list-hero {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 6px;
-    margin-bottom: 4px;
-    padding-left: 8px;
-}
-
-.internacao-list-hero__copy {
-    min-width: 0;
-}
-
-.internacao-list-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 1px;
-    color: #7b5a9a;
-    font-size: .5rem;
-    font-weight: 800;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-}
-
-.internacao-list-kicker::before {
-    content: "";
-    width: 18px;
-    height: 2px;
-    border-radius: 999px;
-    background: currentColor;
-}
-
-.internacao-list-title {
-    margin: 0;
-    color: #2d203d;
-    font-size: .96rem;
-    font-weight: 800;
-    letter-spacing: -.03em;
-}
-
-.internacao-list-subtitle {
-    margin: 1px 0 0;
-    color: #7b7b8d;
-    font-size: .66rem;
-}
-
-.internacao-list-hero__actions {
-    display: flex;
-    align-items: center;
-    align-self: flex-end;
-    gap: 6px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    padding-bottom: 2px;
-}
-
 .btn-list-top {
     display: inline-flex;
     align-items: center;
@@ -306,7 +249,7 @@ try {
     padding: 0 10px;
     font-weight: 700;
     font-size: .7rem;
-    box-shadow: 0 8px 16px rgba(46, 27, 78, 0.10);
+    box-shadow: 0 8px 16px rgba(35, 102, 147, 0.12);
     line-height: 1;
     text-align: center;
     white-space: nowrap;
@@ -322,9 +265,9 @@ try {
 
 .complete-table {
     border-radius: 18px;
-    border: 1px solid rgba(94, 35, 99, 0.10);
-    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,244,253,0.96) 100%);
-    box-shadow: 0 10px 22px rgba(45, 18, 70, 0.06);
+    border: 1px solid rgba(76, 142, 187, 0.16);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(244,250,255,0.96) 100%);
+    box-shadow: 0 10px 22px rgba(35, 102, 147, 0.07);
     padding: 8px 8px 6px;
     overflow: hidden;
 }
@@ -333,21 +276,15 @@ try {
     padding: 0;
 }
 
-/* Chips roxos para seleção de campos (modal export) */
-/* Pills lilás maiores, com ícones brancos */
 .export-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 20px;
-    /* mais “gordinho” */
     border-radius: 999px;
-    background-color: #5e2363;
-    /* roxo cheio */
+    background-color: #2f6f9f;
     color: #ffffff;
-    /* texto branco */
     font-size: 0.95rem;
-    /* fonte um pouco maior */
     font-weight: 600;
     border: none;
     cursor: pointer;
@@ -355,24 +292,19 @@ try {
     white-space: nowrap;
 }
 
-/* Estado desativado (contorno) */
 .export-pill.inactive {
     background-color: #ffffff;
-    color: #5e2363;
-    border: 1px solid #5e2363;
+    color: #2f6f9f;
+    border: 1px solid #2f6f9f;
 }
 
-/* Ícones sempre brancos nas pills ativas */
 .export-pill i {
     color: #ffffff;
-    /* ícones brancos */
     font-size: 1rem;
-    /* maior que antes */
 }
 
-/* Ícones roxos quando a pill está desativada */
 .export-pill.inactive i {
-    color: #5e2363;
+    color: #2f6f9f;
 }
 
 .th-sortable {
@@ -424,19 +356,66 @@ try {
 }
 
 .filter-intel-wrapper {
-    border: 1px solid #e7dcf1;
+    border: 1px solid #d7e8f3;
     border-radius: 14px;
     padding: 6px 8px;
     margin-bottom: 6px;
     background:
         radial-gradient(circle at top right, rgba(83, 196, 226, 0.10), transparent 26%),
-        linear-gradient(180deg, #fefcff 0%, #f8f3fd 100%);
+        linear-gradient(180deg, #ffffff 0%, #f4faff 100%);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.filter-intel-details {
+    margin-bottom: 6px;
+}
+
+.filter-intel-details > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 32px;
+    padding: 0 11px;
+    border-radius: 999px;
+    border: 1px solid #c8deeb;
+    background: #f4faff;
+    color: #2f6f9f;
+    cursor: pointer;
+    font-size: .68rem;
+    font-weight: 800;
+    list-style: none;
+    user-select: none;
+}
+
+.filter-intel-details > summary::-webkit-details-marker {
+    display: none;
+}
+
+.filter-intel-details > summary::before {
+    content: "+";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #2f6f9f;
+    color: #fff;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.filter-intel-details[open] > summary {
+    margin-bottom: 6px;
+}
+
+.filter-intel-details[open] > summary::before {
+    content: "-";
 }
 
 .filter-intel-wrapper h6 {
     font-weight: 800;
-    color: #5e2363;
+    color: #24384f;
     margin-bottom: 3px;
     font-size: .68rem;
 }
@@ -518,9 +497,9 @@ try {
     border-radius: 999px;
     font-size: 0.62rem;
     font-weight: 700;
-    background: #f3edff;
-    border: 1px solid #d6c5f7;
-    color: #5e2363;
+    background: #f4faff;
+    border: 1px solid #c8deeb;
+    color: #2f6f9f;
 }
 
 .filter-intel-grid input[type="text"] {
@@ -548,15 +527,15 @@ try {
     border-radius: 999px;
     font-size: .64rem;
     font-weight: 600;
-    border: 1px solid #bfa3d1;
+    border: 1px solid #c8deeb;
     background: #fff;
-    color: #5e2363;
+    color: #2f6f9f;
     padding: 3px 7px;
     transition: all .15s ease;
 }
 
 .filter-memory-actions button:hover {
-    background: #5e2363;
+    background: #2f6f9f;
     color: #fff;
 }
 
@@ -568,7 +547,7 @@ try {
     padding: 5px 6px;
     border-radius: 10px;
     background: #fff;
-    border: 1px solid #ece4f4;
+    border: 1px solid #d7e8f3;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
 
@@ -667,7 +646,7 @@ try {
     margin-top: 8px !important;
     border-radius: 14px;
     overflow: hidden;
-    border: 1px solid #ebe3f3;
+    border: 1px solid #d7e8f3;
     background: #fff;
 }
 
@@ -675,10 +654,14 @@ try {
     margin-bottom: 0;
 }
 
+#table-content thead {
+    background: #2f6f9f;
+}
+
 #table-content thead th {
     padding-top: 7px;
     padding-bottom: 7px;
-    background: linear-gradient(90deg, #0f5f95 0%, #197fac 55%, #35a6d2 100%);
+    background: transparent !important;
     border-bottom: none;
     color: #fff;
     font-size: .54rem;
@@ -693,23 +676,28 @@ try {
     padding-bottom: 6px;
     font-size: .7rem;
     vertical-align: middle;
-    border-top: 1px solid #f1ebf7;
+    border-top: 1px solid #e0edf5;
 }
 
 #table-content tbody tr:nth-child(even) {
-    background: #fbf8fe;
+    background: #f4faff;
 }
 
 #table-content tbody tr:hover {
-    background: #f3ecfb !important;
+    background: #e8f4fb !important;
 }
 
 .fc-list-action .dropdown-toggle {
-    border: 1px solid #dccceb;
+    border: 1px solid #c8deeb;
     border-radius: 10px;
     min-width: 32px;
     min-height: 28px;
     background: #fff;
+    font-size: .68rem;
+}
+
+.visit-age {
+    font-weight: 500;
     font-size: .68rem;
 }
 
@@ -747,10 +735,10 @@ if (typeof jQuery !== 'undefined') {
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid internacao-list-page" id='main-container'>
 
-    <div class="internacao-list-hero">
-        <div class="internacao-list-hero__copy">
-            <div class="internacao-list-kicker">Internações</div>
-            <h1 class="internacao-list-title"><?= $onlySemSenha ? 'Internações com senha pendente' : 'Listagem de internações' ?></h1>
+    <div class="fc-module-header fc-module-header--internacoes internacao-list-hero">
+        <div class="fc-module-header__copy internacao-list-hero__copy">
+            <p class="fc-module-header__kicker">Internações</p>
+            <h1 class="fc-module-header__title"><?= $onlySemSenha ? 'Senha pendente' : 'Listagem de internações' ?></h1>
         </div>
 
         <?php
@@ -765,7 +753,7 @@ if (typeof jQuery !== 'undefined') {
         $pesquisa_seguradora = $pesquisa_seguradora ?? '';
         ?>
 
-        <div class="internacao-list-hero__actions">
+        <div class="fc-module-header__actions internacao-list-hero__actions">
             <!-- Botão de Exportar para Excel (abre modal) -->
             <a href="#" id="btn-exportar-excel" class="btn btn-success btn-list-top btn-export">
                 Exportar para Excel
@@ -802,30 +790,33 @@ if (typeof jQuery !== 'undefined') {
                     $pesquisa_seguradora = $seguradoraUserNome !== '' ? $seguradoraUserNome : $pesquisa_seguradora;
                 }
                 ?>
-                <div class="filter-intel-wrapper">
-                    <h6>Memória de filtros e busca inteligente</h6>
-                    <div class="filter-intel-grid">
-                        <div class="smart-search-group">
-                            <label for="smartSearchPhrase">Busca em linguagem natural</label>
-                            <div class="input-group">
-                                <input type="text" id="smartSearchPhrase" class="form-control form-control-sm"
-                                    placeholder='Ex.: "contas Einstein outubro 2023" ou "paciente Ana maio"'>
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnApplySmartSearch">
-                                    Aplicar frase
-                                </button>
+                <details class="filter-intel-details">
+                    <summary>Busca inteligente</summary>
+                    <div class="filter-intel-wrapper">
+                        <h6>Memória de filtros</h6>
+                        <div class="filter-intel-grid">
+                            <div class="smart-search-group">
+                                <label for="smartSearchPhrase">Busca em linguagem natural</label>
+                                <div class="input-group">
+                                    <input type="text" id="smartSearchPhrase" class="form-control form-control-sm"
+                                        placeholder='Ex.: "contas Einstein outubro 2023" ou "paciente Ana maio"'>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnApplySmartSearch">
+                                        Aplicar frase
+                                    </button>
+                                </div>
+                                <div id="smartSearchFeedback" class="smart-search-feedback" role="alert" aria-live="polite"></div>
+                                <small>Tente combinar hospital, paciente, seguradora, mês/ano ou senha em uma frase única.</small>
                             </div>
-                            <div id="smartSearchFeedback" class="smart-search-feedback" role="alert" aria-live="polite"></div>
-                            <small>Tente combinar hospital, paciente, seguradora, mês/ano ou senha em uma frase única.</small>
+                            <div class="filter-memory-actions">
+                                <button type="button" id="btnApplyLastFilter">Aplicar último filtro</button>
+                                <button type="button" id="btnSaveFavFilter">Salvar como favorito</button>
+                                <button type="button" id="btnClearFilters" class="btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar filtros</button>
+                            </div>
                         </div>
-                        <div class="filter-memory-actions">
-                            <button type="button" id="btnApplyLastFilter">Aplicar último filtro</button>
-                            <button type="button" id="btnSaveFavFilter">Salvar como favorito</button>
-                            <button type="button" id="btnClearFilters" class="btn-filtro-limpar"><i class="bi bi-trash3 me-1" aria-hidden="true"></i>Limpar filtros</button>
-                        </div>
+                        <div class="filter-favorites" id="filterFavorites"></div>
+                        <div class="filter-empty-hint" id="filterFavoritesHint">Nenhum favorito salvo ainda.</div>
                     </div>
-                    <div class="filter-favorites" id="filterFavorites"></div>
-                    <div class="filter-empty-hint" id="filterFavoritesHint">Nenhum favorito salvo ainda.</div>
-                </div>
+                </details>
                 <div class="form-group row filter-inline-row" style="margin-bottom:14px;">
                     <div class="form-group col-sm-2 filter-inline-field filter-inline--wide" style="padding:2px;padding-left:16px !important;">
                         <input class="form-control form-control-sm" type="text" style="color:#878787;margin-top:0;"
@@ -893,7 +884,7 @@ if (typeof jQuery !== 'undefined') {
                     <div class="form-group col-sm-1 filter-inline-field filter-inline--icon" style="padding:2px;">
                         <div class="filter-inline-actions">
                             <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                                style="background-color:#5e2363;width:42px;height:32px;border-color:#5e2363;margin-top:0;">
+                                style="background-color:#2f6f9f;width:42px;height:32px;border-color:#2f6f9f;margin-top:0;">
                                 <i class="bi bi-search"></i>
                             </button>
                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/internacoes/lista', ENT_QUOTES, 'UTF-8') ?>"
@@ -1252,7 +1243,7 @@ if (typeof jQuery !== 'undefined') {
                                             $cor   = 'red';
                                             $icone = '<i class="fas fa-times-circle" style="color: red; margin-right: 5px;"></i>';
                                         }
-                                        echo "$icone<span style='color: $cor; font-weight: bold;'>{$dias} dias</span>";
+                                        echo "$icone<span class='visit-age' style='color: $cor;'>{$dias} dias</span>";
                                     } else {
                                         echo "<span style='color: gray;'>--</span>";
                                     }
@@ -1276,7 +1267,7 @@ if (typeof jQuery !== 'undefined') {
                                             $cor   = 'red';
                                             $icone = '<i class="fas fa-times-circle" style="color: red; margin-right: 5px;"></i>';
                                         }
-                                        echo "$icone<span style='color: $cor; font-weight: bold;'>{$diasEnf} dias</span>";
+                                        echo "$icone<span class='visit-age' style='color: $cor;'>{$diasEnf} dias</span>";
                                     } else {
                                         echo "<span style='color: gray;'>--</span>";
                                     }
@@ -1310,7 +1301,7 @@ if (typeof jQuery !== 'undefined') {
                             <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="acoesInternacaoDropdown<?= (int)$intern['id_internacao'] ?>"
-                                        role="button" data-bs-toggle="dropdown" style="color:#5e2363"
+                                        role="button" data-bs-toggle="dropdown" style="color:#2f6f9f"
                                         aria-expanded="false">
                                         <i class="bi bi-stack"></i>
                                     </button>
@@ -1912,7 +1903,7 @@ $(document).ready(function() {
     });
 
     // ==========================================
-    // 3) PILLS (chips lilás) <-> checkboxes
+    // 3) Pills de exportação <-> checkboxes
     // ==========================================
 
     // Deixa as pills com visual coerente com o estado dos checkboxes

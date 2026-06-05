@@ -413,7 +413,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
 
 <div class="container-fluid form_container listagem-page" id="main-container">
 
-    <div class="listagem-hero alta-list-header">
+    <div class="listagem-hero listagem-hero--module listagem-hero--internacoes alta-list-header">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Altas</div>
             <h1 class="listagem-title">Alta hospitalar</h1>

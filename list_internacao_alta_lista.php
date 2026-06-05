@@ -1,7 +1,1 @@
-<?php
-include_once("check_logado.php");
-
-$somenteListaAltas = true;
-
-include_once("formularios/form_list_internacao_alta.php");
-include_once("templates/footer.php");
+<?php require_once __DIR__ . '/pages/list/list_internacao_alta_lista.php';

@@ -187,9 +187,20 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
     }
 
     #table-content thead th {
+        background: transparent !important;
+        color: #ffffff !important;
+        border-bottom: 1px solid rgba(47, 111, 159, .35) !important;
         padding: 7px 10px;
         font-size: .54rem;
         letter-spacing: .08em;
+    }
+
+    #table-content thead {
+        background: #2f6f9f !important;
+    }
+
+    #table-content.listagem-table-wrap {
+        border-color: #d7e8f3 !important;
     }
 
     #table-content tbody td,
@@ -197,6 +208,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
         padding: 6px 10px;
         font-size: .7rem;
         vertical-align: middle;
+        border-color: #e0edf5 !important;
     }
 
     #table-content .dropdown-toggle {
@@ -474,7 +486,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                             <td class="action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
-                                        role="button" data-bs-toggle="dropdown" style="color:#5e2363"
+                                        role="button" data-bs-toggle="dropdown" style="color:#2f6f9f"
                                         aria-expanded="false">
                                         <i class="bi bi-stack"></i>
                                     </button>
