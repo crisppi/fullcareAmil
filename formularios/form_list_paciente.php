@@ -418,15 +418,21 @@
 
                                             <li>
                                                 <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/ver/' . (int) $id_paciente, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-eye" style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/editar/' . (int) $id_paciente, ENT_QUOTES, 'UTF-8') ?>">
                                                     <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>
                                             </li>
                                             <li>
-                                                <button class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
-                                                    onclick="openModal('<?= $BASE_URL ?>show_paciente_historico.php?id_paciente=<?= $id_paciente ?>')"
-                                                    data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                        class="bi bi-clock-history" style="font-size:1rem;margin-right:8px;color:#6366f1;"></i>Histórico</button>
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/historico/' . (int) $id_paciente, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-clock-history" style="font-size:1rem;margin-right:8px;color:#6366f1;"></i>Histórico
+                                                </a>
                                             </li>
                                             <li>
                                                 <a href="<?= $BASE_URL ?>hub_paciente/paciente<?= $id_paciente ?>"
@@ -467,21 +473,6 @@
                         <input type="hidden" id="qtd" value="<?php echo $qtdIntItens ?>">
                     </div>
                     <div class="listagem-footer-row">
-                        <div class="modal fade" id="myModal">
-                            <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
-                                <div class="modal-content">
-                                    <div style="padding-left:20px;padding-top:20px;">
-                                        <h4>Paciente</h4>
-                                        <p class="page-description">Informações
-                                            do paciente</p>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div id="content-php"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="pagination" style="margin: 0 auto;">
                             <?php if ($total_pages ?? 1 > 1): ?>
                             <ul class="pagination">
@@ -665,22 +656,6 @@ if (typeof window.paginatePacientes !== 'function') {
     opacity: .95;
 }
 
-.modal-backdrop {
-    display: none;
-
-}
-
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-
-}
-
-.modal-header {
-    color: white;
-    background: #35bae1;
-
-
-}
 </style>
 <script src="./js/input-estilo.js"></script>
 

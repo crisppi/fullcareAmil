@@ -270,213 +270,600 @@ if (empty($riskOverview['available'])) {
         $riskOverview = $fallbackRisk;
     }
 }
-?>
-<script src="js/timeout.js"></script>
 
-<div style="margin:15px" id="main-container">
-    <h4 style="margin-top:20px">Dados do paciente Registro no:
-        <?= $id_paciente ?>
-    </h4>
-    <?php if (!empty($riskOverview['available'])):
-        $riskLevel = strtolower((string)($riskOverview['risk_level'] ?? ''));
-        $alertClass = $riskLevel === 'alto' ? '#ffe0e3' : ($riskLevel === 'moderado' ? '#fff5d6' : '#e6fff4');
-        $borderColor = $riskLevel === 'alto' ? '#c9184a' : ($riskLevel === 'moderado' ? '#f0a500' : '#0f8f5d');
-        $textColor = $riskLevel === 'alto' ? '#5a071d' : ($riskLevel === 'moderado' ? '#6a4900' : '#065238');
-$probPct = number_format((float)($riskOverview['probability'] ?? 0) * 100, 1, ',', '.');
-$features = $riskOverview['features'] ?? [];
-        $faixa = ucfirst($features['faixa_etaria'] ?? '—');
-        $idade = (int)($features['idade'] ?? 0);
-        $antecedentes = (int)($features['antecedentes'] ?? 0);
-        $internPrev = (int)($features['internacoes_previas'] ?? 0);
-        $mpPrev = number_format((float)($features['mp_previas'] ?? 0), 1, ',', '.');
-        $diasAtual = (int)($features['dias_internado_atual'] ?? 0);
-        $mpLimite = (int)($features['mp_limite'] ?? 0);
-$eventos = (int)($features['eventos_adversos'] ?? 0);
-$explanation = htmlspecialchars($riskOverview['explanation'] ?? '', ENT_QUOTES, 'UTF-8');
-$complexMap = [
-    'alto' => ['label' => 'Alta complexidade', 'prioridade' => 'Visita prioritária (<24h)'],
-    'moderado' => ['label' => 'Complexidade intermediária', 'prioridade' => 'Visita reforçada / monitorar'],
-    'baixo' => ['label' => 'Baixa complexidade', 'prioridade' => 'Seguir rotina padrão']
-];
-$complexInfo = $complexMap[$riskLevel ?: 'baixo'];
-?>
-    <div style="border:2px solid <?= $borderColor ?>; background:<?= $alertClass ?>; color:<?= $textColor ?>; border-radius:12px; padding:18px; margin-bottom:18px;">
-        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;">
-            <div>
-                <div style="text-transform:uppercase; font-size:0.8rem; font-weight:600;">Risco de readmissão</div>
-                <div style="font-size:2.4rem; font-weight:700; line-height:1;"><?= $probPct ?>%</div>
-                <?php $refIntern = $riskOverview['internacao_referencia'] ?? null; ?>
-                <div style="font-size:0.85rem;">
-                    Nível <?= strtoupper($riskLevel ?: 'BAIXO') ?> • Internação ref.
-                    <?= $refIntern ? '#' . (int)$refIntern : '—' ?>
-                </div>
-                <div style="margin-top:6px;">
-                    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:.85rem;font-weight:600;background:rgba(255,255,255,.4);color:<?= $textColor ?>;border:1px solid rgba(0,0,0,.06);">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <span><?= $complexInfo['label'] ?> · <?= $complexInfo['prioridade'] ?></span>
-                    </span>
-                </div>
-            </div>
-            <div style="flex:1; min-width:250px; font-size:0.9rem;">
-                <?= $explanation ?>
-            </div>
-        </div>
-        <div style="display:flex; flex-wrap:wrap; gap:20px; margin-top:12px; font-size:0.88rem;">
-            <div>
-                <strong>Perfil:</strong> <?= $faixa ?><?= $idade ? " ({$idade} anos)" : '' ?>, sexo <?= strtoupper($features['sexo'] ?? 'ND') ?>
-            </div>
-            <div>
-                <strong>Antecedentes:</strong> <?= $antecedentes ?> •
-                <strong>Internações prévias:</strong> <?= $internPrev ?> (MP <?= $mpPrev ?> dias)
-            </div>
-            <div>
-                <strong>Permanência atual:</strong> <?= $diasAtual ?> dias<?= $mpLimite ? " (limite {$mpLimite})" : '' ?> •
-                <strong>Eventos adversos:</strong> <?= $eventos ?>
-            </div>
-        </div>
-        <?php if (!empty($riskOverview['recommendations']) && is_array($riskOverview['recommendations'])): ?>
-        <ul style="margin:12px 0 0 18px; padding-left:0.8rem; font-size:0.88rem;">
-            <?php foreach ($riskOverview['recommendations'] as $rec): ?>
-            <li><?= htmlspecialchars($rec, ENT_QUOTES, 'UTF-8') ?></li>
-            <?php endforeach; ?>
-        </ul>
-        <?php endif; ?>
-    </div>
-    <?php elseif (!empty($riskOverview['message'])): ?>
-    <div style="border:1px dashed #999; border-radius:8px; padding:12px; margin-bottom:18px; color:#555;">
-        <?= htmlspecialchars($riskOverview['message'], ENT_QUOTES, 'UTF-8') ?>
-    </div>
-    <?php endif; ?>
-    <div class="card">
-        <h6 style="margin:10px 0 10px 20px">Dados pessoais</h6>
-        <div class="card-header container-fluid" id="view-contact-container">
-            <span style="font-size:large; font-weight:600" class="card-title bold">Nome:</span>
-            <span style="font-size:large; font-weight:600" class="card-title bold">
-                <?= $paciente['0']['nome_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class="card-title bold">Nome da Mãe:</span>
-            <span class="card-title bold">
-                <?= $paciente['0']['mae_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class="card-title bold">CPF:</span>
-            <span class="card-title bold">
-                <?= $cpf_formatado ?>
-            </span>
-            <br>
-            <span class="card-title bold">Seguradora:</span>
-            <span class="card-title bold">
-                <?= $paciente['0']['seguradora_seg'] ?>
-            </span>
-        </div>
-        <div class="card-body">
-            <h6>Dados cadastrais</h6>
-            <span class=" card-text bold">Endereço: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['endereco_pac'] ?>
-            </span>
-            <span class=" card-text bold">, </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['numero_pac'] ?>
-            </span>
-            <br>
-            <span class=" card-text bold">Bairro: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['bairro_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class="card-text bold">Cidade: </span>
-            <span class="card-text bold">
-                <?= $paciente['0']['cidade_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class="card-text bold">Estado: </span>
-            <span class="card-text bold">
-                <?= $paciente['0']['estado_pac'] ?>
-            </span>
-        </div>
-        <hr>
-        <div class="card-body">
-            <h6>Contatos</h6>
-            <span class=" card-text bold">Email: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['email01_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class=" card-text bold">Email 02: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['email02_pac'] ?>
-            </span>
-            <br>
-            <span class=" card-text bold">Telefone: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['telefone01_pac'] ?>
-            </span>
-            <span style="margin-left:200px" class=" card-text bold">Tel 02: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['telefone02_pac'] ?>
-            </span>
-        </div>
-        <hr>
-        <div class="card-body">
-            <h6>Empresa</h6>
-            <span class=" card-text bold">Seguradora: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['seguradora_seg'] ?>
-            </span>
-            <br>
-            <span class=" card-text bold">Estipulante: </span>
-            <span class=" card-text bold">
-                <?= $paciente['0']['nome_est'] ?>
-            </span>
-            <hr>
-        </div>
-        <div style="margin-left:20px" id="id-confirmacao" class="btn_acoes visible">
-
-            <div class="form-group row">
-                <div class="form-group col-sm-2">
-                    <form display="in-line" id="form_delete"
-                        action="process_paciente.php?id_paciente=<?= $id_paciente ?>" method="POST">
-                        <input type="hidden" value="deletando">
-                        <!-- <input type="hidden" name="type" value="delete"> -->
-                        <input type="hidden" name="typeDel" value="delUpdate">
-                        <input type="hidden" name="id_paciente" value="<?= $paciente['0']['id_paciente'] ?>">
-
-                        <button class="btn btn-danger" value="deletar" type="submit" id="deletar-btn"
-                            name="deletar">Deletar</button>
-
-                    </form>
-                    <br>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function apareceOpcoes() {
-
-    $('#deletar-btn').val('nao');
-    let mudancaStatus = ($('#deletar-btn').val())
-    let idAcoes = (document.getElementById('id-confirmacao'));
-    idAcoes.style.display = 'block';
+if (!function_exists('pacienteShowEsc')) {
+    function pacienteShowEsc($value): string
+    {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
 }
 
-function deletar() {
-    let idAcoes = (document.getElementById('id-confirmacao'));
+if (!function_exists('pacienteShowValue')) {
+    function pacienteShowValue($value): string
+    {
+        $value = trim((string)$value);
+        return $value !== '' ? pacienteShowEsc($value) : '-';
+    }
+}
 
-    btnDeletar = (document.getElementById('deletar-btn').value);
+if (!function_exists('pacienteShowPhone')) {
+    function pacienteShowPhone($value): string
+    {
+        $digits = preg_replace('/\D+/', '', (string)$value);
+        if ($digits === '') {
+            return '-';
+        }
+        if (strlen($digits) === 10) {
+            return '(' . substr($digits, 0, 2) . ') ' . substr($digits, 2, 4) . '-' . substr($digits, 6);
+        }
+        if (strlen($digits) === 11) {
+            return '(' . substr($digits, 0, 2) . ') ' . substr($digits, 2, 5) . '-' . substr($digits, 7);
+        }
+        return pacienteShowEsc((string)$value);
+    }
+}
 
-    idAcoes.style.display = 'none';
+if (!function_exists('pacienteShowCpf')) {
+    function pacienteShowCpf($value): string
+    {
+        $digits = preg_replace('/\D+/', '', (string)$value);
+        if ($digits === '') {
+            return '-';
+        }
+        if (strlen($digits) === 11) {
+            return substr($digits, 0, 3) . '.' .
+                substr($digits, 3, 3) . '.' .
+                substr($digits, 6, 3) . '-' .
+                substr($digits, 9, 2);
+        }
+        return pacienteShowEsc((string)$value);
+    }
+}
 
-    window.location = "<?= $BASE_URL ?>dele_paciente.php?id_paciente=<?= $id_paciente ?>";
-};
+if (!function_exists('pacienteShowDate')) {
+    function pacienteShowDate($value): string
+    {
+        $value = trim((string)$value);
+        if ($value === '' || $value === '0000-00-00' || $value === '0000-00-00 00:00:00') {
+            return '-';
+        }
+        $timestamp = strtotime($value);
+        return $timestamp ? date('d/m/Y', $timestamp) : pacienteShowEsc($value);
+    }
+}
 
-function cancelar() {
-    let idAcoes = (document.getElementById('id-confirmacao'));
-    idAcoes.style.display = 'none';
-    window.location = "<?= $BASE_URL ?>pacientes?>";
+$pacienteRow = $paciente[0] ?? [];
+$ativoPaciente = strtolower(trim((string)($pacienteRow['ativo_pac'] ?? '')));
+$deletadoPaciente = strtolower(trim((string)($pacienteRow['deletado_pac'] ?? '')));
+$statusAtivo = $deletadoPaciente !== 's' && $ativoPaciente !== 'n';
+$statusLabel = $statusAtivo ? 'Ativo' : 'Inativo';
+$statusClass = $statusAtivo ? 'is-active' : 'is-inactive';
+$sexoValor = strtolower((string)($pacienteRow['sexo_pac'] ?? ''));
+$sexoLabel = $sexoValor === 'f' ? 'Feminino' : ($sexoValor === 'm' ? 'Masculino' : pacienteShowValue($pacienteRow['sexo_pac'] ?? ''));
+$idadePaciente = calcularIdadeAnos($pacienteRow['data_nasc_pac'] ?? null);
+$matriculaPaciente = trim((string)($pacienteRow['matricula_pac'] ?? ''));
+if (($pacienteRow['recem_nascido_pac'] ?? '') === 's' && trim((string)($pacienteRow['numero_rn_pac'] ?? '')) !== '') {
+    $matriculaPaciente .= ' RN' . trim((string)$pacienteRow['numero_rn_pac']);
+}
+$enderecoPaciente = trim(implode(' ', array_filter([
+    trim((string)($pacienteRow['endereco_pac'] ?? '')),
+    trim((string)($pacienteRow['numero_pac'] ?? '')) !== '' ? ', ' . trim((string)$pacienteRow['numero_pac']) : '',
+])));
+?>
+<script src="js/timeout.js"></script>
+<link rel="stylesheet" href="css/form_cad_internacao.css?v=<?= @filemtime(dirname(__DIR__, 2) . '/css/form_cad_internacao.css') ?>">
 
-};
-src = "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
-</script>
-<script src="js/apagarModal.js"></script>
+<style>
+.paciente-show-page {
+    padding: 0 16px 96px;
+}
+
+.paciente-show-page .internacao-page__hero {
+    margin-bottom: 14px;
+}
+
+.paciente-profile-card {
+    display: grid;
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.paciente-profile-summary,
+.paciente-info-card,
+.paciente-risk-card,
+.paciente-danger-card {
+    background: #fff;
+    border: 1px solid rgba(47, 111, 159, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(47, 60, 85, 0.08);
+}
+
+.paciente-profile-summary {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 100%;
+}
+
+.paciente-avatar {
+    width: 112px;
+    height: 112px;
+    border-radius: 28px;
+    display: grid;
+    place-items: center;
+    background: #eef6fb;
+    color: #2f6f9f;
+    font-size: 3rem;
+    border: 4px solid #eef6fb;
+    box-shadow: 0 10px 24px rgba(47, 111, 159, 0.16);
+}
+
+.paciente-name {
+    margin: 14px 0 4px;
+    color: #1f2937;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.paciente-meta-line {
+    margin: 0;
+    color: #667085;
+    font-size: 0.92rem;
+}
+
+.paciente-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.paciente-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: currentColor;
+}
+
+.paciente-status.is-active {
+    background: #eaf8f0;
+    color: #16834d;
+}
+
+.paciente-status.is-inactive {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.paciente-summary-meta {
+    width: 100%;
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #edf2f7;
+    text-align: left;
+}
+
+.paciente-summary-meta span {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #667085;
+    font-size: 0.82rem;
+}
+
+.paciente-summary-meta strong {
+    color: #334155;
+    font-weight: 800;
+}
+
+.paciente-info-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.paciente-info-card,
+.paciente-risk-card {
+    padding: 16px;
+}
+
+.paciente-info-card h3,
+.paciente-risk-card h3,
+.paciente-danger-card h3 {
+    margin: 0;
+    color: #24384f;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.paciente-card-subtitle {
+    margin: 3px 0 0;
+    color: #64748b;
+    font-size: 0.84rem;
+}
+
+.paciente-field-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.paciente-field {
+    min-height: 74px;
+    padding: 11px 12px;
+    border: 1px solid #e5edf4;
+    border-radius: 10px;
+    background: #f8fbfd;
+}
+
+.paciente-field label {
+    display: block;
+    margin: 0 0 5px;
+    padding: 0;
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.paciente-field div {
+    color: #1f2937;
+    font-size: 0.94rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.paciente-risk-card {
+    border-width: 2px;
+}
+
+.paciente-risk-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.paciente-risk-score {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.paciente-risk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.6);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.paciente-risk-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    margin-top: 12px;
+    font-size: 0.88rem;
+}
+
+.paciente-risk-card ul {
+    margin: 12px 0 0 18px;
+    padding-left: 0.8rem;
+    font-size: 0.88rem;
+}
+
+.paciente-danger-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+    padding: 16px;
+    border-color: rgba(190, 18, 60, 0.18);
+    background: linear-gradient(135deg, #fff 0%, #fff7f7 100%);
+}
+
+.paciente-danger-card p {
+    margin: 4px 0 0;
+    color: #667085;
+    font-size: 0.88rem;
+}
+
+.paciente-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.paciente-actions .btn {
+    border-radius: 10px;
+    font-weight: 700;
+    padding: 9px 14px;
+}
+
+@media (max-width: 980px) {
+    .paciente-profile-card,
+    .paciente-field-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .paciente-danger-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+</style>
+
+<main id="main-container" class="internacao-page cadastro-layout paciente-show-page">
+    <div class="internacao-page__hero">
+        <div class="internacao-page__hero-main">
+            <h1>Dados do paciente</h1>
+        </div>
+        <div class="hero-actions">
+            <a href="<?= $BASE_URL ?>pacientes" class="hero-back-btn">Voltar para lista</a>
+            <a href="<?= $BASE_URL ?>pacientes/editar/<?= (int)$id_paciente ?>" class="hero-back-btn">Editar paciente</a>
+            <a href="<?= $BASE_URL ?>pacientes/historico/<?= (int)$id_paciente ?>" class="hero-back-btn">Histórico</a>
+            <a href="<?= $BASE_URL ?>hub_paciente/paciente<?= (int)$id_paciente ?>" class="hero-back-btn">Hub Paciente</a>
+            <a href="<?= $BASE_URL ?>internacoes/nova?id_paciente=<?= (int)$id_paciente ?>" class="hero-back-btn">Nova internação</a>
+            <span class="internacao-page__tag">Registro #<?= (int)$id_paciente ?></span>
+        </div>
+    </div>
+
+    <div class="paciente-profile-card">
+        <aside class="paciente-profile-summary">
+            <div class="paciente-avatar" aria-hidden="true">
+                <i class="bi bi-person-vcard"></i>
+            </div>
+            <h2 class="paciente-name"><?= pacienteShowValue($pacienteRow['nome_pac'] ?? '') ?></h2>
+            <p class="paciente-meta-line"><?= pacienteShowValue($pacienteRow['nome_social_pac'] ?? '') ?></p>
+            <span class="paciente-status <?= $statusClass ?>"><?= $statusLabel ?></span>
+
+            <div class="paciente-summary-meta">
+                <span><strong>CPF</strong><?= pacienteShowCpf($pacienteRow['cpf_pac'] ?? '') ?></span>
+                <span><strong>Matrícula</strong><?= pacienteShowValue($matriculaPaciente) ?></span>
+                <span><strong>Idade</strong><?= $idadePaciente ? (int)$idadePaciente . ' anos' : '-' ?></span>
+                <span><strong>Seguradora</strong><?= pacienteShowValue($pacienteRow['seguradora_seg'] ?? '') ?></span>
+            </div>
+        </aside>
+
+        <section class="paciente-info-stack">
+            <?php if (!empty($riskOverview['available'])):
+                $riskLevel = strtolower((string)($riskOverview['risk_level'] ?? ''));
+                $alertClass = $riskLevel === 'alto' ? '#ffe0e3' : ($riskLevel === 'moderado' ? '#fff5d6' : '#e6fff4');
+                $borderColor = $riskLevel === 'alto' ? '#c9184a' : ($riskLevel === 'moderado' ? '#f0a500' : '#0f8f5d');
+                $textColor = $riskLevel === 'alto' ? '#5a071d' : ($riskLevel === 'moderado' ? '#6a4900' : '#065238');
+                $probPct = number_format((float)($riskOverview['probability'] ?? 0) * 100, 1, ',', '.');
+                $features = $riskOverview['features'] ?? [];
+                $faixa = ucfirst((string)($features['faixa_etaria'] ?? '-'));
+                $idade = (int)($features['idade'] ?? $idadePaciente);
+                $antecedentes = (int)($features['antecedentes'] ?? ($indicadoresPaciente['antecedentes'] ?? 0));
+                $internPrev = (int)($features['internacoes_previas'] ?? max(0, (int)($indicadoresPaciente['total_internacoes'] ?? 0) - 1));
+                $mpPrev = number_format((float)($features['mp_previas'] ?? ($indicadoresPaciente['media_permanencia'] ?? 0)), 1, ',', '.');
+                $diasAtual = (int)($features['dias_internado_atual'] ?? 0);
+                $mpLimite = (int)($features['mp_limite'] ?? 0);
+                $eventos = (int)($features['eventos_adversos'] ?? ($indicadoresPaciente['eventos_adversos'] ?? 0));
+                $complexMap = [
+                    'alto' => ['label' => 'Alta complexidade', 'prioridade' => 'Visita prioritária (<24h)'],
+                    'moderado' => ['label' => 'Complexidade intermediária', 'prioridade' => 'Visita reforçada / monitorar'],
+                    'baixo' => ['label' => 'Baixa complexidade', 'prioridade' => 'Seguir rotina padrão']
+                ];
+                $complexInfo = $complexMap[$riskLevel ?: 'baixo'] ?? $complexMap['baixo'];
+                $refIntern = $riskOverview['internacao_referencia'] ?? null;
+            ?>
+            <div class="paciente-risk-card" style="border-color:<?= $borderColor ?>; background:<?= $alertClass ?>; color:<?= $textColor ?>;">
+                <div class="paciente-risk-header">
+                    <div>
+                        <h3 style="color:<?= $textColor ?>;">Risco de readmissão</h3>
+                        <div class="paciente-risk-score"><?= $probPct ?>%</div>
+                        <div style="font-size:0.85rem;">
+                            Nível <?= strtoupper($riskLevel ?: 'BAIXO') ?> · Internação ref.
+                            <?= $refIntern ? '#' . (int)$refIntern : '-' ?>
+                        </div>
+                        <span class="paciente-risk-pill">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <?= pacienteShowEsc($complexInfo['label']) ?> · <?= pacienteShowEsc($complexInfo['prioridade']) ?>
+                        </span>
+                    </div>
+                    <div style="flex:1; min-width:250px; font-size:0.9rem;">
+                        <?= pacienteShowEsc($riskOverview['explanation'] ?? '') ?>
+                    </div>
+                </div>
+                <div class="paciente-risk-meta">
+                    <div><strong>Perfil:</strong> <?= pacienteShowEsc($faixa) ?><?= $idade ? " ({$idade} anos)" : '' ?>, sexo <?= pacienteShowEsc(strtoupper((string)($features['sexo'] ?? ($pacienteRow['sexo_pac'] ?? 'ND')))) ?></div>
+                    <div><strong>Antecedentes:</strong> <?= $antecedentes ?> · <strong>Internações prévias:</strong> <?= $internPrev ?> (MP <?= $mpPrev ?> dias)</div>
+                    <div><strong>Permanência atual:</strong> <?= $diasAtual ?> dias<?= $mpLimite ? " (limite {$mpLimite})" : '' ?> · <strong>Eventos adversos:</strong> <?= $eventos ?></div>
+                </div>
+                <?php if (!empty($riskOverview['recommendations']) && is_array($riskOverview['recommendations'])): ?>
+                <ul>
+                    <?php foreach ($riskOverview['recommendations'] as $rec): ?>
+                    <li><?= pacienteShowEsc($rec) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
+            </div>
+            <?php elseif (!empty($riskOverview['message'])): ?>
+            <div class="paciente-risk-card">
+                <h3>Risco de readmissão</h3>
+                <p class="paciente-card-subtitle"><?= pacienteShowEsc($riskOverview['message']) ?></p>
+            </div>
+            <?php endif; ?>
+
+            <div class="paciente-info-card">
+                <h3>Identificação</h3>
+                <p class="paciente-card-subtitle">Dados principais do cadastro do paciente.</p>
+                <div class="paciente-field-grid">
+                    <div class="paciente-field">
+                        <label>Nome completo</label>
+                        <div><?= pacienteShowValue($pacienteRow['nome_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Nome social</label>
+                        <div><?= pacienteShowValue($pacienteRow['nome_social_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Nome da mãe</label>
+                        <div><?= pacienteShowValue($pacienteRow['mae_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>CPF</label>
+                        <div><?= pacienteShowCpf($pacienteRow['cpf_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Sexo</label>
+                        <div><?= pacienteShowValue($sexoLabel) ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Nascimento</label>
+                        <div><?= pacienteShowDate($pacienteRow['data_nasc_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Matrícula</label>
+                        <div><?= pacienteShowValue($matriculaPaciente) ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Nº atendimento</label>
+                        <div><?= pacienteShowValue($pacienteRow['num_atendimento_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Cadastrado em</label>
+                        <div><?= pacienteShowDate($pacienteRow['data_create_pac'] ?? '') ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paciente-info-card">
+                <h3>Convênio</h3>
+                <p class="paciente-card-subtitle">Vínculo operacional do paciente.</p>
+                <div class="paciente-field-grid">
+                    <div class="paciente-field">
+                        <label>Seguradora</label>
+                        <div><?= pacienteShowValue($pacienteRow['seguradora_seg'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Estipulante</label>
+                        <div><?= pacienteShowValue($pacienteRow['nome_est'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>RN</label>
+                        <div><?= ($pacienteRow['recem_nascido_pac'] ?? '') === 's' ? 'Sim' : 'Não' ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Mãe titular</label>
+                        <div><?= pacienteShowValue($pacienteRow['mae_titular_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Matrícula titular</label>
+                        <div><?= pacienteShowValue($pacienteRow['matricula_titular_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Número RN</label>
+                        <div><?= pacienteShowValue($pacienteRow['numero_rn_pac'] ?? '') ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paciente-info-card">
+                <h3>Contato</h3>
+                <p class="paciente-card-subtitle">Canais de comunicação registrados.</p>
+                <div class="paciente-field-grid">
+                    <div class="paciente-field">
+                        <label>E-mail principal</label>
+                        <div><?= pacienteShowValue($pacienteRow['email01_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>E-mail secundário</label>
+                        <div><?= pacienteShowValue($pacienteRow['email02_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Telefone principal</label>
+                        <div><?= pacienteShowPhone($pacienteRow['telefone01_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Telefone secundário</label>
+                        <div><?= pacienteShowPhone($pacienteRow['telefone02_pac'] ?? '') ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paciente-info-card">
+                <h3>Endereço</h3>
+                <p class="paciente-card-subtitle">Localização principal do cadastro.</p>
+                <div class="paciente-field-grid">
+                    <div class="paciente-field">
+                        <label>Endereço</label>
+                        <div><?= pacienteShowValue($enderecoPaciente) ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Complemento</label>
+                        <div><?= pacienteShowValue($pacienteRow['complemento_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Bairro</label>
+                        <div><?= pacienteShowValue($pacienteRow['bairro_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Cidade</label>
+                        <div><?= pacienteShowValue($pacienteRow['cidade_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>Estado</label>
+                        <div><?= pacienteShowValue($pacienteRow['estado_pac'] ?? '') ?></div>
+                    </div>
+                    <div class="paciente-field">
+                        <label>CEP</label>
+                        <div><?= pacienteShowValue($pacienteRow['cep_pac'] ?? '') ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <?php if (trim((string)($pacienteRow['obs_pac'] ?? '')) !== ''): ?>
+            <div class="paciente-info-card">
+                <h3>Observações</h3>
+                <div class="paciente-field-grid">
+                    <div class="paciente-field" style="grid-column: 1 / -1;">
+                        <label>Nota interna</label>
+                        <div><?= nl2br(pacienteShowEsc($pacienteRow['obs_pac'] ?? '')) ?></div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <div class="paciente-danger-card">
+                <div>
+                    <h3>Inativar paciente</h3>
+                    <p>Use esta ação apenas quando o cadastro não deve aparecer como ativo nas listas operacionais.</p>
+                </div>
+                <div class="paciente-actions">
+                    <a href="<?= $BASE_URL ?>pacientes" class="btn btn-outline-secondary">Cancelar</a>
+                    <button class="btn btn-danger" type="submit" form="delete-paciente-form" id="deletar-btn" name="deletar">Inativar</button>
+                </div>
+                <form id="delete-paciente-form" action="process_paciente.php?id_paciente=<?= (int)$id_paciente ?>" method="POST" style="display:none;">
+                    <input type="hidden" name="type" value="delUpdate">
+                    <input type="hidden" name="typeDel" value="delUpdate">
+                    <input type="hidden" name="id_paciente" value="<?= (int)$id_paciente ?>">
+                </form>
+            </div>
+        </section>
+    </div>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+<?php include_once("templates/footer.php"); ?>

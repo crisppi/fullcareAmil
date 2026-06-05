@@ -216,8 +216,14 @@
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                             <li>
                                                 <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
-                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospital_acomodacoes.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i class="bi bi-hospital" style="font-size:1rem;margin-right:8px;color:#5e2363;"></i>Acomodações
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/show_hospital.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>"><i
+                                                        class="bi bi-eye"
+                                                        style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/editar/' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>
                                             </li>
                                             <li>
@@ -228,14 +234,8 @@
                                             </li>
                                             <li>
                                                 <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
-                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/show_hospital.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>"><i
-                                                        class="bi bi-eye"
-                                                        style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
-                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospitais/editar/' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
-                                                    <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospital_acomodacoes.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-hospital" style="font-size:1rem;margin-right:8px;color:#5e2363;"></i>Acomodações
                                                 </a>
                                             </li>
 

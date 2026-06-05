@@ -233,7 +233,13 @@
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
 
                                             <li>
-                                                <a class="dropdown-item" style="font-size: .9rem;"
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/seguradoras/ver/' . (int) $id_seguradora, ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-eye" style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
                                                     href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/seguradoras/editar/' . (int) $id_seguradora, ENT_QUOTES, 'UTF-8') ?>">
                                                     <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
                                                 </a>

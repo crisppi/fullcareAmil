@@ -166,6 +166,7 @@ class PacienteDAO implements PacienteDAOInterface
         pa.estado_pac,
         pa.data_nasc_pac,
         pa.ativo_pac,
+        pa.deletado_pac,
         pa.telefone01_pac,
         pa.telefone02_pac,
         pa.email01_pac,

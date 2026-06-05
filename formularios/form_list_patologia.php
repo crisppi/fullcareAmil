@@ -59,11 +59,11 @@ $query = $patologia->selectAllPatologia($where, $ordenar, $obLimite);
     <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 0;">
         <h4 style="margin-top:-10px" class="page-title">Patologia</h4>
         <div style="margin-left: auto;">
-            <button onclick="openModalPat('cad_patologia.php')" data-bs-toggle="modal" data-bs-target="#myModal"
+            <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/cad_patologia.php', ENT_QUOTES, 'UTF-8') ?>"
                 class="btn btn-success styled"
                 style="border-radius:10px;background-color: #35bae1;font-family:var(--bs-font-sans-serif);box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);border:none">
                 <i class="fa-solid fa-plus" style='font-size: 1rem;margin-right:5px;'></i>Nova Patologia
-            </button>
+            </a>
         </div>
     </div>
 
@@ -191,25 +191,17 @@ $query = $patologia->selectAllPatologia($where, $ordenar, $obLimite);
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="dropdown-item" style="font-size: .9rem;"
-                                                onclick="openModal('<?= $BASE_URL ?>show_patologia.php?id_patologia=<?= $id_patologia ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye"
-                                                    style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver</button>
+                                            <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/show_patologia.php?id_patologia=' . (int) $id_patologia, ENT_QUOTES, 'UTF-8') ?>">
+                                                <i class="bi bi-eye" style="font-size:1rem;margin-right:8px;color:#16a34a;"></i>Ver
+                                            </a>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item" style="font-size: .9rem;"
-                                                onclick="openModalPat('<?= $BASE_URL ?>edit_patologia.php?id_patologia=<?= $id_patologia ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                    class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar</button>
+                                            <a class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;"
+                                                href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/edit_patologia.php?id_patologia=' . (int) $id_patologia, ENT_QUOTES, 'UTF-8') ?>">
+                                                <i class="bi bi-pencil-square" style="font-size:1rem;margin-right:8px;color:#3b82f6;"></i>Editar
+                                            </a>
                                         </li>
-                                        <!-- <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
-                                                onclick="openModal('<?= $BASE_URL ?>show_patologia.php?id_patologia=<?= $id_patologia ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                    name="type" value="edite"
-                                                    class="far fa-edit edit-icon"></i>Deletar</button>
-                                        </li> -->
                                     </ul>
                                 </div>
                             </td>
@@ -235,22 +227,6 @@ $query = $patologia->selectAllPatologia($where, $ordenar, $obLimite);
 
                 <!-- paginacao que aparece abaixo da tabela -->
                 <div style="display: flex;margin-top:20px">
-
-                    <!-- Modal para abrir tela de cadastro -->
-                    <div class="modal fade" id="myModal">
-                        <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
-                            <div class="modal-content">
-                                <div style="padding-left:20px;padding-top:20px;">
-                                    <h4>Patologia</h4>
-                                    <p class="page-description">Adicione informações
-                                        sobre a patologia</p>
-                                </div>
-                                <div class="modal-body">
-                                    <div id="content-php"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="pagination" style="margin: 0 auto;">
                         <?php if ($total_pages ?? 1 > 1): ?>
@@ -356,22 +332,6 @@ $(document).ready(function() {
 });
 </script>
 
-<style>
-.modal-backdrop {
-    display: none;
-
-}
-
-.modal {
-    background: rgba(0, 0, 0, 0.5);
-
-}
-
-.modal-header {
-    color: white;
-    background: #35bae1;
-}
-</style>
 <script src="./js/input-estilo.js"></script>
 
 
