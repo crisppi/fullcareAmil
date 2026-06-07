@@ -2,7 +2,9 @@
 
 function ajax_require_active_session(): void
 {
-    if (empty($_SESSION['id_usuario']) || strtolower((string)($_SESSION['ativo'] ?? '')) !== 's') {
+    $ativoNorm = strtolower(trim((string)($_SESSION['ativo'] ?? '')));
+    $ativoOk = in_array($ativoNorm, ['s', '1', 'true', 'ativo'], true);
+    if (empty($_SESSION['id_usuario']) || !$ativoOk) {
         http_response_code(401);
         echo json_encode(['success' => false, 'error' => 'nao_autenticado']);
         exit;

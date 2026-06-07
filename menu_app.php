@@ -363,6 +363,20 @@ $hospital_name = (!empty($filtered_hospital) && !empty($filtered_hospital[0]['no
     ? ucwords(strtolower($filtered_hospital[0]['nome_hosp']))
     : 'Todos Hospitais';
 
+if (!function_exists('menuFmtDateBr')) {
+    function menuFmtDateBr($value): string
+    {
+        if (empty($value) || $value === '0000-00-00') {
+            return '—';
+        }
+        try {
+            return (new DateTime((string)$value))->format('d/m/Y');
+        } catch (Throwable $e) {
+            return '—';
+        }
+    }
+}
+
 // -----------------------------
 // BUSCAS
 // -----------------------------
@@ -664,6 +678,15 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 .grid-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 24px rgba(35, 102, 147, 0.14);
+}
+
+.grid-item-kpi[data-dash-target] {
+    cursor: pointer;
+}
+
+.grid-item-kpi[data-dash-target]:focus {
+    outline: 3px solid rgba(47, 111, 159, .28);
+    outline-offset: 3px;
 }
 
 .grid-item-filter {
@@ -1296,12 +1319,14 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     }
 
     #dash-visitas-atraso .table,
-    #dash-longa-perm .table {
+    #dash-longa-perm .table,
+    #dash-reinternacoes .table {
         font-size: .68rem !important;
     }
 
     #dash-visitas-atraso .table thead th,
-    #dash-longa-perm .table thead th {
+    #dash-longa-perm .table thead th,
+    #dash-reinternacoes .table thead th {
         background: #2f6f9f !important;
         background-image: none !important;
         font-size: .52rem !important;
@@ -1311,14 +1336,17 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
     #dash-visitas-atraso .table tbody td,
     #dash-longa-perm .table tbody td,
+    #dash-reinternacoes .table tbody td,
     #dash-visitas-atraso .table tbody td *,
-    #dash-longa-perm .table tbody td * {
+    #dash-longa-perm .table tbody td *,
+    #dash-reinternacoes .table tbody td * {
         font-size: .68rem !important;
         font-weight: 400 !important;
     }
 
     #dash-visitas-atraso .table tbody td:nth-child(4),
-    #dash-longa-perm .table tbody td:nth-child(4) {
+    #dash-longa-perm .table tbody td:nth-child(4),
+    #dash-reinternacoes .table tbody td:nth-child(4) {
         white-space: nowrap;
     }
 </style>
@@ -1418,7 +1446,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 <div class="badge-item badge-neutral"><?= count($dados_internacoes) ?></div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning">
+            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-longa-perm-section" role="button" tabindex="0">
                 <div class="title-item"><i class="bi bi-clock-history"></i> Longa Permanência</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="kpi-helper">Dias de internação</div>
@@ -1429,7 +1457,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 </div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning">
+            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-reinternacoes-section" role="button" tabindex="0">
                 <div class="title-item"><i class="bi bi-arrow-repeat"></i> Reinternações</div>
                 <div class="reint-helper">Tempo entre alta e nova internação</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
@@ -1440,7 +1468,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 </div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning">
+            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-visitas-atraso-section" role="button" tabindex="0">
                 <div class="title-item"><i class="bi bi-calendar-x"></i> Visitas em Atraso</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="badge-item badge-warning"><?= count($dados_visitas_atraso) ?></div>
@@ -1487,7 +1515,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 
     <div class=" container-fluid">
         <div class="row m-t-25">
-            <div class="col-12">
+            <div id="dash-visitas-atraso-section" class="col-12">
                 <div class="header_div">
                     <span>Visitas em atraso</span>
                 </div>
@@ -1496,12 +1524,96 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 </div>
             </div>
 
-            <div class="col-12" style="margin-top:20px;">
+            <div id="dash-longa-perm-section" class="col-12" style="margin-top:20px;">
                 <div class="header_div">
                     <span>Pacientes de longa permanência</span>
                 </div>
                 <div id="dash-longa-perm" class="dash-table-loading">
                     Carregando...
+                </div>
+            </div>
+
+            <div id="dash-reinternacoes-section" class="col-12" style="margin-top:20px;">
+                <div class="header_div">
+                    <span>Reinternações até 30 dias</span>
+                </div>
+                <div id="dash-reinternacoes" class="dash-table-scroll">
+                    <table class="table table-sm table-striped table-hover table-condensed dash-sortable" style="margin-top:10px;">
+                        <thead style="background: #2f6f9f; background-image: none; color: #fff;">
+                            <tr>
+                                <th scope="col" class="th-sortable" data-sort-type="number">Id Int
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="text">Hospital
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="text">Paciente
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="date">Internação anterior
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="date">Alta anterior
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="date">Nova internação
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc">▼</a>
+                                    </span>
+                                </th>
+                                <th scope="col" class="th-sortable" data-sort-type="number">Intervalo
+                                    <span class="sort-icons">
+                                        <a href="#" data-dir="asc">▲</a>
+                                        <a href="#" data-dir="desc" class="active">▼</a>
+                                    </span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach (array_slice((array)$reinternacao_30, 0, 50) as $reint): ?>
+                                <tr>
+                                    <td scope="row"><?= (int)($reint['id_internacao_atual'] ?? 0) ?></td>
+                                    <td scope="row"><?= htmlspecialchars((string)($reint['nome_hosp'] ?? '—'), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td scope="row">
+                                        <a href="<?= htmlspecialchars($BASE_URL . 'internacoes/visualizar/' . (int)($reint['id_internacao_atual'] ?? 0), ENT_QUOTES, 'UTF-8') ?>">
+                                            <i class="bi bi-box-arrow-right" style="color:green; margin-right:6px; font-size:1em;"></i>
+                                        </a>
+                                        <?= htmlspecialchars((string)($reint['nome_pac'] ?? '—'), ENT_QUOTES, 'UTF-8') ?>
+                                    </td>
+                                    <td scope="row"><?= htmlspecialchars(menuFmtDateBr($reint['data_internacao_anterior'] ?? null), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td scope="row"><?= htmlspecialchars(menuFmtDateBr($reint['data_alta_anterior'] ?? null), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td scope="row"><?= htmlspecialchars(menuFmtDateBr($reint['data_internacao_atual'] ?? null), ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td scope="row" class="text-danger">
+                                        <?= isset($reint['dias_reinternacao']) ? (int)$reint['dias_reinternacao'] . ' dias' : '—' ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                            <?php if (count((array)$reinternacao_30) === 0): ?>
+                                <tr>
+                                    <td colspan="7" scope="row" class="col-id" style="font-size:.8rem">
+                                        Não foram encontrados registros
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1784,7 +1896,11 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
             body: formData.toString()
         })
         .then(function(res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
+            if (!res.ok) {
+                const error = new Error('HTTP ' + res.status);
+                error.status = res.status;
+                throw error;
+            }
             return res.text();
         })
         .then(function(html) {
@@ -1795,10 +1911,23 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
             visitasEl.innerHTML = visitasContent ? visitasContent.innerHTML : '<div style="padding:10px">Não foi possível carregar.</div>';
             longaEl.innerHTML = longaContent ? longaContent.innerHTML : '<div style="padding:10px">Não foi possível carregar.</div>';
         })
-        .catch(function() {
-            visitasEl.innerHTML = '<div style="padding:10px">Erro ao carregar.</div>';
-            longaEl.innerHTML = '<div style="padding:10px">Erro ao carregar.</div>';
+        .catch(function(error) {
+            const msg = error && error.status === 401
+                ? 'Sessão expirada. Recarregue a página e faça login novamente.'
+                : 'Erro ao carregar. Tente recarregar a página.';
+            visitasEl.innerHTML = '<div style="padding:10px">' + msg + '</div>';
+            longaEl.innerHTML = '<div style="padding:10px">' + msg + '</div>';
         });
+    }
+
+    function scrollToDashTarget(hash) {
+        if (!hash || hash.charAt(0) !== '#') return false;
+        const target = document.querySelector(hash);
+        if (!target) return false;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - 72;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        history.replaceState(null, '', hash);
+        return true;
     }
 
     function submitDashboardFilter(formData) {
@@ -1863,6 +1992,18 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
             });
         });
 
+        document.querySelectorAll('[data-dash-target]').forEach(function(card) {
+            card.addEventListener('click', function() {
+                scrollToDashTarget(card.getAttribute('data-dash-target'));
+            });
+            card.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    scrollToDashTarget(card.getAttribute('data-dash-target'));
+                }
+            });
+        });
+
         loadDashTables();
     }
 
@@ -1885,6 +2026,17 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
             sortDashTable(table, colIndex, dir, type);
         });
         window.__dashSortBound = true;
+    }
+
+    if (!window.__dashAnchorBound) {
+        document.addEventListener('click', function(event) {
+            const link = event.target.closest('a[href^="#dash-"]');
+            if (!link) return;
+            if (scrollToDashTarget(link.getAttribute('href'))) {
+                event.preventDefault();
+            }
+        });
+        window.__dashAnchorBound = true;
     }
 
     document.addEventListener('DOMContentLoaded', initDashboardMenuPage);
