@@ -66,9 +66,8 @@ if (!function_exists("app_latest_version") || !isset($BASE_URL, $conn)) {
     }
 
     .lp-logo img {
-        height: 46px;
+        height: 120px;
         width: auto;
-        filter: brightness(0) invert(1);
     }
 
     .lp-body {
@@ -366,7 +365,7 @@ if (!function_exists("app_latest_version") || !isset($BASE_URL, $conn)) {
     <!-- ── Left panel ── -->
     <div class="lp">
         <div class="lp-logo">
-            <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/logo_branco.png" alt="FullCare" />
+            <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/logo_amil.png" alt="Amil" />
         </div>
 
         <div class="lp-body">

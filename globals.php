@@ -61,11 +61,16 @@ if ($__docroot !== '' && strpos($__appDir, $__docroot) === 0) {
 // Fallback para ambientes locais antigos (mantém suporte a /FullConex, etc.)
 $__host   = $_SERVER['HTTP_HOST']   ?? '';
 $__script = $_SERVER['SCRIPT_NAME'] ?? '';
+$__requestPath = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
 if ($APP_BASE_PATH === '/') {
-    if (preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $__script, $match)) {
+    if (preg_match('#/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $__script . "\n" . $__requestPath, $match)) {
         $APP_BASE_PATH = '/' . trim($match[1], '/') . '/';
     }
 }
+if ($APP_BASE_PATH === '/' && strtolower(basename($__appDir)) === 'fullcareamil' && preg_match('/^(localhost|127\.0\.0\.1)(:|20 20 12 61 79 80 81 33 98 100 204 250 395 398 399 400 701/i', $__host)) {
+    $APP_BASE_PATH = '/fullcareAmil/';
+}
+
 // Normaliza
 $APP_BASE_PATH = '/' . trim($APP_BASE_PATH, '/') . '/';
 if ($APP_BASE_PATH === '//') $APP_BASE_PATH = '/';
