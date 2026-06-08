@@ -142,7 +142,7 @@ if (!function_exists('fullcare_bi_deny_redirect')) {
         }
         $_SESSION['mensagem'] = 'Acesso ao BI permitido para gestor de seguradora e diretoria.';
         $_SESSION['mensagem_tipo'] = 'danger';
-        header('Location: menu_app.php', true, 303);
+        header('Location: central-trabalho', true, 303);
         exit;
     }
 }

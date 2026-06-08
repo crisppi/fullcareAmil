@@ -857,12 +857,12 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                             <div class="rah-inline-actions">
                                                 <?php if (($intern['encerrado_cap'] ?? 'n') !== "s"): ?>
                                                     <?php if (($intern['em_auditoria_cap'] ?? 'n') === "s"): ?>
-                                                        <a class="rah-inline-link rah-inline-link--audit" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                        <a class="rah-inline-link rah-inline-link--audit" href="<?= $BASE_URL ?>contas/auditar/<?= $intern['id_capeante'] ?>">
                                                             <i class="bi bi-file-text"></i>
                                                             <span>Analisar</span>
                                                         </a>
                                                     <?php else: ?>
-                                                        <a class="rah-inline-link rah-inline-link--start" href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                        <a class="rah-inline-link rah-inline-link--start" href="<?= $BASE_URL ?>contas/auditar/<?= $intern['id_capeante'] ?>">
                                                             <i class="bi bi-file-text"></i>
                                                             <span>Iniciar</span>
                                                         </a>
@@ -876,7 +876,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                                 <?php endif; ?>
 
                                                 <a class="rah-inline-link rah-inline-link--partial"
-                                                    href="<?= $BASE_URL ?>cad_capeante_rah.php?id_internacao=<?= $intern["id_internacao"] ?>&type=create&nova_parcial=1">
+                                                    href="<?= $BASE_URL ?>contas/nova/internacao/<?= $intern["id_internacao"] ?>?nova_parcial=1">
                                                     <i class="bi bi-file-text"></i>
                                                     <span>Parcial</span>
                                                 </a>
@@ -1163,7 +1163,7 @@ if (typeof window.paginateRah !== 'function') {
     </script>
 
     <?php if ($rahAfterSave && !empty($rahAfterSave['patient_id'])):
-        $hubUrl = htmlspecialchars(rtrim($BASE_URL, '/') . '/hub_paciente/paciente' . (int)$rahAfterSave['patient_id'], ENT_QUOTES);
+        $hubUrl = htmlspecialchars(rtrim($BASE_URL, '/') . '/pacientes/hub/' . (int)$rahAfterSave['patient_id'], ENT_QUOTES);
         $listUrl = htmlspecialchars($rahAfterSaveRedirect ?? $BASE_URL . 'internacoes/rah', ENT_QUOTES);
     ?>
     <div class="modal fade" id="rahAfterSaveModal" tabindex="-1" aria-labelledby="rahAfterSaveLabel" aria-hidden="true">

@@ -1,6 +1,7 @@
 <?php
 include_once("check_logado.php");
 require_once("templates/header.php");
+require_once("app/services/AuditorActionService.php");
 
 if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexão não disponível.");
@@ -48,6 +49,12 @@ if ($isGestorSeguradora && $seguradoraUserId <= 0) {
 $seguradoraFiltroPac = $isGestorSeguradora
     ? ($seguradoraUserId > 0 ? ' AND p.fk_seguradora_pac = ' . $seguradoraUserId : ' AND 1=0')
     : '';
+$isAuditorOperacional = AuditorActionService::canUseOperationalSearch($_SESSION);
+$auditorDashboard = ['counts' => [], 'queue' => [], 'alerts' => []];
+if ($isAuditorOperacional) {
+    $auditorActionService = new AuditorActionService($conn, $BASE_URL);
+    $auditorDashboard = $auditorActionService->dashboardSummary($_SESSION, 10);
+}
 
 function dashCacheGet(string $key, int $ttl)
 {
@@ -138,7 +145,7 @@ $cards = [
         'value' => $contasAuditoria,
         'icon'  => 'bi-journal-text',
         'variant' => 'kpi-card-v2-2',
-        'link'  => 'list_internacao_cap_rah.php',
+        'link'  => 'contas/auditar',
         'desc'  => 'Capeantes ainda sem encerramento.'
     ],
     [
@@ -146,7 +153,7 @@ $cards = [
         'value' => $visitasAtrasadas,
         'icon'  => 'bi-calendar-x',
         'variant' => 'kpi-card-v2-3',
-        'link'  => 'lista_visitas.php?sort_field=data_visita&sort_dir=asc',
+        'link'  => 'visitas/lista?sort_field=data_visita&sort_dir=asc',
         'desc'  => 'Visitas sem lançamento atualizado.'
     ],
     [
@@ -329,8 +336,166 @@ if (!is_array($prioridades)) {
 .badge-score.low { background: linear-gradient(120deg, #0d9488, #3b82f6); }
 .badge-score.mid { background: linear-gradient(120deg, #f97316, #ef4444); }
 .badge-score.high { background: linear-gradient(120deg, #be185d, #7e22ce); }
+.auditor-action-wrap {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, .42fr);
+    gap: 12px;
+    align-items: start;
+}
+.auditor-panel {
+    border-radius: 14px;
+    border: 1px solid rgba(76, 142, 187, .18);
+    background: #fff;
+    box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
+    overflow: hidden;
+}
+.auditor-panel__head {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(76, 142, 187, .14);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.auditor-panel__head h4 {
+    margin: 0;
+    color: #24384f;
+    font-size: .86rem;
+    font-weight: 800;
+}
+.auditor-panel__head small {
+    color: #7a6a86;
+    font-size: .7rem;
+}
+.auditor-action-list {
+    display: grid;
+}
+.auditor-action-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 9px;
+    align-items: center;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #24384f;
+}
+.auditor-action-item + .auditor-action-item {
+    border-top: 1px solid rgba(76, 142, 187, .10);
+}
+.auditor-action-item:hover {
+    background: #f7fbff;
+    color: #24384f;
+}
+.auditor-action-icon {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #eff7ff;
+    color: #2f6f9f;
+}
+.auditor-action-icon.danger { background: #fff1f2; color: #be123c; }
+.auditor-action-icon.warning { background: #fff7ed; color: #c2410c; }
+.auditor-action-icon.info { background: #eef6ff; color: #2563eb; }
+.auditor-action-icon.primary { background: #f2e8f7; color: #5e2363; }
+.auditor-action-main {
+    min-width: 0;
+}
+.auditor-action-title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    font-size: .78rem;
+    font-weight: 800;
+}
+.auditor-action-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+.auditor-action-meta {
+    margin-top: 2px;
+    color: #6b7280;
+    font-size: .68rem;
+}
+.auditor-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    padding: 0 9px;
+    border-radius: 9px;
+    background: #f4faff;
+    border: 1px solid #d7e8f3;
+    color: #2f6f9f;
+    font-size: .68rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.auditor-alert-stack {
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+}
+.auditor-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 11px;
+    font-size: .74rem;
+    font-weight: 700;
+}
+.auditor-alert.danger { background: #fff1f2; color: #881337; }
+.auditor-alert.warning { background: #fff7ed; color: #9a3412; }
+.auditor-alert.info { background: #eff6ff; color: #1e3a8a; }
+.auditor-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid rgba(76, 142, 187, .10);
+}
+.auditor-mini-kpi {
+    min-height: 58px;
+    border-radius: 11px;
+    border: 1px solid rgba(76, 142, 187, .14);
+    background: #fbfdff;
+    padding: 8px 10px;
+}
+.auditor-mini-kpi small {
+    display: block;
+    color: #6b7280;
+    font-size: .62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.auditor-mini-kpi strong {
+    display: block;
+    color: #24384f;
+    font-size: 1.05rem;
+    line-height: 1.15;
+}
+@media (max-width: 1120px) {
+    .auditor-action-wrap {
+        grid-template-columns: 1fr;
+    }
+}
 @media (max-width: 768px) {
     .dash-card .dash-value { font-size: clamp(1.2rem, 6vw, 2rem); }
+    .auditor-action-item {
+        grid-template-columns: 34px minmax(0, 1fr);
+    }
+    .auditor-action-btn {
+        grid-column: 2;
+        justify-self: start;
+    }
 }
 @media (max-width: 1320px) {
     .dash-grid {
@@ -368,6 +533,78 @@ if (!is_array($prioridades)) {
         </a>
         <?php endforeach; ?>
     </div>
+
+    <?php if ($isAuditorOperacional): ?>
+    <?php
+        $audCounts = $auditorDashboard['counts'] ?? [];
+        $audQueue = $auditorDashboard['queue'] ?? [];
+        $audAlerts = $auditorDashboard['alerts'] ?? [];
+    ?>
+    <div class="auditor-action-wrap">
+        <div class="auditor-panel">
+            <div class="auditor-panel__head">
+                <div>
+                    <h4>Fila do auditor</h4>
+                    <small>Prioridades operacionais da sua carteira</small>
+                </div>
+                <small><?= number_format((int)($audCounts['fila_total'] ?? 0), 0, ',', '.') ?> pendências</small>
+            </div>
+            <div class="auditor-action-list">
+                <?php if (!$audQueue): ?>
+                    <div class="p-4 text-center text-muted" style="font-size:.82rem;">Nenhuma ação crítica para o auditor no momento.</div>
+                <?php else: ?>
+                    <?php foreach ($audQueue as $item): ?>
+                        <a class="auditor-action-item" href="<?= htmlspecialchars((string)$item['action_url'], ENT_QUOTES, 'UTF-8') ?>">
+                            <span class="auditor-action-icon <?= htmlspecialchars((string)$item['severity'], ENT_QUOTES, 'UTF-8') ?>">
+                                <i class="bi <?= htmlspecialchars((string)$item['icon'], ENT_QUOTES, 'UTF-8') ?>"></i>
+                            </span>
+                            <span class="auditor-action-main">
+                                <span class="auditor-action-title">
+                                    <strong><?= htmlspecialchars((string)$item['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                    <span><?= htmlspecialchars((string)$item['paciente'], ENT_QUOTES, 'UTF-8') ?></span>
+                                </span>
+                                <span class="auditor-action-meta">
+                                    <?= htmlspecialchars((string)$item['hospital'], ENT_QUOTES, 'UTF-8') ?>
+                                    <?php if (!empty($item['senha'])): ?> · senha <?= htmlspecialchars((string)$item['senha'], ENT_QUOTES, 'UTF-8') ?><?php endif; ?>
+                                    <?php if ((int)($item['dias'] ?? 0) > 0): ?> · <?= (int)$item['dias'] ?> dia(s)<?php endif; ?>
+                                    · <?= htmlspecialchars((string)$item['detail'], ENT_QUOTES, 'UTF-8') ?>
+                                </span>
+                            </span>
+                            <span class="auditor-action-btn"><?= htmlspecialchars((string)$item['action_label'], ENT_QUOTES, 'UTF-8') ?> <i class="bi bi-arrow-right-short"></i></span>
+                        </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="auditor-panel">
+            <div class="auditor-panel__head">
+                <div>
+                    <h4>Alertas do auditor</h4>
+                    <small>Sinais que pedem atenção hoje</small>
+                </div>
+            </div>
+            <div class="auditor-alert-stack">
+                <?php if (!$audAlerts): ?>
+                    <div class="auditor-alert info"><i class="bi bi-check-circle"></i><span>Sem alertas críticos para sua carteira.</span></div>
+                <?php else: ?>
+                    <?php foreach ($audAlerts as $alert): ?>
+                        <div class="auditor-alert <?= htmlspecialchars((string)$alert['level'], ENT_QUOTES, 'UTF-8') ?>">
+                            <i class="bi <?= htmlspecialchars((string)$alert['icon'], ENT_QUOTES, 'UTF-8') ?>"></i>
+                            <span><?= htmlspecialchars((string)$alert['text'], ENT_QUOTES, 'UTF-8') ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            <div class="auditor-mini-grid">
+                <div class="auditor-mini-kpi"><small>Visitas atrasadas</small><strong><?= number_format((int)($audCounts['visitas_atrasadas'] ?? 0), 0, ',', '.') ?></strong></div>
+                <div class="auditor-mini-kpi"><small>Eventos abertos</small><strong><?= number_format((int)($audCounts['eventos_abertos'] ?? 0), 0, ',', '.') ?></strong></div>
+                <div class="auditor-mini-kpi"><small>Contas pendentes</small><strong><?= number_format((int)($audCounts['contas_pendentes'] ?? 0), 0, ',', '.') ?></strong></div>
+                <div class="auditor-mini-kpi"><small>Negociações</small><strong><?= number_format((int)($audCounts['negociacoes_pendentes'] ?? 0), 0, ',', '.') ?></strong></div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="dash-table-card">
         <h4>

@@ -9,25 +9,29 @@
 
 /* ===== Base ===== */
 body {
-  background-color: #f5f7fa;
+  background-color: #e9edf3;
   font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif);
   color: #212529;
+}
+#main-container {
+  background: #e9edf3 !important;
 }
 form#form-capeante-rah {
   max-width: 1400px;
   margin: 0 auto;
   padding: 10px 10px 40px 10px;
+  background: #e9edf3;
 }
 .block {
-  background: #fff;
-  border: 1px solid #dee2e6;
+  background: #f8fafc;
+  border: 1px solid #d7dde7;
   border-radius: .5rem;
   padding: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, .08);
 }
 .block + .block { margin-top: 18px; }
 .block h5 {
-  background: #f8f9fa;
+  background: #f1f4f8;
   border-left: 6px solid #0d6efd;
   padding: 6px 10px;
   margin: -12px -12px 14px -12px;
@@ -43,10 +47,19 @@ label.form-label {
 }
 input.form-control,
 select.form-select {
-  border: 1px solid #ced4da;
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   font-size: .9rem;
   height: 34px;
   padding: 4px 8px;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, .03);
+}
+textarea.form-control {
+  background-color: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, .03);
 }
 input.form-control:focus,
 select.form-select:focus {
@@ -91,15 +104,15 @@ select.form-select:focus {
 /* ===== Identificação (card estilo “Visitas”) ===== */
 .id-card {
   background: #fff;
-  border: 1px solid #e6dff0;
+  border: 1px solid #d8dde8;
   border-radius: 18px;
-  box-shadow: 0 2px 10px rgba(94,35,99,.06);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .08);
   margin: 14px 0;
 }
 .id-header {
   display: flex; align-items: center; gap: 16px;
   padding: 16px;
-  background: linear-gradient(180deg,#ffffff 0%,#faf7fc 100%);
+  background: linear-gradient(180deg,#ffffff 0%,#f6f8fb 100%);
   border-radius: 18px;
 }
 .id-avatar {
@@ -116,38 +129,43 @@ select.form-select:focus {
 }
 .id-sub { display: flex; flex-wrap: wrap; gap: 8px; color: #7a7684; margin-top: 2px; }
 .id-chip {
-  background: #f5eef7; border: 1px solid #e6dff0; color: #59445e;
+  background: #f1eef6; border: 1px solid #d8dce7; color: #59445e;
   border-radius: 999px; padding: 4px 10px; font-size: .85rem; font-weight: 700;
 }
 .id-sep { opacity: .6; }
 .id-right { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .id-pill  {
-  background: #fbfbfe; border: 1px solid #e6dff0; border-radius: 12px;
+  background: #f8fafc; border: 1px solid #d8dde8; border-radius: 12px;
   padding: 6px 10px; font-size: .9rem; font-weight: 800; color: #2c2a32;
 }
 @media (max-width:768px){ .id-right { width: 100%; justify-content: flex-start; } }
 
 /* ===== “Período e Totais” (card) ===== */
 .sec-card {
-  background: #fff; border: 1px solid #e6dff0; border-radius: 18px;
-  box-shadow: 0 2px 10px rgba(94,35,99,.06); margin: 14px 0;
+  background: #fff; border: 1px solid #d8dde8; border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, .08); margin: 14px 0;
+  overflow: hidden;
 }
 .sec-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 16px 10px 16px;
-  background: linear-gradient(180deg,#ffffff 0%,#faf7fc 100%);
+  background: linear-gradient(180deg,#ffffff 0%,#f6f8fb 100%);
   border-top-left-radius: 18px; border-top-right-radius: 18px;
 }
 .sec-title { font-weight: 900; color: #5e2363; font-size: 1.05rem; }
 .sec-right { display: flex; flex-wrap: wrap; gap: 8px; }
 .pill {
   display: flex; align-items: center; gap: 8px;
-  background: #fbfbfe; border: 1px solid #e6dff0; border-radius: 12px;
+  background: #f8fafc; border: 1px solid #d8dde8; border-radius: 12px;
   padding: 6px 10px; font-size: .9rem; color: #2c2a32;
 }
 .pill span { opacity: .75; font-weight: 700; }
 .pill strong { font-weight: 900; }
-.sec-body { padding: 14px 16px 16px 16px; }
+.sec-body {
+  padding: 14px 16px 16px 16px;
+  background: #f5f7fa;
+  border-top: 1px solid #edf0f5;
+}
 .rah-event-card {
   border: 1.5px solid #f6bad1 !important;
   overflow: hidden;

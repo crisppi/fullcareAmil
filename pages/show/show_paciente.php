@@ -371,6 +371,7 @@ $enderecoPaciente = trim(implode(' ', array_filter([
 
 .paciente-profile-summary,
 .paciente-info-card,
+.paciente-ai-card,
 .paciente-risk-card,
 .paciente-danger-card {
     background: #fff;
@@ -472,11 +473,13 @@ $enderecoPaciente = trim(implode(' ', array_filter([
 }
 
 .paciente-info-card,
+.paciente-ai-card,
 .paciente-risk-card {
     padding: 16px;
 }
 
 .paciente-info-card h3,
+.paciente-ai-card h3,
 .paciente-risk-card h3,
 .paciente-danger-card h3 {
     margin: 0;
@@ -568,6 +571,105 @@ $enderecoPaciente = trim(implode(' ', array_filter([
     font-size: 0.88rem;
 }
 
+.paciente-ai-card {
+    display: grid;
+    gap: 14px;
+}
+
+.paciente-ai-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.paciente-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef6fb;
+    color: #2f6f9f;
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.paciente-ai-messages {
+    min-height: 210px;
+    max-height: 380px;
+    overflow-y: auto;
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e5edf4;
+    border-radius: 12px;
+    background: #f8fbfd;
+}
+
+.paciente-ai-message {
+    width: min(88%, 760px);
+    padding: 11px 13px;
+    border-radius: 12px;
+    white-space: pre-wrap;
+    color: #263445;
+    font-size: 0.92rem;
+    line-height: 1.48;
+}
+
+.paciente-ai-message.is-assistant {
+    justify-self: start;
+    background: #fff;
+    border: 1px solid #dbe8f2;
+}
+
+.paciente-ai-message.is-user {
+    justify-self: end;
+    background: #2f6f9f;
+    color: #fff;
+}
+
+.paciente-ai-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.paciente-ai-suggestion {
+    border: 1px solid #d7e4ee;
+    border-radius: 999px;
+    background: #fff;
+    color: #35556f;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 7px 11px;
+}
+
+.paciente-ai-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: end;
+}
+
+.paciente-ai-form textarea {
+    min-height: 52px;
+    max-height: 140px;
+    resize: vertical;
+    border: 1px solid #d7e4ee;
+    border-radius: 10px;
+    padding: 11px 12px;
+    font-size: 0.92rem;
+}
+
+.paciente-ai-form button {
+    min-height: 52px;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-weight: 800;
+}
+
 .paciente-danger-card {
     display: flex;
     align-items: center;
@@ -608,6 +710,10 @@ $enderecoPaciente = trim(implode(' ', array_filter([
         align-items: flex-start;
         flex-direction: column;
     }
+
+    .paciente-ai-form {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
@@ -620,7 +726,7 @@ $enderecoPaciente = trim(implode(' ', array_filter([
             <a href="<?= $BASE_URL ?>pacientes" class="hero-back-btn">Voltar para lista</a>
             <a href="<?= $BASE_URL ?>pacientes/editar/<?= (int)$id_paciente ?>" class="hero-back-btn">Editar paciente</a>
             <a href="<?= $BASE_URL ?>pacientes/historico/<?= (int)$id_paciente ?>" class="hero-back-btn">Histórico</a>
-            <a href="<?= $BASE_URL ?>hub_paciente/paciente<?= (int)$id_paciente ?>" class="hero-back-btn">Hub Paciente</a>
+            <a href="<?= $BASE_URL ?>pacientes/hub/<?= (int)$id_paciente ?>" class="hero-back-btn">Hub Paciente</a>
             <a href="<?= $BASE_URL ?>internacoes/nova?id_paciente=<?= (int)$id_paciente ?>" class="hero-back-btn">Nova internação</a>
             <span class="internacao-page__tag">Registro #<?= (int)$id_paciente ?></span>
         </div>
@@ -704,6 +810,35 @@ $enderecoPaciente = trim(implode(' ', array_filter([
                 <p class="paciente-card-subtitle"><?= pacienteShowEsc($riskOverview['message']) ?></p>
             </div>
             <?php endif; ?>
+
+            <div class="paciente-ai-card" id="paciente-ai-chat" data-paciente-id="<?= (int)$id_paciente ?>">
+                <div class="paciente-ai-header">
+                    <div>
+                        <h3>Chat IA do paciente</h3>
+                        <p class="paciente-card-subtitle">Perguntas limitadas aos dados deste paciente, internações e antecedentes.</p>
+                    </div>
+                    <span class="paciente-ai-badge" id="paciente-ai-source">
+                        <i class="bi bi-stars"></i>
+                        Contexto do paciente
+                    </span>
+                </div>
+                <div class="paciente-ai-messages" id="paciente-ai-messages" aria-live="polite">
+                    <div class="paciente-ai-message is-assistant">Posso responder sobre este paciente usando cadastro, histórico de internações, visitas, UTI, eventos e antecedentes registrados.</div>
+                </div>
+                <div class="paciente-ai-suggestions">
+                    <button type="button" class="paciente-ai-suggestion" data-question="Faça um resumo objetivo deste paciente.">Resumo do paciente</button>
+                    <button type="button" class="paciente-ai-suggestion" data-question="Quais internações este paciente teve e quais pontos merecem atenção?">Internações</button>
+                    <button type="button" class="paciente-ai-suggestion" data-question="Quais antecedentes estão registrados para este paciente?">Antecedentes</button>
+                    <button type="button" class="paciente-ai-suggestion" data-question="Há sinais operacionais de longa permanência, UTI, evento adverso ou ausência de visita recente?">Alertas operacionais</button>
+                </div>
+                <form class="paciente-ai-form" id="paciente-ai-form">
+                    <textarea id="paciente-ai-question" placeholder="Pergunte algo sobre este paciente..." aria-label="Pergunta para IA do paciente"></textarea>
+                    <button type="submit" class="btn btn-primary" id="paciente-ai-send">
+                        <i class="bi bi-send"></i>
+                        Enviar
+                    </button>
+                </form>
+            </div>
 
             <div class="paciente-info-card">
                 <h3>Identificação</h3>
@@ -863,6 +998,81 @@ $enderecoPaciente = trim(implode(' ', array_filter([
         </section>
     </div>
 </main>
+
+<script>
+(function () {
+    const chat = document.getElementById('paciente-ai-chat');
+    if (!chat) return;
+
+    const endpoint = <?= json_encode($BASE_URL . 'ajax/paciente_chat.php', JSON_UNESCAPED_SLASHES) ?>;
+    const pacienteId = Number(chat.dataset.pacienteId || 0);
+    const form = document.getElementById('paciente-ai-form');
+    const textarea = document.getElementById('paciente-ai-question');
+    const messages = document.getElementById('paciente-ai-messages');
+    const sendBtn = document.getElementById('paciente-ai-send');
+    const source = document.getElementById('paciente-ai-source');
+
+    function appendMessage(kind, text) {
+        const el = document.createElement('div');
+        el.className = 'paciente-ai-message ' + (kind === 'user' ? 'is-user' : 'is-assistant');
+        el.textContent = text;
+        messages.appendChild(el);
+        messages.scrollTop = messages.scrollHeight;
+        return el;
+    }
+
+    async function ask(question) {
+        const cleanQuestion = (question || '').trim();
+        if (!cleanQuestion) {
+            textarea.focus();
+            return;
+        }
+
+        appendMessage('user', cleanQuestion);
+        textarea.value = '';
+        const loading = appendMessage('assistant', 'Consultando os registros deste paciente...');
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Enviando';
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    id_paciente: pacienteId,
+                    question: cleanQuestion
+                })
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Não foi possível responder agora.');
+            }
+            loading.textContent = data.answer || 'Sem resposta disponível.';
+            if (data.summary && data.summary.source) {
+                source.innerHTML = '<i class="bi bi-stars"></i>' + (data.summary.source === 'openai' ? 'IA ativa' : 'Leitura local');
+            }
+        } catch (error) {
+            loading.textContent = error.message || 'Não foi possível responder agora.';
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="bi bi-send"></i> Enviar';
+            textarea.focus();
+        }
+    }
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        ask(textarea.value);
+    });
+
+    chat.querySelectorAll('[data-question]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            ask(button.dataset.question || '');
+        });
+    });
+})();
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>

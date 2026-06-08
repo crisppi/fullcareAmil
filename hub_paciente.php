@@ -16,6 +16,7 @@ require_once("app/services/ReadmissionRiskService.php");
 
 include_once("models/internacao.php");      // se existir
 include_once("dao/internacaoDao.php");      // o seu DAO
+require_once("app/services/AuditorActionService.php");
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
@@ -27,6 +28,7 @@ $normCargoAccess = function ($txt) {
   return preg_replace('/[^a-z]/', '', $txt);
 };
 $isGestorSeguradora = (strpos($normCargoAccess($_SESSION['cargo'] ?? ''), 'seguradora') !== false);
+$isAuditorPacienteHub = AuditorActionService::canUseOperationalSearch($_SESSION);
 if ($isGestorSeguradora && empty($_SESSION['fk_seguradora_user'])) {
   try {
     $uid = (int)($_SESSION['id_usuario'] ?? 0);
@@ -380,6 +382,11 @@ $complexMap = [
 ];
 
 $effectiveLevel = isset($riskColor[$riskLevel]) ? $riskLevel : 'baixo';
+$auditorPatientSnapshot = ['counts' => [], 'pending' => [], 'timeline' => []];
+if ($isAuditorPacienteHub) {
+  $auditorActionService = new AuditorActionService($conn, $BASE_URL);
+  $auditorPatientSnapshot = $auditorActionService->patientSnapshot((int)$id_paciente, $_SESSION);
+}
 ?>
 <!-- Você já tem Bootstrap do header.php. Aqui só estrutura da página -->
 
@@ -539,6 +546,89 @@ $complexInfo = $complexMap[$effectiveLevel];
 </div>
 <?php endif; ?>
 
+<?php if ($isAuditorPacienteHub): ?>
+<?php
+  $audHubCounts = $auditorPatientSnapshot['counts'] ?? [];
+  $audHubPending = $auditorPatientSnapshot['pending'] ?? [];
+  $audHubTimeline = $auditorPatientSnapshot['timeline'] ?? [];
+  $fmtTimelineDate = function ($date) {
+    if (!$date || $date === '0000-00-00' || $date === '0000-00-00 00:00:00') return '—';
+    try {
+      return (new DateTime((string)$date))->format('d/m/Y');
+    } catch (Throwable $e) {
+      return '—';
+    }
+  };
+?>
+<div class="row g-2 mb-2 auditor-hub-row">
+  <div class="col-12 col-xl-5">
+    <div class="card shadow-sm h-100 auditor-hub-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+          <div>
+            <small class="text-uppercase text-muted fw-semibold" style="letter-spacing:.08em;">Pendências do auditor</small>
+            <h6 class="mb-0">Próximas ações</h6>
+          </div>
+          <span class="badge bg-light text-dark border"><?= count($audHubPending) ?> item(ns)</span>
+        </div>
+        <div class="auditor-hub-kpis">
+          <div><small>Internações ativas</small><strong><?= (int)($audHubCounts['internacoes_ativas'] ?? 0) ?></strong></div>
+          <div><small>Visitas atrasadas</small><strong><?= (int)($audHubCounts['visitas_atrasadas'] ?? 0) ?></strong></div>
+          <div><small>Eventos</small><strong><?= (int)($audHubCounts['eventos_abertos'] ?? 0) ?></strong></div>
+          <div><small>Contas</small><strong><?= (int)($audHubCounts['contas_pendentes'] ?? 0) ?></strong></div>
+        </div>
+        <div class="auditor-hub-pending">
+          <?php if (!$audHubPending): ?>
+            <div class="text-muted small text-center py-3">Sem pendências operacionais para este paciente.</div>
+          <?php else: ?>
+            <?php foreach ($audHubPending as $item): ?>
+              <a href="<?= htmlspecialchars((string)$item['action_url'], ENT_QUOTES, 'UTF-8') ?>" class="auditor-hub-task">
+                <span class="auditor-hub-task__icon <?= htmlspecialchars((string)$item['severity'], ENT_QUOTES, 'UTF-8') ?>">
+                  <i class="bi <?= htmlspecialchars((string)$item['icon'], ENT_QUOTES, 'UTF-8') ?>"></i>
+                </span>
+                <span>
+                  <strong><?= htmlspecialchars((string)$item['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+                  <small><?= htmlspecialchars((string)$item['detail'], ENT_QUOTES, 'UTF-8') ?></small>
+                </span>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-xl-7">
+    <div class="card shadow-sm h-100 auditor-hub-card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+          <div>
+            <small class="text-uppercase text-muted fw-semibold" style="letter-spacing:.08em;">Linha do tempo operacional</small>
+            <h6 class="mb-0">Eventos recentes do paciente</h6>
+          </div>
+        </div>
+        <div class="auditor-hub-timeline">
+          <?php if (!$audHubTimeline): ?>
+            <div class="text-muted small text-center py-3">Sem eventos recentes para exibir.</div>
+          <?php else: ?>
+            <?php foreach ($audHubTimeline as $event): ?>
+              <a href="<?= htmlspecialchars((string)($event['url'] ?? '#'), ENT_QUOTES, 'UTF-8') ?>" class="auditor-hub-event">
+                <span class="auditor-hub-event__date"><?= htmlspecialchars($fmtTimelineDate($event['data_ref'] ?? null), ENT_QUOTES, 'UTF-8') ?></span>
+                <span class="auditor-hub-event__body">
+                  <strong><?= htmlspecialchars((string)($event['titulo'] ?? ''), ENT_QUOTES, 'UTF-8') ?></strong>
+                  <small><?= htmlspecialchars((string)($event['tipo'] ?? ''), ENT_QUOTES, 'UTF-8') ?> · <?= htmlspecialchars((string)($event['detalhe'] ?? ''), ENT_QUOTES, 'UTF-8') ?></small>
+                </span>
+                <i class="bi bi-arrow-up-right"></i>
+              </a>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+
   <!-- Abas -->
   <div class="card shadow-sm" style="border-radius:14px;">
     <div class="card-body">
@@ -566,7 +656,7 @@ $complexInfo = $complexMap[$effectiveLevel];
             <input id="buscaInternacoes" type="text" class="form-control" placeholder="Filtrar...">
           </div>
           <?php if (!$isGestorSeguradora) { ?>
-            <a class="btn btn-sm btn-primary hub-new-int-btn" href="<?= $BASE_URL ?>cad_internacao.php?id_paciente=<?= (int)$p['id_paciente'] ?>">
+            <a class="btn btn-sm btn-primary hub-new-int-btn" href="<?= $BASE_URL ?>internacoes/nova/paciente/<?= (int)$p['id_paciente'] ?>">
               <i class="bi bi-plus me-1"></i> Nova Internação
             </a>
           <?php } ?>
@@ -734,6 +824,174 @@ $complexInfo = $complexMap[$effectiveLevel];
     --brand-800: #431945;
     --brand-100: #f2e8f7;
     --brand-050: #f9f3fc;
+  }
+
+  .auditor-hub-card {
+    border-radius: 16px;
+    border: 1px solid rgba(47, 111, 159, .26);
+    background: linear-gradient(180deg, #ffffff 0%, #f4faff 100%);
+    box-shadow: 0 10px 24px rgba(35, 102, 147, .12) !important;
+    overflow: hidden;
+  }
+
+  .auditor-hub-card .card-body {
+    padding: 12px;
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child {
+    margin: -12px -12px 10px;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, rgba(47, 111, 159, .18), rgba(94, 35, 99, .10));
+    color: #24384f;
+    border-bottom: 1px solid rgba(47, 111, 159, .20);
+    position: relative;
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 9px;
+    bottom: 9px;
+    width: 4px;
+    border-radius: 0 999px 999px 0;
+    background: linear-gradient(180deg, #2f6f9f, #5e2363);
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child small,
+  .auditor-hub-card .card-body > .d-flex:first-child h6 {
+    color: #24384f !important;
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child .badge {
+    background: rgba(255,255,255,.82) !important;
+    border-color: rgba(47, 111, 159, .28) !important;
+    color: #24384f !important;
+  }
+
+  .auditor-hub-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+
+  .auditor-hub-kpis > div {
+    min-height: 54px;
+    border: 1px solid rgba(47, 111, 159, .22);
+    background: #ffffff;
+    border-radius: 11px;
+    padding: 7px 8px;
+    box-shadow: 0 5px 12px rgba(35, 102, 147, .065);
+  }
+
+  .auditor-hub-kpis small {
+    display: block;
+    color: #6b7280;
+    font-size: .58rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    line-height: 1.1;
+  }
+
+  .auditor-hub-kpis strong {
+    display: block;
+    color: #16324f;
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .auditor-hub-pending,
+  .auditor-hub-timeline {
+    display: grid;
+    gap: 6px;
+  }
+
+  .auditor-hub-task,
+  .auditor-hub-event {
+    color: #1d2940;
+    text-decoration: none;
+    border: 1px solid rgba(47, 111, 159, .18);
+    border-radius: 11px;
+    background: #ffffff;
+    box-shadow: 0 5px 12px rgba(35, 102, 147, .06);
+  }
+
+  .auditor-hub-task:hover,
+  .auditor-hub-event:hover {
+    color: #16324f;
+    background: #edf7ff;
+    border-color: rgba(47, 111, 159, .32);
+  }
+
+  .auditor-hub-task {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 18px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 9px;
+  }
+
+  .auditor-hub-task__icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #eff7ff;
+    color: #2f6f9f;
+  }
+
+  .auditor-hub-task__icon.danger { background: #fff1f2; color: #be123c; }
+  .auditor-hub-task__icon.warning { background: #fff7ed; color: #c2410c; }
+  .auditor-hub-task__icon.info { background: #eef6ff; color: #2563eb; }
+  .auditor-hub-task__icon.primary { background: var(--brand-100); color: var(--brand); }
+
+  .auditor-hub-task strong,
+  .auditor-hub-event strong {
+    display: block;
+    font-size: .74rem;
+    line-height: 1.2;
+  }
+
+  .auditor-hub-task small,
+  .auditor-hub-event small {
+    display: block;
+    color: #6b7280;
+    font-size: .64rem;
+    line-height: 1.25;
+  }
+
+  .auditor-hub-event {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) 18px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+  }
+
+  .auditor-hub-event__date {
+    color: #1f5f8f;
+    font-size: .68rem;
+    font-weight: 800;
+  }
+
+  .auditor-hub-event__body {
+    min-width: 0;
+  }
+
+  @media (max-width: 720px) {
+    .auditor-hub-kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .auditor-hub-event {
+      grid-template-columns: 1fr 18px;
+    }
+    .auditor-hub-event__date {
+      grid-column: 1 / -1;
+    }
   }
 
   #hubModal .modal-dialog {

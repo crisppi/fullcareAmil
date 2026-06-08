@@ -722,6 +722,18 @@ const hospitalInsightsHelper = (function() {
         popover.innerHTML = content;
     }
 
+    function esc(value) {
+        return String(value ?? '').replace(/[&<>"']/g, function(ch) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[ch];
+        });
+    }
+
     function setLoading(hospitalName) {
         if (button) {
             button.disabled = true;
@@ -747,7 +759,8 @@ const hospitalInsightsHelper = (function() {
         }
         setLoading(hospitalName || 'hospital selecionado');
         try {
-            const response = await fetch('ajax/hospital_insights.php?id_hospital=' + encodeURIComponent(hospitalId), {
+            const baseUrl = config.baseUrl || '';
+            const response = await fetch(baseUrl + 'ajax/hospital_insights.php?id_hospital=' + encodeURIComponent(hospitalId), {
                 credentials: 'same-origin'
             });
             if (!response.ok) throw new Error('Falha ao consultar insights.');
@@ -760,9 +773,28 @@ const hospitalInsightsHelper = (function() {
             const percent = data.percent_uti ?? 0;
             const longStay = data.long_stay ?? 0;
             const longThreshold = data.long_threshold ?? 0;
+            const oportunidade = data.oportunidade_negociacao || {};
+            const nivel = oportunidade.label || 'Baixo';
+            const tipo = oportunidade.tipo || 'Monitoramento preventivo';
+            const resumo = oportunidade.resumo || 'Sem concentração crítica no momento.';
+            const icon = /^[a-z0-9-]+$/i.test(String(oportunidade.icon || ''))
+                ? oportunidade.icon
+                : 'bi-check-circle-fill';
+            const saving = Number(data.total_saving ?? 0).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            const glosaTipos = Array.isArray(data.glosa_tipos) && data.glosa_tipos.length
+                ? data.glosa_tipos.map((item) => esc(item.tipo || 'Glosa')).join(', ')
+                : 'Sem glosa categorizada';
             const html = `
-                <div><strong>${hospitalName || 'Hospital selecionado'}</strong></div>
-                <div>Negociações registradas: <strong>${data.negociacoes ?? 0}</strong></div>
+                <div><strong>${esc(hospitalName || 'Hospital selecionado')}</strong></div>
+                <div>Oportunidade: <strong><i class="bi ${icon}"></i> ${esc(nivel)}</strong></div>
+                <div>Tipo: <strong>${esc(tipo)}</strong></div>
+                <div>${esc(resumo)}</div>
+                <div>Negociações registradas: <strong>${esc(data.negociacoes ?? 0)}</strong></div>
+                <div>Saving registrado: <strong>${esc(saving)}</strong></div>
+                <div>Principais glosas: <strong>${glosaTipos}</strong></div>
                 <div>Internações em UTI: <strong>${data.inter_uti ?? 0}</strong></div>
                 <div>Total de internações: <strong>${data.total_internacoes ?? 0}</strong></div>
                 <div>UTI vs Total: <strong>${percent}%</strong></div>
@@ -1123,8 +1155,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (patientInsightDisplay && typeof patientInsightDisplay.setEnabled === 'function') {
         patientInsightDisplay.setEnabled(!!(pacienteSelect && pacienteSelect.value));
     }
-    syncHospitalInsightAvailability(!!(hospitalSelect && hospitalSelect.value));
-    syncHospitalHiddenField();
+    if (hospitalSelect && hospitalSelect.value) {
+        myFunctionSelected();
+    } else {
+        syncHospitalInsightAvailability(false);
+        syncHospitalHiddenField();
+    }
 
     if (hospitalSelect) {
         hospitalSelect.addEventListener('change', function() {

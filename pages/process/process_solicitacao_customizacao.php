@@ -251,7 +251,7 @@ if (!empty($_FILES['anexos']) && is_array($_FILES['anexos']['name']) && ($type !
 if ($nome === '') {
     $_SESSION['mensagem'] = 'Informe o nome do solicitante.';
     $_SESSION['mensagem_tipo'] = 'danger';
-    header('Location: ' . $BASE_URL . 'SolicitacaoCustomizacao.php');
+    header('Location: ' . $BASE_URL . 'solicitacoes/customizacao');
     exit;
 }
 
@@ -276,7 +276,7 @@ if ($type === 'create') {
     }
     $_SESSION['mensagem'] = $msg;
     $_SESSION['mensagem_tipo'] = 'success';
-    header('Location: ' . $BASE_URL . 'SolicitacaoCustomizacao.php');
+    header('Location: ' . $BASE_URL . 'solicitacoes/customizacao');
     exit;
 }
 
@@ -304,11 +304,11 @@ if ($type === 'update' && $idSolicitacao) {
     }
     $_SESSION['mensagem'] = $msg;
     $_SESSION['mensagem_tipo'] = 'success';
-    header('Location: ' . $BASE_URL . 'SolicitacaoCustomizacaoEdit.php?id=' . $idSolicitacao);
+    header('Location: ' . $BASE_URL . 'solicitacoes/customizacao/editar/' . $idSolicitacao);
     exit;
 }
 
 $_SESSION['mensagem'] = 'Ação inválida para solicitação.';
 $_SESSION['mensagem_tipo'] = 'danger';
-header('Location: ' . $BASE_URL . 'SolicitacaoCustomizacao.php');
+header('Location: ' . $BASE_URL . 'solicitacoes/customizacao');
 exit;

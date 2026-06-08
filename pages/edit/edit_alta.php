@@ -369,7 +369,7 @@ if ($internStartTs && $internEndTs && $internEndTs > $internStartTs) {
                     </div>
                     <?php if (!empty($pr_pendente_label)): ?>
                         <a class="alta-open-badge"
-                            href="<?= $BASE_URL ?>edit_internacao.php?id_internacao=<?= (int)$id_internacao ?>&section=prorrog#collapseProrrog">
+                            href="<?= $BASE_URL ?>internacoes/editar/<?= (int)$id_internacao ?>?section=prorrog#collapseProrrog">
                             Diárias sem prorrogação: <?= htmlspecialchars($pr_pendente_label, ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     <?php endif; ?>

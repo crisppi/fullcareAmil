@@ -1167,7 +1167,7 @@ if ($type === "create") {
         dbg("CREATE concluído. Redirecionamento suprimido no debug.");
         exit;
     }
-    $redirectNovoLancamento = rtrim((string)$BASE_URL, '/') . '/cad_visita.php?id_internacao=' . urlencode((string)$fk_internacao_vis) . '&novo_lancamento_prompt=1';
+    $redirectNovoLancamento = rtrim((string)$BASE_URL, '/') . '/visitas/nova/internacao/' . urlencode((string)$fk_internacao_vis) . '?novo_lancamento_prompt=1';
     header("Location: " . $redirectNovoLancamento);
     exit;
 }

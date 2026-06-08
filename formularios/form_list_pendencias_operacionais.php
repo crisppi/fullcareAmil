@@ -189,7 +189,7 @@ foreach ($internacoes as $row) {
             'sem_senha',
             'Internação sem senha',
             'Senha não informada para internação ativa.',
-            rtrim($BASE_URL, '/') . '/edit_internacao.php?id_internacao=' . $id,
+            rtrim($BASE_URL, '/') . '/internacoes/editar/' . $id,
             'Editar internação'
         );
     }
@@ -206,7 +206,7 @@ foreach ($internacoes as $row) {
                 'sem_visita_medica',
                 'Sem visita médica',
                 $diasSemVisitaMed . ' dias sem visita médica (limite ' . $limiteSemVisitaMed . ').',
-                rtrim($BASE_URL, '/') . '/cad_visita.php?id_internacao=' . $id,
+                rtrim($BASE_URL, '/') . '/visitas/nova/internacao/' . $id,
                 'Lançar visita'
             );
         }
@@ -239,7 +239,7 @@ foreach ($internacoes as $row) {
                     'prorrogacao_aberta',
                     'Prorrogação em aberto',
                     $detalhe,
-                    rtrim($BASE_URL, '/') . '/edit_internacao.php?id_internacao=' . $id . '&section=prorrog#collapseProrrog',
+                    rtrim($BASE_URL, '/') . '/internacoes/editar/' . $id . '?section=prorrog#collapseProrrog',
                     'Editar prorrogação'
                 );
             }

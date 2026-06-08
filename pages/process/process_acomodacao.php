@@ -43,9 +43,9 @@ if (!$redirect_hospital_id) {
 function redirectAcomodacao($BASE_URL, $redirect_hospital_id)
 {
     if (!empty($redirect_hospital_id)) {
-        header("Location: " . rtrim($BASE_URL, '/') . "/hospital_acomodacoes.php?id_hospital=" . (int) $redirect_hospital_id);
+        header("Location: " . rtrim($BASE_URL, '/') . "/hospitais/acomodacoes/" . (int) $redirect_hospital_id);
     } else {
-        header('location:list_acomodacao.php');
+        header('location:acomodacoes');
     }
     exit;
 }

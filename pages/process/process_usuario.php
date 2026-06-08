@@ -278,7 +278,7 @@ if ($type === "create") {
                 'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
                 'source' => 'process_usuario.php',
             ], $BASE_URL);
-            header("location:list_usuario.php");
+            header("location:usuarios");
         } else {
 
             //$message->setMessage("Você precisa adicionar pelo menos: nome do useriente!", "error", "back");
@@ -432,7 +432,7 @@ if ($type === "create") {
             'source' => 'process_usuario.php',
         ], $BASE_URL);
 
-        header("location:list_usuario.php");
+        header("location:usuarios");
 }
 // atualizacao de senha default //
 if ($type === "update-senha") {

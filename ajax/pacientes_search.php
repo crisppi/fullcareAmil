@@ -11,12 +11,26 @@ chdir($ROOT);
 require_once 'globals.php';
 require_once 'db.php';
 require_once 'ajax/_auth_scope.php';
+require_once 'app/services/AuditorActionService.php';
 require_once 'models/message.php';
 require_once 'models/paciente.php'; // opcional, mas não atrapalha (require_once)
 require_once 'dao/pacienteDao.php';
 
 ajax_require_active_session();
 $ctx = ajax_user_context($conn);
+
+$basePath = (string)(parse_url((string)$BASE_URL, PHP_URL_PATH) ?? '/');
+$basePath = '/' . trim($basePath, '/') . '/';
+if ($basePath === '//') {
+    $basePath = '/';
+}
+$requestPath = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
+if ($basePath === '/' && preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $requestPath, $mBaseApp)) {
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443)
+        || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
+    $BASE_URL = ($isHttps ? 'https' : 'http') . '://' . (string)($_SERVER['HTTP_HOST'] ?? 'localhost') . '/' . trim((string)$mBaseApp[1], '/') . '/';
+}
 
 if (!isset($_SESSION['id_usuario'])) {
     http_response_code(401);
@@ -25,6 +39,7 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 $q = isset($_GET['q']) ? trim($_GET['q']) : '';
+$type = isset($_GET['type']) ? trim((string)$_GET['type']) : 'paciente';
 
 
 if (mb_strlen($q) < 2) {
@@ -33,6 +48,12 @@ if (mb_strlen($q) < 2) {
 }
 
 try {
+    if (AuditorActionService::canUseOperationalSearch($_SESSION)) {
+        $auditorSearch = new AuditorActionService($conn, $BASE_URL);
+        echo json_encode($auditorSearch->globalSearch($q, $_SESSION, 12, $type));
+        exit;
+    }
+
     $scopeParams = [];
     $scopePacSql = ajax_scope_clause_for_paciente($ctx, 'pa', $scopeParams, 'psh');
     $scopeIntSql = ajax_scope_clause_for_internacao($ctx, 'i2', $scopeParams, 'psh2');

@@ -207,7 +207,7 @@ if ($internacaoParaEvento > 0) {
                         'valor_negociado' => $registroGestao['evento_valor_negoc_ges'] ?? '',
                         'encerrado' => strtolower((string)($registroGestao['evento_encerrar_ges'] ?? 'n')) === 's'
                     ];
-                    $eventoEditLink = rtrim($BASE_URL, '/') . '/edit_internacao.php?id_internacao=' . $internacaoParaEvento . '#div_evento';
+                    $eventoEditLink = rtrim($BASE_URL, '/') . '/internacoes/editar/' . $internacaoParaEvento . '#div_evento';
                     break;
                 }
             }
@@ -295,7 +295,7 @@ $enfSelecionado = (int)($fv('fk_id_aud_enf') ?? 0);
 $admSelecionado = (int)($fv('fk_id_aud_adm') ?? 0);
 ?>
 
-<link rel="stylesheet" href="<?= $h($BASE_URL) ?>css/rah.css">
+<link rel="stylesheet" href="<?= $h($BASE_URL) ?>css/rah.css?v=<?= @filemtime(__DIR__ . '/../css/rah.css') ?: time() ?>">
 
 <!-- ========================= FORM ========================= -->
 <form id="form-capeante-rah" action="<?= $h($BASE_URL) ?>process_rah.php" method="POST" enctype="multipart/form-data">

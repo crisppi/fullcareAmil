@@ -25,6 +25,7 @@ include_once("dao/hospitalDao.php");
 
 include_once("dao/indicadoresDao.php");
 require_once __DIR__ . '/app/services/PermanenciaForecastService.php';
+require_once __DIR__ . '/app/services/HospitalOpportunityService.php';
 
 // -----------------------------
 // ENTRADAS E SESSÃO
@@ -133,6 +134,7 @@ $userHospitalResumo = [
     'com_internados' => 0,
     'sem_internados' => 0,
 ];
+$hospitalOpportunityRows = [];
 
 // -----------------------------
 // CONDIÇÕES / WHEREs
@@ -362,6 +364,44 @@ if ($hospital_selecionado > 0) {
 $hospital_name = (!empty($filtered_hospital) && !empty($filtered_hospital[0]['nome_hosp']))
     ? ucwords(strtolower($filtered_hospital[0]['nome_hosp']))
     : 'Todos Hospitais';
+
+$hospitalOpportunityRows = dashCacheGet($cacheBase . '_hospital_opportunities_v2', 90);
+if (!is_array($hospitalOpportunityRows)) {
+    $hospitalOpportunityRows = [];
+    try {
+        $hospitalOpportunityIds = array_map(static function ($h) {
+            return (int)($h['id_hospital'] ?? 0);
+        }, $dados_hospital_select);
+        $hospitalOpportunityRows = (new HospitalOpportunityService($conn))->hospitalRows($hospitalOpportunityIds, 8);
+        dashCacheSet($cacheBase . '_hospital_opportunities_v2', $hospitalOpportunityRows);
+    } catch (Throwable $e) {
+        error_log('[MENU_APP][HOSPITAL_OPPORTUNITIES] ' . $e->getMessage());
+        $hospitalOpportunityRows = [];
+    }
+}
+
+if (!function_exists('menuFmtMoney')) {
+    function menuFmtMoney($value): string
+    {
+        return 'R$ ' . number_format((float)$value, 2, ',', '.');
+    }
+}
+
+if (!function_exists('menuFmtMonthly')) {
+    function menuFmtMonthly($value): string
+    {
+        $value = (float)$value;
+        $decimals = abs($value - round($value)) < 0.05 ? 0 : 1;
+        return number_format($value, $decimals, ',', '.');
+    }
+}
+
+if (!function_exists('menuFmtPercent')) {
+    function menuFmtPercent($value): string
+    {
+        return number_format((float)$value, 1, ',', '.') . '%';
+    }
+}
 
 if (!function_exists('menuFmtDateBr')) {
     function menuFmtDateBr($value): string
@@ -609,6 +649,148 @@ if (!is_array($reinternacao_30)) {
     dashCacheSet($cacheBase . '_reinternacao_30', $reinternacao_30);
 }
 $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) : 0;
+if (is_array($reinternacao_30)) {
+    usort($reinternacao_30, static function ($a, $b) {
+        return (int)($b['dias_reinternacao'] ?? 0) <=> (int)($a['dias_reinternacao'] ?? 0);
+    });
+}
+
+$canUseAuditorActions = class_exists('AuditorActionService')
+    ? AuditorActionService::canUseOperationalSearch($_SESSION)
+    : false;
+$auditorMenuDashboard = ['counts' => [], 'queue' => [], 'alerts' => []];
+if ($canUseAuditorActions) {
+    try {
+        $auditorMenuDashboard = (new AuditorActionService($conn, $BASE_URL))->dashboardSummary($_SESSION, 6);
+    } catch (Throwable $e) {
+        error_log('[MENU_APP][AUDITOR_ACTIONS] ' . $e->getMessage());
+    }
+}
+
+$menuQuickActions = [
+    [
+        'label' => 'Nova internação',
+        'desc' => 'Cadastrar uma nova internação',
+        'icon' => 'bi-plus-circle',
+        'url' => $BASE_URL . 'internacoes/nova',
+        'tone' => 'primary',
+    ],
+    [
+        'label' => 'Internações',
+        'desc' => 'Abrir lista de internações',
+        'icon' => 'bi-hospital',
+        'url' => $BASE_URL . 'internacoes/lista',
+        'tone' => 'info',
+    ],
+    [
+        'label' => 'Pacientes',
+        'desc' => 'Pesquisar e abrir cadastro',
+        'icon' => 'bi-person-vcard',
+        'url' => $BASE_URL . 'pacientes',
+        'tone' => 'success',
+    ],
+    [
+        'label' => 'Contas',
+        'desc' => 'Contas para auditar',
+        'icon' => 'bi-receipt',
+        'url' => $BASE_URL . 'contas/auditar',
+        'tone' => 'warning',
+    ],
+    [
+        'label' => 'Pendências',
+        'desc' => 'Pendências operacionais',
+        'icon' => 'bi-exclamation-diamond',
+        'url' => $BASE_URL . 'gestao/pendencias-operacionais',
+        'tone' => 'danger',
+    ],
+];
+
+$menuWorkCards = [
+    [
+        'label' => 'Visitas em atraso',
+        'value' => count($dados_visitas_atraso),
+        'hint' => 'Revisar visitas vencidas',
+        'icon' => 'bi-calendar-x',
+        'url' => '#dash-visitas-atraso-section',
+        'tone' => 'warning',
+    ],
+    [
+        'label' => 'Contas paradas',
+        'value' => (int)($contas_paradas[0] ?? 0),
+        'hint' => 'Retomar contas travadas',
+        'icon' => 'bi-pause-circle',
+        'url' => $BASE_URL . 'list_internacao_cap_par.php',
+        'tone' => 'danger',
+    ],
+    [
+        'label' => 'Eventos adversos',
+        'value' => (int)$eventos_adversos_abertos,
+        'hint' => 'Eventos abertos para atuar',
+        'icon' => 'bi-exclamation-triangle',
+        'url' => $BASE_URL . 'gestao',
+        'tone' => 'danger',
+    ],
+    [
+        'label' => 'Longa permanência',
+        'value' => (int)$longa_perm_30,
+        'hint' => 'Pacientes acima de 30 dias',
+        'icon' => 'bi-hourglass-split',
+        'url' => '#dash-longa-perm-section',
+        'tone' => 'info',
+    ],
+    [
+        'label' => 'Reinternações',
+        'value' => (int)$total_reinternacoes_30,
+        'hint' => 'Até 30 dias da alta',
+        'icon' => 'bi-arrow-repeat',
+        'url' => '#dash-reinternacoes-section',
+        'tone' => 'warning',
+    ],
+];
+
+$recentPatients = [];
+$recentAdmissions = [];
+try {
+    $patientWhere = ["IFNULL(p.deletado_pac, 'n') <> 's'"];
+    if ($isSeguradoraRole) {
+        $patientWhere[] = $seguradoraUserId > 0 ? "p.fk_seguradora_pac = {$seguradoraUserId}" : "1=0";
+    } elseif ($id_usuario_sessao && $nivel_sessao <= 3) {
+        $patientWhere[] = "EXISTS (
+            SELECT 1
+              FROM tb_internacao ri
+              JOIN tb_hospital hosr ON hosr.id_hospital = ri.fk_hospital_int
+             WHERE ri.fk_paciente_int = p.id_paciente
+               AND hosr.fk_usuario_hosp = {$id_usuario_sessao}
+        )";
+    }
+    $sqlRecentPatients = "
+        SELECT p.id_paciente, p.nome_pac, p.matricula_pac, p.data_create_pac
+          FROM tb_paciente p
+         WHERE " . implode(' AND ', $patientWhere) . "
+         ORDER BY COALESCE(p.updated_at, p.data_create_pac) DESC, p.id_paciente DESC
+         LIMIT 5
+    ";
+    $recentPatients = $conn->query($sqlRecentPatients)->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) {
+    error_log('[MENU_APP][RECENT_PATIENTS] ' . $e->getMessage());
+}
+
+try {
+    $recentWhere = $where_gerais ? ($where_gerais . " AND ") : "";
+    $sqlRecentAdmissions = "
+        SELECT i.id_internacao, i.senha_int, i.data_intern_int, i.internado_int,
+               p.nome_pac, h.nome_hosp
+          FROM tb_internacao i
+          JOIN tb_paciente p ON p.id_paciente = i.fk_paciente_int
+          LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
+         WHERE {$recentWhere} IFNULL(p.deletado_pac, 'n') <> 's'
+         ORDER BY COALESCE(i.updated_at, i.data_create_int, i.data_intern_int) DESC, i.id_internacao DESC
+         LIMIT 5
+    ";
+    $recentAdmissions = $conn->query($sqlRecentAdmissions)->fetchAll(PDO::FETCH_ASSOC) ?: [];
+} catch (Throwable $e) {
+    error_log('[MENU_APP][RECENT_ADMISSIONS] ' . $e->getMessage());
+}
 ?>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
@@ -678,15 +860,6 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
 .grid-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 14px 24px rgba(35, 102, 147, 0.14);
-}
-
-.grid-item-kpi[data-dash-target] {
-    cursor: pointer;
-}
-
-.grid-item-kpi[data-dash-target]:focus {
-    outline: 3px solid rgba(47, 111, 159, .28);
-    outline-offset: 3px;
 }
 
 .grid-item-filter {
@@ -1071,6 +1244,425 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     color: #2f6f9f;
 }
 
+.menu-workspace {
+    margin: 8px 0 12px;
+}
+
+.menu-workspace-hero {
+    position: relative;
+    margin-bottom: 12px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(47, 111, 159, .24);
+    background:
+        radial-gradient(circle at 96% 12%, rgba(255, 255, 255, .46), transparent 28%),
+        linear-gradient(135deg, #2f6f9f 0%, #4b90bd 58%, #74bedb 100%);
+    box-shadow: 0 14px 28px rgba(35, 102, 147, .18);
+    color: #fff;
+    overflow: hidden;
+}
+
+.menu-workspace-hero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, .12));
+}
+
+.menu-workspace-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+.menu-workspace-title {
+    margin: 0;
+    color: #fff;
+    font-size: 1.28rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.1;
+}
+
+.menu-workspace-subtitle {
+    margin: 5px 0 0;
+    color: rgba(255,255,255,.86);
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.menu-workspace-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.menu-workspace-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .20);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.menu-workspace-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+    gap: 8px;
+    min-width: 330px;
+    max-width: 430px;
+}
+
+.menu-workspace-summary-item {
+    min-height: 58px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .17);
+    border: 1px solid rgba(255, 255, 255, .22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+
+.menu-workspace-summary-item small {
+    display: block;
+    color: rgba(255,255,255,.78);
+    font-size: .62rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    line-height: 1.1;
+}
+
+.menu-workspace-summary-item strong {
+    display: block;
+    margin-top: 5px;
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.menu-workspace-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: #eef7ff;
+    border: 1px solid rgba(47, 111, 159, .18);
+    color: #1f5f8f;
+    font-size: .72rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.menu-section-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 8px 0 6px;
+    color: #38465a;
+    font-size: .72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.menu-action-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.menu-action-card,
+.menu-work-card,
+.menu-recent-item,
+.menu-auditor-item {
+    text-decoration: none !important;
+}
+
+.menu-action-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 66px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #ffffff 0%, #edf6fc 100%);
+    border: 1px solid rgba(47, 111, 159, .24);
+    color: #24384f;
+    box-shadow: 0 9px 18px rgba(35, 102, 147, .12);
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+.menu-action-card.primary {
+    background: linear-gradient(145deg, #fff 0%, #f4e9f8 100%);
+    border-color: rgba(94, 35, 99, .24);
+}
+
+.menu-action-card.info {
+    background: linear-gradient(145deg, #fff 0%, #e5f3fb 100%);
+    border-color: rgba(47, 111, 159, .26);
+}
+
+.menu-action-card.success {
+    background: linear-gradient(145deg, #fff 0%, #e4f6ec 100%);
+    border-color: rgba(22, 101, 52, .20);
+}
+
+.menu-action-card.warning {
+    background: linear-gradient(145deg, #fff 0%, #fff2d8 100%);
+    border-color: rgba(153, 98, 0, .22);
+}
+
+.menu-action-card.danger {
+    background: linear-gradient(145deg, #fff 0%, #fde9ee 100%);
+    border-color: rgba(173, 41, 68, .22);
+}
+
+.menu-action-card:hover,
+.menu-work-card:hover,
+.menu-recent-item:hover,
+.menu-auditor-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(35, 102, 147, .16);
+    border-color: rgba(47, 111, 159, .42);
+    color: #172033;
+}
+
+.menu-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: #eef7ff;
+    color: #1f5f8f;
+    flex: 0 0 auto;
+    font-size: 1rem;
+}
+
+.menu-action-card.primary .menu-action-icon { background: #f2e8f7; color: #5e2363; }
+.menu-action-card.success .menu-action-icon { background: #ecfdf5; color: #166534; }
+.menu-action-card.warning .menu-action-icon { background: #fffbeb; color: #996200; }
+.menu-action-card.danger .menu-action-icon { background: #fef2f2; color: #ad2944; }
+.menu-action-card .menu-action-icon {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7), 0 5px 12px rgba(35, 102, 147, .10);
+}
+
+.menu-action-text strong,
+.menu-work-card strong,
+.menu-recent-item strong,
+.menu-auditor-title {
+    display: block;
+    color: #24384f;
+    font-size: .78rem;
+    font-weight: 900;
+    line-height: 1.15;
+}
+
+.menu-action-text small,
+.menu-work-card small,
+.menu-recent-item small,
+.menu-auditor-meta {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.menu-work-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.menu-work-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 86px;
+    padding: 11px 12px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #ffffff 0%, #edf6fc 100%);
+    border: 1px solid rgba(47, 111, 159, .24);
+    color: #24384f;
+    box-shadow: 0 9px 18px rgba(35, 102, 147, .12);
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+.menu-work-card.warning {
+    background: linear-gradient(145deg, #ffffff 0%, #fff4dc 100%);
+    border-color: rgba(153, 98, 0, .24);
+}
+
+.menu-work-card.danger {
+    background: linear-gradient(145deg, #ffffff 0%, #fde8ee 100%);
+    border-color: rgba(173, 41, 68, .24);
+}
+
+.menu-work-card.info {
+    background: linear-gradient(145deg, #ffffff 0%, #e7f4fc 100%);
+    border-color: rgba(47, 111, 159, .26);
+}
+
+.menu-work-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #dff0fb;
+    color: #1f5f8f;
+    font-weight: 900;
+    font-size: 1rem;
+    border: 1px solid rgba(47, 111, 159, .16);
+    box-shadow: 0 4px 10px rgba(35, 102, 147, .08);
+}
+
+.menu-work-card.warning .menu-work-value { background: #fff2c7; color: #8b5a00; border-color: rgba(153, 98, 0, .18); }
+.menu-work-card.danger .menu-work-value { background: #fbdde5; color: #9f1f3b; border-color: rgba(173, 41, 68, .18); }
+.menu-work-card.info .menu-work-value { background: #dff0fb; color: #1f5f8f; border-color: rgba(47, 111, 159, .16); }
+
+.menu-operational-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.menu-operational-grid.single {
+    grid-template-columns: 1fr;
+}
+
+.menu-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(47, 111, 159, .22);
+    background: linear-gradient(180deg, #ffffff 0%, #f4f9fd 100%);
+    box-shadow: 0 10px 22px rgba(35, 102, 147, .12);
+    overflow: hidden;
+}
+
+.menu-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, #e9f5fd 0%, #f8fbff 100%);
+    border-bottom: 1px solid rgba(47, 111, 159, .18);
+}
+
+.menu-panel-head strong {
+    color: #24384f;
+    font-size: .78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.menu-panel-head a {
+    color: #1f5f8f;
+    font-size: .7rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.menu-auditor-list,
+.menu-recent-list {
+    display: grid;
+    gap: 0;
+}
+
+.menu-auditor-item,
+.menu-recent-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+    min-height: 58px;
+    padding: 9px 12px;
+    border-bottom: 1px solid #eef3f8;
+    background: rgba(255, 255, 255, .76);
+    color: #24384f;
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+
+.menu-auditor-item:nth-child(even),
+.menu-recent-item:nth-child(even) {
+    background: rgba(239, 247, 252, .72);
+}
+
+.menu-auditor-item:last-child,
+.menu-recent-item:last-child {
+    border-bottom: 0;
+}
+
+.menu-auditor-icon,
+.menu-recent-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+    background: #eef7ff;
+    color: #1f5f8f;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.65), 0 4px 10px rgba(35, 102, 147, .08);
+}
+
+.menu-auditor-icon.danger { background: #fbdde5; color: #9f1f3b; }
+.menu-auditor-icon.warning { background: #fff2c7; color: #8b5a00; }
+.menu-auditor-icon.info { background: #dff0fb; color: #1f5f8f; }
+.menu-auditor-icon.primary { background: #f0def6; color: #5e2363; }
+
+.menu-auditor-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #1f5f8f;
+    font-size: .68rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.menu-empty {
+    padding: 18px 12px;
+    color: #64748b;
+    font-size: .76rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.menu-recent-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
 .user-patient-strip {
     margin: 10px 0 12px;
     padding: 12px;
@@ -1173,18 +1765,303 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
     background: linear-gradient(145deg, #fff1f6, #ffdfe8);
 }
 
+.hospital-opportunity-panel {
+    margin: 10px 0 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(76, 111, 151, 0.26);
+    background:
+        linear-gradient(145deg, #e7eef5 0%, #f1f5f8 45%, #e3edf3 100%);
+    box-shadow: 0 12px 24px rgba(35, 102, 147, 0.12);
+    overflow: hidden;
+}
+
+.hospital-opportunity-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px 8px;
+    background: rgba(255, 255, 255, 0.36);
+    border-bottom: 1px solid rgba(76, 111, 151, 0.12);
+}
+
+.hospital-opportunity-head strong {
+    display: block;
+    color: #24384f;
+    font-size: .76rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.hospital-opportunity-head small {
+    display: block;
+    margin-top: 2px;
+    color: #64748b;
+    font-size: .64rem;
+    font-weight: 700;
+}
+
+.hospital-opportunity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 10px;
+    padding: 12px;
+}
+
+.hospital-opportunity-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 210px;
+    padding: 12px 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(74, 112, 151, 0.30);
+    background:
+        linear-gradient(145deg, #eef5fa 0%, #f7fbfd 54%, #e5eff6 100%);
+    color: #24384f;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .78),
+        0 8px 18px rgba(35, 102, 147, 0.12);
+}
+
+.hospital-opportunity-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(83, 109, 151, 0.13);
+}
+
+.hospital-opportunity-name {
+    min-width: 0;
+}
+
+.hospital-opportunity-name strong {
+    display: block;
+    color: #24384f;
+    font-size: .78rem;
+    font-weight: 900;
+    line-height: 1.15;
+}
+
+.hospital-opportunity-name small {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-size: .62rem;
+    font-weight: 700;
+}
+
+.hospital-opportunity-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 9px;
+    border-radius: 999px;
+    font-size: .68rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.hospital-opportunity-level.alto {
+    background: #fde7ec;
+    color: #a11f3a;
+    border: 1px solid rgba(161, 31, 58, .18);
+}
+
+.hospital-opportunity-level.medio {
+    background: #fff2c7;
+    color: #8b5a00;
+    border: 1px solid rgba(139, 90, 0, .18);
+}
+
+.hospital-opportunity-level.baixo {
+    background: #dcf8e8;
+    color: #166534;
+    border: 1px solid rgba(22, 101, 52, .16);
+}
+
+.hospital-opportunity-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+}
+
+.hospital-opportunity-metric {
+    min-height: 54px;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(83, 109, 151, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86);
+    text-align: center;
+}
+
+.hospital-opportunity-metric small {
+    display: block;
+    color: #64748b;
+    font-size: .58rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.hospital-opportunity-metric strong {
+    display: block;
+    margin-top: 4px;
+    color: #24384f;
+    font-size: .78rem;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.hospital-opportunity-detail {
+    display: grid;
+    gap: 7px;
+}
+
+.hospital-opportunity-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    color: #334155;
+    font-size: .68rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.hospital-opportunity-line i {
+    margin-top: 1px;
+    color: #2f6f9f;
+}
+
+.hospital-glosa-tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin-left: 2px;
+    vertical-align: baseline;
+}
+
+.hospital-glosa-tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: auto;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    border: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    text-transform: uppercase;
+}
+
+.hospital-glosa-tag + .hospital-glosa-tag {
+    position: relative;
+}
+
+.hospital-glosa-tag + .hospital-glosa-tag::before {
+    content: "";
+    width: 3px;
+    height: 3px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: rgba(51, 65, 85, 0.38);
+}
+
+.hospital-opportunity-empty {
+    padding: 18px 12px;
+    color: #64748b;
+    font-size: .76rem;
+    font-weight: 700;
+    text-align: center;
+}
+
 @media (max-width: 1100px) {
+    .menu-workspace-head {
+        flex-direction: column;
+    }
+
+    .menu-workspace-summary {
+        width: 100%;
+        max-width: none;
+    }
+
+    .menu-action-grid,
+    .menu-work-grid {
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
+    }
+
+    .menu-operational-grid {
+        grid-template-columns: 1fr;
+    }
+
     .user-patient-grid {
         grid-template-columns: repeat(2, minmax(130px, 1fr));
+    }
+
+    .hospital-opportunity-grid {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
     }
 }
 
 @media (max-width: 620px) {
+    .menu-workspace-hero {
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    .menu-workspace-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .menu-workspace-title {
+        font-size: 1.08rem;
+    }
+
+    .menu-workspace-summary {
+        grid-template-columns: 1fr;
+        min-width: 0;
+    }
+
+    .menu-action-grid,
+    .menu-work-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-auditor-item,
+    .menu-recent-item {
+        grid-template-columns: 32px minmax(0, 1fr);
+    }
+
+    .menu-auditor-action {
+        grid-column: 2;
+        justify-self: start;
+    }
+
     .user-patient-grid {
         grid-template-columns: 1fr;
     }
 
     .user-hospital-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .hospital-opportunity-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .hospital-opportunity-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hospital-opportunity-metrics {
         grid-template-columns: 1fr;
     }
 }
@@ -1360,6 +2237,256 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 Escopo: Seguradora <?= htmlspecialchars($seguradoraUserNome !== '' ? $seguradoraUserNome : ('#' . $seguradoraUserId), ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
+
+        <section class="menu-workspace" aria-label="Central de trabalho">
+            <div class="menu-workspace-hero">
+                <div class="menu-workspace-head">
+                    <div>
+                        <h1 class="menu-workspace-title">Central de trabalho</h1>
+                        <p class="menu-workspace-subtitle">Acesse as principais rotinas e priorize o que precisa de ação hoje.</p>
+                        <div class="menu-workspace-meta">
+                            <span class="menu-workspace-chip">
+                                <i class="bi bi-calendar2-check"></i>
+                                <?= date('d/m/Y') ?>
+                            </span>
+                            <span class="menu-workspace-chip">
+                                <i class="bi bi-hospital"></i>
+                                <?= htmlspecialchars($hospital_name, ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                            <?php if ($canUseAuditorActions): ?>
+                                <span class="menu-workspace-chip">
+                                    <i class="bi bi-shield-check"></i>
+                                    Visão auditor/direção
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="menu-workspace-summary" aria-label="Resumo operacional">
+                        <div class="menu-workspace-summary-item">
+                            <small>Fila</small>
+                            <strong><?= number_format((int)($auditorMenuDashboard['counts']['fila_total'] ?? array_sum(array_column($menuWorkCards, 'value'))), 0, ',', '.') ?></strong>
+                        </div>
+                        <div class="menu-workspace-summary-item">
+                            <small>Visitas</small>
+                            <strong><?= number_format(count($dados_visitas_atraso), 0, ',', '.') ?></strong>
+                        </div>
+                        <div class="menu-workspace-summary-item">
+                            <small>Eventos</small>
+                            <strong><?= number_format((int)$eventos_adversos_abertos, 0, ',', '.') ?></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-section-label"><i class="bi bi-lightning-charge"></i> Ações rápidas</div>
+            <div class="menu-action-grid">
+                <?php foreach ($menuQuickActions as $action): ?>
+                    <a class="menu-action-card <?= htmlspecialchars((string)$action['tone'], ENT_QUOTES, 'UTF-8') ?>"
+                        href="<?= htmlspecialchars((string)$action['url'], ENT_QUOTES, 'UTF-8') ?>">
+                        <span class="menu-action-icon"><i class="bi <?= htmlspecialchars((string)$action['icon'], ENT_QUOTES, 'UTF-8') ?>"></i></span>
+                        <span class="menu-action-text">
+                            <strong><?= htmlspecialchars((string)$action['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+                            <small><?= htmlspecialchars((string)$action['desc'], ENT_QUOTES, 'UTF-8') ?></small>
+                        </span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="menu-section-label"><i class="bi bi-list-check"></i> Meu trabalho hoje</div>
+            <div class="menu-work-grid">
+                <?php foreach ($menuWorkCards as $card): ?>
+                    <a class="menu-work-card <?= htmlspecialchars((string)$card['tone'], ENT_QUOTES, 'UTF-8') ?>"
+                        href="<?= htmlspecialchars((string)$card['url'], ENT_QUOTES, 'UTF-8') ?>">
+                        <span>
+                            <strong><i class="bi <?= htmlspecialchars((string)$card['icon'], ENT_QUOTES, 'UTF-8') ?> me-1"></i><?= htmlspecialchars((string)$card['label'], ENT_QUOTES, 'UTF-8') ?></strong>
+                            <small><?= htmlspecialchars((string)$card['hint'], ENT_QUOTES, 'UTF-8') ?></small>
+                        </span>
+                        <span class="menu-work-value"><?= number_format((float)$card['value'], 0, ',', '.') ?></span>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="menu-operational-grid <?= $canUseAuditorActions ? '' : 'single' ?>">
+                <?php if ($canUseAuditorActions): ?>
+                    <?php $audQueueMenu = (array)($auditorMenuDashboard['queue'] ?? []); ?>
+                    <div class="menu-panel">
+                        <div class="menu-panel-head">
+                            <strong>Fila do auditor</strong>
+                            <a href="<?= htmlspecialchars($BASE_URL . 'dashboard-operacional', ENT_QUOTES, 'UTF-8') ?>">Ver painel</a>
+                        </div>
+                        <div class="menu-auditor-list">
+                            <?php if (empty($audQueueMenu)): ?>
+                                <div class="menu-empty">Nenhuma ação crítica no momento.</div>
+                            <?php else: ?>
+                                <?php foreach ($audQueueMenu as $item): ?>
+                                    <a class="menu-auditor-item" href="<?= htmlspecialchars((string)($item['action_url'] ?? '#'), ENT_QUOTES, 'UTF-8') ?>">
+                                        <span class="menu-auditor-icon <?= htmlspecialchars((string)($item['severity'] ?? 'info'), ENT_QUOTES, 'UTF-8') ?>">
+                                            <i class="bi <?= htmlspecialchars((string)($item['icon'] ?? 'bi-arrow-right'), ENT_QUOTES, 'UTF-8') ?>"></i>
+                                        </span>
+                                        <span>
+                                            <span class="menu-auditor-title"><?= htmlspecialchars((string)($item['paciente'] ?? 'Paciente'), ENT_QUOTES, 'UTF-8') ?></span>
+                                            <span class="menu-auditor-meta">
+                                                <?= htmlspecialchars((string)($item['label'] ?? 'Pendência'), ENT_QUOTES, 'UTF-8') ?>
+                                                <?php if (!empty($item['dias'])): ?>
+                                                    · <?= (int)$item['dias'] ?> dia(s)
+                                                <?php endif; ?>
+                                                <?php if (!empty($item['hospital'])): ?>
+                                                    · <?= htmlspecialchars((string)$item['hospital'], ENT_QUOTES, 'UTF-8') ?>
+                                                <?php endif; ?>
+                                            </span>
+                                        </span>
+                                        <span class="menu-auditor-action">
+                                            <?= htmlspecialchars((string)($item['action_label'] ?? 'Abrir'), ENT_QUOTES, 'UTF-8') ?>
+                                            <i class="bi bi-arrow-right-short"></i>
+                                        </span>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div class="menu-panel">
+                    <div class="menu-panel-head">
+                        <strong>Recentes</strong>
+                        <a href="<?= htmlspecialchars($BASE_URL . 'internacoes/lista', ENT_QUOTES, 'UTF-8') ?>">Abrir listas</a>
+                    </div>
+                    <div class="menu-recent-columns">
+                        <div class="menu-recent-list">
+                            <?php if (empty($recentAdmissions) && empty($recentPatients)): ?>
+                                <div class="menu-empty">Nenhum registro recente para exibir.</div>
+                            <?php endif; ?>
+                            <?php foreach (array_slice($recentAdmissions, 0, 3) as $recent): ?>
+                                <?php
+                                $recentDate = 'Sem data';
+                                if (!empty($recent['data_intern_int'])) {
+                                    try {
+                                        $recentDate = (new DateTime((string)$recent['data_intern_int']))->format('d/m/Y');
+                                    } catch (Throwable $e) {
+                                        $recentDate = 'Sem data';
+                                    }
+                                }
+                                ?>
+                                <a class="menu-recent-item" href="<?= htmlspecialchars($BASE_URL . 'internacoes/visualizar/' . (int)$recent['id_internacao'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <span class="menu-recent-icon"><i class="bi bi-hospital"></i></span>
+                                    <span>
+                                        <strong><?= htmlspecialchars((string)($recent['nome_pac'] ?? 'Paciente'), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <small>Internação #<?= (int)$recent['id_internacao'] ?> · <?= htmlspecialchars($recentDate, ENT_QUOTES, 'UTF-8') ?></small>
+                                    </span>
+                                    <span class="menu-auditor-action">Abrir <i class="bi bi-arrow-right-short"></i></span>
+                                </a>
+                            <?php endforeach; ?>
+                            <?php foreach (array_slice($recentPatients, 0, max(0, 5 - min(3, count($recentAdmissions)))) as $recent): ?>
+                                <a class="menu-recent-item" href="<?= htmlspecialchars($BASE_URL . 'pacientes/hub/' . (int)$recent['id_paciente'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <span class="menu-recent-icon"><i class="bi bi-person-vcard"></i></span>
+                                    <span>
+                                        <strong><?= htmlspecialchars((string)($recent['nome_pac'] ?? 'Paciente'), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <small>
+                                            Paciente
+                                            <?php if (!empty($recent['matricula_pac'])): ?>
+                                                · Matrícula <?= htmlspecialchars((string)$recent['matricula_pac'], ENT_QUOTES, 'UTF-8') ?>
+                                            <?php endif; ?>
+                                        </small>
+                                    </span>
+                                    <span class="menu-auditor-action">Hub <i class="bi bi-arrow-right-short"></i></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hospital-opportunity-panel">
+                <div class="hospital-opportunity-head">
+                    <div>
+                        <strong><i class="bi bi-hospital me-1"></i> Meus hospitais</strong>
+                        <small>Médias mensais de negociação/saving e percentual de glosa por hospital do seu escopo.</small>
+                    </div>
+                    <span class="menu-workspace-pill">
+                        <i class="bi bi-diagram-3"></i>
+                        <?= number_format(count($hospitalOpportunityRows), 0, ',', '.') ?> em destaque
+                    </span>
+                </div>
+                <?php if (empty($hospitalOpportunityRows)): ?>
+                    <div class="hospital-opportunity-empty">Nenhum hospital com dados para exibir no momento.</div>
+                <?php else: ?>
+                    <div class="hospital-opportunity-grid">
+                        <?php foreach ($hospitalOpportunityRows as $hospitalOpp): ?>
+                            <?php
+                            $oppNivel = (string)($hospitalOpp['nivel'] ?? 'baixo');
+                            $oppIcon = preg_match('/^[a-z0-9-]+$/i', (string)($hospitalOpp['nivel_icon'] ?? ''))
+                                ? (string)$hospitalOpp['nivel_icon']
+                                : 'bi-check-circle-fill';
+                            $glosaTipos = (array)($hospitalOpp['glosa_tipos'] ?? []);
+                            ?>
+                            <article class="hospital-opportunity-card">
+                                <div class="hospital-opportunity-top">
+                                    <div class="hospital-opportunity-name">
+                                        <strong><?= htmlspecialchars((string)($hospitalOpp['nome_hosp'] ?? 'Hospital'), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <small><?= (int)($hospitalOpp['internados'] ?? 0) ?> internado(s) ativos</small>
+                                    </div>
+                                    <span class="hospital-opportunity-level <?= htmlspecialchars($oppNivel, ENT_QUOTES, 'UTF-8') ?>">
+                                        <i class="bi <?= htmlspecialchars($oppIcon, ENT_QUOTES, 'UTF-8') ?>"></i>
+                                        <?= htmlspecialchars((string)($hospitalOpp['nivel_label'] ?? 'Baixo'), ENT_QUOTES, 'UTF-8') ?>
+                                    </span>
+                                </div>
+
+                                <div class="hospital-opportunity-metrics">
+                                    <div class="hospital-opportunity-metric">
+                                        <small>Neg./mês</small>
+                                        <strong><?= htmlspecialchars(menuFmtMonthly($hospitalOpp['negociacoes_media_mensal'] ?? 0), ENT_QUOTES, 'UTF-8') ?></strong>
+                                    </div>
+                                    <div class="hospital-opportunity-metric">
+                                        <small>Saving/mês</small>
+                                        <strong><?= htmlspecialchars(menuFmtMoney($hospitalOpp['saving_media_mensal'] ?? 0), ENT_QUOTES, 'UTF-8') ?></strong>
+                                    </div>
+                                    <div class="hospital-opportunity-metric">
+                                        <small>Glosa %</small>
+                                        <strong><?= htmlspecialchars(menuFmtPercent($hospitalOpp['glosa_percentual'] ?? 0), ENT_QUOTES, 'UTF-8') ?></strong>
+                                    </div>
+                                </div>
+
+                                <div class="hospital-opportunity-detail">
+                                    <div class="hospital-opportunity-line">
+                                        <i class="bi bi-arrow-left-right"></i>
+                                        <span>
+                                            <strong>Troca:</strong>
+                                            <?= htmlspecialchars((string)($hospitalOpp['troca_principal'] ?? 'Sem troca registrada'), ENT_QUOTES, 'UTF-8') ?>
+                                        </span>
+                                    </div>
+                                    <div class="hospital-opportunity-line">
+                                        <i class="bi bi-tag"></i>
+                                        <span>
+                                            <strong>Tipo:</strong>
+                                            <?= htmlspecialchars((string)($hospitalOpp['tipo_negociacao'] ?? 'Sem negociação registrada'), ENT_QUOTES, 'UTF-8') ?>
+                                        </span>
+                                    </div>
+                                    <div class="hospital-opportunity-line">
+                                        <i class="bi bi-percent"></i>
+                                        <span>
+                                            <strong>Glosas:</strong>
+                                            <span class="hospital-glosa-tags">
+                                                <?php if (empty($glosaTipos)): ?>
+                                                    <span class="hospital-glosa-tag">Sem glosa categorizada</span>
+                                                <?php else: ?>
+                                                    <?php foreach ($glosaTipos as $glosaTipo): ?>
+                                                        <span class="hospital-glosa-tag">
+                                                            <?= htmlspecialchars((string)($glosaTipo['tipo'] ?? 'Glosa'), ENT_QUOTES, 'UTF-8') ?>
+                                                            <?= htmlspecialchars(menuFmtPercent($glosaTipo['percentual'] ?? 0), ENT_QUOTES, 'UTF-8') ?>
+                                                        </span>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
         <div class="grid-container">
             <div class="grid-item grid-item-filter">
                 <div class="title-item"><i class="bi bi-hospital"></i> Filtrar Hospital</div>
@@ -1446,7 +2573,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 <div class="badge-item badge-neutral"><?= count($dados_internacoes) ?></div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-longa-perm-section" role="button" tabindex="0">
+            <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-clock-history"></i> Longa Permanência</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="kpi-helper">Dias de internação</div>
@@ -1457,7 +2584,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 </div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-reinternacoes-section" role="button" tabindex="0">
+            <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-arrow-repeat"></i> Reinternações</div>
                 <div class="reint-helper">Tempo entre alta e nova internação</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
@@ -1468,7 +2595,7 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 </div>
             </div>
 
-            <div class="grid-item grid-item-kpi kpi-warning" data-dash-target="#dash-visitas-atraso-section" role="button" tabindex="0">
+            <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-calendar-x"></i> Visitas em Atraso</div>
                 <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
                 <div class="badge-item badge-warning"><?= count($dados_visitas_atraso) ?></div>
@@ -1896,12 +3023,15 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
             body: formData.toString()
         })
         .then(function(res) {
-            if (!res.ok) {
-                const error = new Error('HTTP ' + res.status);
-                error.status = res.status;
-                throw error;
-            }
-            return res.text();
+            return res.text().then(function(text) {
+                if (!res.ok) {
+                    const err = new Error('HTTP ' + res.status);
+                    err.responseText = text;
+                    err.status = res.status;
+                    throw err;
+                }
+                return text;
+            });
         })
         .then(function(html) {
             const temp = document.createElement('div');
@@ -1989,18 +3119,6 @@ $total_reinternacoes_30 = is_array($reinternacao_30) ? count($reinternacao_30) :
                 const data = new URLSearchParams();
                 data.set(submitter.name, submitter.value || '');
                 submitDashboardFilter(data);
-            });
-        });
-
-        document.querySelectorAll('[data-dash-target]').forEach(function(card) {
-            card.addEventListener('click', function() {
-                scrollToDashTarget(card.getAttribute('data-dash-target'));
-            });
-            card.addEventListener('keydown', function(event) {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    scrollToDashTarget(card.getAttribute('data-dash-target'));
-                }
             });
         });
 

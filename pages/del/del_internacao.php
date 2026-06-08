@@ -16,6 +16,7 @@ $internacaoDao = new internacaoDAO($conn, $BASE_URL);
 Gate::enforceAction($conn, $BASE_URL, 'delete', 'Você não tem permissão para excluir internação.');
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
+    fullcare_flash('Use o botão de exclusão da lista para remover uma internação.', 'warning', 'Ação não permitida');
     header('Location: ' . $BASE_URL . 'internacoes/lista', true, 303);
     exit;
 }
@@ -23,6 +24,7 @@ if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 $csrf = (string)filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW);
 if (!csrf_is_valid($csrf)) {
     http_response_code(400);
+    fullcare_flash('A validação de segurança expirou. Tente excluir novamente.', 'error', 'Exclusão bloqueada');
     header('Location: ' . $BASE_URL . 'internacoes/lista', true, 303);
     exit;
 }
@@ -40,6 +42,9 @@ if ($internacao) {
         'before' => $internacaoAntesDelete,
         'source' => 'del_internacao.php',
     ], $BASE_URL);
+    fullcare_flash('Internação excluída com sucesso.', 'success', 'Exclusão concluída');
+} else {
+    fullcare_flash('Não encontramos a internação informada para exclusão.', 'warning', 'Registro não localizado');
 }
 
 header('Location: ' . $BASE_URL . 'internacoes/lista', true, 303);

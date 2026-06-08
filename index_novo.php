@@ -1,3 +1,8 @@
+<?php
+if (!function_exists("app_latest_version") || !isset($BASE_URL, $conn)) {
+    include_once __DIR__ . "/globals.php";
+}
+?>
 <!DOCTYPE html>
 <?php $currentAppVersion = app_latest_version($conn); ?>
 <html lang="pt-BR">
@@ -9,483 +14,297 @@
     <title>FullCare</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-    /* ===============================
-       Base
-    =============================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-        margin: 0;
-        padding: 24px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
         font-family: 'Inter', sans-serif;
-        background:
-            radial-gradient(circle at 18% 18%, rgba(82, 154, 218, .10), transparent 28%),
-            radial-gradient(circle at 88% 20%, rgba(92, 38, 118, .09), transparent 26%),
-            linear-gradient(135deg, #f8fbfd 0%, #eef4f9 44%, #faf5fb 100%);
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        position: relative;
-        opacity: 0;
-        animation: fadeIn .3s ease-in forwards;
-    }
-
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: url("<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/17450.jpg") center / cover no-repeat;
-        opacity: 0.055;
-        z-index: -1;
-        pointer-events: none;
-    }
-
-    body::after {
-        content: "";
-        position: fixed;
-        width: min(980px, 72vw);
-        height: min(620px, 58vh);
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 999px;
-        background: radial-gradient(circle, rgba(255, 255, 255, .18) 0%, rgba(255, 255, 255, .08) 38%, rgba(255, 255, 255, 0) 68%);
-        filter: blur(4px);
-        z-index: -1;
-        pointer-events: none;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0
-        }
-
-        to {
-            opacity: 1
-        }
-    }
-
-    .login-container {
-        display: grid;
-        grid-template-columns: 330px minmax(390px, 1fr);
-        gap: 34px;
-        width: 900px;
-        max-width: 95vw;
-        min-height: 500px;
-        padding: 46px 54px;
-        box-sizing: border-box;
-        align-items: center;
-        justify-content: center;
-        background:
-            radial-gradient(circle at 13% 18%, rgba(48, 160, 210, .42), transparent 0 28%),
-            radial-gradient(circle at 90% 62%, rgba(104, 48, 135, .36), transparent 0 31%),
-            linear-gradient(112deg, rgba(232, 248, 255, .98) 0%, rgba(255, 255, 255, .99) 43%, rgba(255, 246, 255, .98) 100%);
-        border: 1px solid rgba(87, 57, 115, .26);
-        border-radius: 22px;
-        box-shadow:
-            0 0 0 1px rgba(255, 255, 255, .72),
-            0 18px 54px rgba(31, 42, 63, .18),
-            0 46px 110px rgba(31, 42, 63, .26),
-            0 34px 34px -30px rgba(31, 35, 52, .48),
-            0 0 0 1px rgba(255, 255, 255, .96) inset,
-            0 1px 0 rgba(255, 255, 255, .98) inset;
-        backdrop-filter: blur(8px) saturate(1.04);
-        -webkit-backdrop-filter: blur(8px) saturate(1.04);
-        position: relative;
+        display: flex;
+        min-height: 100vh;
         overflow: hidden;
+        opacity: 0;
+        animation: fadeIn .35s ease-in forwards;
     }
 
-    .login-container > * {
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── Left panel ─────────────────────────────────────── */
+    .lp {
+        flex: 1 1 0;
+        min-width: 0;
         position: relative;
-        z-index: 2;
-    }
-
-    .login-container .login-ground {
-        position: absolute;
-        left: 42px;
-        right: 42px;
-        bottom: 0;
-        height: 96px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 44px 56px 36px;
+        overflow: hidden;
         background:
-            radial-gradient(ellipse at 50% 100%, rgba(74, 28, 94, .18), transparent 0 64%),
-            linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(228, 218, 238, .22));
-        z-index: 1;
-        pointer-events: none;
+            radial-gradient(ellipse at 12% 0%,   rgba(92, 150, 205, .16) 0%, transparent 46%),
+            radial-gradient(ellipse at 88% 100%,  rgba(132, 75, 154, .36) 0%, transparent 54%),
+            radial-gradient(ellipse at 20% 78%, rgba(118, 78, 166, .18) 0%, transparent 46%),
+            linear-gradient(160deg, #0b1f34 0%, #183250 48%, #1b2541 100%);
     }
 
-    .login-container .side-panel::before {
-        z-index: 0;
-    }
-
-    .login-container::before {
+    /* noise overlay */
+    .lp::before {
         content: "";
         position: absolute;
-        width: 520px;
-        height: 330px;
-        left: -210px;
-        top: -120px;
-        border-radius: 36% 64% 68% 32% / 44% 52% 48% 56%;
-        background:
-            radial-gradient(circle at 76% 70%, rgba(255, 255, 255, .30), transparent 0 32%, rgba(255, 255, 255, 0) 33%),
-            linear-gradient(135deg, rgba(35, 133, 194, .74), rgba(82, 183, 220, .46));
-        transform: rotate(-9deg);
-        pointer-events: none;
-    }
-
-    .login-container::after {
-        content: "";
-        position: absolute;
-        width: 360px;
-        height: 460px;
-        right: -286px;
-        top: 34px;
-        border-radius: 64% 36% 28% 72% / 42% 38% 62% 58%;
-        background:
-            radial-gradient(circle at 18% 24%, rgba(255, 255, 255, .28), transparent 0 20%, rgba(255, 255, 255, 0) 21%),
-            linear-gradient(160deg, rgba(108, 48, 139, .64), rgba(74, 28, 94, .42));
-        transform: rotate(-4deg);
-        box-shadow:
-            inset 22px 0 42px rgba(255, 255, 255, .12),
-            -18px 24px 46px rgba(66, 24, 73, .10);
-        pointer-events: none;
-    }
-
-    .side-panel::before {
-        content: "";
-        position: absolute;
-        width: 190px;
-        height: 300px;
-        right: -132px;
-        top: 116px;
-        border-radius: 64% 36% 44% 56% / 50% 36% 64% 50%;
-        background: linear-gradient(170deg, rgba(108, 48, 139, .44), rgba(66, 24, 73, .16));
-        border-left: 1px solid rgba(255, 255, 255, .18);
-        transform: rotate(-6deg);
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
         pointer-events: none;
         z-index: 0;
     }
 
-    .login-form::before {
-        content: "";
-        position: absolute;
-        width: 320px;
-        height: 220px;
-        left: -138px;
-        top: -78px;
-        border-radius: 52% 48% 68% 32% / 48% 56% 44% 52%;
-        background: linear-gradient(145deg, rgba(35, 150, 205, .30), rgba(255, 255, 255, .04));
-        transform: rotate(-12deg);
-        pointer-events: none;
-        z-index: -1;
+    .lp > * { position: relative; z-index: 1; }
+
+    .lp-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
-    /* ===============================
-       Bloco Azul (formulário)
-    =============================== */
-    .login-form {
-        padding: 42px 36px 38px;
-        border-radius: 22px;
+    .lp-logo img {
+        height: 46px;
         width: auto;
-        height: auto;
-        min-height: 0;
-        background:
-            radial-gradient(circle at 0% 0%, rgba(48, 160, 210, .20), transparent 0 40%),
-            linear-gradient(180deg, rgba(255, 255, 255, .99), rgba(244, 251, 255, .98));
-        border: 1px solid rgba(88, 166, 205, .38);
-        box-shadow:
-            0 38px 82px rgba(42, 57, 82, .22),
-            0 18px 38px rgba(55, 119, 157, .13),
-            0 2px 0 rgba(255, 255, 255, .9) inset;
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+        filter: brightness(0) invert(1);
+    }
+
+    .lp-body {
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        position: relative;
-        z-index: 2;
-        transform: none;
+        padding: 48px 0 24px;
     }
 
-    .login-form::after {
+    .lp-headline {
+        font-size: clamp(32px, 3.4vw, 52px);
+        font-weight: 800;
+        line-height: 1.1;
+        color: #fff;
+        letter-spacing: -0.02em;
+    }
+
+    .lp-headline span {
+        display: block;
+        background: linear-gradient(90deg, #4facde 0%, #8b5be8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .lp-sub {
+        margin-top: 20px;
+        font-size: 15px;
+        font-weight: 400;
+        color: rgba(200, 220, 240, .72);
+        line-height: 1.6;
+        max-width: 420px;
+    }
+
+    .lp-features {
+        margin-top: 36px;
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .lp-features li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(210, 230, 248, .85);
+        list-style: none;
+    }
+
+    .lp-features li::before {
+        content: "";
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #4facde, #8b5be8);
+        box-shadow: 0 0 8px rgba(79, 172, 222, .5);
+    }
+
+    .lp-footer {
+        font-size: 12px;
+        color: rgba(180, 210, 235, .38);
+        letter-spacing: .03em;
+    }
+
+    /* ── Right panel ────────────────────────────────────── */
+    .rp {
+        width: min(42%, 560px);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f8fc;
+        padding: 48px 40px;
+        position: relative;
+    }
+
+    .rp::before {
         content: "";
         position: absolute;
-        inset: 12px;
-        border: 1px solid rgba(78, 155, 196, .10);
-        border-radius: 16px;
-        pointer-events: none;
-    }
-
-    .login-form-logo {
-        width: 100%;
-        max-width: 172px;
-        margin-bottom: 34px;
-        display: block;
-    }
-
-    .form-content {
-        width: min(100%, 268px);
-    }
-
-    .input-container {
-        position: relative;
-        margin: 24px 0;
-        width: 100%;
-    }
-
-    .input-container + .input-container {
-        margin-top: 42px;
-    }
-
-    .input-container input {
-        width: 100%;
-        padding: 10px 0 !important;
-        border: 0 !important;
-        border-bottom: 1px solid rgba(54, 139, 154, .58) !important;
-        background: transparent !important;
-        border-radius: 0 !important;
-        box-sizing: border-box;
-        color: #263241;
-        font-size: 13px !important;
-        font-weight: 500;
-        outline: none;
-        box-shadow: none;
-        transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
-    }
-
-    .input-container input:focus {
-        background: transparent !important;
-        border-color: #5a2363 !important;
-        box-shadow: 0 6px 0 -5px rgba(90, 35, 99, .72);
-    }
-
-    .input-container input:-webkit-autofill,
-    .input-container input:-webkit-autofill:hover,
-    .input-container input:-webkit-autofill:focus {
-        -webkit-text-fill-color: #263241;
-        box-shadow: 0 0 0 1000px rgba(236, 246, 255, .78) inset !important;
-        border-bottom-color: rgba(54, 139, 154, .72) !important;
-        transition: background-color 9999s ease-in-out 0s;
-    }
-
-    .input-container label {
-        position: absolute;
-        top: -16px;
         left: 0;
-        color: #327f8a;
-        pointer-events: none;
-        transition: color .2s ease;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: linear-gradient(180deg, transparent 0%, rgba(47, 111, 159, .18) 30%, rgba(107, 43, 116, .14) 70%, transparent 100%);
+    }
+
+    .rp-inner {
+        width: 100%;
+        max-width: 360px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rp-logo {
+        height: 68px;
+        width: auto;
+        object-fit: contain;
+        margin-bottom: 28px;
+    }
+
+    .rp-title {
+        font-size: 26px;
+        font-weight: 800;
+        color: #0d2038;
+        letter-spacing: -0.02em;
+        text-align: center;
+    }
+
+    .rp-subtitle {
+        margin-top: 6px;
+        font-size: 13.5px;
+        color: #7a8ea8;
+        font-weight: 400;
+        text-align: center;
+        margin-bottom: 36px;
+    }
+
+    /* fields */
+    .field-group {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .field-group label {
+        display: block;
         font-size: 11px;
         font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #5a7390;
+        margin-bottom: 7px;
     }
 
-    .input-container input:focus+label,
-    .input-container input:not(:placeholder-shown)+label {
-        top: -20px;
-        font-size: 11px;
-        color: #5a2363;
+    .field-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
     }
 
+    .field-wrap svg {
+        position: absolute;
+        left: 14px;
+        color: #9db3c8;
+        pointer-events: none;
+        flex-shrink: 0;
+    }
+
+    .field-wrap input {
+        width: 100%;
+        padding: 13px 16px 13px 42px;
+        background: #fff;
+        border: 1.5px solid #d8e4ef;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: 'Inter', sans-serif;
+        color: #1a2d3e;
+        outline: none;
+        transition: border-color .18s, box-shadow .18s;
+    }
+
+    .field-wrap input::placeholder { color: #b0c4d6; }
+
+    .field-wrap input:focus {
+        border-color: #2f6f9f;
+        box-shadow: 0 0 0 3px rgba(47, 111, 159, .12);
+    }
+
+    .field-wrap input:-webkit-autofill,
+    .field-wrap input:-webkit-autofill:hover,
+    .field-wrap input:-webkit-autofill:focus {
+        -webkit-text-fill-color: #1a2d3e;
+        box-shadow: 0 0 0 1000px #fff inset, 0 0 0 3px rgba(47, 111, 159, .12);
+        transition: background-color 9999s ease 0s;
+    }
+
+    /* submit */
     .login-btn {
         width: 100%;
-        padding: 12px;
-        background: linear-gradient(135deg, #6b2b74, #421849);
+        margin-top: 10px;
+        padding: 14px;
+        background: linear-gradient(135deg, #2f6f9f 0%, #6b2b74 100%);
         color: #fff;
-        border: 1px solid rgba(255, 255, 255, .22);
-        cursor: pointer;
-        font-size: 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
         font-weight: 700;
-        border-radius: 8px;
-        margin-top: 18px;
-        box-shadow: 0 12px 26px rgba(66, 24, 73, .28);
-        transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        box-shadow: 0 10px 28px rgba(47, 111, 159, .28);
+        transition: transform .18s, box-shadow .18s, filter .18s;
     }
 
     .login-btn:hover {
-        box-shadow: 0 15px 32px rgba(66, 24, 73, .34);
-        background: linear-gradient(135deg, #783484, #4b1c58);
+        filter: brightness(1.08);
         transform: translateY(-1px);
+        box-shadow: 0 14px 34px rgba(47, 111, 159, .34);
     }
 
-    .forgot-password {
-        color: #485565;
+    /* forgot */
+    .forgot {
+        margin-top: 18px;
         text-align: center;
-        margin-top: 20px;
     }
 
-    .forgot-password a {
-        color: #485565;
-        text-decoration: none;
-    }
-
-    .login-links {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        margin: -6px 0 6px;
-    }
-
-    .login-links a {
-        font-size: 12px;
-        color: #485565;
-        text-decoration: none;
+    .forgot a {
+        font-size: 13px;
         font-weight: 600;
+        color: #2f6f9f;
+        text-decoration: none;
+        transition: color .15s;
     }
 
-    .login-links a:hover {
-        text-decoration: underline;
-    }
+    .forgot a:hover { color: #6b2b74; text-decoration: underline; }
 
+    /* login attempts */
     .login-attempts-notice {
-        margin: 12px 0 0;
-        padding: 9px 11px;
-        border-radius: 8px;
+        margin-top: 14px;
+        padding: 10px 13px;
+        border-radius: 9px;
         background: #fff8e6;
         border: 1px solid #f1d894;
         border-left: 4px solid #d6a82d;
         color: #705519;
         font-size: 12px;
-        line-height: 1.35;
+        line-height: 1.4;
         text-align: center;
-        box-shadow: 0 8px 18px rgba(87, 69, 28, .08);
+        width: 100%;
     }
 
-    /* ===============================
-       Bloco Lilás (lado direito)
-    =============================== */
-    .side-panel {
-        padding: 0;
-        background: transparent;
-        color: #4a1d55;
-        width: auto;
-        max-height: none;
-        min-height: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        border-radius: 0;
-        margin: 0;
-        text-align: center;
-        position: relative;
-        overflow: visible;
-        z-index: 2;
-    }
-
-    .side-panel-content {
-        margin-top: 0;
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: min(100%, 560px);
-        margin-inline: auto;
-    }
-
-    .side-panel img.monitor-image {
-        width: min(100%, 530px);
-        height: auto;
-        object-fit: contain;
-        margin: 14px auto -8px;
-        filter:
-            drop-shadow(0 20px 24px rgba(45, 31, 78, .24))
-            drop-shadow(0 7px 10px rgba(45, 31, 78, .14));
-    }
-
-    .login-insight-row {
-        width: min(100%, 430px);
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        margin: 14px auto 4px;
-    }
-
-    .login-insight-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 58px;
-        padding: 10px 11px;
-        border-radius: 13px;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(246, 249, 255, .70)),
-            linear-gradient(135deg, rgba(48, 160, 210, .32), rgba(108, 48, 139, .24));
-        border: 1px solid rgba(112, 121, 178, .26);
-        box-shadow: 0 14px 28px rgba(59, 66, 92, .11);
-        text-align: center;
-    }
-
-    .login-insight-card small {
-        display: block;
-        color: rgba(83, 46, 101, .62);
-        font-size: 9px;
-        font-weight: 800;
-        letter-spacing: .1em;
-        text-transform: uppercase;
-        line-height: 1.1;
-    }
-
-    .login-insight-card strong {
-        display: block;
-        margin-top: 7px;
-        color: #4a1d55;
-        font-size: 12px;
-        font-weight: 800;
-        line-height: 1.15;
-    }
-
-    .side-panel h3,
-    .side-panel p,
-    .side-panel .email-btn {
-        margin: 10px 0;
-    }
-
-    .side-panel p {
-        margin: 8px auto 0;
-        max-width: 350px;
-        line-height: 1.5;
-        color: rgba(55, 46, 78, .72);
-        font-size: 12px;
-        font-weight: 400;
-    }
-
-    .side-panel h3 {
-        margin: 0;
-        font-size: 20px;
-        line-height: 1.2;
-        letter-spacing: 0;
-        font-weight: 800;
-        color: #4a1d55;
-    }
-
-    .side-panel .email-btn {
-        background: #421849;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 16px;
-        border-radius: 5px;
-    }
-
-    .side-panel::after {
-        content: none;
-    }
-
-    /* ===============================
-       Mensagem de erro (flutuante)
-    =============================== */
+    /* error toast */
     .error-message {
         position: fixed;
         bottom: 26px;
@@ -493,11 +312,10 @@
         transform: translateX(-50%);
         width: min(88vw, 420px);
         padding: 12px 14px 12px 16px;
-        background: rgba(255, 255, 255, .96);
+        background: rgba(255, 255, 255, .97);
         border: 1px solid rgba(180, 55, 55, .18);
         border-left: 4px solid #b43737;
         border-radius: 12px;
-        text-align: left;
         box-shadow: 0 18px 42px rgba(72, 48, 58, .18);
         color: #673030;
         font-size: 13px;
@@ -512,7 +330,6 @@
         letter-spacing: .03em;
         margin-bottom: 3px;
         color: #9f2f2f;
-        opacity: 1;
         text-transform: uppercase;
     }
 
@@ -522,255 +339,123 @@
         transition: opacity .35s ease, transform .35s ease;
     }
 
-    /* ===============================
-       Responsivo
-    =============================== */
-    @media (max-width: 1024px) {
-        body {
-            padding: 20px 16px;
-            height: auto;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 860px;
-            gap: 24px;
-            grid-template-columns: 310px minmax(330px, 1fr);
-            padding: 38px 42px;
-        }
-
-        .form-content {
-            width: min(100%, 268px);
-        }
+    /* version badge */
+    .version-badge {
+        position: absolute;
+        bottom: 16px;
+        right: 20px;
+        font-size: 11px;
+        color: #b0c4d6;
+        letter-spacing: .04em;
     }
 
-    @media (max-width: 900px) {
-        .login-container {
-            flex-direction: column;
-            display: flex;
-            border-radius: 16px;
-            overflow: hidden;
-            min-height: 0;
-            background: rgba(255, 255, 255, .94);
-            gap: 26px;
-            padding: 34px 24px;
-        }
-
-        .login-form,
-        .side-panel {
-            width: 100%;
-            height: auto;
-        }
-
-        .login-form {
-            padding: 32px 28px 30px;
-            min-height: 0;
-            width: min(100%, 360px);
-            margin: 0 auto;
-            transform: none;
-        }
-
-        .login-form::before {
-            content: none;
-        }
-
-        .side-panel {
-            min-height: 0;
-            margin: 0;
-            padding: 0 24px 10px;
-        }
-
-        .side-panel::after {
-            content: none;
-        }
-
-        .side-panel-content {
-            margin-top: 0;
-        }
-
-        .login-insight-row {
-            width: min(100%, 420px);
-        }
-
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 860px) {
+        .lp { display: none; }
+        .rp { width: 100%; min-height: 100vh; padding: 48px 28px; }
     }
 
-    @media (max-width: 600px) {
-        .side-panel {
-            display: none;
-        }
-
-        body {
-            min-height: 520px;
-            align-items: flex-start;
-        }
-
-        .login-container {
-            align-items: flex-start;
-            height: auto;
-        }
-
-        .login-form {
-            padding: 30px 22px 26px;
-            min-height: 0;
-            height: auto;
-            max-height: none;
-            border-radius: 14px;
-            transform: none;
-        }
-
-        .login-form::before {
-            content: none;
-        }
-
-        .login-form-logo {
-            max-width: 165px;
-            margin-bottom: 28px;
-        }
-
-        .form-content {
-            width: 100%;
-        }
-
-        .input-container {
-            margin: 24px 0;
-        }
-
-        .input-container + .input-container {
-            margin-top: 40px;
-        }
-
-        .input-container input {
-            padding: 11px 13px !important;
-            font-size: 13px !important;
-        }
-
-        .input-container label {
-            font-size: 12px;
-        }
-
-        .input-container input:focus+label,
-        .input-container input:not(:placeholder-shown)+label {
-            top: -20px;
-            font-size: 12px;
-        }
-
-        .login-btn {
-            padding: 12px;
-            margin-top: 18px;
-            font-size: 14px;
-        }
-    }
-
-    .login-footer {
-        position: fixed;
-        bottom: 12px;
-        right: 24px;
-        color: rgba(255, 255, 255, .85);
-        font-size: 0.78rem;
-        letter-spacing: 0.04em;
-        pointer-events: none;
-    }
-
-    @media (max-width: 900px) {
-        .login-footer {
-            left: 50%;
-            right: auto;
-            transform: translateX(-50%);
-        }
+    @media (max-width: 480px) {
+        .rp { padding: 40px 20px; }
+        .rp-inner { max-width: 100%; }
     }
     </style>
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="login-ground" aria-hidden="true"></div>
-        <div class="login-form">
-            <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/LogoFullCare.png" alt="FullCare Gestao em Saude" class="login-form-logo" />
-            <div class="form-content">
-                <form action="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/check_login.php" method="post" autocomplete="off">
-                    <div class="input-container">
-                        <input type="email" name="email_login" autocomplete="off" id="email_login" required />
-                        <label for="email_login">Email</label>
-                    </div>
-
-                    <div class="input-container">
-                        <input type="password" id="senha_login" autocomplete="off" name="senha_login" required />
-                        <label for="senha_login">Senha</label>
-                    </div>
-
-                    <div class="login-links">
-                        <a href="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/esqueci_senha.php">Esqueci minha senha</a>
-                    </div>
-
-                    <?php if (isset($_SESSION['login_attempts_notice']) && $_SESSION['login_attempts_notice'] !== "") { ?>
-                    <div class="login-attempts-notice">
-                        <?= htmlspecialchars((string)$_SESSION['login_attempts_notice'], ENT_QUOTES, 'UTF-8') ?>
-                    </div>
-                    <?php unset($_SESSION['login_attempts_notice']); ?>
-                    <?php } ?>
-
-                    <input type="submit" value="Login" class="login-btn" />
-                </form>
-
-                <!-- Error message -->
-                <?php if (isset($_SESSION['login_error']) && $_SESSION['login_error'] !== "") { ?>
-                <div class="error-message">
-                    <strong>Falha no login</strong>
-                    <div><?= htmlspecialchars((string)$_SESSION['login_error'], ENT_QUOTES, 'UTF-8') ?></div>
-                </div>
-                <?php unset($_SESSION['login_error']); ?>
-                <?php } ?>
-            </div>
+    <!-- ── Left panel ── -->
+    <div class="lp">
+        <div class="lp-logo">
+            <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/logo_branco.png" alt="FullCare" />
         </div>
 
-        <div class="side-panel">
-            <div class="side-panel-content">
-                <h3>Sistema inteligente de auditoria médica</h3>
-                <p>BI e IA transformam dados assistenciais em acompanhamento objetivo de internações, contas e indicadores.</p>
-                <div class="login-insight-row" aria-label="Indicadores em destaque">
-                    <div class="login-insight-card">
-                        <small>BI</small>
-                        <strong>Dados em tempo real</strong>
-                    </div>
-                    <div class="login-insight-card">
-                        <small>IA</small>
-                        <strong>Insights clínicos inteligentes</strong>
-                    </div>
-                    <div class="login-insight-card">
-                        <small>Gestão</small>
-                        <strong>Decisão mais rápida</strong>
-                    </div>
-                </div>
-                <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/producao_preview.png?v=20260516-login-preview-pro" alt="Preview do dashboard de producao" class="monitor-image" />
-            </div>
+        <div class="lp-body">
+            <h1 class="lp-headline">
+                Gestão em saúde
+                <span>inteligente</span>
+            </h1>
+            <p class="lp-sub">Centralize internações, auditorias e equipe. IA integrada para análise clínica e acompanhamento em tempo real.</p>
+            <ul class="lp-features">
+                <li>Jornada de internação com acompanhamento passo a passo</li>
+                <li>IA para análise e resumo clínico de pacientes</li>
+                <li>BI em tempo real: custos, qualidade e indicadores</li>
+                <li>Auditoria médica integrada com alertas automáticos</li>
+            </ul>
+        </div>
+
+        <div class="lp-footer">
+            &copy; <?= date('Y') ?> FullCare &middot; Sistema de Gestão em Saúde
         </div>
     </div>
 
-    <div class="login-footer">
-        Versão <?= htmlspecialchars($currentAppVersion) ?>
+    <!-- ── Right panel ── -->
+    <div class="rp">
+        <div class="rp-inner">
+            <img src="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/img/LogoFullCare.png" alt="FullCare" class="rp-logo" />
+
+            <h2 class="rp-title">Bem-vindo</h2>
+            <p class="rp-subtitle">Acesse sua conta para continuar</p>
+
+            <form action="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/check_login.php" method="post" autocomplete="off" style="width:100%">
+
+                <div class="field-group">
+                    <label for="email_login">E-mail</label>
+                    <div class="field-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input type="email" name="email_login" id="email_login" autocomplete="off" placeholder="seu@email.com" required />
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="senha_login">Senha</label>
+                    <div class="field-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" name="senha_login" id="senha_login" autocomplete="off" placeholder="••••••••" required />
+                    </div>
+                </div>
+
+                <?php if (isset($_SESSION['login_attempts_notice']) && $_SESSION['login_attempts_notice'] !== "") { ?>
+                <div class="login-attempts-notice">
+                    <?= htmlspecialchars((string)$_SESSION['login_attempts_notice'], ENT_QUOTES, 'UTF-8') ?>
+                </div>
+                <?php unset($_SESSION['login_attempts_notice']); ?>
+                <?php } ?>
+
+                <input type="submit" value="Entrar" class="login-btn" />
+            </form>
+
+            <div class="forgot">
+                <a href="<?= htmlspecialchars($assetBase, ENT_QUOTES, 'UTF-8') ?>/esqueci_senha.php">Esqueci minha senha</a>
+            </div>
+
+            <?php if (isset($_SESSION['login_error']) && $_SESSION['login_error'] !== "") { ?>
+            <div class="error-message">
+                <strong>Falha no login</strong>
+                <div><?= htmlspecialchars((string)$_SESSION['login_error'], ENT_QUOTES, 'UTF-8') ?></div>
+            </div>
+            <?php unset($_SESSION['login_error']); ?>
+            <?php } ?>
+        </div>
+
+        <div class="version-badge">v<?= htmlspecialchars($currentAppVersion) ?></div>
     </div>
 
     <script>
-    // limpar os campos manualmente e evitar autocompletar
     document.addEventListener("DOMContentLoaded", () => {
-        const emailInput = document.getElementById("email_login");
-        const senhaInput = document.getElementById("senha_login");
-        emailInput.value = "";
-        senhaInput.value = "";
-        setTimeout(() => {
-            emailInput.value = "";
-            senhaInput.value = "";
-        }, 100);
+        const email = document.getElementById("email_login");
+        const senha = document.getElementById("senha_login");
+        email.value = "";
+        senha.value = "";
+        setTimeout(() => { email.value = ""; senha.value = ""; }, 100);
     });
 
-    // resetar campos após o submit
     document.querySelector("form").addEventListener("submit", function() {
-        setTimeout(() => {
-            this.reset();
-        }, 100);
+        setTimeout(() => { this.reset(); }, 100);
     });
-
     </script>
 </body>
-
 </html>

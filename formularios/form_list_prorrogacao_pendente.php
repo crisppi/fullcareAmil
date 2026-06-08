@@ -466,7 +466,7 @@ $baseParams = [
                                     </li>
                                     <li>
                                         <button class="btn btn-default"
-                                            onclick="window.location.href='<?= e($BASE_URL) ?>edit_internacao.php?id_internacao=<?= (int)$row['id_internacao'] ?>&section=prorrog#collapseProrrog'"
+                                            onclick="window.location.href='<?= e($BASE_URL) ?>internacoes/editar/<?= (int)$row['id_internacao'] ?>?section=prorrog#collapseProrrog'"
                                             style="font-size: .9rem;">
                                             <i class="bi bi-pencil-square"
                                                 style="font-size: 1rem; margin-right: 5px; color: rgba(113, 27, 156, 1);"></i>

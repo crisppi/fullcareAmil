@@ -4,14 +4,14 @@ require_once("globals.php");
 require_once("dao/homeCareDao.php");
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: " . $BASE_URL . "home_care_gestao.php");
+    header("Location: " . $BASE_URL . "cuidado-continuado/home-care");
     exit;
 }
 
 if (!hash_equals((string)($_SESSION['csrf'] ?? ''), (string)($_POST['_csrf'] ?? ''))) {
     $_SESSION['msg'] = 'Falha de validacao da requisicao.';
     $_SESSION['type'] = 'danger';
-    header("Location: " . $BASE_URL . "home_care_gestao.php");
+    header("Location: " . $BASE_URL . "cuidado-continuado/home-care");
     exit;
 }
 
@@ -19,7 +19,7 @@ $internacaoId = filter_input(INPUT_POST, 'fk_internacao_hc', FILTER_VALIDATE_INT
 if ($internacaoId <= 0) {
     $_SESSION['msg'] = 'Internacao invalida para Home Care.';
     $_SESSION['type'] = 'danger';
-    header("Location: " . $BASE_URL . "home_care_gestao.php");
+    header("Location: " . $BASE_URL . "cuidado-continuado/home-care");
     exit;
 }
 
@@ -38,5 +38,5 @@ try {
     error_log('[HOME_CARE][SAVE][ERROR] ' . $e->getMessage());
 }
 
-header("Location: " . $BASE_URL . "home_care_avaliacao.php?id_internacao=" . $internacaoId);
+header("Location: " . $BASE_URL . "cuidado-continuado/home-care/avaliar/" . $internacaoId);
 exit;

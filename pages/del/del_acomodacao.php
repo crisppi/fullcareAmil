@@ -16,14 +16,16 @@ $acomodacaoDao = new acomodacaoDAO($conn, $BASE_URL);
 Gate::enforceAction($conn, $BASE_URL, 'delete', 'Você não tem permissão para excluir acomodação.');
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
-    header('Location: ' . $BASE_URL . 'list_acomodacao.php', true, 303);
+    fullcare_flash('Use o botão de exclusão da lista para remover uma acomodação.', 'warning', 'Ação não permitida');
+    header('Location: ' . $BASE_URL . 'acomodacoes', true, 303);
     exit;
 }
 
 $csrf = (string)filter_input(INPUT_POST, 'csrf', FILTER_UNSAFE_RAW);
 if (!csrf_is_valid($csrf)) {
     http_response_code(400);
-    header('Location: ' . $BASE_URL . 'list_acomodacao.php', true, 303);
+    fullcare_flash('A validação de segurança expirou. Tente excluir novamente.', 'error', 'Exclusão bloqueada');
+    header('Location: ' . $BASE_URL . 'acomodacoes', true, 303);
     exit;
 }
 
@@ -40,7 +42,10 @@ if ($acomodacao) {
         'before' => $acomodacaoAntesDelete,
         'source' => 'del_acomodacao.php',
     ], $BASE_URL);
+    fullcare_flash('Acomodação excluída com sucesso.', 'success', 'Exclusão concluída');
+} else {
+    fullcare_flash('Não encontramos a acomodação informada para exclusão.', 'warning', 'Registro não localizado');
 }
 
-header('Location: ' . $BASE_URL . 'list_acomodacao.php', true, 303);
+header('Location: ' . $BASE_URL . 'acomodacoes', true, 303);
 exit;

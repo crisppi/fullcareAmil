@@ -94,7 +94,7 @@ return [
             'O painel de Performance destaca metas por equipe e visita, atualize o período antes de exportar.',
             'O Painel Mensal compara realizado x previsão e se integra ao módulo de Faturamento.'
         ],
-        'link' => 'dashboard_operacional.php',
+        'link' => 'dashboard-operacional',
         'link_label' => 'Dashboard Operacional'
     ]
 ];

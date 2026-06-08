@@ -539,7 +539,7 @@ if ($havePages) {
                                     $capeanteEncerrado = strtolower((string)($intern['encerrado_cap'] ?? 'n')) === 's';
                                     $pdfPreviewUrl = $BASE_URL . 'export_capeante_rah_pdf.php?id_capeante=' . $intern['id_capeante'] . '&download=0';
                                     $pdfDownloadUrl = $BASE_URL . 'export_capeante_rah_pdf.php?id_capeante=' . $intern['id_capeante'] . '&download=1';
-                                    $rahEditUrl = $BASE_URL . 'cad_capeante_rah.php?id_capeante=' . $intern['id_capeante'];
+                                    $rahEditUrl = $BASE_URL . 'contas/auditar/' . $intern['id_capeante'];
                                 ?>
                                 <td class="action text-center">
                                     <div class="d-flex flex-column align-items-center gap-2">
@@ -547,13 +547,13 @@ if ($havePages) {
                                             <?php if (($intern['encerrado_cap'] ?? 'n') !== "s"): ?>
                                                 <?php if (($intern['em_auditoria_cap'] ?? 'n') === "s"): ?>
                                                     <a class="legenda-em-auditoria"
-                                                        href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                        href="<?= $BASE_URL ?>contas/auditar/<?= $intern['id_capeante'] ?>">
                                                         <i class="bi bi-file-text" style="color:#db5a0f;font-size:1.1em;margin:0 5px"></i>
                                                         <span style="color:#db5a0f;">Analisar</span>
                                                     </a>
                                                 <?php else: ?>
                                                     <a class="legenda-iniciar"
-                                                        href="<?= $BASE_URL ?>cad_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>">
+                                                        href="<?= $BASE_URL ?>contas/auditar/<?= $intern['id_capeante'] ?>">
                                                         <i class="bi bi-file-text"
                                                             style="color:rgb(25,78,255);font-size:1.1em;font-weight:bold;margin:0 5px"></i>
                                                         <span>Iniciar</span>
@@ -568,7 +568,7 @@ if ($havePages) {
                                             <?php endif; ?>
 
                                             <a class="legenda-parcial"
-                                                href="<?= $BASE_URL ?>cad_capeante_rah.php?id_internacao=<?= $intern["id_internacao"] ?>&type=create">
+                                                href="<?= $BASE_URL ?>contas/nova/internacao/<?= $intern["id_internacao"] ?>">
                                                 <i class="legenda-parcial bi bi-file-text"
                                                     style="color:green;text-decoration:none;font-size:10px;font-weight:bold;margin:0 5px">
                                                     Criar Parcial</i>

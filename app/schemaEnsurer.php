@@ -212,6 +212,57 @@ if (!function_exists('ensure_visita_faturamento_columns')) {
     }
 }
 
+if (!function_exists('ensure_capeante_core_columns')) {
+    function ensure_capeante_core_columns(PDO $conn): void
+    {
+        static $checked = false;
+        if ($checked) return;
+        $checked = true;
+
+        try {
+            $stmtTable = $conn->prepare("
+                SELECT COUNT(*)
+                  FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_capeante'
+            ");
+            $stmtTable->execute();
+            if ((int)$stmtTable->fetchColumn() === 0) {
+                return;
+            }
+
+            $stmtCols = $conn->prepare("
+                SELECT COLUMN_NAME
+                  FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_capeante'
+            ");
+            $stmtCols->execute();
+            $existing = array_flip($stmtCols->fetchAll(PDO::FETCH_COLUMN) ?: []);
+
+            $addColumn = static function (string $column, string $definition, ?string $after = null) use ($conn, &$existing): void {
+                if (isset($existing[$column])) {
+                    return;
+                }
+
+                $sql = "ALTER TABLE tb_capeante ADD COLUMN {$column} {$definition}";
+                if ($after !== null && isset($existing[$after])) {
+                    $sql .= " AFTER {$after}";
+                }
+                $conn->exec($sql);
+                $existing[$column] = true;
+            };
+
+            $addColumn('data_digit_capeante', 'DATE NULL DEFAULT NULL', 'data_fech_capeante');
+            $addColumn('conta_fatura_cap', "VARCHAR(5) NULL DEFAULT 'n'", 'conta_faturada_cap');
+            $addColumn('acomodacao_cap', 'VARCHAR(100) NULL DEFAULT NULL', 'conta_fatura_cap');
+            $addColumn('valor_hemoderivados', 'DECIMAL(12,2) NULL DEFAULT 0.00', 'valor_opme');
+        } catch (Throwable $e) {
+            error_log('[SCHEMA][tb_capeante:core] ' . $e->getMessage());
+        }
+    }
+}
+
 if (!function_exists('ensure_schema_version_table')) {
     function ensure_schema_version_table(PDO $conn): void
     {

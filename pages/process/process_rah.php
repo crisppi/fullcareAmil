@@ -544,7 +544,7 @@ if ($fk_internacao) {
         $stmtPac->execute();
         $patientId = (int)$stmtPac->fetchColumn();
         if ($patientId > 0) {
-            $hubUrl = rtrim($BASE_URL, '/') . '/hub_paciente/paciente' . $patientId;
+            $hubUrl = rtrim($BASE_URL, '/') . '/pacientes/hub/' . $patientId;
             $stmtName = $conn->prepare("SELECT nome_pac FROM tb_paciente WHERE id_paciente = :id LIMIT 1");
             $stmtName->bindValue(':id', $patientId, PDO::PARAM_INT);
             $stmtName->execute();
@@ -562,7 +562,7 @@ if ($patientId) {
         'patient_id' => $patientId,
         'patient_name' => $patientName ? (string)$patientName : '',
         'accounts_url' => $BASE_URL . 'internacoes/rah?pesquisa_pac=' . rawurlencode($patientName ?? ''),
-        'visits_url' => $fk_internacao ? $BASE_URL . 'cad_visita.php?id_internacao=' . $fk_internacao : null,
+        'visits_url' => $fk_internacao ? $BASE_URL . 'visitas/nova/internacao/' . $fk_internacao : null,
     ];
 }
 

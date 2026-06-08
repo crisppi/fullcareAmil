@@ -435,7 +435,7 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="<?= $BASE_URL ?>hub_paciente/paciente<?= $id_paciente ?>"
+                                                <a href="<?= $BASE_URL ?>pacientes/hub/<?= $id_paciente ?>"
                                                     class="dropdown-item" style="font-size: .9rem; font-weight: 400 !important; text-transform: none !important;">
                                                     <i class="bi bi-journal-medical"
                                                         style="font-size:1rem;margin-right:8px;color:#0ea5e9;"></i>

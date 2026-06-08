@@ -61,8 +61,8 @@ if ($__docroot !== '' && strpos($__appDir, $__docroot) === 0) {
 // Fallback para ambientes locais antigos (mantém suporte a /FullConex, etc.)
 $__host   = $_SERVER['HTTP_HOST']   ?? '';
 $__script = $_SERVER['SCRIPT_NAME'] ?? '';
-if ($APP_BASE_PATH === '/' && $__host && stripos($__host, 'localhost') !== false) {
-    if (preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $__script, $match)) {
+if ($APP_BASE_PATH === '/') {
+    if (preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $__script, $match)) {
         $APP_BASE_PATH = '/' . trim($match[1], '/') . '/';
     }
 }
@@ -287,6 +287,7 @@ if (!in_array($__scriptBase, $__schemaSkip, true)) {
     require_once __DIR__ . '/app/schemaEnsurer.php';
     ensure_visita_timer_column($conn);
     ensure_visita_faturamento_columns($conn);
+    ensure_capeante_core_columns($conn);
     ensure_internacao_timer_column($conn);
     ensure_internacao_core_columns($conn);
     ensure_internacao_forecast_columns($conn);
@@ -335,6 +336,34 @@ if (!function_exists('flash')) {
         }
         $_SESSION[$key] = $val;
         return true;
+    }
+}
+
+if (!function_exists('fullcare_feedback_type')) {
+    function fullcare_feedback_type(?string $type): string
+    {
+        $type = strtolower(trim((string)$type));
+        if (in_array($type, ['success', 'sucesso', 'ok'], true)) return 'success';
+        if (in_array($type, ['warning', 'warn', 'aviso', 'alert'], true)) return 'warning';
+        if (in_array($type, ['danger', 'error', 'erro'], true)) return 'error';
+        return 'info';
+    }
+}
+
+if (!function_exists('fullcare_flash')) {
+    function fullcare_flash(string $message, string $type = 'info', ?string $title = null): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            @session_start();
+        }
+        if (!isset($_SESSION['fullcare_feedback']) || !is_array($_SESSION['fullcare_feedback'])) {
+            $_SESSION['fullcare_feedback'] = [];
+        }
+        $_SESSION['fullcare_feedback'][] = [
+            'type' => fullcare_feedback_type($type),
+            'title' => $title,
+            'message' => $message,
+        ];
     }
 }
 

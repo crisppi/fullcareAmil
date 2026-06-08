@@ -75,7 +75,7 @@ if ($type === "create-ant") {
             'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
             'source' => 'process_antecedente.php',
         ], $BASE_URL);
-        header('location:list_antecedente.php');
+        header('location: antecedentes');
     } else {
         $message->setMessage("Você precisa adicionar pelo menos: Antecedente!", "error", "internacoes/nova");
     }
@@ -117,7 +117,7 @@ if ($type === "create-ant") {
         'source' => 'process_antecedente.php',
     ], $BASE_URL);
 
-    header('location:list_antecedente.php');
+    header('location: antecedentes');
 };
 if ($type === "delete") {
     // Recebe os dados do form
@@ -139,7 +139,7 @@ if ($type === "delete") {
             'source' => 'process_antecedente.php',
         ], $BASE_URL);
 
-        header('location:list_antecedente.php');
+        header('location: antecedentes');
     } else {
 
         $message->setMessage("Informações inválidas!", "error", "index.php");

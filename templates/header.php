@@ -2,6 +2,7 @@
 
 include_once("globals.php");
 include_once("db.php");
+require_once(__DIR__ . "/../app/services/AuditorActionService.php");
 require_once(__DIR__ . "/../app/security/bi_access.php");
 require_once(__DIR__ . "/../app/security/inteligencia_access.php");
 date_default_timezone_set('America/Sao_Paulo');
@@ -15,7 +16,7 @@ if ($basePathFromBaseUrl === '//') {
     $basePathFromBaseUrl = '/';
 }
 $requestUriPath = (string)(parse_url((string)($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH) ?? '');
-if ($basePathFromBaseUrl === '/' && preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $requestUriPath, $mBaseApp)) {
+if ($basePathFromBaseUrl === '/' && preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $requestUriPath, $mBaseApp)) {
     $isHttpsHeader = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
         || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443)
         || (strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https');
@@ -138,6 +139,9 @@ $canSeeCadastrosMenu = $canSeeFullMenu && (
     || $isCadastroRequestPath
 );
 $isPerfilMedicoMenu = $startsWithAnyAccess($normCargoAccess, ['medico', 'med']);
+$isAuditorHeaderSearch = class_exists('AuditorActionService')
+    ? AuditorActionService::canUseOperationalSearch($_SESSION)
+    : false;
 $seguradoraHeaderLogoUrl = null;
 $seguradoraHeaderNome = null;
 $resolveSeguradoraLogoUrl = static function (string $logoSeg, int $seguradoraId, string $seguradoraNome) use ($BASE_URL): ?string {
@@ -295,7 +299,12 @@ if (!empty($sessionIdUsuario)) {
     <link href="<?= $BASE_URL ?>css/module_headers.css?v=<?= @filemtime(__DIR__ . '/../css/module_headers.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/style_show_internacao.css?v=<?= @filemtime(__DIR__ . '/../css/style_show_internacao.css') ?>" rel="stylesheet">
     <link href="<?= $BASE_URL ?>css/table_style.css?v=<?= @filemtime(__DIR__ . '/../css/table_style.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/listagem_padrao.css?v=<?= @filemtime(__DIR__ . '/../css/listagem_padrao.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/feedback.css?v=<?= @filemtime(__DIR__ . '/../css/feedback.css') ?>" rel="stylesheet">
     <script defer src="<?= $BASE_URL ?>js/lista_header_sort.js"></script>
+    <script defer src="<?= $BASE_URL ?>js/listagem_enhancer.js?v=<?= @filemtime(__DIR__ . '/../js/listagem_enhancer.js') ?: time() ?>"></script>
+    <script defer src="<?= $BASE_URL ?>js/feedback.js?v=<?= @filemtime(__DIR__ . '/../js/feedback.js') ?: time() ?>"></script>
+    <script defer src="<?= $BASE_URL ?>js/friendly_urls.js?v=<?= @filemtime(__DIR__ . '/../js/friendly_urls.js') ?: time() ?>"></script>
 
     <!-- ======= APENAS DESIGN (logos alinhados e simétricos) ======= -->
     <style>
@@ -470,11 +479,23 @@ if (!empty($sessionIdUsuario)) {
         }
 
         .header-actions #global-patient-search .form-control,
+        .header-actions #global-patient-search .form-select,
         .header-actions #global-patient-search input,
         .header-actions #global-patient-search .btn {
             min-height: 34px !important;
             height: 34px !important;
             font-size: 0.78rem !important;
+        }
+
+        .header-actions #global-patient-search .global-search-type {
+            width: 118px;
+            max-width: 118px;
+            border-left: 0;
+            border-right: 0;
+            padding: 0 1.75rem 0 0.55rem !important;
+            color: #24384f;
+            font-weight: 700;
+            background-color: #f8fbff;
         }
 
         .header-actions #global-patient-search .input-group-text {
@@ -517,8 +538,40 @@ if (!empty($sessionIdUsuario)) {
             gap: 0.25rem;
         }
 
+        .header-chat-launcher.has-unread {
+            border-color: rgba(220, 38, 38, .35);
+            background: #fff7f7;
+            color: #7f1d1d;
+            box-shadow: 0 8px 18px rgba(220, 38, 38, .12);
+        }
+
+        .header-chat-launcher.has-unread:hover {
+            background: #fff1f1;
+            border-color: rgba(220, 38, 38, .48);
+            color: #7f1d1d;
+        }
+
         .header-chat-launcher .chat-unread-badge {
-            font-size: 0.58rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border: 2px solid #fff;
+            font-size: 0.66rem;
+            font-weight: 900;
+            box-shadow: 0 7px 16px rgba(220, 38, 38, .28);
+            animation: chatUnreadPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes chatUnreadPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+            }
         }
 
         #search-results-dropdown {
@@ -985,12 +1038,12 @@ if (!empty($sessionIdUsuario)) {
                                         Menu
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarMenuDropdown">
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>menu_app.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>central-trabalho"><i
                                                     class="bi bi-speedometer2"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(255, 25, 55);"></i>
-                                                Dashboard</a></li>
+                                                Central de trabalho</a></li>
                                         <?php if ($isDiretoria) { ?>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard_operacional.php"><i
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>dashboard-operacional"><i
                                                         class="bi bi-activity"
                                                         style="font-size: 1rem;margin-right:5px; color: rgb(94, 35, 99);"></i>
                                                     Dashboard operacional</a></li>
@@ -998,13 +1051,13 @@ if (!empty($sessionIdUsuario)) {
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>manual.html"><i class="bi bi-person"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(255, 25, 55);"></i>
                                                 Manual</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>SolicitacaoCustomizacao.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>solicitacoes/customizacao">
                                                 <i class="bi bi-file-earmark-text"
                                                     style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Solicitação de Customização
                                             </a></li>
                                         <?php if ($isDiretoria) { ?>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>SolicitacaoCustomizacaoList.php">
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>solicitacoes/customizacao/lista">
                                                     <i class="bi bi-clipboard-check"
                                                         style="font-size: 1rem;margin-right:5px; color: #0d6efd;"></i>
                                                     Solicitações (Lista)
@@ -1016,15 +1069,9 @@ if (!empty($sessionIdUsuario)) {
                                                         style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                     Performance equipes</a></li>
                                         <?php } ?>
-                                        <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
-                                                    <i class="bi bi-journal-text"
-                                                        style="font-size: 1rem;margin-right:5px; color:#7c5023;"></i>
-                                                    Auditoria</a></li>
-                                        <?php } ?>
                                         <?php if ($sessionNivel > 3) { ?>
                                             <li class="nav-item">
-                                                <a class="dropdown-item" href="<?= $BASE_URL ?>admin_permissao.php">
+                                                <a class="dropdown-item" href="<?= $BASE_URL ?>administracao/permissoes">
                                                     <i class="bi bi-shield-lock"
                                                         style="font-size: 1rem;margin-right:5px; color: rgb(21, 56, 210);"></i>
                                                     Permissões
@@ -1064,7 +1111,7 @@ if (!empty($sessionIdUsuario)) {
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_usuario.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>usuarios"><i
                                                     class="bi bi-people-fill"
                                                     style="font-size: 1rem; margin-right:5px; color: rgb(155, 95, 76);"></i>
                                                 Usuários</a></li>
@@ -1129,19 +1176,19 @@ if (!empty($sessionIdUsuario)) {
                                         <i class="bi bi-journal-richtext me-1" style="color:#4b7fa5;"></i>Contas
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownContasRah">
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_cap_rah.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>contas/auditar">
                                                 <i class="bi bi-currency-dollar text-success me-2"></i>Contas para Auditar
                                             </a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_cap_fin.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>contas/finalizadas">
                                                 <i class="bi bi-shield-check text-primary me-2"></i>Contas Finalizadas
                                             </a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_senha_fin.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>contas/senhas-finalizadas">
                                                 <i class="bi bi-bookmark-check text-danger me-2"></i>Senhas Finalizadas
                                             </a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_cap_par.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>contas/paradas">
                                                 <i class="bi bi-pause-circle text-warning me-2"></i>Contas Paradas
                                             </a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_internacao_cap_jornada.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>contas/jornada">
                                                 <i class="bi bi-diagram-3 text-info me-2"></i>Jornada da Conta
                                             </a></li>
                                     </ul>
@@ -1206,7 +1253,7 @@ if (!empty($sessionIdUsuario)) {
                                                     style="font-size:  1rem;margin-right:5px; color:#d63384;"></i>
                                                 Internações sem senha</a></li>
                                         <?php if (!$isPerfilMedicoMenu) { ?>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_pendencias_operacionais.php"><i
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>gestao/pendencias-operacionais"><i
                                                         class="bi bi-exclamation-diamond"
                                                         style="font-size:  1rem;margin-right:5px; color:#fd7e14;"></i>
                                                     Pendências operacionais</a></li>
@@ -1222,11 +1269,11 @@ if (!empty($sessionIdUsuario)) {
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_fila_tarefas.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>gestao/fila-tarefas"><i
                                                     class="bi bi-list-check"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(20, 120, 90);"></i>
                                                 Fila de Tarefas</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_prorrogacao_pendente.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>gestao/prorrogacoes-pendentes"><i
                                                     class="bi bi-hourglass-split"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(180, 120, 20);"></i>
                                                 Prorrogação Pendente</a></li>
@@ -1238,7 +1285,7 @@ if (!empty($sessionIdUsuario)) {
                                                         class="bi bi-list-check"
                                                         style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                     Lista Visitas</a></li>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>faturamento_visitas.php"><i
+                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>visitas/faturamento"><i
                                                         class="bi bi-clipboard-check"
                                                         style="font-size: 1rem;margin-right:5px; color:#0a4fa3;"></i>
                                                     Faturamento Mensal</a></li>
@@ -1270,11 +1317,11 @@ if (!empty($sessionIdUsuario)) {
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>longa_permanencia_gestao.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>cuidado-continuado/longa-permanencia"><i
                                                     class="bi bi-hourglass-split"
                                                     style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Longa Permanência</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>home_care_gestao.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>cuidado-continuado/home-care"><i
                                                     class="bi bi-house-heart"
                                                     style="font-size: 1rem;margin-right:5px; color:#0ea5e9;"></i>
                                                 Home Care</a></li>
@@ -1320,7 +1367,7 @@ if (!empty($sessionIdUsuario)) {
                                                     class="bi bi-speedometer2"
                                                     style="font-size: 1rem;margin-right:5px; color:#9fd7ff;"></i>
                                                 Resumo</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>IndicadoresEssenciaisHubBI.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>bi/indicadores-essenciais"><i
                                                     class="bi bi-bar-chart-steps"
                                                     style="font-size: 1rem;margin-right:5px; color:#7ee3c8;"></i>
                                                 Indicadores Essenciais</a></li>
@@ -1367,11 +1414,11 @@ if (!empty($sessionIdUsuario)) {
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>longa_permanencia_gestao.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>cuidado-continuado/longa-permanencia"><i
                                                     class="bi bi-hourglass-split"
                                                     style="font-size: 1rem;margin-right:5px; color:#c084fc;"></i>
                                                 Gestão Longa Permanência</a></li>
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>home_care_gestao.php"><i
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>cuidado-continuado/home-care"><i
                                                     class="bi bi-house-heart"
                                                     style="font-size: 1rem;margin-right:5px; color:#7dd3fc;"></i>
                                                 Gestão Home Care</a></li>
@@ -1481,10 +1528,10 @@ if (!empty($sessionIdUsuario)) {
                                         Lista
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarGestorListas">
-                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>menu_app.php">
+                                        <li><a class="dropdown-item" href="<?= $BASE_URL ?>central-trabalho">
                                                 <i class="bi bi-grid-1x2-fill"
                                                     style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
-                                                Dashboard Operacional</a></li>
+                                                Central de trabalho</a></li>
                                         <li><a class="dropdown-item" href="<?= $BASE_URL ?>internacoes/lista">
                                                 <i class="bi bi-clipboard-data"
                                                     style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
@@ -1497,12 +1544,6 @@ if (!empty($sessionIdUsuario)) {
                                                 <i class="bi bi-clipboard-check"
                                                     style="font-size: 1rem;margin-right:5px; color:#4b7fa5;"></i>
                                                 Altas</a></li>
-                                        <?php if (in_array((int)($_SESSION['nivel'] ?? 0), [4, 5], true) || mb_strtolower(trim((string)($_SESSION['email_user'] ?? '')), 'UTF-8') === 'crisppi@fullcare.com.br') { ?>
-                                            <li><a class="dropdown-item" href="<?= $BASE_URL ?>list_audit_log.php">
-                                                    <i class="bi bi-journal-text"
-                                                        style="font-size: 1rem;margin-right:5px; color:#7c5023;"></i>
-                                                    Auditoria</a></li>
-                                        <?php } ?>
                                     </ul>
                                 </li>
                             <?php } ?>
@@ -1562,23 +1603,33 @@ if (!empty($sessionIdUsuario)) {
 
             <div class="d-flex align-items-center gap-2 ms-auto header-actions pe-3">
                 <a href="<?= htmlspecialchars($chatAssistantLink) ?>"
-                    class="btn btn-outline-secondary position-relative header-chat-launcher header-action-btn"
-                    title="Mensagens entre usuários">
+                    id="header-chat-launcher"
+                    class="btn btn-outline-secondary position-relative header-chat-launcher header-action-btn<?= $chatUnreadCount > 0 ? ' has-unread' : '' ?>"
+                    title="<?= $chatUnreadCount > 0 ? htmlspecialchars($chatUnreadCount . ' mensagem(ns) não lida(s)') : 'Mensagens entre usuários' ?>"
+                    aria-label="<?= $chatUnreadCount > 0 ? htmlspecialchars('Mensagens: ' . $chatUnreadCount . ' não lida(s)') : 'Mensagens entre usuários' ?>"
+                    data-unread-count="<?= (int)$chatUnreadCount ?>">
                     <i class="bi bi-chat-dots"></i>
                     <span class="d-none d-xl-inline ms-1">Mensagens</span>
-                    <?php if ($chatUnreadCount > 0): ?>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger chat-unread-badge">
-                            <?= $chatUnreadCount > 99 ? '99+' : $chatUnreadCount ?>
-                        </span>
-                    <?php endif; ?>
+                    <span
+                        id="header-chat-unread-badge"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger chat-unread-badge"
+                        <?= $chatUnreadCount > 0 ? '' : 'hidden' ?>>
+                        <?= $chatUnreadCount > 99 ? '99+' : (int)$chatUnreadCount ?>
+                    </span>
                 </a>
                 <form class="d-flex position-relative" id="global-patient-search" autocomplete="off">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <?php if ($isAuditorHeaderSearch): ?>
+                            <select class="form-select global-search-type" id="global-search-type" aria-label="Tipo de pesquisa">
+                                <option value="paciente" selected>Paciente</option>
+                                <option value="internacao">Internação</option>
+                                <option value="conta">Conta</option>
+                            </select>
+                        <?php endif; ?>
                         <input type="text" class="form-control" id="inp-search-paciente"
-                            placeholder="Pesquisar por senha, matrícula ou nome"
-                            aria-label="Buscar por senha, matrícula ou nome" />
+                            placeholder="<?= $isAuditorHeaderSearch ? 'Nome ou matrícula' : 'Pesquisar por senha, matrícula ou nome' ?>"
+                            aria-label="<?= $isAuditorHeaderSearch ? 'Buscar pelo tipo selecionado' : 'Buscar por senha, matrícula ou nome' ?>" />
                     </div>
 
                     <div id="search-results-dropdown" class="dropdown-menu show"
@@ -1654,46 +1705,48 @@ if (!empty($sessionIdUsuario)) {
             </script>
         <?php endif; ?>
 
-        <!-- notification message -->
+        <!-- feedback visual global -->
         <?php if (session_status() !== PHP_SESSION_ACTIVE) session_start(); ?>
         <?php
-        $flashMsg  = $_SESSION['mensagem']      ?? '';
-        $flashType = $_SESSION['mensagem_tipo'] ?? 'danger';
-        unset($_SESSION['mensagem'], $_SESSION['mensagem_tipo']);
+        $feedbackItems = [];
+        if (!empty($_SESSION['fullcare_feedback']) && is_array($_SESSION['fullcare_feedback'])) {
+            foreach ($_SESSION['fullcare_feedback'] as $item) {
+                if (!is_array($item) || empty($item['message'])) continue;
+                $feedbackItems[] = [
+                    'type' => function_exists('fullcare_feedback_type') ? fullcare_feedback_type($item['type'] ?? 'info') : ($item['type'] ?? 'info'),
+                    'title' => $item['title'] ?? null,
+                    'message' => (string)$item['message'],
+                ];
+            }
+        }
+        if (!empty($_SESSION['mensagem'])) {
+            $feedbackItems[] = [
+                'type' => function_exists('fullcare_feedback_type') ? fullcare_feedback_type($_SESSION['mensagem_tipo'] ?? 'danger') : ($_SESSION['mensagem_tipo'] ?? 'danger'),
+                'title' => null,
+                'message' => (string)$_SESSION['mensagem'],
+            ];
+        }
+        if (!empty($_SESSION['msg'])) {
+            $feedbackItems[] = [
+                'type' => function_exists('fullcare_feedback_type') ? fullcare_feedback_type($_SESSION['type'] ?? 'info') : ($_SESSION['type'] ?? 'info'),
+                'title' => null,
+                'message' => trim(strip_tags((string)$_SESSION['msg'])),
+            ];
+        }
+        $feedbackSeen = [];
+        $feedbackItems = array_values(array_filter($feedbackItems, static function ($item) use (&$feedbackSeen) {
+            $message = trim((string)($item['message'] ?? ''));
+            if ($message === '') return false;
+            $key = (string)($item['type'] ?? 'info') . '|' . mb_strtolower($message, 'UTF-8');
+            if (isset($feedbackSeen[$key])) return false;
+            $feedbackSeen[$key] = true;
+            return true;
+        }));
+        unset($_SESSION['fullcare_feedback'], $_SESSION['mensagem'], $_SESSION['mensagem_tipo'], $_SESSION['msg'], $_SESSION['type']);
         ?>
-        <?php if ($flashMsg): ?>
-            <div class="container mt-3">
-                <div id="app-flash"
-                    class="alert alert-<?= htmlspecialchars($flashType) ?> text-center alert-dismissible fade show"
-                    role="alert">
-                    <?= htmlspecialchars($flashMsg) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                </div>
-            </div>
-
-            <script>
-                (function() {
-                    var el = document.getElementById('app-flash');
-                    if (!el) return;
-
-                    // fecha visualmente ~9.8s (para dar tempo da transição)
-                    setTimeout(function() {
-                        try {
-                            if (window.bootstrap && bootstrap.Alert) {
-                                bootstrap.Alert.getOrCreateInstance(el).close();
-                            } else {
-                                el.classList.remove('show'); // some a classe de exibição
-                            }
-                        } catch (e) {}
-                    }, 9800);
-
-                    // remove do DOM em 10s (garantia)
-                    setTimeout(function() {
-                        if (el && el.parentNode) el.parentNode.removeChild(el);
-                    }, 5000);
-                })();
-            </script>
-        <?php endif; ?>
+        <script>
+            window.FullCareInitialFeedback = <?= json_encode($feedbackItems, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+        </script>
 
         <div class="modal fade" id="globalModal">
             <div class="modal-dialog  modal-lg modal-dialog-centered modal-xl">
@@ -1713,11 +1766,48 @@ if (!empty($sessionIdUsuario)) {
 </body>
 <script src="js/fix-header.js"></script>
 <script>
+    window.FullCareListUserId = <?= json_encode((string)($sessionIdUsuario ?? 'anon')) ?>;
+    window.FullCareChatUnreadUrl = <?= json_encode($BASE_URL . 'ajax/chat_unread_count.php') ?>;
+
+    function updateHeaderChatBadge(count) {
+        const btn = document.getElementById('header-chat-launcher');
+        const badge = document.getElementById('header-chat-unread-badge');
+        if (!btn || !badge) return;
+
+        const unread = Math.max(0, Number(count || 0));
+        btn.dataset.unreadCount = String(unread);
+        btn.classList.toggle('has-unread', unread > 0);
+        btn.title = unread > 0 ? `${unread} mensagem(ns) não lida(s)` : 'Mensagens entre usuários';
+        btn.setAttribute('aria-label', unread > 0 ? `Mensagens: ${unread} não lida(s)` : 'Mensagens entre usuários');
+        badge.textContent = unread > 99 ? '99+' : String(unread);
+        badge.hidden = unread <= 0;
+    }
+
+    function refreshHeaderChatBadge() {
+        if (!window.FullCareChatUnreadUrl || typeof fetch !== 'function') return;
+        fetch(window.FullCareChatUnreadUrl, {
+            credentials: 'same-origin',
+            cache: 'no-store',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then((response) => response.ok ? response.json() : null)
+            .then((payload) => {
+                if (!payload || payload.success === false) return;
+                updateHeaderChatBadge(payload.count || 0);
+            })
+            .catch(() => {});
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         try {
             localStorage.removeItem('fcx_zoom');
         } catch (e) {}
         document.documentElement.style.zoom = '';
+        updateHeaderChatBadge(document.getElementById('header-chat-launcher')?.dataset.unreadCount || 0);
+        refreshHeaderChatBadge();
+        window.setInterval(refreshHeaderChatBadge, 30000);
     });
 </script>
 
@@ -1749,7 +1839,6 @@ if (!empty($sessionIdUsuario)) {
 <script src="<?= $BASE_URL ?>js/stepper.js?v=<?= rawurlencode(defined('APP_VERSION') ? APP_VERSION : '1') ?>"></script>
 <script src="js/show_internacao_visitas.js"></script>
 <script src="<?= $BASE_URL ?>js/contextual-assistant.js"></script>
-</script>
 <script>
     // Base para links absolutos
     const BASE_URL = '<?= $BASE_URL ?>';
@@ -1803,6 +1892,9 @@ if (!empty($sessionIdUsuario)) {
                                     detail: payload.paciente
                                 }));
                             }
+                            if (window.FullCareFeedback && typeof window.FullCareFeedback.success === 'function') {
+                                window.FullCareFeedback.success(payload.message || 'As informações foram salvas com sucesso.', 'Cadastro atualizado');
+                            }
                             return;
                         }
                         if (payload && payload.success === false) {
@@ -1820,7 +1912,10 @@ if (!empty($sessionIdUsuario)) {
                     })
                     .catch((err) => {
                         const msg = (err && err.message) ? err.message : 'Erro ao processar o formulário.';
-                        container.innerHTML = '<div class="p-4 text-danger">' + msg + '</div>';
+                        if (window.FullCareFeedback && typeof window.FullCareFeedback.error === 'function') {
+                            window.FullCareFeedback.error(msg, 'Não foi possível salvar');
+                        }
+                        container.innerHTML = '<div class="p-4 text-danger">' + escapeHtml(msg) + '</div>';
                     })
                     .finally(() => {
                         if (submitBtn) submitBtn.disabled = false;
@@ -1902,7 +1997,11 @@ if (!empty($sessionIdUsuario)) {
                 })
                 .catch(err => {
                     console.error(err);
-                    body.innerHTML = '<div class="p-4 text-danger">Falha ao carregar conteúdo do modal.</div>';
+                    const msg = 'Falha ao carregar conteúdo do modal.';
+                    if (window.FullCareFeedback && typeof window.FullCareFeedback.error === 'function') {
+                        window.FullCareFeedback.error(msg, 'Conteúdo indisponível');
+                    }
+                    body.innerHTML = '<div class="p-4 text-danger">' + msg + '</div>';
                 });
         };
     }
@@ -1918,41 +2017,99 @@ if (!empty($sessionIdUsuario)) {
 
     const $input = $('#inp-search-paciente');
     const $menu = $('#search-results-dropdown');
+    const $searchType = $('#global-search-type');
+
+    const searchTypeConfig = {
+        paciente: {
+            placeholder: 'Nome ou matrícula',
+            empty: 'Nenhum paciente encontrado por nome ou matrícula.',
+            create: true,
+        },
+        internacao: {
+            placeholder: 'Nome do paciente ou ID da internação',
+            empty: 'Nenhuma internação encontrada por nome ou ID.',
+            create: false,
+        },
+        conta: {
+            placeholder: 'Nome do paciente ou ID da conta',
+            empty: 'Nenhuma conta encontrada por nome ou ID.',
+            create: false,
+        },
+    };
+
+    function currentSearchType() {
+        return ($searchType.length ? String($searchType.val() || 'paciente') : 'paciente');
+    }
+
+    function applySearchTypeUi() {
+        const cfg = searchTypeConfig[currentSearchType()] || searchTypeConfig.paciente;
+        if ($searchType.length) {
+            $input.attr('placeholder', cfg.placeholder);
+        }
+        $menu.hide();
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
 
     // Renderiza itens no dropdown
     function renderResults(items) {
         if (!items || !items.length) {
             const termo = $input.val().trim();
+            const termoEsc = escapeHtml(termo);
+            const cfg = searchTypeConfig[currentSearchType()] || searchTypeConfig.paciente;
+            const createLink = cfg.create ? `
+                <a href="#" id="create-new-pac" class="dropdown-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <div><strong>Cadastrar novo paciente</strong></div>
+                        ${termo ? `<small class="text-muted">Iniciar cadastro com: <em>${termoEsc}</em></small>` : ''}
+                    </div>
+                    <i class="bi bi-plus-circle"></i>
+                </a>
+            ` : '';
             $menu.html(`
-        <div class="dropdown-item text-muted">Nada encontrado. Tente outra senha, matrícula ou nome.</div>
-        <a href="#" id="create-new-pac" class="dropdown-item d-flex justify-content-between align-items-center">
-            <div>
-                <div><strong>Cadastrar novo paciente</strong></div>
-                ${termo ? `<small class="text-muted">Iniciar cadastro com: <em>${termo}</em></small>` : ''}
-            </div>
-            <i class="bi bi-plus-circle"></i>
-        </a>
+        <div class="dropdown-item text-muted">${escapeHtml(cfg.empty)}</div>
+        ${createLink}
         `).show();
             return;
         }
 
         const html = items.map((p, idx) => {
-            const metaParts = [];
-            if (p.senha) metaParts.push(`Senha: ${p.senha}`);
-            if (p.matricula) metaParts.push(`Matrícula: ${p.matricula}`);
-            if (p.nascimento_fmt) metaParts.push(`Nasc.: ${p.nascimento_fmt}`);
-            const meta = metaParts.length ? `<small class="text-muted">${metaParts.join(' • ')}</small>` : '';
-            const nome = p.nome || 'Paciente sem nome';
+            const isOperational = Boolean(p.type || p.title || p.url);
+            const href = isOperational && p.url
+                ? p.url
+                : `pacientes/hub/${encodeURIComponent(p.id_paciente)}`;
+            const icon = escapeHtml(p.icon || (p.type === 'internacao' ? 'bi-hospital' : (p.type === 'conta' ? 'bi-receipt' : 'bi-person-vcard')));
+            const typeLabel = p.type ? escapeHtml(String(p.type).charAt(0).toUpperCase() + String(p.type).slice(1)) : 'Paciente';
+            let title = p.title || p.nome || 'Paciente sem nome';
+            let subtitle = p.subtitle || '';
+            if (!subtitle) {
+                const metaParts = [];
+                if (p.senha) metaParts.push(`Senha: ${p.senha}`);
+                if (p.matricula) metaParts.push(`Matrícula: ${p.matricula}`);
+                if (p.nascimento_fmt) metaParts.push(`Nasc.: ${p.nascimento_fmt}`);
+                subtitle = metaParts.join(' • ');
+            }
+            const meta = subtitle ? `<small class="text-muted">${escapeHtml(subtitle)}</small>` : '';
 
             return `
-        <a href="hub_paciente/paciente${encodeURIComponent(p.id_paciente)}"
+        <a href="${escapeHtml(href)}"
             class="dropdown-item d-flex justify-content-between align-items-center ${idx === 0 ? 'active' : ''}"
-            data-id="${p.id_paciente}">
+            data-id="${escapeHtml(p.id_paciente || '')}">
             <div>
-                <div><strong>${nome}</strong></div>
+                <div><strong>${escapeHtml(title)}</strong></div>
                 ${meta}
             </div>
-            <i class="bi bi-arrow-return-right"></i>
+            <span class="d-inline-flex align-items-center gap-2">
+                <small class="text-muted">${typeLabel}</small>
+                <i class="bi ${icon}"></i>
+            </span>
         </a>
         `;
         }).join('');
@@ -1968,7 +2125,8 @@ if (!empty($sessionIdUsuario)) {
             return;
         }
         $.getJSON('ajax/pacientes_search.php', {
-                q
+                q,
+                type: currentSearchType()
             })
             .done(res => {
                 renderResults(res);
@@ -1980,6 +2138,9 @@ if (!empty($sessionIdUsuario)) {
                     errorThrown,
                     responseText: jqXHR.responseText
                 });
+                if (window.FullCareFeedback && typeof window.FullCareFeedback.error === 'function') {
+                    window.FullCareFeedback.error('Não foi possível concluir a busca. Tente novamente.', 'Busca indisponível');
+                }
                 $menu
                     .html(
                         `<div class="dropdown-item text-danger">
@@ -1993,6 +2154,14 @@ if (!empty($sessionIdUsuario)) {
     }, 250);
 
     $input.on('input', doSearch);
+    $searchType.on('change', function() {
+        applySearchTypeUi();
+        if ($input.val().trim().length >= 2) {
+            doSearch();
+        }
+        $input.trigger('focus');
+    });
+    applySearchTypeUi();
 
     // Fecha dropdown ao clicar fora
     $(document).on('click', function(e) {
@@ -2209,7 +2378,7 @@ if (!empty($sessionIdUsuario)) {
             navigateWithReturn(BASE_URL + 'pacientes/novo');
         } else if (key === 'V') {
             handled = true;
-            navigateWithReturn(BASE_URL + 'cad_visita.php');
+            navigateWithReturn(BASE_URL + 'visitas/nova');
         } else if (key === 'S') {
             handled = true;
             if (typeof triggerInternacaoAutoSave === 'function') {

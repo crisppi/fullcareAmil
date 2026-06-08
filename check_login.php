@@ -116,7 +116,10 @@ try {
     $loginAliases = [
         'diretor@fullcare.com.br' => 'diretor@minas.com',
     ];
-    $loginLookupIdentifier = $loginAliases[$loginIdentifier] ?? $loginIdentifier;
+    $loginLookupIdentifiers = array_values(array_unique(array_filter([
+        $loginIdentifier,
+        $loginAliases[$loginIdentifier] ?? null,
+    ])));
 
     $stmt = $conn->prepare($userSelect . "
         WHERE LOWER(TRIM(email_user)) = :email_identifier
@@ -125,12 +128,19 @@ try {
            OR LOWER(TRIM(usuario_user)) = :user_identifier
         LIMIT 1
     ");
-    $stmt->bindValue(':email_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':email2_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':login_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
-    $stmt->bindValue(':user_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    $user = null;
+    foreach ($loginLookupIdentifiers as $loginLookupIdentifier) {
+        $stmt->bindValue(':email_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+        $stmt->bindValue(':email2_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+        $stmt->bindValue(':login_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+        $stmt->bindValue(':user_identifier', $loginLookupIdentifier, PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+        if (is_array($user)) {
+            break;
+        }
+    }
 
     if (!is_array($user) && strpos($loginIdentifier, '@') !== false) {
         $alias = fullcare_normalize_login_identifier((string)strtok($loginIdentifier, '@'));

@@ -501,8 +501,8 @@ try {
                             $capeanteId = (int)($row['id_capeante'] ?? 0);
                             $internacaoId = (int)($row['id_internacao'] ?? 0);
                             $capeanteLink = $capeanteId
-                                ? $BASE_URL . "cad_capeante_rah.php?id_capeante=" . $capeanteId
-                                : $BASE_URL . "cad_capeante_rah.php?id_internacao=" . $internacaoId . "&type=create";
+                                ? $BASE_URL . "contas/auditar/" . $capeanteId
+                                : $BASE_URL . "contas/nova/internacao/" . $internacaoId;
                             ?>
                             <a class="btn btn-outline-primary btn-sm" href="<?= h($capeanteLink) ?>">Abrir</a>
                         </td>

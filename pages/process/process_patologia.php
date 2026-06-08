@@ -79,7 +79,7 @@ if ($type === "create") {
             'trace_id' => isset($__flowCtxAuto) ? ($__flowCtxAuto['trace_id'] ?? null) : null,
             'source' => 'process_patologia.php',
         ], $BASE_URL);
-        header('location:list_patologia.php');
+        header('location: patologias');
     } else {
 
         $message->setMessage("Você precisa adicionar pelo menos: patologiaNome do patologia!", "error", "back");
@@ -151,7 +151,7 @@ if ($type === "delete") {
             'source' => 'process_patologia.php',
         ], $BASE_URL);
 
-        header('location:list_patologia.php');
+        header('location: patologias');
     } else {
 
         $message->setMessage("Informações inválidas!", "error", "index.php");

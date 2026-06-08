@@ -394,7 +394,7 @@ $visualizarInternacaoUrl = rtrim($BASE_URL, '/') . '/internacoes/visualizar/' . 
 $visitaPdfBase = $BASE_URL . 'process_visita_pdf.php?id_internacao=' . urlencode((string)$id_internacao) . '&id_visita=';
 $visitaPdfHref = $initId ? $visitaPdfBase . urlencode((string)$initId) : '#';
 $visitaRangePdfBase = $BASE_URL . 'process_visita_pdf.php?range=1&id_internacao=' . urlencode((string)$id_internacao);
-$visitaEditBase = $BASE_URL . 'cad_visita.php?id_internacao=' . urlencode((string)$id_internacao) . '&edit_visita=';
+$visitaEditBase = $BASE_URL . 'visitas/nova/internacao/' . (int)$id_internacao . '?edit_visita=';
 
 // Evita duplicar no layout a visita já destacada no card principal.
 $visitas_recent_exibicao = $visitas_recent;
@@ -612,12 +612,12 @@ if (!empty($pr_pendente_label) && empty($visitas_norm)) {
     $priorityClass = 'is-warning';
 }
 
-$novaVisitaUrl = $BASE_URL . 'cad_visita.php?id_internacao=' . (int)$id_internacao;
-$editarInternacaoUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_internacao;
-$gerarAltaUrl = $BASE_URL . 'edit_alta.php?type=alta&id_internacao=' . (int)$id_internacao;
-$editarProrrogUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_internacao . '&section=prorrog#collapseProrrog';
-$editarTussUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_internacao . '&section=tuss#collapseTuss';
-$editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_internacao . '&section=negoc#collapseNegoc';
+$novaVisitaUrl = $BASE_URL . 'visitas/nova/internacao/' . (int)$id_internacao;
+$editarInternacaoUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao;
+$gerarAltaUrl = $BASE_URL . 'internacoes/alta/editar/' . (int)$id_internacao;
+$editarProrrogUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?section=prorrog#collapseProrrog';
+$editarTussUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?section=tuss#collapseTuss';
+$editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?section=negoc#collapseNegoc';
 ?>
 
 <div id="main-container" class="container-fluid py-3">
@@ -1210,7 +1210,7 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
                                     <?php if (!empty($pr_pendente_label)): ?>
                                         <a class="prorrog-pendente-badge"
                                             style="margin-left:auto !important;background:#ffe7ef !important;color:#b42346 !important;border:1px solid #e55353 !important;border-radius:999px !important;padding:6px 14px !important;display:inline-flex !important;align-items:center !important;text-decoration:none !important;box-shadow:0 1px 4px rgba(181,35,70,.12) !important;"
-                                            href="<?= e($BASE_URL) ?>edit_internacao.php?id_internacao=<?= (int)$id_internacao ?>&section=prorrog#collapseProrrog">
+                                            href="<?= e($BASE_URL) ?>internacoes/editar/<?= (int)$id_internacao ?>?section=prorrog#collapseProrrog">
                                             Período em aberto: <?= e($pr_pendente_label) ?>
                                         </a>
                                     <?php endif; ?>
@@ -1303,7 +1303,7 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
                                 <div class="ov-head ov-head-space">
                                     <h6 class="ov-title mb-0">TUSS</h6>
                                     <a class="btn btn-sm btn-outline-secondary ms-auto"
-                                        href="<?= e($BASE_URL) ?>edit_internacao.php?id_internacao=<?= (int)$id_internacao ?>&section=tuss#collapseTuss">
+                                        href="<?= e($BASE_URL) ?>internacoes/editar/<?= (int)$id_internacao ?>?section=tuss#collapseTuss">
                                         <i class="fas fa-edit me-1"></i>Editar TUSS
                                     </a>
                                 </div>
@@ -1402,7 +1402,7 @@ $editarNegocUrl = $BASE_URL . 'edit_internacao.php?id_internacao=' . (int)$id_in
                                 <div class="ov-head ov-head-space">
                                     <h6 class="ov-title mb-0">Negociações</h6>
                                     <a class="btn btn-sm btn-outline-secondary ms-auto"
-                                        href="<?= e($BASE_URL) ?>edit_internacao.php?id_internacao=<?= (int)$id_internacao ?>&section=negoc#collapseNegoc">
+                                        href="<?= e($BASE_URL) ?>internacoes/editar/<?= (int)$id_internacao ?>?section=negoc#collapseNegoc">
                                         <i class="fas fa-edit me-1"></i>Editar Negociações
                                     </a>
                                 </div>

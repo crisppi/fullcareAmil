@@ -16,7 +16,8 @@ Gate::enforceAction($conn, $BASE_URL, 'delete', 'Você não tem permissão para 
 $message = new Message($BASE_URL);
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
-    header('Location: ' . $BASE_URL . 'list_hospitalUser.php', true, 303);
+    fullcare_flash('Use o botão de exclusão da lista para remover o vínculo.', 'warning', 'Ação não permitida');
+    header('Location: ' . $BASE_URL . 'usuarios/hospitais', true, 303);
     exit;
 }
 
@@ -45,6 +46,9 @@ if ($id_hospitalUser) {
         'before' => $hospitalUserAntesDelete,
         'source' => 'del_hosp_user.php',
     ], $BASE_URL);
+    fullcare_flash('Vínculo hospital-usuário excluído com sucesso.', 'success', 'Exclusão concluída');
+} else {
+    fullcare_flash('Não encontramos o vínculo informado para exclusão.', 'warning', 'Registro não localizado');
 }
 
 header('Location: ' . $redirectUrl, true, 303);

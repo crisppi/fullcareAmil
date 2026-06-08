@@ -522,7 +522,7 @@ if ($semAtualizacao) {
                 <p>Use o dashboard para leitura executiva e avance para a tela operacional quando precisar tratar elegibilidade, barreiras e implantação por caso.</p>
             </div>
             <div class="bi-header-actions">
-                <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>home_care_gestao.php">Gestão Home Care</a>
+                <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>cuidado-continuado/home-care">Gestão Home Care</a>
                 <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegacao">
                     <i class="bi bi-grid-3x3-gap"></i>
                 </a>
@@ -653,7 +653,7 @@ if ($semAtualizacao) {
                 <h3>Fila resumida de Home Care</h3>
                 <p><?= count($rowsTable) ?> registro(s) exibidos.</p>
             </div>
-            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>home_care_gestao.php">Abrir tela operacional</a>
+            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>cuidado-continuado/home-care">Abrir tela operacional</a>
         </div>
         <table class="bi-table">
             <thead>

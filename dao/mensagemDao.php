@@ -49,7 +49,7 @@ class mensagemDAO implements mensagemDAOInterface
         $mensagens = [];
 
         $stmt = $this->conn->prepare("SELECT * FROM tb_mensagem 
-                                      WHERE ((de_usuario = :de_usuario_1 AND para_usuario = :para_usuario_1)
+                                      WHERE ((de_usuario = :de_usuario_1 AND para_usuario = :para_usuario_1) 
                                       OR (de_usuario = :para_usuario_2 AND para_usuario = :de_usuario_2))
                                       and id_mensagem > :ultima_msg
                                       ORDER BY data_mensagem ASC");

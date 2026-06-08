@@ -16,7 +16,8 @@ Gate::enforceAction($conn, $BASE_URL, 'delete', 'Você não tem permissão para 
 
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
-    header('Location: ' . $BASE_URL . 'list_usuario.php', true, 303);
+    fullcare_flash('Use o botão de exclusão da lista para remover um usuário.', 'warning', 'Ação não permitida');
+    header('Location: ' . $BASE_URL . 'usuarios', true, 303);
     exit;
 }
 
@@ -42,7 +43,8 @@ if ($usuario) {
         'after' => null,
         'source' => 'del_usuario.php',
     ], $BASE_URL);
-    header('Location: ' . $BASE_URL . 'list_usuario.php', true, 303);
+    fullcare_flash('Usuário excluído ou inativado com sucesso.', 'success', 'Exclusão concluída');
+    header('Location: ' . $BASE_URL . 'usuarios', true, 303);
     exit;
 }
 

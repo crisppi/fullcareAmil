@@ -293,8 +293,8 @@ $endereco = trim(implode(' ', array_filter([
             <h1>Dados do usuário</h1>
         </div>
         <div class="hero-actions">
-            <a href="<?= $BASE_URL ?>list_usuario.php" class="hero-back-btn">Voltar para lista</a>
-            <a href="<?= $BASE_URL ?>edit_usuario.php?id_usuario=<?= (int)$usuario->id_usuario ?>" class="hero-back-btn">Editar usuário</a>
+            <a href="<?= $BASE_URL ?>usuarios" class="hero-back-btn">Voltar para lista</a>
+            <a href="<?= $BASE_URL ?>usuarios/editar/<?= (int)$usuario->id_usuario ?>" class="hero-back-btn">Editar usuário</a>
             <span class="internacao-page__tag">Registro #<?= (int)$usuario->id_usuario ?></span>
         </div>
     </div>
@@ -409,7 +409,7 @@ $endereco = trim(implode(' ', array_filter([
                     <p>Use esta ação apenas quando o usuário não deve mais acessar o sistema.</p>
                 </div>
                 <div class="usuario-actions">
-                    <a href="<?= $BASE_URL ?>list_usuario.php" class="btn btn-outline-secondary">Cancelar</a>
+                    <a href="<?= $BASE_URL ?>usuarios" class="btn btn-outline-secondary">Cancelar</a>
                     <button class="btn btn-danger" onclick="deletar()" value="default" type="button" id="deletar-btn" name="deletar">Inativar</button>
                 </div>
                 <form id="delete-usuario-form" action="<?= $BASE_URL ?>del_usuario.php" method="POST" style="display:none;">

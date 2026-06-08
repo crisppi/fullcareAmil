@@ -17,6 +17,7 @@ Gate::enforceAction($conn, $BASE_URL, 'delete', 'Você não tem permissão para 
 $message = new Message($BASE_URL);
 if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(405);
+    fullcare_flash('Use o botão de exclusão da lista para remover um censo.', 'warning', 'Ação não permitida');
     header('Location: ' . $BASE_URL . 'censo/lista', true, 303);
     exit;
 }
@@ -40,6 +41,9 @@ if ($id_censo) {
         'before' => $censoAntesDelete,
         'source' => 'del_censo.php',
     ], $BASE_URL);
+    fullcare_flash('Censo excluído com sucesso.', 'success', 'Exclusão concluída');
+} else {
+    fullcare_flash('Não encontramos o censo informado para exclusão.', 'warning', 'Registro não localizado');
 }
 
 header('Location: ' . $BASE_URL . 'censo/lista', true, 303);

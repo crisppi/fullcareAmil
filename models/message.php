@@ -16,11 +16,26 @@ class Message
 
         $_SESSION["msg"] = $msg;
         $_SESSION["type"] = $type;
+        if (function_exists('fullcare_flash')) {
+            fullcare_flash(strip_tags((string)$msg), (string)$type);
+        }
 
         if ($redirect != "back") {
-            //  header("Location: $this->url" . $redirect);
+            $target = $this->url . ltrim((string)$redirect, '/');
+            if (!headers_sent()) {
+                header("Location: " . $target, true, 303);
+            } else {
+                $safeTarget = json_encode($target, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                echo "<script>window.location.href={$safeTarget};</script>";
+            }
         } else {
-            header("Location: " . $_SERVER["HTTP_REFERER"]);
+            $target = $_SERVER["HTTP_REFERER"] ?? $this->url;
+            if (!headers_sent()) {
+                header("Location: " . $target, true, 303);
+            } else {
+                $safeTarget = json_encode($target, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+                echo "<script>window.location.href={$safeTarget};</script>";
+            }
         }
     }
 

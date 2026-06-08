@@ -316,14 +316,14 @@ if ($qtdIntItens > $limite) {
                             <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                 <li>
                                     <button class="dropdown-item"
-                                        onclick="edit('<?= $BASE_URL ?>show_capeante.php?id_capeante=<?= $intern['id_capeante'] ?>')">
+                                        onclick="edit('<?= $BASE_URL ?>contas/ver/<?= $intern['id_capeante'] ?>')">
                                         <i style="color:green; margin-right:10px" class="fas fa-eye check-icon"></i> Ver
                                         Detalhes
                                     </button>
                                 </li>
                                 <li>
                                     <button class="dropdown-item"
-                                        onclick="edit('<?= $BASE_URL ?>show_capeantePrt.php?id_capeante=<?= $intern['id_capeante'] ?>')">
+                                        onclick="edit('<?= $BASE_URL ?>contas/prontuario/<?= $intern['id_capeante'] ?>')">
                                         <i style="color:brown; margin-right:10px" class="bi bi-printer"></i> Imprimir
                                     </button>
                                 </li>

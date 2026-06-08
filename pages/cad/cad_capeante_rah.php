@@ -69,7 +69,7 @@ $id_capeante = filter_input(INPUT_GET, "id_capeante");
 $internacao = $internacaoDao->selectAllInternacaoCapList($id_capeante);
 
 ?>
-<div id="main-container" style="background:#f5f6f8; margin:1px">
+<div id="main-container" style="background:#e9edf3; margin:1px">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
     <!-- FORMULARIO INTERNACAO -->

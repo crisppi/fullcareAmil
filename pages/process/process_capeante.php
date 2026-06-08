@@ -315,7 +315,7 @@ if ($type === "create") {
             'source' => 'process_capeante.php',
         ], $BASE_URL);
     }
-    header('location: list_internacao_cap.php');
+    header('location: contas/auditoria');
 }
 
 if ($type === "update") {
@@ -491,8 +491,8 @@ if ($type === "update") {
         ], $BASE_URL);
     }
     if ($checkbox_imprimir == '1') {
-        header('location: show_capeantePrt.php?id_capeante=' . $id_capeante);
+        header('location: contas/prontuario/' . $id_capeante);
     } else {
-        header('location: list_internacao_cap.php');
+        header('location: contas/auditoria');
     }
 }

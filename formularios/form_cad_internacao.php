@@ -321,6 +321,9 @@
                                     <label class="control-label mb-0" for="hospital_selected">
                                         <span style="color:red;">*</span> Hospital
                                     </label>
+                                    <button type="button" id="hospitalTipButton" class="patient-insight-inline-btn"
+                                        style="display:none;" title="Mostrar indicadores do hospital"
+                                        aria-expanded="false" aria-hidden="true">i</button>
                                 </div>
                                 <div class="hospital-select-wrapper">
                                     <select onchange="myFunctionSelected()" data-size="10"
@@ -341,9 +344,15 @@
                                         <?php endif; ?>
                                     </select>
                                 </div>
+                                <div class="hospital-tip" id="hospitalTipContainer">
+                                    <div class="hospital-tip-popover" id="hospitalTipPopover">
+                                        Selecione um hospital para ver negociações e internações em UTI.
+                                    </div>
+                                </div>
                                 <div class="hospital-name-slot">
                                     <div id="hospitalNomeTexto" class="hospital-name-chip"></div>
                                 </div>
+                                <div id="hospitalUtiAlert" class="hospital-uti-alert" role="status" aria-live="polite"></div>
                             </div>
 
                             <div class="form-group patient-col">
@@ -1060,6 +1069,198 @@
         </form>
     </div>
     </div>
+    <!-- ══ Modal Perfil do Hospital ══════════════════════════════════════ -->
+    <div class="modal fade" id="modalHospitalPerfil" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content hosp-modal">
+                <div class="hosp-modal__header">
+                    <div class="hosp-modal__title-wrap">
+                        <span class="hosp-modal__icon"><i class="bi bi-hospital"></i></span>
+                        <div>
+                            <p class="hosp-modal__eyebrow">Perfil do Hospital</p>
+                            <h5 class="hosp-modal__title" id="hospModalNome">—</h5>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body hosp-modal__body" id="hospModalBody">
+                    <div class="hosp-modal__loading" id="hospModalLoading">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <span>Carregando dados do hospital…</span>
+                    </div>
+                    <div id="hospModalContent" style="display:none;">
+                        <div class="hosp-kpi-grid">
+                            <div class="hosp-kpi hosp-kpi--opportunity-low">
+                                <div class="hosp-kpi__icon" id="hkpi-opportunity-icon"><i class="bi bi-dash-circle-fill"></i></div>
+                                <small>Oportunidade de Negociação</small>
+                                <strong id="hkpi-opportunity-level">—</strong>
+                                <span class="hosp-kpi__sub" id="hkpi-opportunity-type">Tipo: —</span>
+                                <span class="hosp-kpi__sub" id="hkpi-neg-count">— negociações</span>
+                            </div>
+                            <div class="hosp-kpi hosp-kpi--red">
+                                <div class="hosp-kpi__icon"><i class="bi bi-x-circle"></i></div>
+                                <small>Glosas</small>
+                                <strong id="hkpi-glosa">—</strong>
+                                <span class="hosp-kpi__sub" id="hkpi-glosa-count">— contas com glosa</span>
+                            </div>
+                            <div class="hosp-kpi hosp-kpi--blue">
+                                <div class="hosp-kpi__icon"><i class="bi bi-calendar-week"></i></div>
+                                <small>Média de Permanência</small>
+                                <strong id="hkpi-mp">—</strong>
+                                <span class="hosp-kpi__sub" id="hkpi-mp-sub">— internações</span>
+                            </div>
+                            <div class="hosp-kpi hosp-kpi--orange">
+                                <div class="hosp-kpi__icon"><i class="bi bi-exclamation-triangle"></i></div>
+                                <small>Eventos Adversos</small>
+                                <strong id="hkpi-ea">—</strong>
+                                <span class="hosp-kpi__sub">registrados</span>
+                            </div>
+                            <div class="hosp-kpi hosp-kpi--purple">
+                                <div class="hosp-kpi__icon"><i class="bi bi-clock-history"></i></div>
+                                <small>Longa Permanência</small>
+                                <strong id="hkpi-lp">—</strong>
+                                <span class="hosp-kpi__sub" id="hkpi-lp-sub">MP: — dias</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="hospModalError" style="display:none;" class="alert alert-warning mb-0">
+                        Não foi possível carregar os dados do hospital.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    .hosp-modal { border:0; border-radius:16px; overflow:hidden; }
+    .hosp-modal__header {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:18px 24px;
+        background: linear-gradient(120deg, #1c4f80 0%, #2f6f9f 55%, #4a1d55 100%);
+        color:#fff;
+    }
+    .hosp-modal__title-wrap { display:flex; align-items:center; gap:14px; }
+    .hosp-modal__icon {
+        width:42px; height:42px; border-radius:10px;
+        background:rgba(255,255,255,.15);
+        display:flex; align-items:center; justify-content:center;
+        font-size:20px;
+    }
+    .hosp-modal__eyebrow { margin:0; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; opacity:.7; }
+    .hosp-modal__title   { margin:0; font-size:17px; font-weight:700; }
+    .hosp-modal__body    { padding:22px 24px; background:#f5f7fb; }
+    .hosp-modal__loading { display:flex; align-items:center; gap:12px; color:#6b7a8d; padding:12px 0; }
+    .hosp-kpi-grid {
+        display:grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap:12px;
+    }
+    @media(max-width:860px) { .hosp-kpi-grid { grid-template-columns: repeat(3,1fr); } }
+    @media(max-width:540px) { .hosp-kpi-grid { grid-template-columns: repeat(2,1fr); } }
+    .hosp-kpi {
+        background:#fff;
+        border-radius:12px;
+        padding:16px 14px 14px;
+        display:flex; flex-direction:column; align-items:center; text-align:center;
+        border-top:3px solid transparent;
+        box-shadow:0 2px 10px rgba(31,42,63,.07);
+        gap:4px;
+    }
+    .hosp-kpi__icon { font-size:22px; margin-bottom:4px; }
+    .hosp-kpi small { font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#7a8ea8; line-height:1.2; }
+    .hosp-kpi strong { font-size:20px; font-weight:800; color:#1a2d3e; line-height:1.1; }
+    .hosp-kpi__sub { font-size:11px; color:#9baab8; }
+    .hosp-kpi--opportunity-low { border-color:#22c55e; }
+    .hosp-kpi--opportunity-low .hosp-kpi__icon,
+    .hosp-kpi--opportunity-low strong { color:#16a34a; }
+    .hosp-kpi--opportunity-medium { border-color:#f59e0b; }
+    .hosp-kpi--opportunity-medium .hosp-kpi__icon,
+    .hosp-kpi--opportunity-medium strong { color:#b7791f; }
+    .hosp-kpi--opportunity-high { border-color:#ef4444; }
+    .hosp-kpi--opportunity-high .hosp-kpi__icon,
+    .hosp-kpi--opportunity-high strong { color:#dc2626; }
+    .hosp-kpi--green  { border-color:#22c55e; } .hosp-kpi--green  .hosp-kpi__icon { color:#16a34a; }
+    .hosp-kpi--red    { border-color:#ef4444; } .hosp-kpi--red    .hosp-kpi__icon { color:#dc2626; }
+    .hosp-kpi--blue   { border-color:#2f6f9f; } .hosp-kpi--blue   .hosp-kpi__icon { color:#2f6f9f; }
+    .hosp-kpi--orange { border-color:#f97316; } .hosp-kpi--orange .hosp-kpi__icon { color:#ea6c10; }
+    .hosp-kpi--purple { border-color:#6b2b74; } .hosp-kpi--purple .hosp-kpi__icon { color:#6b2b74; }
+    </style>
+    <script>
+    (function() {
+        function set(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+        function setOpportunityKpi(op) {
+            op = op || {};
+            var level = String(op.nivel || 'baixo');
+            var label = op.label || 'Baixo';
+            var icon = /^[a-z0-9-]+$/i.test(String(op.icon || '')) ? op.icon : 'bi-check-circle-fill';
+            var type = op.tipo || 'Monitoramento preventivo';
+            var iconWrap = document.getElementById('hkpi-opportunity-icon');
+            var card = iconWrap ? iconWrap.closest('.hosp-kpi') : null;
+
+            if (iconWrap) {
+                iconWrap.innerHTML = '<i class="bi ' + icon + '"></i>';
+            }
+            if (card) {
+                card.classList.remove('hosp-kpi--opportunity-low', 'hosp-kpi--opportunity-medium', 'hosp-kpi--opportunity-high');
+                card.classList.add(level === 'alto'
+                    ? 'hosp-kpi--opportunity-high'
+                    : (level === 'medio' ? 'hosp-kpi--opportunity-medium' : 'hosp-kpi--opportunity-low'));
+            }
+            set('hkpi-opportunity-level', label);
+            set('hkpi-opportunity-type', 'Tipo: ' + type);
+        }
+
+        function openHospitalModal(hospitalId, hospitalName) {
+            var modal   = document.getElementById('modalHospitalPerfil');
+            var loading = document.getElementById('hospModalLoading');
+            var content = document.getElementById('hospModalContent');
+            var errBox  = document.getElementById('hospModalError');
+            if (!modal) return;
+
+            set('hospModalNome', hospitalName || '—');
+            loading.style.display = 'flex';
+            content.style.display = 'none';
+            errBox.style.display  = 'none';
+
+            try {
+                var bsModal = window.bootstrap && bootstrap.Modal
+                    ? (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal))
+                    : null;
+                if (bsModal) bsModal.show();
+            } catch(e) {
+                if (window.jQuery) window.jQuery(modal).modal('show');
+            }
+
+            var baseUrl = (window.formInternacaoConfig && window.formInternacaoConfig.baseUrl) || '';
+            fetch(baseUrl + 'ajax/hospital_insights.php?id_hospital=' + encodeURIComponent(hospitalId), {credentials:'same-origin'})
+                .then(function(r) { return r.json(); })
+                .then(function(payload) {
+                    loading.style.display = 'none';
+                    if (!payload.success || !payload.data) { errBox.style.display = 'block'; return; }
+                    var d = payload.data;
+                    setOpportunityKpi(d.oportunidade_negociacao);
+                    set('hkpi-neg-count',  (d.negociacoes ?? 0) + ' negociações');
+                    set('hkpi-glosa',      'R$ ' + Number(d.total_glosa ?? 0).toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0}));
+                    var glosaTipos = Array.isArray(d.glosa_tipos) ? d.glosa_tipos : [];
+                    set('hkpi-glosa-count', glosaTipos.length
+                        ? 'Top: ' + glosaTipos.map(function(item) { return item.tipo || 'Glosa'; }).join(', ')
+                        : (d.qtd_glosa ?? 0) + ' contas com glosa');
+                    set('hkpi-mp',         (d.mp_hospital ?? 0) + ' dias');
+                    set('hkpi-mp-sub',     (d.total_internacoes ?? 0) + ' internações');
+                    set('hkpi-ea',         d.eventos_adversos ?? 0);
+                    set('hkpi-lp',         (d.long_stay ?? 0) + ' casos');
+                    set('hkpi-lp-sub',     'MP: ' + (d.mp_long ?? 0) + ' dias');
+                    content.style.display = 'block';
+                })
+                .catch(function() {
+                    loading.style.display = 'none';
+                    errBox.style.display  = 'block';
+                });
+        }
+
+        window._openHospitalPerfilModal = openHospitalModal;
+    })();
+    </script>
+
     <!-- Modal retroativa -->
     <div class="modal fade" id="modalInternacaoAtiva" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -1119,10 +1320,47 @@
             idSessao: <?= json_encode((string) $idSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             cargoSessao: <?= json_encode((string) $cargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
             cargoSessaoNorm: <?= json_encode((string) $normCargoSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-            emailSessao: <?= json_encode((string) $emailSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
+            emailSessao: <?= json_encode((string) $emailSessao, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
+            hospitalPerfilPopup: <?= ($isMedOuEnf || $isDiretorSessao || $isCrisppiSessao) ? 'true' : 'false' ?>
         });
     </script>
     <script src="<?= $BASE_URL ?>js/form_cad_internacao.js?v=<?= filemtime(__DIR__ . '/../js/form_cad_internacao.js') ?>"></script>
+    <script>
+    /* Abre o popup de perfil do hospital para auditor médico, enfermagem e diretoria. */
+    (function() {
+        var config = window.formInternacaoConfig || {};
+        if (!config.hospitalPerfilPopup) return;
+        var lastOpenedHospital = '';
+        var openTimer = null;
+
+        function openSelectedHospitalPerfil(force) {
+            window.clearTimeout(openTimer);
+            openTimer = window.setTimeout(function() {
+                var sel = document.getElementById('hospital_selected');
+                if (!sel || !sel.value) return;
+                if (!force && lastOpenedHospital === String(sel.value)) return;
+
+                var nome = (sel.options[sel.selectedIndex] || {}).text || '';
+                if (typeof window._openHospitalPerfilModal === 'function') {
+                    lastOpenedHospital = String(sel.value);
+                    window._openHospitalPerfilModal(sel.value, nome);
+                }
+            }, 120);
+        }
+
+        var originalHospitalSelected = window.myFunctionSelected;
+        window.myFunctionSelected = function() {
+            if (typeof originalHospitalSelected === 'function') {
+                originalHospitalSelected.apply(this, arguments);
+            }
+            openSelectedHospitalPerfil(false);
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            openSelectedHospitalPerfil(true);
+        });
+    })();
+    </script>
     <script src="<?= $BASE_URL ?>js/internacao_cronicos_alert.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>

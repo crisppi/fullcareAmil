@@ -363,7 +363,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                 </td>
                 <td scope="row">
                     <a
-                        href="<?= $BASE_URL ?>cad_visita.php?id_internacao=<?= (int)($intern["id_internacao"] ?? 0) ?>">
+                        href="<?= $BASE_URL ?>visitas/nova/internacao/<?= (int)($intern["id_internacao"] ?? 0) ?>">
                         <i class="bi bi-box-arrow-in-right"
                             style="margin-right:6px; font-size:1em;"></i>
                     </a>
@@ -472,7 +472,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                 </td>
                 <td scope="row">
                     <a
-                        href="<?= $BASE_URL ?>show_internacao.php?id_internacao=<?= (int)($intern["id_internacao"] ?? 0) ?>">
+                        href="<?= $BASE_URL ?>internacoes/visualizar/<?= (int)($intern["id_internacao"] ?? 0) ?>">
                         <i class="bi bi-box-arrow-right"
                             style="color:green; margin-right:6px; font-size:1em;"></i>
                     </a>

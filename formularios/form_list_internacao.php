@@ -1321,7 +1321,7 @@ if (typeof jQuery !== 'undefined') {
                                         <?php if ($pesqInternado == "s" and $intern['censo_int'] == "s" and $intern['primeira_vis_int'] == 'n') { ?>
                                         <li>
                                             <button class="btn btn-default"
-                                                onclick="edit('<?= $BASE_URL ?>edit_internacao.php?id_internacao=<?= $intern['id_internacao'] ?>')"
+                                                onclick="edit('<?= $BASE_URL ?>internacoes/editar/<?= $intern['id_internacao'] ?>')"
                                                 style="font-size: .9rem;">
                                                 <i class="bi bi-pencil-square"
                                                     style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>
@@ -1333,7 +1333,7 @@ if (typeof jQuery !== 'undefined') {
                                         <?php if (!$isGestorSeguradora) { ?>
                                             <li>
                                                 <button type="button" class="btn btn-default" style="font-size: .9rem;"
-                                                    onclick="window.location.href='<?= $BASE_URL ?>cad_visita.php?id_internacao=<?= $intern['id_internacao'] ?>'">
+                                                    onclick="window.location.href='<?= $BASE_URL ?>visitas/nova/internacao/<?= $intern['id_internacao'] ?>'">
                                                     <i class="bi bi-file-text"
                                                         style="font-size: 1rem; margin-right:5px; color: rgba(128, 27, 156, 1);"></i>
                                                     Visita
@@ -1344,7 +1344,7 @@ if (typeof jQuery !== 'undefined') {
                                         <?php if ($pesqInternado == "s" && !$isGestorSeguradora) { ?>
                                             <li>
                                                 <button class="btn btn-default"
-                                                    onclick="edit('<?= $BASE_URL ?>edit_alta.php?type=alta&id_internacao=<?= $intern['id_internacao'] ?>')"
+                                                    onclick="edit('<?= $BASE_URL ?>internacoes/alta/editar/<?= $intern['id_internacao'] ?>')"
                                                     style="font-size: .9rem;">
                                                     <i class="bi bi-door-open"
                                                         style="font-size: 1rem;margin-right:5px; color: rgba(27, 64, 156, 1);"></i>
@@ -1376,7 +1376,7 @@ if (typeof jQuery !== 'undefined') {
                                         <?php if (!$isGestorSeguradora) { ?>
                                             <li>
                                                 <button type="button" class="btn btn-default" style="font-size: .9rem;"
-                                                    onclick="window.location.href='<?= $BASE_URL ?>edit_internacao.php?id_internacao=<?= $intern['id_internacao'] ?>'">
+                                                    onclick="window.location.href='<?= $BASE_URL ?>internacoes/editar/<?= $intern['id_internacao'] ?>'">
                                                     <i class="bi bi-pencil-square"
                                                         style="font-size: 1rem; margin-right: 5px; color: rgba(113, 27, 156, 1);"></i>
                                                     Editar

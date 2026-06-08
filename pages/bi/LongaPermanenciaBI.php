@@ -193,7 +193,7 @@ $lpChartHeight = max(220, count($labelsHosp) * 34);
             <div style="color: var(--bi-muted); font-size: 0.95rem;">Internações acima do limiar da seguradora ou do parâmetro selecionado.</div>
         </div>
         <div class="bi-header-actions">
-            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>longa_permanencia_gestao.php">Gestão clínica</a>
+            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>cuidado-continuado/longa-permanencia">Gestão clínica</a>
             <a class="bi-nav-icon" href="<?= $BASE_URL ?>bi/navegacao" title="Navegação">
                 <i class="bi bi-grid-3x3-gap"></i>
             </a>
@@ -339,7 +339,7 @@ $lpChartHeight = max(220, count($labelsHosp) * 34);
                                         </td>
                                         <td><?= e($row['relatorio'] ?? 'Sem relatório') ?></td>
                                         <td style="white-space:nowrap;">
-                                            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>longa_permanencia_editar.php?id_internacao=<?= (int)($row['id_internacao'] ?? 0) ?>">Gerir caso</a>
+                                            <a class="bi-btn bi-btn-secondary" href="<?= $BASE_URL ?>cuidado-continuado/longa-permanencia/gerir/<?= (int)($row['id_internacao'] ?? 0) ?>">Gerir caso</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

@@ -6,7 +6,7 @@ require_once("dao/longaPermanenciaDao.php");
 
 $internacaoId = filter_input(INPUT_POST, 'fk_internacao_lp', FILTER_VALIDATE_INT) ?: 0;
 if ($internacaoId <= 0) {
-    header("Location: " . $BASE_URL . "longa_permanencia_gestao.php");
+    header("Location: " . $BASE_URL . "cuidado-continuado/longa-permanencia");
     exit;
 }
 
@@ -29,5 +29,5 @@ $dao->createUpdate([
     'observacoes_lp' => filter_input(INPUT_POST, 'observacoes_lp'),
 ]);
 
-header("Location: " . $BASE_URL . "longa_permanencia_editar.php?id_internacao=" . $internacaoId . "&success=1");
+header("Location: " . $BASE_URL . "cuidado-continuado/longa-permanencia/gerir/" . $internacaoId . "?success=1");
 exit;

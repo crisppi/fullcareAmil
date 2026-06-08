@@ -226,7 +226,7 @@ try {
     $mail->addStringAttachment($pdfString, "ContaCapeante_{$id_capeante}.pdf");
     $mail->send();
 
-    header("Location: list_internacao_cap.php");
+    header("Location: contas/auditoria");
     exit;
 } catch (Exception $e) {
     echo "Erro ao enviar e-mail: " . $mail->ErrorInfo;

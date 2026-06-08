@@ -43,7 +43,7 @@ $isGestorSeguradoraUser = strpos($cargoAtualNorm, 'gestorseguradora') === 0;
             <h1>Atualizar usuário</h1>
         </div>
         <div class="hero-actions">
-            <a href="<?= $BASE_URL ?>list_usuario.php" class="hero-back-btn">Voltar para lista</a>
+            <a href="<?= $BASE_URL ?>usuarios" class="hero-back-btn">Voltar para lista</a>
             <span class="internacao-page__tag">Cadastro e acessos</span>
         </div>
     </div>
