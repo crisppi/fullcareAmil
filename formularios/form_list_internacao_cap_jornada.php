@@ -681,7 +681,7 @@ th.th-acoes {
                         <td><b><?= $idInt ?></b></td>
                         <td><?= $idCapeante ?></td>
                         <td><?= htmlspecialchars($intern["nome_hosp"] ?? '') ?></td>
-                        <td><?= htmlspecialchars($intern["nome_pac"] ?? '') ?></td>
+                        <td><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
                         <td><?= !empty($intern["data_intern_int"]) ? date('d/m/Y', strtotime($intern["data_intern_int"])) : '' ?>
                         </td>
                         <td>

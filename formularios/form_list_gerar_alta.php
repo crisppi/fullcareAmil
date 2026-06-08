@@ -465,8 +465,8 @@ sort($dadosAlta);
                     </div>
                     <div class="gerar-alta-meta-card">
                         <span class="gerar-alta-meta-label"><i class="bi bi-person" aria-hidden="true"></i>Paciente</span>
-                        <strong><?= htmlspecialchars($row['nome_pac'] ?? '-') ?></strong>
-                        <small><?= htmlspecialchars($row['titular_int'] ?? '') ?></small>
+                        <strong><?= fullcare_mask_person_name_e($row['nome_pac'] ?? "-") ?></strong>
+                        <small><?= fullcare_mask_person_name_e($row['titular_int'] ?? '') ?></small>
                     </div>
                     <div class="gerar-alta-meta-card">
                         <span class="gerar-alta-meta-label"><i class="bi bi-calendar2-plus" aria-hidden="true"></i>Internação</span>

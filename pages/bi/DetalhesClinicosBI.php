@@ -133,7 +133,7 @@ function labelsValues(array $rows): array
         <h3>Relatório detalhado</h3>
         <table class="bi-table"><thead><tr><th>Paciente</th><th>Hospital</th><th>Patologia</th><th>Visitas</th><th>Relatório</th><th>Ações</th></tr></thead><tbody>
         <?php if (!$rowsTable): ?><tr><td colspan="6">Sem informações para o filtro selecionado.</td></tr><?php endif; ?>
-        <?php foreach ($rowsTable as $row): ?><tr><td><?= e($row['paciente']) ?></td><td><?= e($row['hospital']) ?></td><td><?= e($row['patologia']) ?></td><td><?= (int)$row['visitas'] ?></td><td><?= e($row['relatorio']) ?></td><td><?= e($row['acoes']) ?></td></tr><?php endforeach; ?>
+        <?php foreach ($rowsTable as $row): ?><tr><td><?= e(fullcare_mask_person_name($row['paciente'] ?? "")) ?></td><td><?= e($row['hospital']) ?></td><td><?= e($row['patologia']) ?></td><td><?= (int)$row['visitas'] ?></td><td><?= e($row['relatorio']) ?></td><td><?= e($row['acoes']) ?></td></tr><?php endforeach; ?>
         </tbody></table>
     </div>
 </div>

@@ -95,7 +95,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php foreach ($rows as $row): ?>
                         <?php $dias = (int)($row['dias'] ?? 0); ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem informações")) ?></td>
                             <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt($dias) ?></td>
                             <td><?= fmtInt((int)max(0, $dias - $mediaDias)) ?></td>

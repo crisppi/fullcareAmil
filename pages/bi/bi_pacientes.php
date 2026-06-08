@@ -155,17 +155,17 @@ $topMp = topBy($metrics, 'mp');
 $topReinternacoes = topBy($metrics, 'reinternacoes');
 $topLp = topBy($metrics, 'lp');
 
-$labelsCusto = array_map(fn($r) => $r['paciente'] ?: 'Paciente', $custoRows);
+$labelsCusto = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?: 'Paciente'), $custoRows);
 $valsCusto = array_map(fn($r) => (float)$r['total_valor'], $custoRows);
-$labelsMedio = array_map(fn($r) => $r['paciente'] ?: 'Paciente', $medioRows);
+$labelsMedio = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?: 'Paciente'), $medioRows);
 $valsMedio = array_map(fn($r) => (float)$r['valor_medio'], $medioRows);
-$labelsInternacoes = array_map(fn($r) => $r['paciente'], $topInternacoes);
+$labelsInternacoes = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''), $topInternacoes);
 $valsInternacoes = array_map(fn($r) => (float)$r['internacoes'], $topInternacoes);
-$labelsMp = array_map(fn($r) => $r['paciente'], $topMp);
+$labelsMp = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''), $topMp);
 $valsMp = array_map(fn($r) => (float)$r['mp'], $topMp);
-$labelsReinternacoes = array_map(fn($r) => $r['paciente'], $topReinternacoes);
+$labelsReinternacoes = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''), $topReinternacoes);
 $valsReinternacoes = array_map(fn($r) => (float)$r['reinternacoes'], $topReinternacoes);
-$labelsLp = array_map(fn($r) => $r['paciente'], $topLp);
+$labelsLp = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''), $topLp);
 $valsLp = array_map(fn($r) => (float)$r['lp'], $topLp);
 ?>
 

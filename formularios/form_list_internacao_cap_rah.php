@@ -676,7 +676,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                                <td scope="row"><?= $intern["nome_pac"] ?></td>
+                                <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
                                 <td scope="row"><?= $intern["senha_int"] ?></td>
                                 <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                                 <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>
@@ -823,7 +823,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                             <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                            <td scope="row"><?= $intern["nome_pac"] ?></td>
+                            <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
                             <td scope="row"><?= $intern["senha_int"] ?></td>
                             <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                             <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>

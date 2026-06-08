@@ -561,7 +561,7 @@ if (!is_array($prioridades)) {
                             <span class="auditor-action-main">
                                 <span class="auditor-action-title">
                                     <strong><?= htmlspecialchars((string)$item['label'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                    <span><?= htmlspecialchars((string)$item['paciente'], ENT_QUOTES, 'UTF-8') ?></span>
+                                    <span><?= fullcare_mask_person_name_e($item['paciente'] ?? '') ?></span>
                                 </span>
                                 <span class="auditor-action-meta">
                                     <?= htmlspecialchars((string)$item['hospital'], ENT_QUOTES, 'UTF-8') ?>
@@ -637,7 +637,7 @@ if (!is_array($prioridades)) {
                     ?>
                     <tr>
                         <td>#<?= (int) $row['id_internacao'] ?></td>
-                        <td><?= htmlspecialchars($row['nome_pac']) ?></td>
+                        <td><?= fullcare_mask_person_name_e($row['nome_pac'] ?? '') ?></td>
                         <td><?= htmlspecialchars($row['nome_hosp']) ?></td>
                         <td><?= (int) $row['dias_internado'] ?></td>
                         <td>R$ <?= number_format($row['valor_apresentado'], 2, ',', '.') ?></td>

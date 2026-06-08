@@ -218,7 +218,7 @@ sort($tiposDisponiveis);
                             <td><?= htmlspecialchars($neg['senha_int'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($neg['matricula_pac'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($neg['nome_hosp'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($neg['nome_pac'] ?? '-') ?></td>
+                            <td><?= fullcare_mask_person_name_e($neg['nome_pac'] ?? "-") ?></td>
                             <td><?= htmlspecialchars($neg['tipo_negociacao'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($neg['troca_de'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($neg['troca_para'] ?? '-') ?></td>

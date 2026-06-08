@@ -367,7 +367,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                         <i class="bi bi-box-arrow-in-right"
                             style="margin-right:6px; font-size:1em;"></i>
                     </a>
-                    <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                 </td>
                 <td scope="row"><?= $formattedDate ?></td>
                 <td scope="row" class="<?= $classeDiasVisita ?>">
@@ -476,7 +476,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                         <i class="bi bi-box-arrow-right"
                             style="color:green; margin-right:6px; font-size:1em;"></i>
                     </a>
-                    <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                 </td>
                 <td scope="row"><?= $formattedDate ?></td>
                 <td scope="row"><?= $ultimaVisitaData ?? '—' ?></td>

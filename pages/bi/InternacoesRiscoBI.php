@@ -211,7 +211,7 @@ foreach ($rows as $row) {
                         <?php foreach ($resultados as $row): ?>
                             <tr>
                                 <td><?= (int)$row['id_internacao'] ?></td>
-                                <td><?= e($row['nome_pac']) ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '')) ?></td>
                                 <td><?= e($row['nome_hosp']) ?></td>
                                 <td><?= $row['dias_internacao'] !== null ? (int)$row['dias_internacao'] : '-' ?></td>
                                 <td><?= $row['dias_pato'] !== null ? (int)$row['dias_pato'] : '-' ?></td>

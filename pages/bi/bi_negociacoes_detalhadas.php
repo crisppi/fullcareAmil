@@ -184,7 +184,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         <?php foreach ($rows as $row): ?>
                             <tr>
                                 <td><?= e($row['hospital']) ?></td>
-                                <td><?= e($row['paciente']) ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "")) ?></td>
                                 <td><?= e($row['senha']) ?></td>
                                 <td><?= e($row['tipo_negociacao']) ?></td>
                                 <td><?= e($row['mes_label'] ?: str_pad((string)($row['mes_numero'] ?? 0), 2, '0', STR_PAD_LEFT) . '/' . e($ano)) ?></td>

@@ -180,7 +180,7 @@ foreach ($featureCounts as $count) {
                         <?php foreach ($highRisk as $row): ?>
                             <tr>
                                 <td>#<?= (int)$row['internacao'] ?></td>
-                                <td><?= e($row['paciente']) ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "")) ?></td>
                                 <td><?= e($row['hospital']) ?></td>
                                 <td><?= fmt_pct($row['prob'] * 100) ?></td>
                                 <td><?= strtoupper(e($row['nivel'])) ?></td>

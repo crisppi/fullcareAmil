@@ -484,7 +484,7 @@ function pendenciasUrl(array $params): string
                         <td><strong><?= e($item['tipo_label']) ?></strong></td>
                         <td><?= (int)$item['id_internacao'] ?></td>
                         <td><?= e($item['hospital']) ?></td>
-                        <td><?= e($item['paciente']) ?></td>
+                        <td><?= e(fullcare_mask_person_name($item['paciente'] ?? '')) ?></td>
                         <td><?= e($item['seguradora']) ?></td>
                         <td><?= !empty($item['data_internacao']) ? e(date('d/m/Y', strtotime($item['data_internacao']))) : '--' ?></td>
                         <td><?= e($item['detalhe']) ?></td>

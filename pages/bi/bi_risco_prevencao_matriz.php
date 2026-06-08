@@ -284,7 +284,7 @@ $highHigh = array_slice($highHigh, 0, 20);
                 <?php else: ?>
                     <?php foreach ($highHigh as $item): ?>
                         <tr>
-                            <td><?= e($item['paciente'] ?: 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($item['paciente'] ?: "Sem informações")) ?></td>
                             <td><?= e($item['hospital'] ?: 'Sem informações') ?></td>
                             <td><?= !empty($item['data']) ? e(date('d/m/Y', strtotime($item['data']))) : '-' ?></td>
                             <td><?= fmtPct(((float)$item['probability']) * 100, 1) ?></td>

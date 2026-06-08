@@ -101,7 +101,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem informações")) ?></td>
                             <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= fmtInt((int)($row['dias'] ?? 0)) ?></td>
                         </tr>

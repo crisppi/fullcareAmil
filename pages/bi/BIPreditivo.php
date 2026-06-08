@@ -128,6 +128,9 @@ $avgScore = $riskRows ? array_sum(array_map(fn($r) => (int)$r['score'], $riskRow
 $riskCell = function ($row): string {
     return (string)(int)($row['score'] ?? 0);
 };
+$patientCell = function ($row): string {
+    return fullcare_mask_person_name($row['paciente'] ?? '');
+};
 
 bi_render_page_start('BI Preditivo', 'Scores explicáveis para alto custo, permanência, glosa, readmissão, desospitalização e backlog.', $BASE_URL);
 bi_render_module_nav('preditivo', $BASE_URL);
@@ -142,27 +145,27 @@ bi_render_kpis([
 
 <div class="bi-strategic-grid">
     <?php bi_render_table('Risco de alto custo em aberto', ['Score', 'Paciente', 'Hospital', 'Patologia', 'Dias', 'Custo'], $altoCusto, [
-        $riskCell, 'paciente', 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0), fn($r) => bi_money($r['custo'] ?? 0),
+        $riskCell, $patientCell, 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0), fn($r) => bi_money($r['custo'] ?? 0),
     ]); ?>
 
     <?php bi_render_table('Probabilidade de glosa', ['Score', 'Paciente', 'Hospital', 'Apresentado', 'Glosa', 'Taxa'], $glosaRows, [
-        $riskCell, 'paciente', 'hospital', fn($r) => bi_money($r['apresentado'] ?? 0), fn($r) => bi_money($r['glosa'] ?? 0), fn($r) => ((float)($r['apresentado'] ?? 0) > 0 ? bi_pct(((float)$r['glosa'] / (float)$r['apresentado']) * 100) : '0,0%'),
+        $riskCell, $patientCell, 'hospital', fn($r) => bi_money($r['apresentado'] ?? 0), fn($r) => bi_money($r['glosa'] ?? 0), fn($r) => ((float)($r['apresentado'] ?? 0) > 0 ? bi_pct(((float)$r['glosa'] / (float)$r['apresentado']) * 100) : '0,0%'),
     ]); ?>
 </div>
 
 <div class="bi-strategic-grid">
     <?php bi_render_table('Risco de estouro de permanência', ['Score', 'Paciente', 'Hospital', 'Patologia', 'Dias'], $permanencia, [
-        $riskCell, 'paciente', 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0),
+        $riskCell, $patientCell, 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0),
     ]); ?>
 
     <?php bi_render_table('Predição de readmissão', ['Score', 'Paciente', 'Hospital', 'Patologia', 'Histórico', 'Maior permanência'], $readmRows, [
-        $riskCell, 'paciente', 'hospital', 'patologia', fn($r) => bi_num($r['historico'] ?? 0), fn($r) => bi_num($r['maior_permanencia'] ?? 0) . ' d',
+        $riskCell, $patientCell, 'hospital', 'patologia', fn($r) => bi_num($r['historico'] ?? 0), fn($r) => bi_num($r['maior_permanencia'] ?? 0) . ' d',
     ]); ?>
 </div>
 
 <div class="bi-strategic-grid">
     <?php bi_render_table('Alerta de desospitalização', ['Score', 'Paciente', 'Hospital', 'Patologia', 'Dias'], $desospitalizacao, [
-        $riskCell, 'paciente', 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0),
+        $riskCell, $patientCell, 'hospital', 'patologia', fn($r) => bi_num($r['dias'] ?? 0),
     ]); ?>
 
     <?php bi_render_table('Backlog futuro de auditoria', ['Hospital', 'Internados', 'Visitas', 'Contas', 'Contas abertas'], $backlogRows, [

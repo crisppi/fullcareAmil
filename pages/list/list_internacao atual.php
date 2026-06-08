@@ -149,7 +149,7 @@ include_once("models/pagination.php");
                         <td scope="row" class="col-id"><?= $intern["id_internacao"] ?></td>
                         <td scope="row" class="nome-coluna-table"><?= $intern["internado_int"] ?></td>
                         <td scope="row" class="nome-coluna-table"><?= $intern["nome_hosp"] ?></td>
-                        <td scope="row"><?= $intern["nome_pac"] ?></td>
+                        <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
                         <td scope="row"><?= $intern["data_intern_int"] ?></td>
                         <td scope="row"><?= $intern["acomodacao_int"] ?></td>
                         <td scope="row"><?= $intern["data_visita_int"] ?></td>
@@ -157,7 +157,7 @@ include_once("models/pagination.php");
                         <td scope="row"><?= $intern["tipo_admissao_int"] ?></td>
                         <td scope="row"><?= $intern["tipo_alta_int"] ?></td>
                         <td scope="row"><?= $intern["modo_internacao_int"] ?></td>
-                        <td scope="row"><?= $intern["titular_int"] ?></td>
+                        <td scope="row"><?= fullcare_mask_person_name_e($intern["titular_int"] ?? "") ?></td>
                         <td scope="row"><?= $intern["especialidade_int"] ?></td>
                         <td scope="row"><?= $intern["rel_int"] ?></td>
 

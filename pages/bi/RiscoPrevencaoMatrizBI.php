@@ -217,7 +217,7 @@ foreach (['baixo', 'moderado', 'alto'] as $key) {
                         <?php foreach ($topHigh as $row): ?>
                             <tr>
                                 <td>#<?= (int)$row['internacao'] ?></td>
-                                <td><?= e($row['paciente']) ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "")) ?></td>
                                 <td><?= e($row['hospital']) ?></td>
                                 <td><?= fmt_date($row['data_internacao']) ?></td>
                                 <td><?= fmt_pct($row['prob'] * 100) ?></td>

@@ -289,7 +289,7 @@ $tableRows = $stmtTable->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <td><?= e($row['crm_int'] ?? '-') ?></td>
                                 <td><?= e($row['medico'] ?? '-') ?></td>
-                                <td><?= e($row['paciente'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "-")) ?></td>
                                 <td><?= fmt_num($row['mp'] ?? 0, 0) ?></td>
                                 <td><?= fmt_money($row['valor_apresentado'] ?? 0) ?></td>
                                 <td><?= e($row['tipo_admissao_int'] ?? '-') ?></td>

@@ -156,7 +156,7 @@ $rateRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php else: ?>
                         <?php foreach ($opmeRows as $row): ?>
                             <tr>
-                                <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                                 <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                                 <td>R$ <?= number_format((float)($row['valor_opme'] ?? 0), 2, ',', '.') ?></td>
                                 <td>R$ <?= number_format((float)($row['glosa_opme'] ?? 0), 2, ',', '.') ?></td>

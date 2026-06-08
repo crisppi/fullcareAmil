@@ -301,7 +301,7 @@ if ($qtdIntItens > $limite) {
                             <?= $intern["nome_hosp"] ?>
                         </b></td>
                     <td scope="row">
-                        <?= $intern["nome_pac"] ?>
+                        <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                     </td>
                     <td scope="row">
                         <?= $intern["senha_int"] ?>

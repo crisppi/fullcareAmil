@@ -224,7 +224,7 @@ usort($scored, static function ($a, $b) {
                 <?php else: ?>
                     <?php foreach ($scored as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?: 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?: "Sem informações")) ?></td>
                             <td><?= e($row['hospital'] ?: 'Sem informações') ?></td>
                             <td><?= !empty($row['data']) ? e(date('d/m/Y', strtotime($row['data']))) : '-' ?></td>
                             <td><?= fmtPct(((float)$row['probability']) * 100, 1) ?></td>

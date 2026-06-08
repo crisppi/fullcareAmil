@@ -42,7 +42,7 @@ function topMetric(array $rows, string $metric, int $limit = 8): array
         return (float)($b[$metric] ?? 0) <=> (float)($a[$metric] ?? 0);
     });
     $slice = array_slice($sorted, 0, $limit);
-    $labels = array_map(fn($r) => shortLabel((string)($r['label'] ?? 'Paciente')), $slice);
+    $labels = array_map(fn($r) => shortLabel(fullcare_mask_person_name($r['label'] ?? 'Paciente')), $slice);
     $values = array_map(fn($r) => round((float)($r[$metric] ?? 0), 2), $slice);
     return [$labels, $values];
 }
@@ -203,7 +203,7 @@ unset($row);
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['label'] ?? 'Paciente') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['label'] ?? 'Paciente')) ?></td>
                             <td><?= fmtInt($row['internacoes'] ?? 0) ?></td>
                             <td><?= fmtFloat($row['mp'] ?? 0) ?></td>
                             <td><?= fmtMoney($row['custo_total'] ?? 0) ?></td>

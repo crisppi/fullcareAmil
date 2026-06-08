@@ -332,7 +332,7 @@ $tableRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($tableRows as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem informações")) ?></td>
                             <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
                             <td><?= e($row['tipo'] ?? 'Sem informações') ?></td>
                             <td><?= e($row['relato'] ?? '-') ?></td>

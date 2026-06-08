@@ -298,7 +298,7 @@ $totalInternacoes = count($internacoes);
                         <header class="bi-evolution-card-head">
                             <div class="bi-evolution-patient-title">
                                 <span class="bi-evolution-eyebrow">Paciente</span>
-                                <strong><?= e($internacao['paciente']) ?></strong>
+                                <strong><?= e(fullcare_mask_person_name($internacao['paciente'] ?? "")) ?></strong>
                             </div>
                             <span class="bi-evolution-count"><?= count($internacao['visitas']) ?> visita<?= count($internacao['visitas']) === 1 ? '' : 's' ?></span>
                         </header>

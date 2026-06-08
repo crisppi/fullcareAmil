@@ -248,7 +248,7 @@ $earlyPct = $totalAltas > 0 ? ($totalEarly / $totalAltas) * 100 : 0.0;
                         $diff = $media > 0 ? $media - $dias : 0;
                         ?>
                         <tr>
-                            <td><?= e($row['nome_pac'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? 'Sem informações')) ?></td>
                             <td><?= e($row['nome_hosp'] ?? 'Sem informações') ?></td>
                             <td><?= !empty($row['data_intern_int']) ? e(date('d/m/Y', strtotime($row['data_intern_int']))) : '-' ?></td>
                             <td><?= !empty($row['data_alta_alt']) ? e(date('d/m/Y', strtotime($row['data_alta_alt']))) : '-' ?></td>

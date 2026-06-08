@@ -220,7 +220,7 @@ $uti = new utiDAO($conn, $BASE_URL);
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= $intern["nome_pac"] ?>
+                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                             </td>
                             <td scope="row">
                                 <?= date('d/m/Y', strtotime($intern["data_intern_int"])); ?>

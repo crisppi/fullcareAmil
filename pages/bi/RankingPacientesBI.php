@@ -89,7 +89,7 @@ $stmt->execute();
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
 $topRows = array_slice($rows, 0, 10);
-$labels = array_map(fn($r) => $r['paciente'], $topRows);
+$labels = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''), $topRows);
 $sinistroVals = array_map(fn($r) => round((float)($r['sinistro'] ?? 0), 2), $topRows);
 $diariasVals = array_map(fn($r) => round((float)($r['total_diarias'] ?? 0), 1), $topRows);
 $internacoesVals = array_map(fn($r) => (int)($r['internacoes'] ?? 0), $topRows);
@@ -161,7 +161,7 @@ $mpUtiVals = array_map(fn($r) => ($r['internacoes_uti'] ?? 0) > 0 ? round($r['to
                             $mpUti = $internacoesUti > 0 ? $row['total_uti_dias'] / $internacoesUti : 0;
                             ?>
                             <tr>
-                                <td><?= e($row['paciente'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "-")) ?></td>
                                 <td>R$ <?= number_format((float)($row['sinistro'] ?? 0), 2, ',', '.') ?></td>
                                 <td><?= number_format((float)($row['total_diarias'] ?? 0), 1, ',', '.') ?></td>
                                 <td><?= number_format($internacoes, 0, ',', '.') ?></td>

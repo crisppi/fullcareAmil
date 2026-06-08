@@ -170,7 +170,7 @@ if ($internacoes) {
                             <option value="">Todos</option>
                             <?php foreach ($pacientes as $p): ?>
                                 <option value="<?= (int)$p['id_paciente'] ?>" <?= $pacienteId == $p['id_paciente'] ? 'selected' : '' ?>>
-                                    <?= e($p['nome_pac']) ?>
+                                    <?= e(fullcare_mask_person_name($p['nome_pac'] ?? '')) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -196,7 +196,7 @@ if ($internacoes) {
                     <div class="bi-panel">
                         <div class="bi-section-title">Relatório Internação</div>
                         <div class="bi-report">
-                            <div><strong>Paciente:</strong> <?= e($intern['nome_pac'] ?? 'Sem nome') ?> | <strong>Data Internação:</strong>
+                            <div><strong>Paciente:</strong> <?= e(fullcare_mask_person_name($intern['nome_pac'] ?? 'Sem nome')) ?> | <strong>Data Internação:</strong>
                                 <?= !empty($intern['data_intern_int']) ? e(date('d/m/Y', strtotime($intern['data_intern_int']))) : '-' ?> | <strong>Acomodação:</strong>
                                 <?= e($intern['acomodacao_int'] ?? '-') ?></div>
                             <p><strong>Relatório:</strong> <?= e($intern['rel_int'] ?? '-') ?></p>

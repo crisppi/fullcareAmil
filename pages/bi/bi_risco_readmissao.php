@@ -79,7 +79,7 @@ $rows = $rowsStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         }
                         ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem informações")) ?></td>
                             <td><?= fmtInt($idade) ?></td>
                             <td><?= fmtInt($internacoes) ?></td>
                             <td><?= fmtInt($readm30) ?></td>

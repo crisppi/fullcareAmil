@@ -109,7 +109,7 @@ include_once("templates/header.php");
                         <?php foreach ($drivers['entries'] as $entry): ?>
                         <tr>
                             <td>
-                                <div class="fw-semibold"><?= htmlspecialchars($entry['nome_pac'] ?? 'Paciente') ?></div>
+                                <div class="fw-semibold"><?= fullcare_mask_person_name_e($entry['nome_pac'] ?? 'Paciente') ?></div>
                                 <small class="text-muted">Int. #<?= (int)$entry['id_internacao'] ?> · <?= date('d/m/Y', strtotime($entry['data_intern_int'])) ?></small>
                             </td>
                             <td><?= htmlspecialchars($entry['nome_hosp'] ?? '-') ?></td>

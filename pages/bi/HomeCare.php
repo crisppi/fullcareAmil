@@ -672,7 +672,7 @@ if ($semAtualizacao) {
                 <?php endif; ?>
                 <?php foreach ($rowsTable as $row): ?>
                     <tr>
-                        <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                        <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                         <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                         <td><?= e(!empty($row['status_hc']) ? ($statusOptions[$row['status_hc']] ?? $row['status_hc']) : 'Sem status') ?></td>
                         <td><?= e(!empty($row['modalidade_aprovada_hc']) ? ($modalidadeOptions[$row['modalidade_aprovada_hc']] ?? $row['modalidade_aprovada_hc']) : (!empty($row['modalidade_sugerida_hc']) ? ($modalidadeOptions[$row['modalidade_sugerida_hc']] ?? $row['modalidade_sugerida_hc']) : '-')) ?></td>

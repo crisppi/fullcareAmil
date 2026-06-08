@@ -154,7 +154,7 @@ $rows = $listStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                         $rowPct = $totalGasto > 0 ? ($rowTotal / $totalGasto) * 100 : 0.0;
                         ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Paciente') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Paciente")) ?></td>
                             <td><?= fmtMoney($rowTotal) ?></td>
                             <td><?= fmtInt((int)($row['casos'] ?? 0)) ?></td>
                             <td><?= fmtPct($rowPct, 1) ?></td>

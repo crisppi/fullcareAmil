@@ -200,7 +200,7 @@ $longRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php else: ?>
                         <?php foreach ($longRows as $row): ?>
                             <tr>
-                                <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                                 <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                                 <td><?= !empty($row['data_intern_int']) ? e(date('d/m/Y', strtotime($row['data_intern_int']))) : '-' ?></td>
                                 <td><?= number_format((float)($row['diarias'] ?? 0), 0, ',', '.') ?></td>

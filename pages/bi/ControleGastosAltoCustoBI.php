@@ -196,7 +196,7 @@ $topList = array_slice($rows, 0, 15);
                             $media = $casos > 0 ? $final / $casos : 0;
                             ?>
                             <tr>
-                                <td><?= e($row['paciente'] ?? 'Paciente') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Paciente")) ?></td>
                                 <td><?= number_format($casos, 0, ',', '.') ?></td>
                                 <td>R$ <?= number_format($final, 2, ',', '.') ?></td>
                                 <td>R$ <?= number_format($media, 2, ',', '.') ?></td>

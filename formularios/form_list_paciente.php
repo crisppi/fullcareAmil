@@ -391,7 +391,7 @@
                                     <?= $id_paciente ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table">
-                                    <?= $nome_pac ?>
+                                    <?= fullcare_mask_person_name_e($nome_pac ?? "") ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table">
                                     <?= $matricula_pac ?>

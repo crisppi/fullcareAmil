@@ -599,7 +599,7 @@ $urlBase = $self . '?' . $urlParams;
                                 <tr>
                                     <td class="text-center"><b><?= $idInt ?></b></td>
                                     <td><?= e($hosp) ?></td>
-                                    <td><?= e($pac) ?></td>
+                                    <td><?= e(fullcare_mask_person_name($pac)) ?></td>
                                     <td class="text-center"><?= $dInter ? date('d/m/Y', strtotime($dInter)) : '' ?></td>
                                     <td class="text-center">
                                         <?php

@@ -17,6 +17,7 @@ if (!function_exists('fullcare_login_index_url')) {
 
 require_once(__DIR__ . "/app/security/bi_access.php");
 require_once(__DIR__ . "/app/security/inteligencia_access.php");
+require_once(__DIR__ . "/utils/privacy.php");
 
 if (empty($_SESSION['email_user']) && empty($_SESSION['id_usuario'])) {
     header('Location: ' . fullcare_login_index_url(), true, 303);

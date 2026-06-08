@@ -401,7 +401,7 @@ try {
                     <?php foreach ($visitasPendentes as $row): ?>
                     <tr>
                         <td><?= h($row['id_internacao']) ?></td>
-                        <td><?= h($row['nome_pac']) ?></td>
+                        <td><?= h(fullcare_mask_person_name($row['nome_pac'] ?? "")) ?></td>
                         <td><?= h($row['nome_hosp']) ?></td>
                         <td><?= h($row['seguradora_seg'] ?? '-') ?></td>
                         <td><?= h(fmt_date_br($row['data_intern_int'] ?? '')) ?></td>
@@ -491,7 +491,7 @@ try {
                     <tr>
                         <td><?= h($row['id_capeante']) ?></td>
                         <td><?= h($row['id_internacao'] ?? '-') ?></td>
-                        <td><?= h($row['nome_pac']) ?></td>
+                        <td><?= h(fullcare_mask_person_name($row['nome_pac'] ?? "")) ?></td>
                         <td><?= h($row['nome_hosp']) ?></td>
                         <td><?= h($row['seguradora_seg'] ?? '-') ?></td>
                         <td><?= h(fmt_date_br($row['data_create_cap'] ?? '')) ?></td>

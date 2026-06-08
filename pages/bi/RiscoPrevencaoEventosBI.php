@@ -255,7 +255,7 @@ $valsTipo = array_map(function ($r) {
                         <?php foreach ($recentes as $row): ?>
                             <tr>
                                 <td>#<?= (int)$row['id_internacao'] ?></td>
-                                <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                                 <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                                 <td><?= e($row['tipo'] ?? 'Sem informações') ?></td>
                                 <td><?= e($row['relato'] ?? '-') ?></td>

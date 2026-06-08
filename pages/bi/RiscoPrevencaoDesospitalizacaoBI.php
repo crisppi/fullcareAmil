@@ -191,7 +191,7 @@ $pctPrecoce = $totalAltas > 0 ? ($precoceCount / $totalAltas) * 100 : 0;
                         <?php foreach ($precoce as $row): ?>
                             <tr>
                                 <td>#<?= (int)$row['id_internacao'] ?></td>
-                                <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                                 <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                                 <td><?= e($row['patologia_pat'] ?? '-') ?></td>
                                 <td><?= fmt_date($row['data_intern_int']) ?></td>

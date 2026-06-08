@@ -107,7 +107,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php else: ?>
                         <?php foreach ($rows as $row): ?>
                             <tr>
-                                <td><?= e($row['nome_pac'] ?? '-') ?></td>
+                                <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? '-')) ?></td>
                                 <td><?= e($row['nome_hosp'] ?? '-') ?></td>
                                 <td><?= number_format((int)($row['internacoes'] ?? 0), 0, ',', '.') ?></td>
                             </tr>

@@ -241,7 +241,7 @@ $tableRows = $tableStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                     <?php foreach ($tableRows as $row): ?>
                         <tr>
                             <td><?= e($row['hospital'] ?? 'Sem informações') ?></td>
-                            <td><?= e($row['paciente'] ?? 'Paciente') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Paciente")) ?></td>
                             <td><?= fmtInt((int)($row['diarias'] ?? 0)) ?></td>
                             <td><?= fmtMoney((float)($row['custo'] ?? 0)) ?></td>
                         </tr>

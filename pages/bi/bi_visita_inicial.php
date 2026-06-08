@@ -161,7 +161,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
                     <option value="">Todos</option>
                     <?php foreach ($pacientes as $p): ?>
                         <option value="<?= (int)$p['id_paciente'] ?>" <?= $pacienteId == $p['id_paciente'] ? 'selected' : '' ?>>
-                            <?= e($p['nome_pac']) ?>
+                            <?= e(fullcare_mask_person_name($p['nome_pac'] ?? '')) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

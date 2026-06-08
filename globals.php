@@ -132,6 +132,7 @@ if (empty($_SESSION['csrf'])) {
 
 // ------------------ 5) DB primeiro -------------------------
 require_once __DIR__ . '/db.php';   // aqui dentro você cria $conn (PDO)
+require_once __DIR__ . '/utils/privacy.php';
 
 if (!function_exists('fullcare_sync_session_user')) {
     function fullcare_sync_session_user(PDO $conn): void

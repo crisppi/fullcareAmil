@@ -235,7 +235,7 @@ $user = $_SESSION['id_usuario'];
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= $intern["nome_pac"] ?>
+                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                             </td>
                             <td scope="row">
                                 <?php
@@ -255,7 +255,7 @@ $user = $_SESSION['id_usuario'];
                             </td>
 
                             <td scope="row">
-                                <?= $intern["titular_censo"] ?>
+                                <?= fullcare_mask_person_name_e($intern["titular_censo"] ?? "") ?>
                             </td>
                             <td scope="row">
                                 <?= $intern["senha_censo"] ?>

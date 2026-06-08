@@ -356,7 +356,7 @@ $rowsTable = $stmtTable->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php endif; ?>
                 <?php foreach ($rowsTable as $row): ?>
                     <tr>
-                        <td><?= e($row['paciente'] ?? '-') ?></td>
+                        <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "-")) ?></td>
                         <td><?= e($row['hospital'] ?? '-') ?></td>
                         <td><?= e($row['tipo_evento'] ?? '-') ?></td>
                         <td><?= e($row['relatorio'] ?? '-') ?></td>

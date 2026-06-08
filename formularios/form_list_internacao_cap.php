@@ -479,7 +479,7 @@ if ($havePages) {
                                 <td scope="row" class="col-id"><b><?= $intern["id_internacao"]; ?></b></td>
                                 <td scope="row" class="col-id"><b><?= $intern["id_capeante"]; ?></b></td>
                                 <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                                <td scope="row"><?= $intern["nome_pac"] ?></td>
+                                <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
                                 <td scope="row"><?= $intern["senha_int"] ?></td>
                                 <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
 

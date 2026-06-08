@@ -441,7 +441,7 @@ $baseParams = [
                     <tr style="font-size:13px;">
                         <td><?= (int)$row['id_internacao'] ?></td>
                         <td style="font-weight:bolder;"><?= e($row['nome_hosp']) ?></td>
-                        <td><?= e($row['nome_pac']) ?></td>
+                        <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? "")) ?></td>
                         <td><?= e($row['seguradora_seg']) ?></td>
                         <td><?= !empty($row['data_intern_int']) ? e(date('d/m/Y', strtotime($row['data_intern_int']))) : '--' ?></td>
                         <td style="font-weight:bolder;"><?= e($row['senha_int']) ?></td>

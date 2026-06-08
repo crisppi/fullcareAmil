@@ -82,7 +82,7 @@ $cronicos = count($rows);
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem informações') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem informações")) ?></td>
                             <td><?= fmtInt((int)($row['internacoes'] ?? 0)) ?></td>
                             <td><?= e($row['ultima_internacao'] ?? '-') ?></td>
                         </tr>

@@ -540,7 +540,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                                     <?= htmlspecialchars((string)$intern["nome_hosp"]) ?>
                                 </td>
                                 <td scope="row">
-                                    <?= htmlspecialchars((string)$intern["nome_pac"]) ?>
+                                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                                 </td>
                                 <td scope="row">
                                     <?= htmlspecialchars((string)$intern["tipo_alta_alt"]) ?>

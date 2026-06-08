@@ -1204,7 +1204,7 @@ if (typeof jQuery !== 'undefined') {
                                 <?= htmlspecialchars($intern["nome_hosp"], ENT_QUOTES, 'UTF-8') ?>
                             </td>
                             <td scope="row">
-                                <?= htmlspecialchars($intern["nome_pac"], ENT_QUOTES, 'UTF-8') ?>
+                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                             </td>
                             <td scope="row">
                                 <?= htmlspecialchars($intern["seguradora_seg"] ?? '--', ENT_QUOTES, 'UTF-8') ?>

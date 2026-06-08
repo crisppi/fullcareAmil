@@ -342,7 +342,7 @@ $readmDetails = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($longDetails as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem paciente') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem paciente")) ?></td>
                             <td><?= e($row['hospital'] ?? 'Sem hospital') ?></td>
                             <td><?= e($row['seguradora'] ?? 'Sem seguradora') ?></td>
                             <td><?= e(fmt_date($row['data_intern_int'] ?? null)) ?></td>
@@ -378,7 +378,7 @@ $readmDetails = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 <?php else: ?>
                     <?php foreach ($readmDetails as $row): ?>
                         <tr>
-                            <td><?= e($row['paciente'] ?? 'Sem paciente') ?></td>
+                            <td><?= e(fullcare_mask_person_name($row['paciente'] ?? "Sem paciente")) ?></td>
                             <td><?= e($row['hospital'] ?? 'Sem hospital') ?></td>
                             <td><?= e($row['seguradora'] ?? 'Sem seguradora') ?></td>
                             <td><?= e(fmt_date($row['data_intern_int'] ?? null)) ?></td>

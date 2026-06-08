@@ -517,7 +517,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                                     <?= $intern["nome_hosp"] ?>
                                 </td>
                                 <td scope="row">
-                                    <?= $intern["nome_pac"] ?>
+                                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
                                 </td>
                                 <td scope="row">
                                     <?= $intern["senha_int"] ?>
