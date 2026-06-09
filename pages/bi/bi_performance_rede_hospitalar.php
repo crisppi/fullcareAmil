@@ -283,7 +283,7 @@ $chartLabels = array_map(fn($r) => $r['hospital'] ?: 'Sem hospital', array_slice
 $chartVals = array_map(fn($r) => round((float)($r['permanencia_media'] ?? 0), 1), array_slice($rows, 0, 10));
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>

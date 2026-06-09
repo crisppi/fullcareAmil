@@ -85,7 +85,7 @@ $utiVals = array_map(fn($r) => (int)($r['internacoes_uti'] ?? 0), $topRows);
 $mpUtiVals = array_map(fn($r) => ($r['internacoes_uti'] ?? 0) > 0 ? round($r['total_uti_dias'] / $r['internacoes_uti'], 1) : 0, $topRows);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>

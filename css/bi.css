@@ -1,6 +1,6 @@
 :root {
-  --bi-bg: #197fac;
-  --bi-bg-2: #2f9ec6;
+  --bi-bg: #6ea9cf;
+  --bi-bg-2: #a7cfe8;
   --bi-panel: rgba(255, 255, 255, 0.1);
   --bi-panel-strong: rgba(255, 255, 255, 0.15);
   --bi-border: rgba(255, 255, 255, 0.4);
@@ -17,8 +17,8 @@
 
 body.bi-theme,
 .bi-theme {
-  background: radial-gradient(circle at 10% 20%, rgba(126, 203, 236, 0.24), transparent 45%),
-              radial-gradient(circle at 90% 10%, rgba(216, 153, 196, 0.14), transparent 40%),
+  background: radial-gradient(circle at 10% 20%, rgba(214, 235, 248, 0.08), transparent 45%),
+              radial-gradient(circle at 90% 10%, rgba(195, 211, 239, 0.05), transparent 40%),
               linear-gradient(120deg, var(--bi-bg), var(--bi-bg-2));
   color: var(--bi-text);
   font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif);
@@ -1723,14 +1723,14 @@ table.bi-table::after,
 /* BI contrast refresh. Reference before this change:
    css/bi.css.reference-before-contrast-20260508.css */
 .bi-theme .bi-panel:not(.bi-report) {
-  background: linear-gradient(180deg, rgba(14, 68, 106, 0.38), rgba(13, 58, 93, 0.26));
-  border-color: rgba(220, 240, 252, 0.46);
-  box-shadow: 0 12px 24px rgba(5, 27, 48, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  background: linear-gradient(180deg, rgba(28, 86, 127, 0.66), rgba(20, 70, 110, 0.56));
+  border-color: rgba(226, 244, 252, 0.54);
+  box-shadow: 0 12px 24px rgba(5, 27, 48, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.13);
 }
 
 .bi-theme .bi-panel.bi-filters {
-  background: linear-gradient(135deg, rgba(22, 82, 121, 0.42), rgba(16, 66, 104, 0.26));
-  border-color: rgba(228, 242, 252, 0.52);
+  background: linear-gradient(135deg, rgba(28, 93, 135, 0.58), rgba(23, 78, 120, 0.45));
+  border-color: rgba(234, 247, 253, 0.56);
 }
 
 .bi-theme .bi-panel h3,
@@ -1743,8 +1743,8 @@ table.bi-table::after,
   padding: 8px 14px;
   border-radius: 12px 12px 0 0;
   color: #f8fbff;
-  background: linear-gradient(90deg, rgba(26, 76, 112, 0.58), rgba(40, 100, 142, 0.28));
-  border-bottom: 1px solid rgba(218, 239, 255, 0.26);
+  background: linear-gradient(90deg, rgba(24, 73, 109, 0.86), rgba(35, 91, 132, 0.62));
+  border-bottom: 1px solid rgba(218, 239, 255, 0.34);
   text-shadow: 0 1px 0 rgba(6, 25, 45, 0.22);
 }
 
@@ -1754,20 +1754,28 @@ table.bi-table::after,
 
 .bi-theme .bi-filter input,
 .bi-theme .bi-filter select {
-  background: rgba(245, 250, 255, 0.22);
-  border-color: rgba(231, 244, 252, 0.48);
+  background: rgba(16, 61, 92, 0.42);
+  border-color: rgba(231, 244, 252, 0.62);
+  color: #f4fbff;
+  -webkit-text-fill-color: #f4fbff;
+}
+
+.bi-theme .bi-filter select option {
+  background: #f4f8fb;
+  color: #1f2d3a;
+  -webkit-text-fill-color: #1f2d3a;
 }
 
 .bi-theme .bi-table {
   color: #eaf4ff;
-  background: rgba(18, 55, 87, 0.38);
-  border: 1px solid rgba(206, 232, 248, 0.34);
+  background: rgba(18, 55, 87, 0.52);
+  border: 1px solid rgba(206, 232, 248, 0.40);
   border-radius: 10px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 20px rgba(5, 27, 48, 0.12);
 }
 
 .bi-theme .bi-table thead {
-  background: rgba(231, 244, 252, 0.14);
+  background: rgba(231, 244, 252, 0.18);
 }
 
 .bi-theme .bi-table th {

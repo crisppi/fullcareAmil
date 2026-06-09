@@ -417,23 +417,24 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 0 12px;
-    height: 38px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
+    padding: 0 13px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(127, 243, 222, 0.56);
+    background: rgba(99, 213, 192, 0.10);
+    box-shadow: inset 3px 0 0 rgba(99, 213, 192, 0.78), 0 0 0 1px rgba(99, 213, 192, 0.10);
     transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
 }
 
 .bi-sidebar-search-box:focus-within {
-    border-color: rgba(99, 213, 192, 0.45);
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 0 0 3px rgba(99, 213, 192, 0.12);
+    border-color: rgba(127, 243, 222, 0.86);
+    background: rgba(99, 213, 192, 0.15);
+    box-shadow: inset 3px 0 0 rgba(127, 243, 222, 0.95), 0 0 0 3px rgba(99, 213, 192, 0.16), 0 0 18px rgba(99, 213, 192, 0.10);
 }
 
 .bi-sidebar-search-box i {
-    color: rgba(237, 244, 255, 0.62);
-    font-size: 0.76rem;
+    color: rgba(127, 243, 222, 0.86);
+    font-size: 0.82rem;
 }
 
 .bi-sidebar-search-input {
@@ -442,11 +443,12 @@ body.bi-theme.bi-nav-collapsed .bi-sidebar-shell {
     outline: none;
     background: transparent;
     color: #edf4ff;
-    font-size: 0.76rem;
+    font-size: 0.78rem;
+    font-weight: 650;
 }
 
 .bi-sidebar-search-input::placeholder {
-    color: rgba(237, 244, 255, 0.42);
+    color: rgba(237, 244, 255, 0.52);
 }
 
 .bi-sidebar-search-meta {
@@ -809,10 +811,6 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             <span>/</span>
             <?= htmlspecialchars($currentLabel ?: 'Painel', ENT_QUOTES, 'UTF-8') ?>
         </div>
-        <a class="bi-sidebar-navlink <?= $navActive ? 'is-active' : '' ?>"
-            href="<?= htmlspecialchars($navUrl, ENT_QUOTES, 'UTF-8') ?>">
-            Navegação Geral
-        </a>
         <button type="button" class="bi-sidebar-search-trigger" id="biSidebarSearchTrigger" aria-label="Abrir pesquisa do BI" title="Pesquisar no BI">
             <i class="bi bi-search"></i>
         </button>
@@ -830,6 +828,10 @@ $navActive = $currentPage === 'bi_navegacao.php' || trim((string) $currentPath, 
             </div>
             <div class="bi-sidebar-search-meta" id="biSidebarSearchMeta">Exibindo todos os atalhos</div>
         </div>
+        <a class="bi-sidebar-navlink <?= $navActive ? 'is-active' : '' ?>"
+            href="<?= htmlspecialchars($navUrl, ENT_QUOTES, 'UTF-8') ?>">
+            Navegação Geral
+        </a>
     </div>
 
     <div class="bi-sidebar-body">

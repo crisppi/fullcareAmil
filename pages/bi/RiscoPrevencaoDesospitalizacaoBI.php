@@ -107,7 +107,7 @@ $precoceCount = count($precoce);
 $pctPrecoce = $totalAltas > 0 ? ($precoceCount / $totalAltas) * 100 : 0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
 <script src="diversos/chartjs/Chart.min.js"></script>
 <script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>

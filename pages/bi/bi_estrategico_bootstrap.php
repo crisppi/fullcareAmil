@@ -107,7 +107,7 @@ if (!function_exists('bi_render_page_start')) {
     function bi_render_page_start(string $title, string $subtitle, string $baseUrl): void
     {
         ?>
-        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi.css?v=20260509-filter-icons">
+        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi.css?v=20260609-soft-bg-4">
         <link rel="stylesheet" href="<?= $baseUrl ?>css/bi-estrategico.css?v=20260523-align2">
         <script src="diversos/chartjs/Chart.min.js"></script>
         <script src="<?= $baseUrl ?>js/bi.js?v=20260516-rounded-bars"></script>
