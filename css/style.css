@@ -543,17 +543,14 @@ p {
 
 
 input[type="date"] {
-    height: 32px !important;
-    padding: 4px 7px !important;
-    font-size: .90em !important;
-    background-color: #fff !important;
-    /* branco como os selects */
-    box-shadow: none !important;
-    /* REMOVE A SOMBRA */
+    height: 32px;
+    padding: 4px 7px;
+    font-size: .90em;
+    background-color: #fff;
+    box-shadow: none;
     border: 1px solid #ccc;
     vertical-align: middle;
-    color: #666 !important;
-    /* clareia texto e barras */
+    color: #666;
     border-radius: 4px;
 }
 

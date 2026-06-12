@@ -169,9 +169,9 @@ $labelsLp = array_map(fn($r) => fullcare_mask_person_name($r['paciente'] ?? ''),
 $valsLp = array_map(fn($r) => (float)$r['lp'], $topLp);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme">

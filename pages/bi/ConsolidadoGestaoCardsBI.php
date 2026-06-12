@@ -416,8 +416,8 @@ $custoMedioDiariaUti = $selUti['total_diarias'] > 0 ? ($selFinanceiroUti['valor_
 $custoMedioConta = $selFinanceiro['total_contas'] > 0 ? ($selFinanceiro['valor_apresentado'] / $selFinanceiro['total_contas']) : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
 <div class="bi-wrapper bi-theme bi-consolidado-page">

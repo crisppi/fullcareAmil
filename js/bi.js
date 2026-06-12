@@ -449,41 +449,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.paddingTop = (navHeight + 16) + 'px';
   }
 
-  const applyDateStyles = (root) => {
-    root.querySelectorAll('input[type="date"]').forEach((input) => {
-      input.style.setProperty('background-color', 'var(--bi-panel-strong)', 'important');
-      input.style.setProperty('color', '#eaf6ff', 'important');
-      input.style.setProperty('border-color', 'rgba(255,255,255,0.35)', 'important');
-      input.style.setProperty('-webkit-text-fill-color', '#eaf6ff', 'important');
-    });
-  };
-
   const setupFilterStates = (root) => {
     const updateFilterState = (filter) => {
       const control = filter.querySelector('select, input');
       if (!control) {
         return;
       }
-      const label = filter.querySelector('label');
       const value = (control.value || '').trim();
       const isSelected = value !== '';
       filter.classList.toggle('is-selected', isSelected);
       if (isSelected) {
         control.setAttribute('data-selected', '1');
-        control.style.setProperty('border-color', 'rgba(255, 220, 120, 0.95)', 'important');
-        control.style.setProperty('background-color', 'rgba(255, 220, 120, 0.2)', 'important');
-        control.style.setProperty('box-shadow', '0 0 0 2px rgba(255, 220, 120, 0.25)', 'important');
-        if (label) {
-          label.style.setProperty('color', '#ffe2a6', 'important');
-        }
       } else {
         control.removeAttribute('data-selected');
-        control.style.removeProperty('border-color');
-        control.style.removeProperty('background-color');
-        control.style.removeProperty('box-shadow');
-        if (label) {
-          label.style.removeProperty('color');
-        }
       }
     };
 
@@ -547,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    applyDateStyles(panel);
     setupFilterStates(panel);
 
     const form = panel.closest('form');
@@ -574,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelectorAll('.bi-filter-card').forEach((card) => {
-    applyDateStyles(card);
     setupFilterStates(card);
 
     const form = card.closest('form');

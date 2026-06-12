@@ -1,6 +1,6 @@
 :root {
-  --bi-bg: #6ea9cf;
-  --bi-bg-2: #a7cfe8;
+  --bi-bg: #197fac;
+  --bi-bg-2: #2f9ec6;
   --bi-panel: rgba(255, 255, 255, 0.1);
   --bi-panel-strong: rgba(255, 255, 255, 0.15);
   --bi-border: rgba(255, 255, 255, 0.4);
@@ -17,8 +17,8 @@
 
 body.bi-theme,
 .bi-theme {
-  background: radial-gradient(circle at 10% 20%, rgba(214, 235, 248, 0.08), transparent 45%),
-              radial-gradient(circle at 90% 10%, rgba(195, 211, 239, 0.05), transparent 40%),
+  background: radial-gradient(circle at 10% 20%, rgba(126, 203, 236, 0.24), transparent 45%),
+              radial-gradient(circle at 90% 10%, rgba(216, 153, 196, 0.14), transparent 40%),
               linear-gradient(120deg, var(--bi-bg), var(--bi-bg-2));
   color: var(--bi-text);
   font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif);
@@ -224,14 +224,18 @@ body.bi-theme,
 
 .bi-theme input[type="date"],
 .bi-panel.bi-filters input[type="date"] {
-  background-color: var(--bi-panel-strong) !important;
-  color: var(--bi-text) !important;
+  background-color: rgba(16, 61, 92, 0.42) !important;
+  color: #f4fbff !important;
   color-scheme: dark;
   -webkit-appearance: none;
   appearance: none;
-  border-color: var(--bi-border) !important;
+  border-color: rgba(231, 244, 252, 0.62) !important;
   box-shadow: none !important;
-  -webkit-text-fill-color: var(--bi-text);
+  -webkit-text-fill-color: #f4fbff;
+  min-height: 36px;
+  padding: 7px 10px;
+  line-height: 1.2;
+  font-size: 0.82rem;
 }
 
 .bi-theme input[type="date"]::-webkit-datetime-edit,
@@ -239,7 +243,8 @@ body.bi-theme,
 .bi-theme input[type="date"]::-webkit-datetime-edit-month-field,
 .bi-theme input[type="date"]::-webkit-datetime-edit-day-field,
 .bi-theme input[type="date"]::-webkit-datetime-edit-year-field {
-  color: var(--bi-text);
+  color: #f4fbff;
+  -webkit-text-fill-color: #f4fbff;
 }
 
 .bi-filter option {
@@ -1760,6 +1765,74 @@ table.bi-table::after,
   -webkit-text-fill-color: #f4fbff;
 }
 
+.bi-theme .bi-panel.bi-filters .bi-filter input,
+.bi-theme .bi-panel.bi-filters .bi-filter select,
+.bi-theme .bi-panel.bi-filters .bi-filter input[type="date"] {
+  box-sizing: border-box;
+  width: 100%;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(231, 244, 252, 0.62) !important;
+  background: rgba(16, 61, 92, 0.42) !important;
+  color: #f4fbff !important;
+  -webkit-text-fill-color: #f4fbff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 40px;
+  box-shadow: none !important;
+  outline: none;
+}
+
+.bi-theme .bi-panel.bi-filters .bi-filter select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(244,251,255,0.7)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  padding-right: 32px !important;
+}
+
+.bi-theme .bi-panel.bi-filters .bi-filter input::placeholder {
+  color: rgba(244, 251, 255, 0.58);
+  -webkit-text-fill-color: rgba(244, 251, 255, 0.58);
+}
+
+.bi-theme .bi-panel.bi-filters .bi-filter input:focus,
+.bi-theme .bi-panel.bi-filters .bi-filter select:focus,
+.bi-theme .bi-panel.bi-filters .bi-filter input[type="date"]:focus {
+  border-color: rgba(255, 222, 137, 0.72) !important;
+  background: rgba(16, 61, 92, 0.50) !important;
+  box-shadow: 0 0 0 2px rgba(255, 222, 137, 0.16) !important;
+}
+
+.bi-theme .bi-panel.bi-filters input[type="date"]::-webkit-datetime-edit,
+.bi-theme .bi-panel.bi-filters input[type="date"]::-webkit-datetime-edit-text,
+.bi-theme .bi-panel.bi-filters input[type="date"]::-webkit-datetime-edit-month-field,
+.bi-theme .bi-panel.bi-filters input[type="date"]::-webkit-datetime-edit-day-field,
+.bi-theme .bi-panel.bi-filters input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #f4fbff;
+  -webkit-text-fill-color: #f4fbff;
+  line-height: 40px;
+  padding: 0;
+}
+
+.bi-theme .bi-panel.bi-filters .bi-filter.is-selected label {
+  color: rgba(226, 238, 249, 0.84) !important;
+}
+
+.bi-theme .bi-panel.bi-filters .bi-filter.is-selected input,
+.bi-theme .bi-panel.bi-filters .bi-filter.is-selected select,
+.bi-theme .bi-panel.bi-filters .bi-filter input[data-selected="1"],
+.bi-theme .bi-panel.bi-filters .bi-filter select[data-selected="1"] {
+  border-color: rgba(231, 244, 252, 0.62) !important;
+  background: rgba(16, 61, 92, 0.42) !important;
+  box-shadow: none !important;
+  color: #f4fbff !important;
+  -webkit-text-fill-color: #f4fbff;
+}
+
 .bi-theme .bi-filter select option {
   background: #f4f8fb;
   color: #1f2d3a;
@@ -1904,7 +1977,8 @@ table.bi-table::after,
 }
 
 .bi-consolidado-filters .bi-filter select,
-.bi-consolidado-filters .bi-filter input {
+.bi-consolidado-filters .bi-filter input,
+.bi-consolidado-filters .bi-filter input[type="date"] {
   min-height: 38px;
 }
 
@@ -2109,7 +2183,8 @@ table.bi-table::after,
 }
 
 .bi-perfil-sinistro-filters .bi-filter input,
-.bi-perfil-sinistro-filters .bi-filter select {
+.bi-perfil-sinistro-filters .bi-filter select,
+.bi-perfil-sinistro-filters .bi-filter input[type="date"] {
   min-height: 38px;
 }
 

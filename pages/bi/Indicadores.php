@@ -153,9 +153,9 @@ $idxAltoCusto = $totalInternacoes > 0 ? ($altoCusto / $totalInternacoes) * 100 :
 $idxObitos = $totalInternacoes > 0 ? ($obitos / $totalInternacoes) * 100 : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260609-soft-bg-4">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
     .bi-indicadores-page .bi-kpis.kpi-auditor-v2 {
