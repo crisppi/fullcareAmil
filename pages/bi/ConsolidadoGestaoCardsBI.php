@@ -6,7 +6,7 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
-require_once __DIR__ . '/app/bi_cid_options.php';
+require_once __DIR__ . '/../../app/bi_cid_options.php';
 
 function e($v)
 {
@@ -416,11 +416,11 @@ $custoMedioDiariaUti = $selUti['total_diarias'] > 0 ? ($selFinanceiroUti['valor_
 $custoMedioConta = $selFinanceiro['total_contas'] > 0 ? ($selFinanceiro['valor_apresentado'] / $selFinanceiro['total_contas']) : 0.0;
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=<?= @filemtime(__DIR__ . '/../../css/bi.css') ?: time() ?>">
+<script src="<?= $BASE_URL ?>js/bi.js?v=<?= @filemtime(__DIR__ . '/../../js/bi.js') ?: time() ?>"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 
-<div class="bi-wrapper bi-theme bi-consolidado-page">
+<div class="bi-wrapper bi-theme bi-consolidado-page bi-consolidado-cards-page">
     <div class="bi-header">
         <h1 class="bi-title">Consolidado Gestão Cards</h1>
         <div class="bi-header-actions">
@@ -558,7 +558,7 @@ $custoMedioConta = $selFinanceiro['total_contas'] > 0 ? ($selFinanceiro['valor_a
         </div>
     </form>
 
-    <div class="bi-layout" style="margin-top:16px;">
+    <div class="bi-layout bi-consolidado-cards-layout">
         <section class="bi-main">
             <div class="bi-grid fixed-3 bi-grid-kpi">
                 <div class="bi-panel">

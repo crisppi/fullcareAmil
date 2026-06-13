@@ -25,7 +25,7 @@
 body {
     font-family: var(--app-font-family);
     padding-top: var(--header-offset);
-    zoom: 90%;
+    min-width: calc(100vw / var(--app-zoom));
 
     /* Ajuste este valor de acordo com a altura real do seu header */
 }
@@ -56,13 +56,18 @@ textarea,
     }
 }
 
-
-
 .fixed-top {
     z-index: 1080;
+    width: calc(100vw / var(--app-zoom));
+    max-width: none;
     /* Mantém o header no topo */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     /* Adiciona uma sombra opcional */
+}
+
+#myFooterSimple {
+    width: calc(100vw / var(--app-zoom));
+    max-width: none;
 }
 
 
@@ -543,14 +548,17 @@ p {
 
 
 input[type="date"] {
-    height: 32px;
-    padding: 4px 7px;
-    font-size: .90em;
-    background-color: #fff;
-    box-shadow: none;
+    height: 32px !important;
+    padding: 4px 7px !important;
+    font-size: .90em !important;
+    background-color: #fff !important;
+    /* branco como os selects */
+    box-shadow: none !important;
+    /* REMOVE A SOMBRA */
     border: 1px solid #ccc;
     vertical-align: middle;
-    color: #666;
+    color: #666 !important;
+    /* clareia texto e barras */
     border-radius: 4px;
 }
 

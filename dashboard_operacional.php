@@ -223,75 +223,102 @@ if (!is_array($prioridades)) {
 ?>
 
 <link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . filemtime(__DIR__ . '/css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 
 <style>
 .dashboard-wrapper {
     width: 100%;
     max-width: none;
-    margin: 10px 0 32px;
-    padding: 0 18px;
+    margin: 2px 0 18px;
+    padding: 0 4px;
 }
+
 .dash-hero {
-    background: linear-gradient(120deg, #f4faff 0%, #e8f4fb 58%, #dff2fb 100%);
-    color: #24384f;
-    border-radius: 14px;
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    border: 1px solid rgba(76, 142, 187, .20);
-    box-shadow: 0 20px 45px rgba(35, 102, 147, .12);
+    min-height: 40px;
+    margin-bottom: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
 }
-.dash-hero h1 {
+
+.dash-hero .listagem-title {
+    font-size: .78rem !important;
+    line-height: 1 !important;
     font-weight: 800;
-    letter-spacing: .02em;
-    margin-bottom: 5px;
-    font-size: clamp(1.08rem, 1.8vw, 1.46rem);
 }
-.dash-hero p {
-    margin: 0;
-    opacity: .85;
-    font-size: .76rem;
+
+.dash-hero .listagem-kicker {
+    font-size: .44rem !important;
+    letter-spacing: .08em !important;
+    line-height: 1 !important;
 }
+
+.dash-hero .listagem-subtitle {
+    margin-top: 1px;
+    color: rgba(255, 255, 255, .76);
+    font-size: .54rem !important;
+    line-height: 1 !important;
+}
+
 .dash-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: 6px;
 }
 .dash-card {
     text-decoration: none;
+    min-height: 62px !important;
+    padding: 7px 9px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(20, 42, 74, .12) !important;
+}
+.kpi-card-v2-head {
+    gap: 6px !important;
+    margin-bottom: 3px !important;
+}
+.kpi-card-v2-head small {
+    font-size: .5rem !important;
+    letter-spacing: .07em;
+}
+.kpi-card-v2-icon {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 6px !important;
+    font-size: .68rem !important;
 }
 .dash-card .dash-value {
     margin-top: 0;
-    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    font-size: .98rem;
     line-height: 1.05;
 }
 .dash-card .dash-desc {
     margin: 0;
     color: rgba(228, 241, 255, 0.85);
-    font-size: .68rem;
-    min-height: 2em;
+    font-size: .54rem;
+    min-height: 0;
+    line-height: 1.1;
 }
 .dash-card .dash-link {
     margin-top: 2px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: .68rem;
+    font-size: .55rem;
     color: #cfe8ff;
-    font-weight: 600;
+    font-weight: 800;
 }
 .bi-kpi.kpi-card-v2.kpi-card-v2-5 {
     background: linear-gradient(140deg, rgba(112, 31, 31, 0.96), rgba(205, 53, 53, 0.9));
     border-color: rgba(255, 168, 168, 0.46);
 }
 .dash-table-card {
-    margin-top: 18px;
-    border-radius: 14px;
+    margin-top: 10px;
+    border-radius: 9px;
     border: 1px solid rgba(76, 142, 187, .18);
     background: #fff;
-    box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
+    box-shadow: 0 2px 9px rgba(34, 45, 60, .12);
 }
 .dash-table-card h4 {
-    padding: 10px 14px;
+    padding: 8px 12px;
     margin: 0;
     border-bottom: 1px solid rgba(76, 142, 187, .16);
     font-weight: 800;
@@ -299,7 +326,7 @@ if (!is_array($prioridades)) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: .84rem;
+    font-size: .76rem;
 }
 .dash-table-card table {
     width: 100%;
@@ -307,8 +334,8 @@ if (!is_array($prioridades)) {
 }
 .dash-table-card th,
 .dash-table-card td {
-    padding: 8px 11px;
-    font-size: .76rem;
+    padding: 3px 6px;
+    font-size: .68rem;
     text-align: left;
 }
 .dash-table-card th {
@@ -337,21 +364,21 @@ if (!is_array($prioridades)) {
 .badge-score.mid { background: linear-gradient(120deg, #f97316, #ef4444); }
 .badge-score.high { background: linear-gradient(120deg, #be185d, #7e22ce); }
 .auditor-action-wrap {
-    margin-top: 14px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(320px, .42fr);
-    gap: 12px;
+    gap: 10px;
     align-items: start;
 }
 .auditor-panel {
-    border-radius: 14px;
+    border-radius: 9px;
     border: 1px solid rgba(76, 142, 187, .18);
     background: #fff;
-    box-shadow: 0 12px 25px rgba(13, 10, 30, .08);
+    box-shadow: 0 2px 9px rgba(34, 45, 60, .12);
     overflow: hidden;
 }
 .auditor-panel__head {
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-bottom: 1px solid rgba(76, 142, 187, .14);
     display: flex;
     align-items: center;
@@ -361,22 +388,22 @@ if (!is_array($prioridades)) {
 .auditor-panel__head h4 {
     margin: 0;
     color: #24384f;
-    font-size: .86rem;
+    font-size: .78rem;
     font-weight: 800;
 }
 .auditor-panel__head small {
     color: #7a6a86;
-    font-size: .7rem;
+    font-size: .64rem;
 }
 .auditor-action-list {
     display: grid;
 }
 .auditor-action-item {
     display: grid;
-    grid-template-columns: 34px minmax(0, 1fr) auto;
-    gap: 9px;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 8px;
     align-items: center;
-    padding: 10px 12px;
+    padding: 7px 10px;
     text-decoration: none;
     color: #24384f;
 }
@@ -388,12 +415,12 @@ if (!is_array($prioridades)) {
     color: #24384f;
 }
 .auditor-action-icon {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 8px;
     background: #eff7ff;
     color: #2f6f9f;
 }
@@ -409,7 +436,7 @@ if (!is_array($prioridades)) {
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
-    font-size: .78rem;
+    font-size: .68rem;
     font-weight: 800;
 }
 .auditor-action-title span {
@@ -421,34 +448,34 @@ if (!is_array($prioridades)) {
 .auditor-action-meta {
     margin-top: 2px;
     color: #6b7280;
-    font-size: .68rem;
+    font-size: .62rem;
 }
 .auditor-action-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    min-height: 28px;
-    padding: 0 9px;
-    border-radius: 9px;
+    min-height: 24px;
+    padding: 0 8px;
+    border-radius: 7px;
     background: #f4faff;
     border: 1px solid #d7e8f3;
     color: #2f6f9f;
-    font-size: .68rem;
+    font-size: .62rem;
     font-weight: 800;
     white-space: nowrap;
 }
 .auditor-alert-stack {
-    padding: 10px;
+    padding: 8px;
     display: grid;
-    gap: 8px;
+    gap: 7px;
 }
 .auditor-alert {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    padding: 9px 10px;
-    border-radius: 11px;
-    font-size: .74rem;
+    gap: 7px;
+    padding: 7px 9px;
+    border-radius: 8px;
+    font-size: .66rem;
     font-weight: 700;
 }
 .auditor-alert.danger { background: #fff1f2; color: #881337; }
@@ -457,21 +484,21 @@ if (!is_array($prioridades)) {
 .auditor-mini-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    padding: 10px;
+    gap: 7px;
+    padding: 8px;
     border-top: 1px solid rgba(76, 142, 187, .10);
 }
 .auditor-mini-kpi {
-    min-height: 58px;
-    border-radius: 11px;
+    min-height: 46px;
+    border-radius: 8px;
     border: 1px solid rgba(76, 142, 187, .14);
     background: #fbfdff;
-    padding: 8px 10px;
+    padding: 6px 8px;
 }
 .auditor-mini-kpi small {
     display: block;
     color: #6b7280;
-    font-size: .62rem;
+    font-size: .55rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -479,7 +506,7 @@ if (!is_array($prioridades)) {
 .auditor-mini-kpi strong {
     display: block;
     color: #24384f;
-    font-size: 1.05rem;
+    font-size: .9rem;
     line-height: 1.15;
 }
 @media (max-width: 1120px) {
@@ -515,9 +542,12 @@ if (!is_array($prioridades)) {
 </style>
 
 <div class="dashboard-wrapper">
-    <div class="dash-hero">
-        <h1>Painel Operacional 360°</h1>
-        <p>Resumo em tempo real das principais frentes (internação, contas, visitas, negociações e eventos).</p>
+    <div class="listagem-hero listagem-hero--module listagem-hero--gestao dash-hero">
+        <div class="listagem-hero__copy">
+            <p class="listagem-kicker">Gestão</p>
+            <h1 class="listagem-title">Painel Operacional 360°</h1>
+            <p class="listagem-subtitle">Resumo em tempo real das principais frentes operacionais.</p>
+        </div>
     </div>
 
     <div class="dash-grid">
@@ -561,7 +591,7 @@ if (!is_array($prioridades)) {
                             <span class="auditor-action-main">
                                 <span class="auditor-action-title">
                                     <strong><?= htmlspecialchars((string)$item['label'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                    <span><?= fullcare_mask_person_name_e($item['paciente'] ?? '') ?></span>
+                                    <span><?= htmlspecialchars((string)$item['paciente'], ENT_QUOTES, 'UTF-8') ?></span>
                                 </span>
                                 <span class="auditor-action-meta">
                                     <?= htmlspecialchars((string)$item['hospital'], ENT_QUOTES, 'UTF-8') ?>
@@ -637,7 +667,7 @@ if (!is_array($prioridades)) {
                     ?>
                     <tr>
                         <td>#<?= (int) $row['id_internacao'] ?></td>
-                        <td><?= fullcare_mask_person_name_e($row['nome_pac'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($row['nome_pac']) ?></td>
                         <td><?= htmlspecialchars($row['nome_hosp']) ?></td>
                         <td><?= (int) $row['dias_internado'] ?></td>
                         <td>R$ <?= number_format($row['valor_apresentado'], 2, ',', '.') ?></td>

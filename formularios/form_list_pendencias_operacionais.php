@@ -284,37 +284,107 @@ function pendenciasUrl(array $params): string
 }
 ?>
 
+<link rel="stylesheet" href="<?= e(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . filemtime(__DIR__ . '/../css/listagem_padrao.css')) ?>">
+
 <style>
-.pend-card-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(180px, 1fr));
-    gap: 10px;
-    margin-bottom: 14px;
+.pendencias-page {
+    margin-top: 2px !important;
+    padding-top: 0;
 }
 
-.pend-card {
-    border: 1px solid #e7e0f0;
-    border-radius: 12px;
-    background: #faf8fd;
-    padding: 10px 12px;
+.pendencias-hero {
+    min-height: 54px;
+    margin-bottom: 8px;
+    padding: 7px 14px;
+    border-radius: 10px;
 }
 
-.pend-card .label {
-    font-size: .82rem;
-    color: #5b4a66;
-    font-weight: 600;
-}
-
-.pend-card .value {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: #4b1f63;
+.pendencias-hero .listagem-title {
+    font-size: 1rem;
     line-height: 1.1;
 }
 
+.pend-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.pend-card {
+    min-height: 58px;
+    border: 1px solid #e6edf5;
+    border-radius: 8px;
+    background: #fff;
+    padding: 8px 10px;
+    box-shadow: 0 1px 4px rgba(30, 45, 70, .06);
+}
+
+.pend-card .label {
+    font-size: .68rem;
+    color: #5f6878;
+    font-weight: 700;
+    line-height: 1.05;
+}
+
+.pend-card .value {
+    margin-top: 2px;
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: #4d2768;
+    line-height: 1.1;
+}
+
+.pendencias-table-card {
+    border-radius: 9px;
+    box-shadow: 0 2px 9px rgba(34, 45, 60, 0.16) !important;
+}
+
+.pendencias-table-card .table-filters {
+    margin-left: 0;
+    padding: 8px 10px 7px;
+}
+
+.pendencias-table-card .fc-list-filters-line {
+    align-items: center;
+    gap: 6px;
+}
+
+.pendencias-table-card .w-actions {
+    flex: 0 0 78px;
+    max-width: 78px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pendencias-table-card .w-actions .btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.pendencias-table-card .w-actions .material-icons {
+    margin: 0 !important;
+    font-size: 1rem;
+    line-height: 1;
+}
+
 .btn-pend-action {
-    font-weight: 600;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 7px;
+    font-size: .62rem;
+    font-weight: 800;
+    line-height: 1;
     border-width: 1px;
+    white-space: nowrap;
 }
 
 .btn-pend-sem-senha {
@@ -378,11 +448,11 @@ function pendenciasUrl(array $params): string
 }
 </style>
 
-<div class="container-fluid form_container" style="margin-top:15px;">
-    <div class="fc-module-header fc-module-header--gestao">
-        <div class="fc-module-header__copy">
-            <p class="fc-module-header__kicker">Gestão</p>
-            <h1 class="fc-module-header__title">Pendências Operacionais</h1>
+<div class="container-fluid form_container listagem-page pendencias-page">
+    <div class="listagem-hero listagem-hero--module listagem-hero--gestao pendencias-hero">
+        <div class="listagem-hero__copy">
+            <p class="listagem-kicker">Gestão</p>
+            <h1 class="listagem-title">Pendências Operacionais</h1>
         </div>
     </div>
 
@@ -405,7 +475,7 @@ function pendenciasUrl(array $params): string
         </div>
     </div>
 
-    <div class="complete-table">
+    <div class="complete-table pendencias-table-card">
         <div class="table-filters fc-list-filters">
             <form method="GET" class="fc-list-filters-line">
                 <div class="fc-filter-item w-hospital">
@@ -438,12 +508,11 @@ function pendenciasUrl(array $params): string
                     </select>
                 </div>
                 <div class="fc-filter-item w-actions">
-                    <button type="submit" class="btn btn-primary"
-                        style="background-color:#5e2363;width:42px;height:32px;border-color:#5e2363">
-                        <span class="material-icons" style="margin-left:-3px;margin-top:-2px;">search</span>
+                    <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon" title="Pesquisar" aria-label="Pesquisar">
+                        <span class="material-icons" aria-hidden="true">search</span>
                     </button>
-                    <a href="<?= e(pendenciasUrl([])) ?>" class="btn btn-light btn-sm" title="Limpar filtros">
-                        <i class="bi bi-trash3"></i>
+                    <a href="<?= e(pendenciasUrl([])) ?>" class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon" title="Limpar filtros" aria-label="Limpar filtros">
+                        <i class="bi bi-trash3" aria-hidden="true"></i>
                     </a>
                 </div>
             </form>
@@ -484,7 +553,7 @@ function pendenciasUrl(array $params): string
                         <td><strong><?= e($item['tipo_label']) ?></strong></td>
                         <td><?= (int)$item['id_internacao'] ?></td>
                         <td><?= e($item['hospital']) ?></td>
-                        <td><?= e(fullcare_mask_person_name($item['paciente'] ?? '')) ?></td>
+                        <td><?= e($item['paciente']) ?></td>
                         <td><?= e($item['seguradora']) ?></td>
                         <td><?= !empty($item['data_internacao']) ? e(date('d/m/Y', strtotime($item['data_internacao']))) : '--' ?></td>
                         <td><?= e($item['detalhe']) ?></td>

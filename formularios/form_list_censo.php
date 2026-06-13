@@ -98,89 +98,28 @@ $where = $order = $obLimite = null;
 $user = $_SESSION['id_usuario'];
 
 ?>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <style>
-    .listagem-page {
-        padding: 4px 4px 14px;
-    }
-
-    .listagem-title {
-        font-size: .96rem;
-        line-height: 1.05;
-    }
-
-    .listagem-hero__copy {
-        padding-left: 10px;
-    }
-
-    .listagem-subtitle {
-        font-size: .66rem;
-        line-height: 1.25;
-        max-width: 42rem;
-    }
-
-    .listagem-btn-top {
-        min-height: 32px;
-        padding: 6px 12px;
-        font-size: .7rem;
-        gap: 6px;
-    }
-
-    .listagem-btn-top i {
-        font-size: .72rem;
-        margin-right: 0;
-    }
-
-    .listagem-panel {
-        padding: 8px 8px 6px;
-    }
-
-    #table-content {
-        margin-top: -4px;
-    }
-
-    #table-content thead th {
-        padding: 7px 10px;
-        font-size: .54rem;
-        letter-spacing: .08em;
-    }
-
-    #table-content tbody td,
-    #table-content tbody th {
-        padding: 4px 10px;
-        font-size: .66rem;
-        vertical-align: middle;
-        line-height: 1.15;
-    }
-
-    #table-content .dropdown-toggle {
-        min-width: 32px;
-        min-height: 28px;
-        padding: 4px 8px;
-        font-size: .68rem;
-    }
-
     #table-content .dropdown-menu .btn {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: flex-start;
+        border: 0;
+        border-radius: 0;
+        min-height: 28px;
+        padding: 6px 10px;
         font-size: .72rem !important;
     }
 
     #table-content .dropdown-menu .btn i {
         font-size: .78rem !important;
-        margin-right: 4px !important;
-    }
-
-    .listagem-panel .pagination {
-        margin-top: 10px !important;
-    }
-
-    .listagem-panel .pagination .page-link,
-    .listagem-panel p[style*="text-align:right"] {
-        font-size: .72rem;
+        margin-right: 6px !important;
     }
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid form_container listagem-page" id="main-container">
-    <div class="listagem-hero listagem-hero--module listagem-hero--internacoes">
+    <div class="listagem-hero listagem-hero--module listagem-hero--cadastros">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Censo</div>
             <h1 class="listagem-title">Listagem de censo</h1>
@@ -190,7 +129,7 @@ $user = $_SESSION['id_usuario'];
             <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="bi bi-door-open"></i>Internar selecionados</a>
         </div>
     </div>
-    <div class="complete-table listagem-panel">
+    <div class="complete-table">
         <div id="navbarToggleExternalContent" class="table-filters">
             <div class="row">
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -201,7 +140,7 @@ $user = $_SESSION['id_usuario'];
                     $pesquisa_pac = (string)listaCensoGetParam('pesquisa_pac', '');
                     $ordenar = (string)listaCensoGetParam('ordenar', '');
                     ?>
-                    <div class="row filter-inline-row">
+                    <div class="row">
                         <div class="form-group col-sm-2" style="padding:2px !important;padding-left:16px !important;">
                             <input class="form-control form-control-sm" type="text"
                                 name="pesquisa_nome"
@@ -361,7 +300,7 @@ $user = $_SESSION['id_usuario'];
 
         <!-- TABELA DE REGISTROS -->
         <div>
-            <div id="table-content" class="listagem-table-wrap">
+            <div id="table-content">
                 <table class="table table-sm table-striped  table-hover table-condensed censo-list-table">
                     <thead>
                         <tr>
@@ -393,7 +332,7 @@ $user = $_SESSION['id_usuario'];
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= $intern["nome_pac"] ?>
                             </td>
                             <td scope="row">
                                 <?php
@@ -413,7 +352,7 @@ $user = $_SESSION['id_usuario'];
                             </td>
 
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["titular_censo"] ?? "") ?>
+                                <?= $intern["titular_censo"] ?>
                             </td>
                             <td scope="row">
                                 <?= $intern["senha_censo"] ?>
@@ -493,9 +432,8 @@ $user = $_SESSION['id_usuario'];
                 <div style="text-align:right">
                     <input type="hidden" id="qtd" value="<?php echo $qtdIntItens ?>">
                 </div>
-                <div style="display: flex;margin-top:20px">
-
-                    <div class="pagination" style="margin: 0 auto;">
+                <div class="listagem-footer-row">
+                    <div class="pagination">
                         <?php if ($total_pages ?? 1 > 1): ?>
                         <ul class="pagination">
                             <?php
@@ -539,11 +477,8 @@ $user = $_SESSION['id_usuario'];
                         <?php endif; ?>
                     </div>
 
-                    <div class="table-counter">
-                        <p
-                            style="font-size:1em; font-weight:600; font-family:var(--bs-font-sans-serif); text-align:right">
-                            <?php echo "Total: " . $qtdIntItens ?>
-                        </p>
+                    <div class="listagem-total">
+                        <p><?php echo "Total: " . $qtdIntItens ?></p>
                     </div>
                 </div>
             </div>
@@ -652,24 +587,6 @@ $(document).on('click', '#table-content .pagination a.page-link', function(e) {
     background: #35bae1;
 }
 
-/* Center the checkbox both vertically and horizontally */
-.form-check {
-    display: flex;
-    justify-content: center;
-    /* Center horizontally */
-    align-items: center;
-    /* Center vertically */
-    height: 100%;
-    /* Ensure the container takes full height of the cell */
-}
-
-/* Increase the size of the checkbox */
-.form-check-input[type=checkbox] {
-    width: 17px;
-    /* Set your desired width */
-    height: 17px;
-    /* Set your desired height */
-}
 </style>
 <script src="./js/input-estilo.js"></script>
 

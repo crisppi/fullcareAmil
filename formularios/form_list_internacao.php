@@ -696,6 +696,32 @@ try {
     font-size: .68rem;
 }
 
+.internacao-list-page .fc-list-action .dropdown-menu {
+    min-width: 170px;
+    max-width: 190px;
+    padding: 5px 0;
+    border-radius: 10px;
+}
+
+.internacao-list-page .fc-list-action .dropdown-menu .btn-default,
+.internacao-list-page .fc-list-action .dropdown-menu .dropdown-item {
+    min-height: 28px !important;
+    padding: 5px 10px !important;
+    margin: 1px 5px !important;
+    gap: 8px !important;
+    font-size: .72rem !important;
+    line-height: 1.1 !important;
+    font-weight: 500 !important;
+}
+
+.internacao-list-page .fc-list-action .dropdown-menu .btn-default i,
+.internacao-list-page .fc-list-action .dropdown-menu .dropdown-item i {
+    min-width: 16px !important;
+    margin-right: 0 !important;
+    font-size: .86rem !important;
+    line-height: 1 !important;
+}
+
 .visit-age {
     font-weight: 500;
     font-size: .68rem;
@@ -1204,7 +1230,7 @@ if (typeof jQuery !== 'undefined') {
                                 <?= htmlspecialchars($intern["nome_hosp"], ENT_QUOTES, 'UTF-8') ?>
                             </td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= htmlspecialchars($intern["nome_pac"], ENT_QUOTES, 'UTF-8') ?>
                             </td>
                             <td scope="row">
                                 <?= htmlspecialchars($intern["seguradora_seg"] ?? '--', ENT_QUOTES, 'UTF-8') ?>

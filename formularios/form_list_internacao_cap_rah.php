@@ -361,6 +361,20 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
             width: 150px;
             max-width: 150px;
         }
+        .rah-action-cell {
+            min-width: 230px;
+            text-align: center;
+            text-transform: none !important;
+            white-space: nowrap;
+        }
+        .rah-action-cell--compact {
+            min-width: 170px;
+        }
+        .rah-action-cell .btn,
+        .rah-action-cell button,
+        .rah-action-cell a {
+            text-transform: none !important;
+        }
         .rah-action-stack {
             display: flex;
             flex-direction: row;
@@ -405,8 +419,13 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
             text-decoration: none;
         }
         .cap-rah-contas-btn {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
             min-height: 30px !important;
             height: 30px !important;
+            width: auto !important;
+            min-width: 76px !important;
             padding: 0 8px !important;
             font-size: .68rem !important;
             font-weight: 500;
@@ -425,6 +444,10 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
             }
             .rah-filter-actions {
                 width: 100%;
+            }
+            .rah-action-cell,
+            .rah-action-cell--compact {
+                min-width: 220px;
             }
         }
         </style>
@@ -676,7 +699,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                                <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
+                                <td scope="row"><?= $intern["nome_pac"] ?></td>
                                 <td scope="row"><?= $intern["senha_int"] ?></td>
                                 <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                                 <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>
@@ -693,9 +716,9 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     $pdfDownloadUrl = $BASE_URL . 'export_capeante_rah_pdf.php?id_capeante=' . $intern['id_capeante'] . '&download=1';
                                     $rahEditUrl = $BASE_URL . 'edit_capeante_rah.php?id_capeante=' . $intern['id_capeante'];
                                 ?>
-                                <td class="action">
+                                <td class="rah-action-cell rah-action-cell--compact">
                                     <div class="rah-action-stack">
-                                        <a class="btn btn-outline-primary btn-sm" href="#"
+                                        <a class="btn btn-outline-primary btn-sm cap-rah-edit-btn" href="#"
                                             onclick="edit('<?= $BASE_URL ?>edit_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>')">
                                             Editar RAH
                                         </a>
@@ -823,7 +846,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                             <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                            <td scope="row"><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
+                            <td scope="row"><?= $intern["nome_pac"] ?></td>
                             <td scope="row"><?= $intern["senha_int"] ?></td>
                             <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                             <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>
@@ -845,10 +868,10 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     $dropdownId = 'contasDropdownRah' . $intern['id_capeante'] . '_' . $intern['id_internacao'];
                                     $rahEditUrl = $BASE_URL . 'edit_capeante_rah.php?id_capeante=' . $intern['id_capeante'];
                                 ?>
-                                <td class="action text-center">
+                                <td class="rah-action-cell">
                                     <div class="rah-action-stack">
                                         <?php if ($isSenhasContext): ?>
-                                            <a class="btn btn-outline-primary btn-sm"
+                                            <a class="btn btn-outline-primary btn-sm cap-rah-edit-btn"
                                                 href="#"
                                                 onclick="edit('<?= $BASE_URL ?>edit_capeante_rah.php?id_capeante=<?= $intern['id_capeante'] ?>')">
                                                 Editar RAH

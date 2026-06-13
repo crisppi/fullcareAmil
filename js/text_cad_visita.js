@@ -81,7 +81,7 @@
          if (!select || !wrapper || !detalhes) return;
          var show = select.value === 's';
          wrapper.style.display = show ? 'block' : 'none';
-         detalhes.style.display = show ? 'block' : 'none';
+         detalhes.style.display = show ? 'grid' : 'none';
      }
 
      if (window.jQuery) {
@@ -89,7 +89,7 @@
              function toggleDetalhes() {
                  if ($('#relatorio-detalhado').val() === 's') {
                      $('#detalhes-card-wrapper').show();
-                     $('#div-detalhado').show();
+                     $('#div-detalhado').css('display', 'grid');
                  } else {
                      $('#div-detalhado').hide();
                      $('#detalhes-card-wrapper').hide();

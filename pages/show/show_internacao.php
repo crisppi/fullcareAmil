@@ -620,11 +620,11 @@ $editarTussUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?sec
 $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?section=negoc#collapseNegoc';
 ?>
 
-<div id="main-container" class="container-fluid py-3">
+<div id="main-container" class="container-fluid py-2 internacao-show-page">
     <div class="v2-max mx-auto">
 
-        <div class="card shadow-sm mb-3 header-card">
-            <div class="card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
+        <div class="card shadow-sm mb-2 header-card">
+            <div class="card-body d-flex flex-wrap gap-2 align-items-center justify-content-between">
                 <div class="d-flex gap-3 align-items-center">
                     <div class="v2-avatar"><?= e($iniciais) ?></div>
                     <div>
@@ -641,7 +641,7 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
             </div>
         </div>
 
-        <div class="card shadow-sm mb-3">
+        <div class="card shadow-sm mb-2">
             <div class="card-body py-2 px-3">
                 <div class="ux-summary-strip">
                     <div class="ux-summary-chip">
@@ -666,7 +666,7 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
             </div>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm internacao-main-card">
             <div class="card-body">
 
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -1209,7 +1209,7 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
                                     <h6 class="ov-title mb-0">Prorrogações</h6>
                                     <?php if (!empty($pr_pendente_label)): ?>
                                         <a class="prorrog-pendente-badge"
-                                            style="margin-left:auto !important;background:#ffe7ef !important;color:#b42346 !important;border:1px solid #e55353 !important;border-radius:999px !important;padding:6px 14px !important;display:inline-flex !important;align-items:center !important;text-decoration:none !important;box-shadow:0 1px 4px rgba(181,35,70,.12) !important;"
+                                            style="margin-left:auto !important;background:#ffe7ef !important;color:#b42346 !important;border:1px solid #e55353 !important;border-radius:999px !important;padding:4px 10px !important;font-size:.64rem !important;line-height:1.05 !important;display:inline-flex !important;align-items:center !important;text-decoration:none !important;box-shadow:0 1px 4px rgba(181,35,70,.12) !important;"
                                             href="<?= e($BASE_URL) ?>internacoes/editar/<?= (int)$id_internacao ?>?section=prorrog#collapseProrrog">
                                             Período em aberto: <?= e($pr_pendente_label) ?>
                                         </a>
@@ -1960,8 +1960,8 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
     }
 
     .v2-avatar {
-        width: 54px;
-        height: 54px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         background: #ecd5f9;
         display: flex;
@@ -1969,42 +1969,45 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
         justify-content: center;
         font-weight: 700;
         color: #5e2363;
-        font-size: 1.45rem;
+        font-size: 1rem;
+        flex: 0 0 auto;
     }
 
     .header-card .card-body {
-        padding: .9rem 1.1rem;
+        padding: .62rem .9rem;
     }
 
     .header-card h4 {
-        font-size: 1.02rem;
-        margin-bottom: .2rem !important;
+        font-size: .86rem;
+        margin-bottom: .12rem !important;
+        line-height: 1.15;
     }
 
     .header-card .small,
     .header-card .text-secondary {
-        font-size: .76rem !important;
+        font-size: .66rem !important;
+        line-height: 1.2;
     }
 
     .ux-summary-strip {
         display: grid;
         grid-template-columns: repeat(4, minmax(180px, 1fr));
-        gap: 8px;
+        gap: 6px;
     }
 
     .ux-summary-chip {
         border: 1px solid #eadcf3;
         background: #fbf7fe;
-        border-radius: 12px;
-        padding: 6px 9px;
+        border-radius: 10px;
+        padding: 4px 7px;
         display: flex;
         align-items: baseline;
-        gap: 6px;
+        gap: 5px;
         flex-wrap: wrap;
     }
 
     .ux-chip-label {
-        font-size: .68rem;
+        font-size: .58rem;
         letter-spacing: .02em;
         color: #6b7280;
         text-transform: uppercase;
@@ -2012,13 +2015,13 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
 
     .ux-chip-value {
         color: #5e2363;
-        font-size: .88rem;
+        font-size: .72rem;
         font-weight: 700;
     }
 
     .ux-chip-sub {
         color: #6b7280;
-        font-size: .72rem;
+        font-size: .62rem;
     }
 
     .ux-priority-chip .ux-chip-value {
@@ -2080,45 +2083,51 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
         z-index: 10;
         background: #fff;
         border: 1px solid #ece7f1;
-        border-radius: 12px;
-        padding: 8px;
+        border-radius: 10px;
+        padding: 6px;
     }
 
     #internTabs .nav-link {
-        padding: .65rem .95rem;
-        font-size: .86rem;
+        padding: .42rem .68rem;
+        font-size: .72rem;
         font-weight: 700;
-        border-radius: 14px;
+        border-radius: 10px;
+        line-height: 1.15;
+    }
+
+    #internTabs .nav-link i {
+        font-size: .72rem;
+        margin-right: .32rem !important;
     }
 
     .ov-card .ov-head {
         display: flex;
         align-items: center;
-        gap: .5rem;
-        margin-bottom: .4rem
+        gap: .36rem;
+        margin-bottom: .25rem
     }
 
     #main-container .ov-card {
         border: 1px solid #ede7f3;
-        border-radius: 14px;
+        border-radius: 10px;
     }
 
     #main-container .ov-card .card-body {
-        padding: .8rem .95rem;
+        padding: .58rem .72rem;
     }
 
     #main-container .ov-title {
-        font-size: .9rem;
+        font-size: .74rem;
         font-weight: 700;
         color: #2b2f36;
     }
 
     #main-container .btn-sm {
-        min-height: 31px;
-        padding: 0.28rem 0.66rem;
+        min-height: 26px;
+        padding: 0.2rem 0.52rem;
         font-weight: 600;
         line-height: 1.2;
-        font-size: .76rem;
+        font-size: .66rem;
     }
 
     #main-container .form-label.small {
@@ -2235,14 +2244,57 @@ $editarNegocUrl = $BASE_URL . 'internacoes/editar/' . (int)$id_internacao . '?se
     }
 
     .ov-card .ov-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
+        width: 22px;
+        height: 22px;
+        border-radius: 7px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         background: var(--ov-accent-100, var(--brand-100));
         color: var(--ov-accent, var(--brand))
+    }
+
+    .ov-card .ov-icon i {
+        font-size: .72rem;
+    }
+
+    .internacao-show-page .card {
+        border-radius: 10px;
+    }
+
+    .internacao-main-card > .card-body {
+        padding: .75rem .85rem;
+    }
+
+    .internacao-show-page .details-dl {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        column-gap: 12px;
+        row-gap: 6px;
+        margin: 0;
+    }
+
+    .internacao-show-page .details-dl dt,
+    .internacao-show-page .details-dl dd {
+        font-size: .68rem;
+        line-height: 1.15;
+        margin: 0;
+    }
+
+    .internacao-show-page .details-dl dt {
+        color: #737488;
+        font-weight: 700;
+    }
+
+    .internacao-show-page .details-dl dd {
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .internacao-show-page .v2-relatorio {
+        font-size: .68rem;
+        line-height: 1.32;
+        min-height: 24px;
     }
 
     .ov-card.ov-int {

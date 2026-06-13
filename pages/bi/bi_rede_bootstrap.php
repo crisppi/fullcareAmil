@@ -6,7 +6,7 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
-require_once __DIR__ . '/app/bi_cid_options.php';
+require_once __DIR__ . '/../../app/bi_cid_options.php';
 
 if (!function_exists('e')) {
     function e($v)
@@ -285,7 +285,7 @@ $stmt = $conn->prepare($sqlHosp);
 $stmt->execute($params);
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-$whereAlta = "al.data_alta_alt BETWEEN :data_ini AND :data_fim";
+$whereAlta = "TO_DAYS(al.data_alta_alt) BETWEEN TO_DAYS(:data_ini) AND TO_DAYS(:data_fim)";
 if ($hospitalId) {
     $whereAlta .= " AND i.fk_hospital_int = :hospital_id";
 }
@@ -311,27 +311,33 @@ if ($uti === 'n') {
 $sqlReadm = "
     SELECT
         h.id_hospital,
-        COUNT(*) AS total_altas,
-        SUM(
-            CASE WHEN EXISTS (
-                SELECT 1
-                FROM tb_internacao i2
-                WHERE i2.fk_paciente_int = i.fk_paciente_int
-                  AND i2.data_intern_int > al.data_alta_alt
-                  AND i2.data_intern_int <= DATE_ADD(al.data_alta_alt, INTERVAL 30 DAY)
-            ) THEN 1 ELSE 0 END
-        ) AS readm
+        COUNT(DISTINCT al.id_alta) AS total_altas,
+        COUNT(DISTINCT rm.id_alta) AS readm
     FROM tb_alta al
     JOIN tb_internacao i ON i.id_internacao = al.fk_id_int_alt
     LEFT JOIN tb_hospital h ON h.id_hospital = i.fk_hospital_int
     LEFT JOIN tb_paciente pa ON pa.id_paciente = i.fk_paciente_int
     LEFT JOIN tb_seguradora s ON s.id_seguradora = pa.fk_seguradora_pac
+    LEFT JOIN (
+        SELECT DISTINCT alr.id_alta
+        FROM tb_alta alr
+        JOIN tb_internacao ir ON ir.id_internacao = alr.fk_id_int_alt
+        JOIN tb_internacao i2
+         ON i2.fk_paciente_int = ir.fk_paciente_int
+         AND i2.id_internacao <> ir.id_internacao
+         AND TO_DAYS(i2.data_intern_int) > TO_DAYS(alr.data_alta_alt)
+         AND TO_DAYS(i2.data_intern_int) <= TO_DAYS(alr.data_alta_alt) + 30
+        WHERE TO_DAYS(alr.data_alta_alt) BETWEEN TO_DAYS(:readm_data_ini) AND TO_DAYS(:readm_data_fim)
+    ) rm ON rm.id_alta = al.id_alta
     {$utiJoin}
     WHERE {$whereAlta}
     GROUP BY h.id_hospital
 ";
 $stmt = $conn->prepare($sqlReadm);
-$stmt->execute($params);
+$readmParams = $params;
+$readmParams[':readm_data_ini'] = $dataIni;
+$readmParams[':readm_data_fim'] = $dataFim;
+$stmt->execute($readmParams);
 $readmRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 $readmMap = [];
 foreach ($readmRows as $row) {
@@ -452,7 +458,7 @@ $redeTabs = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>

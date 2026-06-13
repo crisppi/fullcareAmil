@@ -2009,6 +2009,9 @@ $("#myForm").submit(function(event) {
                     "border": "1px solid #8fc7f5",
                     "background-color": "#d7ebff"
                 });
+                if (typeof window.fullcareRestyleAdditionalLaunchers === 'function') {
+                    window.fullcareRestyleAdditionalLaunchers();
+                }
 
 
                 // 8. Atualiza selects que usam Bootstrap Select (exceto o de hospitais)
@@ -2135,7 +2138,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function aplicar() {
         if (selectDet.value === 's') {
             if (wrapperDet) wrapperDet.style.display = 'block';
-            divDet.style.display = 'block';
+            divDet.style.display = 'grid';
             if (hiddenDet) hiddenDet.value = 's';
         } else {
             divDet.style.display = 'none';
@@ -2183,15 +2186,45 @@ document.addEventListener('DOMContentLoaded', function() {
         const body = section.bodyId ? document.getElementById(section.bodyId) : null;
         const hidden = section.hiddenId ? document.getElementById(section.hiddenId) : null;
         if (container) container.style.display = show ? 'block' : 'none';
-        if (body) body.style.display = show ? 'block' : 'none';
+        if (body) body.style.display = show ? 'grid' : 'none';
         if (hidden) hidden.value = show ? 's' : 'n';
     }
+
+    function styleLauncher(select) {
+        if (!select) return;
+        const active = select.value === 's';
+        const visibleButton = document.querySelector('.tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="' + select.id + '"]');
+        const controls = [select, visibleButton].filter(Boolean);
+        controls.forEach(function(control) {
+            control.style.setProperty('border', active ? '1px solid #5b8ee8' : '1px solid #83aef2', 'important');
+            control.style.setProperty('background', active ? 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%)' : 'linear-gradient(180deg, #eaf4ff 0%, #d6eaff 100%)', 'important');
+            control.style.setProperty('background-color', active ? '#dbeafe' : '#eaf4ff', 'important');
+            control.style.setProperty('color', '#1f4d85', 'important');
+            control.style.setProperty('font-weight', '750', 'important');
+            control.style.setProperty('box-shadow', active ? '0 0 0 .14rem rgba(91, 142, 232, .16)' : 'inset 0 0 0 1px rgba(62, 113, 198, .12)', 'important');
+        });
+
+        if (visibleButton) {
+            visibleButton.querySelectorAll('.filter-option, .filter-option-inner, .filter-option-inner-inner').forEach(function(node) {
+                node.style.setProperty('color', '#1f4d85', 'important');
+                node.style.setProperty('font-weight', '750', 'important');
+            });
+        }
+    }
+
+    function styleAllLaunchers() {
+        sections.forEach(function(section) {
+            styleLauncher(document.getElementById(section.selectId));
+        });
+    }
+    window.fullcareRestyleAdditionalLaunchers = styleAllLaunchers;
 
     function showOnly(activeSelectId) {
         sections.forEach(function(section) {
             const select = document.getElementById(section.selectId);
             const show = section.selectId === activeSelectId && select && select.value === 's';
             setSection(section, show);
+            styleLauncher(select);
         });
     }
 
@@ -2201,6 +2234,7 @@ document.addEventListener('DOMContentLoaded', function() {
         select.addEventListener('change', function() {
             showOnly(section.selectId);
         });
+        select.addEventListener('click', styleAllLaunchers);
     });
 
     const acomodacao = document.getElementById('acomodacao_int');
@@ -2221,6 +2255,9 @@ document.addEventListener('DOMContentLoaded', function() {
     sections.forEach(function(section) {
         setSection(section, initiallyOpen && section.selectId === initiallyOpen.selectId);
     });
+    styleAllLaunchers();
+    window.setTimeout(styleAllLaunchers, 100);
+    window.setTimeout(styleAllLaunchers, 500);
 });
 
 // Layout visual dos blocos adicionais no cadastro. Nao altera valores enviados ao banco.
@@ -2229,41 +2266,58 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!row) return;
         row.style.setProperty('display', 'grid', 'important');
         row.style.setProperty('grid-template-columns', 'repeat(auto-fit, minmax(' + minWidth + 'px, 1fr))', 'important');
-        row.style.setProperty('gap', '14px', 'important');
+        row.style.setProperty('gap', '5px 8px', 'important');
         row.style.setProperty('align-items', 'end', 'important');
         row.style.setProperty('width', '100%', 'important');
         row.style.setProperty('max-width', '100%', 'important');
+        row.style.setProperty('margin', '0 0 5px', 'important');
 
         row.querySelectorAll(':scope > .form-group[class*="col-"], :scope > .tuss-actions-col').forEach(function(col) {
-            col.style.setProperty('width', '100%', 'important');
+            col.style.setProperty('width', 'auto', 'important');
             col.style.setProperty('max-width', 'none', 'important');
             col.style.setProperty('min-width', '0', 'important');
             col.style.setProperty('padding-left', '0', 'important');
             col.style.setProperty('padding-right', '0', 'important');
+            col.style.setProperty('margin', '0', 'important');
             col.style.setProperty('margin-bottom', '0', 'important');
         });
 
         row.querySelectorAll(':scope > .form-group[class*="col-"] .form-control, :scope > .form-group[class*="col-"] .form-control-sm').forEach(function(control) {
             control.style.setProperty('width', '100%', 'important');
-            control.style.setProperty('min-height', '42px', 'important');
+            control.style.setProperty('min-height', '30px', 'important');
+            control.style.setProperty('height', '30px', 'important');
+            control.style.setProperty('padding-top', '0', 'important');
+            control.style.setProperty('padding-bottom', '0', 'important');
+            control.style.setProperty('font-size', '.68rem', 'important');
+            control.style.setProperty('line-height', '1', 'important');
+        });
+
+        row.querySelectorAll(':scope > .tuss-actions-col .btn-add, :scope > .tuss-actions-col .btn-remove, :scope > .form-group .btn-add, :scope > .form-group .btn-remove').forEach(function(button) {
+            button.style.setProperty('min-width', '30px', 'important');
+            button.style.setProperty('width', '30px', 'important');
+            button.style.setProperty('min-height', '30px', 'important');
+            button.style.setProperty('height', '30px', 'important');
+            button.style.setProperty('padding', '0', 'important');
+            button.style.setProperty('border-radius', '7px', 'important');
+            button.style.setProperty('font-size', '.72rem', 'important');
         });
     }
 
     function applyAdditionalTablesLayout() {
         document.querySelectorAll('#container-tuss .tuss-field-container').forEach(function(row) {
-            applyGrid(row, 170);
+            applyGrid(row, 120);
         });
         document.querySelectorAll('#container-gestao .adicional-card > .form-group.row').forEach(function(row) {
-            applyGrid(row, 170);
+            applyGrid(row, 120);
         });
         document.querySelectorAll('#container-uti .uti-grid-row').forEach(function(row) {
-            applyGrid(row, 170);
+            applyGrid(row, 120);
         });
         document.querySelectorAll('#container-prorrog .field-container').forEach(function(row) {
-            applyGrid(row, 160);
+            applyGrid(row, 120);
         });
         document.querySelectorAll('#container-negoc .negotiation-field-container').forEach(function(row) {
-            applyGrid(row, 160);
+            applyGrid(row, 110);
         });
     }
 
@@ -2667,10 +2721,118 @@ document.addEventListener('click', function(event) {
     }
 });
 
+function applyInternacaoPickerCompact() {
+    const ids = ['hospital_selected', 'fk_paciente_int', 'fk_cid_int', 'fk_patologia2'];
+    const cssId = 'internacao-picker-compact-runtime';
+
+    if (!document.getElementById(cssId)) {
+        const style = document.createElement('style');
+        style.id = cssId;
+        style.textContent = `
+            .internacao-page select.selectpicker.bs-select-hidden,
+            .internacao-page select.selectpicker[data-fcx-picker-locked="1"] {
+                position: absolute !important;
+                width: 1px !important;
+                height: 1px !important;
+                min-width: 1px !important;
+                min-height: 1px !important;
+                max-width: 1px !important;
+                max-height: 1px !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: 0 !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                overflow: hidden !important;
+                clip-path: inset(50%) !important;
+            }
+            .internacao-page .hospital-select-wrapper,
+            .internacao-page .assist-select-clear,
+            .internacao-page .hospital-select-wrapper .bootstrap-select,
+            .internacao-page .patient-col .bootstrap-select,
+            .internacao-page .assist-select-clear .bootstrap-select {
+                min-height: 30px !important;
+                height: 30px !important;
+            }
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"],
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"],
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"],
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] {
+                display: flex !important;
+                align-items: center !important;
+                min-height: 30px !important;
+                height: 30px !important;
+                padding: 0 28px 0 8px !important;
+                border-radius: 7px !important;
+                box-shadow: none !important;
+                font-size: .68rem !important;
+                line-height: 1 !important;
+            }
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner-inner,
+            .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option-inner-inner {
+                height: 22px !important;
+                line-height: 22px !important;
+                min-height: 0 !important;
+                font-size: .68rem !important;
+                font-weight: 500 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    ids.forEach(function(id) {
+        const select = document.getElementById(id);
+        const button = document.querySelector('.bootstrap-select > button.dropdown-toggle[data-id="' + id + '"]');
+        const wrapper = button ? button.closest('.bootstrap-select') : null;
+
+        if (select && select.classList.contains('selectpicker')) {
+            select.classList.add('bs-select-hidden');
+            select.setAttribute('data-fcx-picker-locked', '1');
+        }
+
+        [wrapper, button].forEach(function(el) {
+            if (!el) return;
+            el.style.setProperty('min-height', '30px', 'important');
+            el.style.setProperty('height', '30px', 'important');
+            el.style.setProperty('box-shadow', 'none', 'important');
+        });
+
+        if (button) {
+            button.style.setProperty('display', 'flex', 'important');
+            button.style.setProperty('align-items', 'center', 'important');
+            button.style.setProperty('padding', '0 28px 0 8px', 'important');
+            button.style.setProperty('font-size', '.68rem', 'important');
+            button.style.setProperty('line-height', '1', 'important');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    applyInternacaoPickerCompact();
+    setTimeout(applyInternacaoPickerCompact, 100);
+    setTimeout(applyInternacaoPickerCompact, 400);
+
+    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.selectpicker) {
+        window.jQuery('#hospital_selected, #fk_paciente_int, #fk_cid_int, #fk_patologia2')
+            .on('loaded.bs.select rendered.bs.select refreshed.bs.select changed.bs.select', applyInternacaoPickerCompact);
+    }
+});
+
     window.triggerInternacaoAutoSave = triggerInternacaoAutoSave;
     window.aumentarText = aumentarText;
     window.reduzirText = reduzirText;
     window.myFunctionSelected = myFunctionSelected;
     window.mirrorVisitMedFromFk = mirrorVisitMedFromFk;
+    window.applyInternacaoPickerCompact = applyInternacaoPickerCompact;
 
 })(window, document);

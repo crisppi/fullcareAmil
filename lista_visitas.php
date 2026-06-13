@@ -547,6 +547,8 @@ $brandColor = $isFaturamentoView ? '#0a4fa3' : '#0b3d91';
 $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="<?= h(rtrim($BASE_URL, '/') . '/css/table_style.css?v=' . filemtime(__DIR__ . '/css/table_style.css')) ?>">
+<link rel="stylesheet" href="<?= h(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . filemtime(__DIR__ . '/css/listagem_padrao.css')) ?>">
 <style>
     :root {
         --brand: <?= htmlspecialchars($brandColor, ENT_QUOTES, 'UTF-8') ?>;
@@ -554,73 +556,66 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     }
 
     .visitas-page {
-        padding-top: 1rem;
+        padding: 0 4px 14px;
+        margin-top: 2px !important;
     }
 
-    .visitas-page-heading {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: .8rem;
-        padding: .15rem .15rem 0;
+    .visitas-hero {
+        min-height: 54px;
+        margin-bottom: 8px;
+        padding: 7px 14px;
+        border-radius: 10px;
     }
 
-    .visitas-page-heading.fc-module-header {
-        align-items: center;
-        margin-bottom: 14px;
-        padding: 10px 18px;
+    .visitas-hero .listagem-title {
+        font-size: 1rem;
+        line-height: 1.1;
     }
 
-    .page-title {
-        color: #303038;
-        font-size: 1.38rem;
-        font-weight: 700;
-        line-height: 1.2;
-        margin: 0;
-    }
-
-    .page-subtitle {
-        color: #71717a;
-        font-size: .86rem;
-        margin-top: .2rem;
+    .visitas-hero .listagem-subtitle {
+        margin-top: 2px;
+        color: rgba(255,255,255,.76);
+        font-size: .68rem;
     }
 
     .card {
-        border-radius: 14px;
+        border-radius: 9px;
     }
 
     .card.shadow-sm {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, .06) !important;
+        box-shadow: 0 2px 9px rgba(34, 45, 60, .12) !important;
     }
 
     .visitas-toolbar {
-        background: linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
-        border: 1px solid #e8e3ee;
+        background: #fff;
+        border: 1px solid #e6edf5;
+        padding: 10px !important;
+        margin-bottom: 10px !important;
     }
 
     .visitas-toolbar-head {
         display: grid;
         grid-template-columns: minmax(220px, 1fr) auto;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: .85rem;
+        gap: .6rem;
+        margin-bottom: .55rem;
     }
 
     .visitas-toolbar-title {
         color: #3f3f46;
-        font-size: 1rem;
+        font-size: .78rem;
+        font-weight: 800 !important;
     }
 
     .visitas-toolbar-subtitle {
         color: #71717a;
-        font-size: .82rem;
+        font-size: .66rem;
     }
 
     .field-actions {
         display: grid;
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-        gap: .5rem;
+        grid-template-columns: repeat(2, minmax(112px, 1fr));
+        gap: .4rem;
         align-items: center;
     }
 
@@ -628,9 +623,11 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         border: 1px solid #d9dce5;
         background: #fff;
         color: #3f3f46;
-        border-radius: 8px;
-        font-weight: 600;
-        min-height: 34px;
+        border-radius: 7px;
+        font-size: .68rem;
+        font-weight: 800;
+        min-height: 28px;
+        padding: 0 8px;
     }
 
     .btn-soft-action:hover {
@@ -642,25 +639,23 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     .field-selector {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
-        gap: .55rem;
-        margin-bottom: 1.15rem;
-        padding: .75rem;
+        gap: .38rem;
+        margin-bottom: .7rem;
+        padding: .55rem;
         border: 1px solid #eceff5;
-        border-radius: 10px;
-        background:
-            linear-gradient(#ffffff, #ffffff) padding-box,
-            linear-gradient(90deg, rgba(11, 61, 145, .08), rgba(60, 160, 210, .12)) border-box;
+        border-radius: 8px;
+        background: #fff;
     }
 
     .field-option {
         display: flex;
         align-items: center;
-        gap: .55rem;
-        min-height: 40px;
+        gap: .38rem;
+        min-height: 28px;
         margin: 0;
-        padding: .55rem .7rem;
+        padding: .32rem .5rem;
         border: 1px solid #e2e5ec;
-        border-radius: 8px;
+        border-radius: 7px;
         background: #fff;
         color: #45454f;
         cursor: pointer;
@@ -673,8 +668,8 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     }
 
     .field-option .form-check-input {
-        width: 1rem;
-        height: 1rem;
+        width: .82rem;
+        height: .82rem;
         margin: 0;
         border-color: #b9bfcc;
         flex: 0 0 auto;
@@ -687,15 +682,15 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
 
     .field-option i {
         color: #6b7280;
-        font-size: .95rem;
+        font-size: .74rem;
     }
 
     .field-option-text {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: .88rem;
-        font-weight: 600;
+        font-size: .66rem;
+        font-weight: 800;
     }
 
     .field-option:has(.form-check-input:checked) {
@@ -711,15 +706,17 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
 
     .filters-actions {
         display: grid !important;
-        grid-template-columns: repeat(2, minmax(128px, 1fr));
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
         align-items: stretch;
+        gap: 6px;
     }
 
     .filters-actions .btn {
         width: 100%;
         min-height: 34px;
         border-radius: 8px;
-        font-weight: 600;
+        font-size: .72rem;
+        font-weight: 800;
     }
 
     .sticky-actions {
@@ -750,10 +747,10 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         border-left: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-        min-height: 2.1875rem;
-        height: 2.1875rem !important;
+        min-height: 34px;
+        height: 34px !important;
         width: 100%;
-        padding: 0.25rem 0.45rem;
+        padding: 0.2rem 0.4rem;
         display: flex;
         align-items: center;
         margin-right: 0;
@@ -765,9 +762,9 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     .select2-container--default .select2-selection--multiple {
         border: 1px solid #ced4da;
         border-radius: .375rem;
-        min-height: 2.1875rem;
-        height: 2.1875rem !important;
-        padding: 0.25rem 0.45rem;
+        min-height: 34px;
+        height: 34px !important;
+        padding: 0.2rem 0.4rem;
         display: flex;
         align-items: center;
         flex-wrap: wrap;
@@ -793,6 +790,17 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         border-right: 0;
         display: flex;
         align-items: center;
+        height: 34px;
+        min-height: 34px;
+        padding: 0 10px;
+    }
+
+    .visitas-toolbar .form-control,
+    .visitas-toolbar .form-select {
+        height: 34px;
+        min-height: 34px;
+        font-size: .72rem;
+        font-weight: 700;
     }
 
     .faturamento-actions h6 {
@@ -809,42 +817,49 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         width: 95px;
     }
     .visit-table-wrap {
-        border: 1px solid #e5e7eb;
-        border-radius: 10px;
+        border: 0;
+        border-radius: 0;
         overflow: auto;
         max-height: calc(100vh - 320px);
     }
+
+    .visitas-list-card {
+        border-radius: 9px;
+        box-shadow: 0 2px 9px rgba(34, 45, 60, .12) !important;
+        overflow: hidden;
+    }
+
     .visit-table {
         margin-bottom: 0;
         min-width: 1240px;
-        font-size: .82rem;
+        font-size: .68rem;
     }
     .visit-table thead th {
         position: sticky;
         top: 0;
         z-index: 2;
-        padding: .82rem .75rem;
+        padding: 3px 6px;
         vertical-align: middle;
         color: #fff;
-        font-size: .76rem;
+        font-size: .66rem;
         font-weight: 700;
         letter-spacing: .02em;
         white-space: nowrap;
     }
     .visit-table tbody td {
-        padding: .72rem .75rem;
-        line-height: 1.35;
+        padding: 3px 6px;
+        line-height: 1.05;
         vertical-align: middle;
         color: #34343c;
     }
     .visit-table tbody tr {
-        min-height: 44px;
+        min-height: 26px;
     }
     .visit-table tbody tr:nth-child(odd) td {
-        background-color: #ffffff;
+        background-color: #f4f4f4;
     }
     .visit-table tbody tr:nth-child(even) td {
-        background-color: #f6f3fb;
+        background-color: #eef7ff;
     }
     .visit-table tbody tr:hover td {
         background-color: #eef5ff;
@@ -865,6 +880,106 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     .visit-table .col-data_alta {
         min-width: 125px;
     }
+
+    .visitas-list-card .listagem-footer-row {
+        padding: 10px 16px 14px;
+    }
+
+    .visitas-list-card .listagem-total p {
+        margin: 0;
+    }
+
+    .visitas-page--faturamento .visitas-hero {
+        min-height: 46px;
+        margin-bottom: 7px;
+        padding: 6px 12px;
+    }
+
+    .visitas-page--faturamento .visitas-toolbar {
+        padding: 8px !important;
+    }
+
+    .visitas-page--faturamento .visitas-toolbar-head {
+        margin-bottom: .42rem;
+    }
+
+    .visitas-page--faturamento .field-selector {
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        gap: .32rem;
+        padding: .45rem;
+        margin-bottom: .55rem;
+    }
+
+    .visitas-page--faturamento .field-option {
+        min-height: 24px;
+        padding: .24rem .42rem;
+    }
+
+    .visitas-page--faturamento .field-option-text {
+        font-size: .6rem;
+    }
+
+    .visitas-page--faturamento .field-option i {
+        font-size: .68rem;
+    }
+
+    .visitas-page--faturamento .field-option .form-check-input {
+        width: .74rem;
+        height: .74rem;
+    }
+
+    .visitas-page--faturamento .filters-inline {
+        row-gap: 6px;
+    }
+
+    #faturamentoActionBox {
+        border: 1px solid #e6edf5 !important;
+        border-radius: 9px;
+        box-shadow: 0 2px 9px rgba(34, 45, 60, .12) !important;
+        padding: 8px 10px !important;
+        margin-bottom: 10px !important;
+    }
+
+    #faturamentoActionBox .faturamento-actions {
+        gap: 8px !important;
+    }
+
+    #faturamentoActionBox h6 {
+        margin-bottom: 1px !important;
+        font-size: .58rem !important;
+        letter-spacing: .08em;
+    }
+
+    #faturamentoActionBox .fw-semibold.fs-5 {
+        font-size: .82rem !important;
+        line-height: 1.1;
+    }
+
+    #faturamentoActionBox .form-check-label {
+        font-size: .68rem;
+        font-weight: 700;
+    }
+
+    #faturamentoActionBox .form-check-input {
+        width: 28px;
+        height: 15px;
+        margin-top: 0;
+    }
+
+    #btnFaturarVisitas {
+        min-height: 30px;
+        padding: 0 10px;
+        border-radius: 7px;
+        font-size: .72rem;
+        font-weight: 800;
+    }
+
+    #badgeSelVisitas {
+        min-width: 22px;
+        padding: 2px 6px;
+        font-size: .66rem;
+    }
+
     .th-sortable {
         display: flex;
         align-items: center;
@@ -918,6 +1033,13 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
         .field-selector {
             grid-template-columns: repeat(9, minmax(0, 1fr));
         }
+
+        .visitas-page--faturamento .filters-inline {
+            display: grid;
+            grid-template-columns: minmax(150px, 1.25fr) minmax(150px, 1.25fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(220px, .9fr) minmax(210px, .85fr) minmax(260px, 1fr);
+            align-items: end;
+            gap: 8px;
+        }
     }
 
     @media (max-width: 767.98px) {
@@ -944,14 +1066,14 @@ $brandSoftColor = $isFaturamentoView ? '#d6e4ff' : '#dfe6ff';
     }
 </style>
 
-<div class="container-fluid visitas-page">
-    <div class="fc-module-header fc-module-header--gestao visitas-page-heading">
-        <div class="fc-module-header__copy">
-            <p class="fc-module-header__kicker">Gestão</p>
-            <h1 class="fc-module-header__title"><?= h($pageTitle) ?></h1>
-            <p class="fc-module-header__subtitle">Consulta, filtros e exportação das visitas registradas</p>
+<div class="container-fluid form_container listagem-page visitas-page<?= $isFaturamentoView ? ' visitas-page--faturamento' : '' ?>">
+    <div class="listagem-hero listagem-hero--module listagem-hero--gestao visitas-hero">
+        <div class="listagem-hero__copy">
+            <p class="listagem-kicker">Gestão</p>
+            <h1 class="listagem-title"><?= h($pageTitle) ?></h1>
+            <p class="listagem-subtitle">Consulta, filtros e exportação das visitas registradas</p>
         </div>
-        <div class="fc-module-header__actions">
+        <div class="listagem-hero__actions">
             <div class="small text-white"><?= (int)$total ?> registro(s)</div>
         </div>
     </div>
@@ -1137,9 +1259,9 @@ $fieldIcons = [
         </div>
     <?php endif; ?>
 
-    <div class="card p-3 shadow-sm border-0">
+    <div class="complete-table visitas-list-card">
         <div class="table-responsive visit-table-wrap">
-            <table class="table table-hover align-middle visit-table">
+            <table class="table table-sm table-striped table-hover table-condensed align-middle visit-table mb-0">
                 <thead>
                     <tr>
                         <?php if ($isFaturamentoView): ?>
@@ -1207,8 +1329,7 @@ $fieldIcons = [
         </div>
 
         <?php $totalPages = max(1, (int)ceil($total / max(1, $limite))); ?>
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="text-muted small">Total: <?= (int)$total ?> registro(s)</div>
+        <div class="listagem-footer-row">
             <nav>
                 <ul class="pagination m-0">
                     <li class="page-item <?= $pag <= 1 ? 'disabled' : '' ?>"><a class="page-link"
@@ -1223,6 +1344,9 @@ $fieldIcons = [
                             href="<?= h($currentPath) ?>?<?= qs_keep(['pag' => $totalPages]) ?>">&raquo;</a></li>
                 </ul>
             </nav>
+            <div class="listagem-total">
+                <p>Total: <?= (int)$total ?> registro(s)</p>
+            </div>
         </div>
     </div>
 </div>

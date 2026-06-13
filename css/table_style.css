@@ -8,7 +8,7 @@
 
 .table th,
 .table td {
-    padding: 6px;
+    padding: 3px 6px;
     border-bottom: 1px solid #ededf3;
     text-transform: uppercase;
 }
@@ -22,13 +22,34 @@
     text-transform: none !important;
 }
 
+.table td .dropdown-menu {
+    min-width: 132px;
+    padding: 6px 0;
+    border-radius: 8px;
+    font-size: .68rem;
+}
+
+.table td .dropdown-menu .dropdown-item {
+    min-height: 28px;
+    padding: 6px 10px !important;
+    font-size: .68rem !important;
+    line-height: 1.1;
+}
+
+.table td .dropdown-menu .dropdown-item i {
+    margin-right: 6px !important;
+    font-size: .78rem !important;
+    line-height: 1 !important;
+}
+
 .table thead th {
     text-align: center;
-    height: 30px;
-    min-height: 30px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    line-height: 1.15;
+    height: 24px;
+    min-height: 24px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: .66rem;
+    line-height: 1.02;
     background: transparent;
 }
 
@@ -36,8 +57,60 @@
     background: #2f6f9f;
     color: white;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.025em;
     transform: translateZ(0);
+}
+
+.complete-table .table,
+.complete-table .table-sm {
+    font-size: 10px !important;
+}
+
+.complete-table .table thead {
+    height: 24px !important;
+}
+
+.complete-table .table thead th,
+.complete-table .table-sm > :not(caption) > * > th {
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 2px 6px !important;
+    font-size: .66rem !important;
+    line-height: 1.02 !important;
+    vertical-align: middle !important;
+}
+
+.complete-table .table tbody tr {
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+.complete-table .table tbody td,
+.complete-table .table tbody th,
+.complete-table .table-sm > :not(caption) > * > td {
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    line-height: 1.05 !important;
+    vertical-align: middle !important;
+}
+
+.complete-table .table a,
+.complete-table .table button {
+    font-size: inherit;
+}
+
+.complete-table .form-check {
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+}
+
+.complete-table .form-check-input[type=checkbox] {
+    width: 13px !important;
+    height: 13px !important;
+    margin: 0 !important;
 }
 
 .table thead th span {
@@ -48,15 +121,15 @@
     position: relative;
     cursor: pointer;
     user-select: none;
-    padding-right: 20px;
+    padding-right: 17px;
 }
 
 .table thead th .js-sort-indicator {
     position: absolute;
-    right: 6px;
+    right: 5px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.72rem;
+    font-size: 0.66rem;
     line-height: 1;
     opacity: 0.75;
 }
@@ -85,11 +158,14 @@
 }
 
 .pagination .page-link {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: 26px;
+    min-height: 26px;
+    padding: 0 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    font-size: .72rem;
+    font-weight: 700;
     line-height: 1;
 }
 
@@ -99,7 +175,7 @@
     justify-content: center;
     font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif) !important;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: .76rem;
     line-height: 1;
 }
 
@@ -129,7 +205,7 @@
 
 .table-filters {
     margin-left: 10px;
-    padding: 10px 12px 12px;
+    padding: 8px 12px 4px;
 }
 
 .table-filters .row {
@@ -148,8 +224,8 @@
 .table-filters .bootstrap-select > .dropdown-toggle,
 .table-filters select.form-control,
 .table-filters select.form-control-sm {
-    min-height: 42px !important;
-    height: 42px !important;
+    min-height: 34px !important;
+    height: 34px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
@@ -157,8 +233,8 @@
 .table-filters .form-control,
 .table-filters .form-control-sm,
 .table-filters .bootstrap-select > .dropdown-toggle {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .table-filters .form-control,
@@ -168,16 +244,16 @@
 .table-filters .bootstrap-select > .dropdown-toggle {
     border-radius: 12px;
     color: #7d768e !important;
-    font-size: .78rem !important;
+    font-size: .72rem !important;
     font-family: inherit !important;
     font-weight: 500 !important;
-    line-height: 1.2;
+    line-height: 1.12;
 }
 
 .table-filters .form-control::placeholder,
 .table-filters .form-control-sm::placeholder {
     color: #7d768e !important;
-    font-size: .78rem !important;
+    font-size: .72rem !important;
     font-family: inherit !important;
     font-weight: 500 !important;
     opacity: 1;
@@ -185,7 +261,7 @@
 
 .table-filters select.form-control,
 .table-filters select.form-control-sm {
-    padding-right: 30px;
+    padding-right: 26px;
 }
 
 .table-filters .row > [class*="col-"]:has(.btn-filtro-buscar),
@@ -196,7 +272,8 @@
 }
 
 .complete-table #table-content {
-    margin-top: 8px;
+    margin-top: 3px;
+    padding-bottom: 18px;
 }
 
 .table-counter {
@@ -222,10 +299,50 @@
 
 .table tbody tr td {
     border-bottom: 1px solid #e0e0e0;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    font-size: 11px;
-    line-height: 1.18;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 10px;
+    line-height: 1.05;
+    vertical-align: middle;
+}
+
+.table tbody td.action,
+.table tbody td .action {
+    line-height: 1;
+}
+
+.table tbody td.action .dropdown,
+.table tbody td .action .dropdown {
+    display: inline-flex;
+    align-items: center;
+    min-height: 0;
+}
+
+.table tbody td.action .btn,
+.table tbody td .action .btn,
+.table tbody td .fc-list-action {
+    min-width: 26px !important;
+    width: 26px !important;
+    min-height: 24px !important;
+    height: 24px !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1 !important;
+}
+
+.table tbody td.action .btn i,
+.table tbody td .action .btn i,
+.table tbody td .fc-list-action i {
+    font-size: .9rem !important;
+    line-height: 1 !important;
+}
+
+.table tbody td.action .dropdown-toggle::after,
+.table tbody td .action .dropdown-toggle::after {
+    margin-left: 4px;
+    font-size: .7rem;
 }
 
 .table tbody tr:last-child td {
@@ -258,8 +375,8 @@
 }
 
 .btn-filtro-limpar-icon {
-    width: 42px;
-    height: 42px !important;
+    width: 34px;
+    height: 34px !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -274,16 +391,16 @@
 }
 
 .table-filters .btn-filtro-buscar {
-    width: 42px !important;
-    min-width: 42px !important;
-    max-width: 42px !important;
-    height: 42px !important;
-    min-height: 42px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 6px 14px rgba(35, 102, 147, 0.16);
+    border-radius: 10px !important;
+    box-shadow: 0 4px 10px rgba(35, 102, 147, 0.14);
 }
 
 .table-filters .btn-filtro-buscar .material-icons,
@@ -294,16 +411,16 @@
     width: 100%;
     height: 100%;
     margin: 0 !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
     line-height: 1 !important;
 }
 
 .table-filters .btn-filtro-limpar:not(.btn-filtro-limpar-icon) {
-    width: 42px !important;
-    min-width: 42px !important;
-    max-width: 42px !important;
-    height: 42px !important;
-    min-height: 42px !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -313,11 +430,11 @@
     overflow: hidden;
     font-size: 0 !important;
     line-height: 1;
-    border-radius: 12px;
+    border-radius: 10px;
     color: #2f6f9f !important;
     background: #f4faff !important;
     border-color: #c8deeb !important;
-    box-shadow: 0 6px 14px rgba(35, 102, 147, 0.12);
+    box-shadow: 0 4px 10px rgba(35, 102, 147, 0.10);
 }
 
 .table-filters .btn-filtro-limpar:not(.btn-filtro-limpar-icon)::before {

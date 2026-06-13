@@ -502,8 +502,157 @@ th.th-acoes {
 }
 </style>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<style>
+.jornada-page {
+    padding: 4px 4px 14px;
+}
+.jornada-filter-panel {
+    padding: 8px 8px 6px;
+}
+.jornada-filter-row {
+    gap: 0 !important;
+    margin: 0 !important;
+    row-gap: 4px;
+}
+.jornada-filter-row + .jornada-filter-row {
+    margin-top: 6px !important;
+}
+.jornada-filter-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2px !important;
+}
+.jornada-filter-row .form-label {
+    display: block;
+    width: 100%;
+    margin-bottom: 2px !important;
+    color: #7d768e !important;
+    font-size: .62rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: left !important;
+}
+.jornada-filter-row .form-control,
+.jornada-filter-row .form-control-sm,
+.jornada-filter-row .btn {
+    min-height: 34px !important;
+    height: 34px !important;
+    margin: 0 !important;
+    border-radius: 10px;
+    font-size: .68rem !important;
+    line-height: 1.2;
+}
+.jornada-filter-actions {
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    gap: 8px;
+}
+#table-container .table thead th {
+    font-size: .66rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .025em !important;
+    line-height: 1.02 !important;
+    white-space: nowrap;
+    vertical-align: middle !important;
+}
+#table-container .table tbody td,
+#table-container .table tbody th {
+    padding: 3px 7px !important;
+    font-size: .62rem !important;
+    line-height: 1.05 !important;
+    vertical-align: middle !important;
+}
+#table-container .table tbody tr {
+    height: 32px;
+}
+#table-container .table-responsive {
+    border-radius: 16px;
+    border: 1px solid #eee8f6;
+    background: #fff;
+    box-shadow: 0 10px 28px -22px rgba(89,46,131,.28);
+    padding: 8px;
+}
+#table-container .timeline-container {
+    align-items: center;
+    min-width: 320px;
+    padding: 0;
+}
+#table-container .timeline-step {
+    width: 50px;
+}
+#table-container .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-width: 1px;
+    box-shadow: 0 0 0 2px #e0e0e0;
+}
+#table-container .timeline-label {
+    margin-top: 4px;
+    font-size: .46rem;
+    font-weight: 700;
+    line-height: 1;
+}
+#table-container .timeline-connector {
+    height: 2px;
+    margin: 0 2px;
+}
+#table-container .form-check-input,
+#table-container .chk-faturar-linha,
+#table-container #chkTodos {
+    width: 13px !important;
+    height: 13px !important;
+    min-width: 13px !important;
+    margin: 0 !important;
+}
+#table-container .th-sortable {
+    gap: 4px;
+}
+#table-container .th-sortable .sort-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+#table-container .th-sortable .sort-icons a {
+    color: rgba(255, 255, 255, .62) !important;
+    font-size: .76rem !important;
+    line-height: 1 !important;
+    margin-left: 0 !important;
+}
+#table-container .th-sortable .sort-icons a.active,
+#table-container .th-sortable .sort-icons a:hover,
+#table-container .th-sortable .sort-icons a:focus {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+#table-container .th-acoes {
+    min-width: 220px;
+}
+#table-container .acoes-head {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    white-space: nowrap;
+}
+#table-container .acoes-head .label,
+#table-container .acoes-head .form-check-label {
+    color: #ffffff !important;
+    font-size: .6rem;
+    line-height: 1;
+}
+#table-container .acoes-head .form-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+</style>
 
-<div class="container-fluid form_container listagem-page" style="margin-top:8px;">
+<div class="container-fluid form_container listagem-page jornada-page">
     <div class="listagem-hero listagem-hero--module listagem-hero--contas">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Capeantes</div>
@@ -511,8 +660,8 @@ th.th-acoes {
         </div>
     </div>
 
-    <form action="<?= htmlspecialchars($actionUrl) ?>" id="filtros-form" method="GET" class="listagem-panel">
-        <div class="row legacy-filter-row align-items-end">
+    <form action="<?= htmlspecialchars($actionUrl) ?>" id="filtros-form" method="GET" class="listagem-panel jornada-filter-panel">
+        <div class="row legacy-filter-row align-items-end jornada-filter-row">
             <div class="col-sm-3">
                 <label class="form-label mb-0 small text-muted">Hospital</label>
                 <input class="form-control form-control-sm" type="text" name="pesquisa_nome"
@@ -545,7 +694,7 @@ th.th-acoes {
             </div>
         </div>
 
-        <div class="row legacy-filter-row align-items-end mt-1">
+        <div class="row legacy-filter-row align-items-end jornada-filter-row">
             <div class="col-sm-2">
                 <label class="form-label mb-0 small text-muted">Abertas</label>
                 <select class="form-control form-control-sm" name="aberta">
@@ -578,7 +727,7 @@ th.th-acoes {
                     <option value="n" <?= $faturada === 'n' ? 'selected' : '' ?>>Somente não faturadas</option>
                 </select>
             </div>
-            <div class="col-sm-1 filter-actions d-flex align-items-end gap-2">
+            <div class="col-sm-1 filter-actions d-flex jornada-filter-actions">
                 <button type="submit"
                     class="btn btn-primary btn-sm btn-filtro-buscar d-inline-flex align-items-center justify-content-center btn-filtro-limpar-icon">
                     <span class="material-icons">search</span>
@@ -681,7 +830,7 @@ th.th-acoes {
                         <td><b><?= $idInt ?></b></td>
                         <td><?= $idCapeante ?></td>
                         <td><?= htmlspecialchars($intern["nome_hosp"] ?? '') ?></td>
-                        <td><?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?></td>
+                        <td><?= htmlspecialchars($intern["nome_pac"] ?? '') ?></td>
                         <td><?= !empty($intern["data_intern_int"]) ? date('d/m/Y', strtotime($intern["data_intern_int"])) : '' ?>
                         </td>
                         <td>

@@ -255,6 +255,83 @@
             color: #4b1850;
         }
 
+        .internacao-page select.selectpicker.bs-select-hidden,
+        .internacao-page select.selectpicker[data-fcx-picker-locked="1"] {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 1px !important;
+            min-width: 1px !important;
+            max-width: 1px !important;
+            height: 1px !important;
+            min-height: 1px !important;
+            max-height: 1px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            clip-path: inset(50%) !important;
+        }
+
+        .internacao-page .hospital-select-wrapper,
+        .internacao-page .assist-select-clear,
+        .internacao-page .hospital-select-wrapper .bootstrap-select,
+        .internacao-page .patient-col .bootstrap-select,
+        .internacao-page .assist-select-clear .bootstrap-select {
+            min-height: 30px !important;
+            height: 30px !important;
+        }
+
+        .internacao-page .bootstrap-select > button.dropdown-toggle.input-lg-fullcare[data-id="hospital_selected"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle.input-lg-fullcare[data-id="fk_paciente_int"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle.input-lg-fullcare[data-id="fk_cid_int"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle.input-lg-fullcare[data-id="fk_patologia2"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"],
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] {
+            display: flex !important;
+            align-items: center !important;
+            min-height: 30px !important;
+            height: 30px !important;
+            padding: 0 28px 0 8px !important;
+            border-radius: 7px !important;
+            border-width: 1px !important;
+            box-shadow: none !important;
+            font-size: .68rem !important;
+            line-height: 1 !important;
+        }
+
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="hospital_selected"] .filter-option-inner-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_paciente_int"] .filter-option-inner-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_cid_int"] .filter-option-inner-inner,
+        .internacao-page .bootstrap-select > button.dropdown-toggle[data-id="fk_patologia2"] .filter-option-inner-inner {
+            height: 22px !important;
+            min-height: 0 !important;
+            line-height: 22px !important;
+            font-size: .68rem !important;
+            font-weight: 500 !important;
+        }
+
+        .internacao-page .internacao-head-grid > .form-group > .form-control,
+        .internacao-page .internacao-head-grid > .form-group > select.form-control,
+        .internacao-page .internacao-head-grid > .form-group .bootstrap-select,
+        .internacao-page .internacao-head-grid > .form-group .bootstrap-select > .dropdown-toggle {
+            min-height: 30px !important;
+            height: 30px !important;
+        }
+
         .assistenciais-row-full {
             display: grid;
             grid-template-columns: 3fr 3fr 2fr 1fr 1fr 2fr;
@@ -1035,6 +1112,430 @@
                 <?php include_once('formularios/form_cad_internacao_prorrog.php'); ?>
                 <?php include_once('formularios/form_cad_internacao_negoc.php'); ?>
             </div>
+
+        <style>
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) {
+            margin: 6px 0 0 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .adicional-card {
+            padding: 8px 10px !important;
+            border-radius: 8px !important;
+            border: 1px solid #e3dde9 !important;
+            background: #f7f8fb !important;
+            box-shadow: 0 5px 12px rgba(37, 18, 54, .045) !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .adicional-card__header {
+            min-height: 0 !important;
+            margin-bottom: 7px !important;
+            align-items: center !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .adicional-card__title {
+            font-size: .88rem !important;
+            line-height: 1.05 !important;
+            font-weight: 700 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .adicional-card__marker {
+            width: 4px !important;
+            height: 18px !important;
+            margin-right: 8px !important;
+        }
+
+        .internacao-page #container-tuss .tuss-field-container,
+        .internacao-page #container-prorrog .field-container,
+        .internacao-page #container-uti .uti-grid-row,
+        .internacao-page #container-gestao .adicional-card > .form-group.row,
+        .internacao-page #container-gestao #div_evento > .form-group.row {
+            display: grid !important;
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            gap: 5px 8px !important;
+            align-items: end !important;
+            margin: 0 0 5px !important;
+            width: 100% !important;
+        }
+
+        .internacao-page #container-negoc .negotiation-field-container {
+            display: grid !important;
+            grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+            gap: 5px 8px !important;
+            align-items: end !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .form-group[class*="col-"],
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .tuss-actions-col {
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            flex: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .internacao-page :is(#div_rel_alto_custo, #div_rel_home_care, #div_rel_opme, #div_rel_desospitalizacao, #div_rel_evento) {
+            grid-column: 1 / -1 !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .internacao-page #tutorial_alto {
+            margin: 0 !important;
+            padding: 5px 7px !important;
+            border: 1px solid #e3dde9 !important;
+            border-radius: 7px !important;
+            background: #fff !important;
+            align-self: end !important;
+        }
+
+        .internacao-page #tutorial_alto p {
+            margin: 0 !important;
+            margin-left: 0 !important;
+            text-align: left !important;
+            font-size: .6rem !important;
+            line-height: 1.18 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) label {
+            min-height: 0 !important;
+            margin-bottom: 2px !important;
+            font-size: .62rem !important;
+            line-height: 1.05 !important;
+            font-weight: 600 !important;
+            color: #5f6673 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) :is(.form-control, .form-control-sm.form-control),
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .bootstrap-select,
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) .bootstrap-select > .dropdown-toggle {
+            min-height: 30px !important;
+            height: 30px !important;
+            padding: 0 26px 0 7px !important;
+            border-radius: 7px !important;
+            border: 1px solid #dfe4ec !important;
+            background-color: #fff !important;
+            box-shadow: none !important;
+            color: #5f6673 !important;
+            font-size: .68rem !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-gestao, #container-uti, #container-negoc) textarea.form-control,
+        .internacao-page #container-prorrog #prorrog-ia-contexto {
+            min-height: 58px !important;
+            height: auto !important;
+            padding: 5px 7px !important;
+            line-height: 1.25 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog, #container-negoc) :is(.btn-add, .btn-remove, .btn-trash-negoc-inline),
+        .internacao-page #container-uti a,
+        .internacao-page #container-prorrog #btn-executar-prorrog-ia {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 30px !important;
+            width: auto !important;
+            min-height: 30px !important;
+            height: 30px !important;
+            padding: 0 10px !important;
+            border-radius: 7px !important;
+            font-size: .68rem !important;
+            line-height: 1 !important;
+        }
+
+        .internacao-page :is(#container-tuss, #container-prorrog) :is(.tuss-actions, .form-group[style*="margin-top:25px"]) {
+            margin-top: 0 !important;
+            align-items: end !important;
+        }
+
+        .internacao-page #container-uti .uti-report {
+            max-width: none !important;
+            margin-top: 0 !important;
+        }
+
+        .internacao-page #criteria_message {
+            display: block !important;
+            margin: 1px 0 0 !important;
+            font-size: .62rem !important;
+            line-height: 1.1 !important;
+        }
+
+        .internacao-page :is(.prorrog-alta-box, .prorrog-ia-box, .prorrog-ia-card) {
+            margin-top: 7px !important;
+            padding: 8px 10px !important;
+            border-radius: 8px !important;
+            box-shadow: none !important;
+        }
+
+        .internacao-page :is(.prorrog-alta-box__header, .prorrog-ia-box__header, .prorrog-ia-card__header) {
+            min-height: 0 !important;
+            margin-bottom: 5px !important;
+            align-items: center !important;
+        }
+
+        .internacao-page :is(.prorrog-alta-box__title, .prorrog-ia-box__title, .prorrog-ia-card__header h5) {
+            margin: 0 !important;
+            font-size: .82rem !important;
+            line-height: 1.05 !important;
+        }
+
+        .internacao-page :is(.prorrog-alta-box__hint, .prorrog-ia-box__eyebrow, .prorrog-ia-context-field small) {
+            margin: 2px 0 0 !important;
+            font-size: .62rem !important;
+            line-height: 1.15 !important;
+        }
+
+        .internacao-page .prorrog-alta-toggle .btn,
+        .internacao-page .prorrog-ia-toggle {
+            min-height: 28px !important;
+            height: 28px !important;
+            padding: 0 14px !important;
+            border-radius: 999px !important;
+            font-size: .68rem !important;
+            line-height: 1 !important;
+        }
+
+        .internacao-page .prorrog-ia-powered {
+            min-height: 22px !important;
+            padding: 3px 8px !important;
+            font-size: .58rem !important;
+        }
+
+        .internacao-page .tabelas-adicionais-card > .tabelas-selects :is(#relatorio-detalhado, #select_tuss, #select_prorrog, #select_gestao, #select_uti, #select_negoc) {
+            border-color: #9fbdf4 !important;
+            background: linear-gradient(180deg, #eff7ff 0%, #dfeeff 100%) !important;
+            color: #23406f !important;
+            font-weight: 700 !important;
+            box-shadow: inset 0 0 0 1px rgba(62, 113, 198, .08) !important;
+        }
+
+        .internacao-page .tabelas-adicionais-card > .tabelas-selects :is(#relatorio-detalhado, #select_tuss, #select_prorrog, #select_gestao, #select_uti, #select_negoc):focus {
+            border-color: #5b8ee8 !important;
+            box-shadow: 0 0 0 .14rem rgba(91, 142, 232, .16) !important;
+        }
+
+        .internacao-page .tabelas-adicionais-card > .tabelas-selects .tabelas-col > label {
+            color: #3b4c6f !important;
+            font-weight: 700 !important;
+        }
+
+        #container-tuss .adicional-card {
+            padding: 7px 10px !important;
+            border-radius: 8px !important;
+        }
+
+        #container-tuss .adicional-card__header {
+            margin-bottom: 6px !important;
+        }
+
+        #container-tuss .adicional-card__title {
+            font-size: .86rem !important;
+            line-height: 1.05 !important;
+        }
+
+        #container-tuss .tuss-field-container {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(0, 1.05fr) 42px !important;
+            gap: 5px 8px !important;
+            align-items: end !important;
+            margin: 0 !important;
+        }
+
+        #container-tuss .tuss-field-container > .form-group {
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #container-tuss label,
+        #container-tuss .control-label {
+            margin-bottom: 2px !important;
+            font-size: .6rem !important;
+            line-height: 1 !important;
+            font-weight: 600 !important;
+            color: #5f6673 !important;
+        }
+
+        #container-tuss .tuss-ac-wrap,
+        #container-tuss .form-control,
+        #container-tuss .form-control-sm.form-control,
+        #container-tuss input.form-control,
+        #container-tuss select.form-control {
+            min-height: 28px !important;
+            height: 28px !important;
+            padding: 0 24px 0 7px !important;
+            border-radius: 7px !important;
+            font-size: .66rem !important;
+            line-height: 1 !important;
+        }
+
+        #container-tuss .tuss-actions {
+            min-height: 28px !important;
+            height: 28px !important;
+            align-items: center !important;
+        }
+
+        #container-tuss .btn-add,
+        #container-tuss .btn-remove {
+            min-width: 28px !important;
+            width: 28px !important;
+            min-height: 28px !important;
+            height: 28px !important;
+            padding: 0 !important;
+            border-radius: 7px !important;
+            font-size: .72rem !important;
+        }
+
+        .tabelas-adicionais-card > .tabelas-selects :is(#relatorio-detalhado, #select_tuss, #select_prorrog, #select_gestao, #select_uti, #select_negoc),
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="relatorio-detalhado"],
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_tuss"],
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_prorrog"],
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_gestao"],
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_uti"],
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_negoc"] {
+            border-color: #83aef2 !important;
+            background: linear-gradient(180deg, #eaf4ff 0%, #d6eaff 100%) !important;
+            color: #1f4d85 !important;
+            font-weight: 750 !important;
+            box-shadow: inset 0 0 0 1px rgba(62, 113, 198, .12) !important;
+        }
+
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="relatorio-detalhado"] .filter-option-inner-inner,
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_tuss"] .filter-option-inner-inner,
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_prorrog"] .filter-option-inner-inner,
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_gestao"] .filter-option-inner-inner,
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_uti"] .filter-option-inner-inner,
+        .tabelas-adicionais-card > .tabelas-selects .bootstrap-select > button.dropdown-toggle[data-id="select_negoc"] .filter-option-inner-inner {
+            color: #1f4d85 !important;
+            font-weight: 750 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado {
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            gap: 7px 10px !important;
+            align-items: end !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado > .form-group.row,
+        .internacao-page #detalhes-card-wrapper #div-detalhado > .row {
+            display: contents !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado > input[type="hidden"] {
+            display: none !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado :is(.form-group[class*="col-"], .form-group.row > div, .row > div) {
+            min-width: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            flex: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .col-sm-3,
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has(#atb_uso_det),
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has([name="qual_medicamento_det"]) {
+            grid-column: span 2 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado div:has(#exames_det),
+        .internacao-page #detalhes-card-wrapper #div-detalhado div:has(#oportunidades_det) {
+            grid-column: span 3 !important;
+            order: 80 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has(#liminar_det),
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has(#paliativos_det),
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has(#parto_det),
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-group:has(#braden_det) {
+            order: 70 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado label {
+            min-height: 0 !important;
+            margin: 0 0 2px !important;
+            font-size: .6rem !important;
+            line-height: 1.05 !important;
+            font-weight: 650 !important;
+            color: #646b78 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado :is(.form-control, .form-control-sm.form-control) {
+            min-height: 28px !important;
+            height: 28px !important;
+            padding: 2px 24px 2px 7px !important;
+            border-radius: 7px !important;
+            font-size: .66rem !important;
+            line-height: 1.05 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado textarea.form-control {
+            min-height: 56px !important;
+            height: auto !important;
+            padding: 5px 7px !important;
+            line-height: 1.22 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .d-flex.flex-wrap.align-items-center {
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(24px, 1fr)) !important;
+            gap: 4px !important;
+            align-items: center !important;
+            min-height: 28px !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-check {
+            display: inline-flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 2px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-check label {
+            margin: 0 !important;
+            font-size: .56rem !important;
+            line-height: 1 !important;
+        }
+
+        .internacao-page #detalhes-card-wrapper #div-detalhado .form-check-input {
+            width: 12px !important;
+            height: 12px !important;
+            margin: 0 !important;
+        }
+
+        @media (max-width: 1199.98px) {
+            .internacao-page #container-tuss .tuss-field-container,
+            .internacao-page #container-prorrog .field-container,
+            .internacao-page #container-uti .uti-grid-row,
+            .internacao-page #container-gestao .adicional-card > .form-group.row,
+            .internacao-page #container-gestao #div_evento > .form-group.row,
+            .internacao-page #container-negoc .negotiation-field-container,
+            .internacao-page #detalhes-card-wrapper #div-detalhado {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+
+            .internacao-page #detalhes-card-wrapper #div-detalhado div:has(#exames_det),
+            .internacao-page #detalhes-card-wrapper #div-detalhado div:has(#oportunidades_det) {
+                grid-column: 1 / -1 !important;
+            }
+        }
+        </style>
 
         <input type="hidden" class="form-control" value="<?= ($ultimoReg + 1) ?>" id="fk_int_capeante"
             name="fk_int_capeante">

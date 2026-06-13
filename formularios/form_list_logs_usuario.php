@@ -412,6 +412,64 @@ $hasLogSource = $dbAvailable || $hasFile;
 $acessosRows = array_values(array_filter($rows, static fn($r) => in_array($r['tipo_evento'], ['Acesso', 'Login'], true)));
 $acessosRows = array_slice($acessosRows, 0, 30);
 ?>
+<style>
+    .logs-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 8px 0 10px;
+        padding: 0 20px;
+    }
+
+    .logs-summary-card {
+        min-height: 54px;
+        padding: 8px 12px;
+        border: 1px solid rgba(47, 111, 159, .12);
+        border-radius: 8px;
+        background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
+        box-shadow: 0 4px 12px rgba(31, 76, 110, .05);
+    }
+
+    .logs-summary-card__label {
+        color: #778196;
+        font-size: .64rem;
+        font-weight: 800;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: .025em;
+    }
+
+    .logs-summary-card__value {
+        margin-top: 5px;
+        color: #4a5568;
+        font-size: 1.05rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .logs-summary-card__value--date {
+        font-size: .86rem;
+        white-space: nowrap;
+    }
+
+    .logs-section-title {
+        margin: 8px 20px 6px;
+        color: #2f3747;
+        font-size: .78rem;
+        font-weight: 800;
+    }
+
+    .logs-table-wrap {
+        margin-top: 0;
+    }
+
+    @media (max-width: 991.98px) {
+        .logs-summary-grid {
+            grid-template-columns: 1fr;
+            padding: 0 12px;
+        }
+    }
+</style>
 
 <div class="container-fluid form_container" style="margin-top:15px;">
     <div class="fc-module-header fc-module-header--gestao">
@@ -491,37 +549,25 @@ $acessosRows = array_slice($acessosRows, 0, 30);
         <?php if (!$hasLogSource): ?>
         <div class="alert alert-warning mt-3">Ainda não há origem de logs disponível. A tabela será criada no próximo registro operacional.</div>
         <?php else: ?>
-        <div class="row mt-2 mb-3">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body py-2">
-                        <div class="small text-muted">Registros filtrados</div>
-                        <div style="font-size:1.4rem;font-weight:700;"><?= (int)$totalRows ?></div>
-                    </div>
-                </div>
+        <div class="logs-summary-grid">
+            <div class="logs-summary-card">
+                <div class="logs-summary-card__label">Registros filtrados</div>
+                <div class="logs-summary-card__value"><?= (int)$totalRows ?></div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body py-2">
-                        <div class="small text-muted">Usuários no período</div>
-                        <div style="font-size:1.4rem;font-weight:700;"><?= (int)$totalSummaryUsers ?></div>
-                    </div>
-                </div>
+            <div class="logs-summary-card">
+                <div class="logs-summary-card__label">Usuários no período</div>
+                <div class="logs-summary-card__value"><?= (int)$totalSummaryUsers ?></div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body py-2">
-                        <div class="small text-muted">Filtro de datas</div>
-                        <div style="font-size:1.0rem;font-weight:700;">
-                            <?= eLogUser(date('d/m/Y', (int)$dateStartTs)) ?> a <?= eLogUser(date('d/m/Y', (int)$dateEndTs)) ?>
-                        </div>
-                    </div>
+            <div class="logs-summary-card">
+                <div class="logs-summary-card__label">Filtro de datas</div>
+                <div class="logs-summary-card__value logs-summary-card__value--date">
+                    <?= eLogUser(date('d/m/Y', (int)$dateStartTs)) ?> a <?= eLogUser(date('d/m/Y', (int)$dateEndTs)) ?>
                 </div>
             </div>
         </div>
 
-        <h6 class="mb-2">Resumo por usuário</h6>
-        <div class="table-responsive mb-3">
+        <h6 class="logs-section-title">Resumo por usuário</h6>
+        <div class="table-responsive mb-3 logs-table-wrap">
             <table class="table table-sm table-striped table-hover table-condensed">
                 <thead>
                     <tr>

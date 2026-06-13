@@ -313,6 +313,9 @@ if (!empty($sessionIdUsuario)) {
             align-items: center;
             flex-wrap: nowrap;
             gap: 8px;
+            width: auto !important;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .navbar.nav_bar_custom.fixed-top {
@@ -422,7 +425,7 @@ if (!empty($sessionIdUsuario)) {
             border: 1px solid rgba(47, 111, 159, 0.12);
             border-radius: 14px;
             box-shadow: 0 8px 22px rgba(31, 76, 110, 0.10);
-            padding: 8px 10px;
+            padding: 8px 8px;
             min-width: 0;
         }
 
@@ -442,11 +445,16 @@ if (!empty($sessionIdUsuario)) {
             border-color: transparent !important;
         }
 
+        .navbar-nav.navbar-nav-scroll .nav-link i {
+            font-size: 0.75rem !important;
+            margin-right: 3px !important;
+        }
+
         .navbar-nav.navbar-nav-scroll .nav-link {
             white-space: nowrap;
-            padding: 0.36rem 0.34rem;
+            padding: 0.34rem 0.22rem !important;
             font-family: "Inter", Arial, Helvetica, sans-serif !important;
-            font-size: 0.82rem;
+            font-size: 0.70rem !important;
             font-weight: 400;
             line-height: 1.18;
             color: #111827 !important;
@@ -467,7 +475,7 @@ if (!empty($sessionIdUsuario)) {
         .header-actions {
             margin-left: auto !important;
             margin-right: 0 !important;
-            gap: 0.7rem !important;
+            gap: 0.35rem !important;
             flex: 0 0 auto;
             align-items: center;
         }
@@ -536,6 +544,26 @@ if (!empty($sessionIdUsuario)) {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
+        }
+
+        #header-chat-launcher .d-xl-inline {
+            display: none !important;
+        }
+
+        .account-item > .content > a {
+            font-size: 0.76rem !important;
+        }
+
+        .account-item .image {
+            width: 34px !important;
+            height: 34px !important;
+        }
+
+        .header-actions #global-patient-search .form-control,
+        .header-actions #global-patient-search .form-select,
+        .header-actions #global-patient-search input,
+        .header-actions #global-patient-search .btn {
+            font-size: 0.74rem !important;
         }
 
         .header-chat-launcher.has-unread {

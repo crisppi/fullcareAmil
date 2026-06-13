@@ -171,21 +171,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    min-height: 36px;
-    border: none;
-    border-radius: 11px;
-    padding: 0 12px;
-    font-weight: 700;
-    font-size: .76rem;
+    gap: 6px;
+    min-height: 32px;
+    border: 1px solid rgba(255, 255, 255, .36);
+    border-radius: 10px;
+    padding: 0 10px;
+    font-weight: 800;
+    font-size: .68rem;
     line-height: 1;
     text-align: center;
     white-space: nowrap;
-    box-shadow: 0 8px 16px rgba(46, 27, 78, 0.10);
+    box-shadow: 0 8px 16px rgba(21, 69, 105, 0.18);
 }
 
 .listagem-btn-top__icon {
-    font-size: .95rem;
+    font-size: .86rem;
     line-height: 1;
 }
 
@@ -200,8 +200,17 @@
 }
 
 .listagem-btn-top--blue {
-    background: linear-gradient(135deg, #35bae1 0%, #5dc8ea 100%);
+    background: linear-gradient(135deg, #236693 0%, #2f89bd 100%);
     color: #fff !important;
+    text-shadow: 0 1px 1px rgba(15, 48, 76, .22);
+}
+
+.listagem-btn-top--blue:hover,
+.listagem-btn-top--blue:focus {
+    background: linear-gradient(135deg, #1f5f8f 0%, #257eae 100%);
+    border-color: rgba(255, 255, 255, .52);
+    color: #fff !important;
+    box-shadow: 0 9px 18px rgba(21, 69, 105, 0.24);
 }
 
 .listagem-panel {
@@ -214,35 +223,36 @@
 }
 
 .listagem-panel .table-filters {
-    padding: 0;
+    padding: 0 0 3px;
 }
 
 .fc-list-tools {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 7px;
-    margin: 6px 10px 8px;
-    padding: 6px 8px;
-    border: 1px solid rgba(47, 111, 159, .12);
-    border-radius: 11px;
-    background: #f8fbff;
+    gap: 6px;
+    margin: -2px 12px 4px 32px;
+    padding: 0 0 4px;
+    border: 0;
+    border-bottom: 1px solid rgba(47, 111, 159, .10);
+    border-radius: 0;
+    background: transparent;
 }
 
 .fc-list-tool-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 30px;
-    border: 1px solid rgba(47, 111, 159, .18);
-    border-radius: 9px;
-    padding: 0 10px;
-    background: #fff;
+    gap: 5px;
+    min-height: 26px;
+    border: 1px solid rgba(47, 111, 159, .14);
+    border-radius: 8px;
+    padding: 0 8px;
+    background: #fdfefe;
     color: #24384f;
-    font-size: .72rem;
+    font-size: .66rem;
     font-weight: 800;
     line-height: 1;
 }
@@ -261,7 +271,7 @@
     z-index: 20;
     min-width: 220px;
     max-width: min(320px, 92vw);
-    padding: 10px;
+    padding: 8px;
     border: 1px solid rgba(47, 111, 159, .18);
     border-radius: 11px;
     background: #fff;
@@ -272,28 +282,28 @@
     display: block;
     margin-bottom: 6px;
     color: #24384f;
-    font-size: .72rem;
+    font-size: .68rem;
 }
 
 .fc-list-columns-menu > small {
     display: block;
     margin: -3px 0 8px;
     color: #64748b;
-    font-size: .66rem;
+    font-size: .62rem;
     font-weight: 700;
 }
 
 .fc-list-column-option {
     display: flex;
     align-items: center;
-    gap: 7px;
-    min-height: 26px;
+    gap: 6px;
+    min-height: 23px;
     margin: 0 0 3px;
-    padding: 3px 5px;
+    padding: 2px 5px;
     border: 1px solid transparent;
     border-radius: 8px;
     color: #334155;
-    font-size: .72rem;
+    font-size: .66rem;
     font-weight: 600;
     cursor: grab;
     user-select: none;
@@ -335,7 +345,7 @@
     position: absolute;
     left: 10px;
     color: #1f5f8f;
-    font-size: .72rem;
+    font-size: .66rem;
     font-weight: 800;
     opacity: 0;
     transition: opacity .18s ease;
@@ -350,12 +360,12 @@
     align-items: center;
     gap: 8px;
     margin: -2px 10px 8px;
-    padding: 8px 10px;
+    padding: 6px 9px;
     border: 1px solid #dbeafe;
     border-radius: 10px;
     background: #f8fbff;
     color: #1f5f8f;
-    font-size: .74rem;
+    font-size: .68rem;
     font-weight: 800;
 }
 
@@ -368,11 +378,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 22px;
-    padding: 0 8px;
+    min-height: 19px;
+    padding: 0 7px;
     border-radius: 999px;
     border: 1px solid transparent;
-    font-size: .68rem;
+    font-size: .62rem;
     font-weight: 800;
     line-height: 1;
 }
@@ -419,8 +429,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    padding: 5px 6px;
+    gap: 6px;
+    padding: 4px 6px;
     border-radius: 14px;
     background: #fff;
     border: 1px solid #ece4f4;
@@ -443,10 +453,10 @@
 .listagem-panel .filter-inline-row .form-control-sm,
 .listagem-panel .filter-inline-row .btn,
 .listagem-panel .filter-inline-row .bootstrap-select > .dropdown-toggle {
-    min-height: 42px !important;
-    height: 42px !important;
-    border-radius: 11px;
-    font-size: .72rem !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    border-radius: 10px;
+    font-size: .68rem !important;
     font-family: inherit !important;
     font-weight: 400 !important;
     line-height: 1.2;
@@ -464,7 +474,7 @@
 
 .listagem-panel .filter-inline-row .form-control::placeholder,
 .listagem-panel .filter-inline-row .form-control-sm::placeholder {
-    font-size: .72rem !important;
+    font-size: .68rem !important;
     font-family: inherit !important;
     font-weight: 400 !important;
     color: #8e88a1 !important;
@@ -473,7 +483,7 @@
 
 .listagem-panel .filter-inline-row select.form-control,
 .listagem-panel .filter-inline-row select.form-control-sm {
-    padding-right: 28px;
+    padding-right: 24px;
     color: #8e88a1 !important;
     background-color: #fff;
     font-style: normal;
@@ -483,24 +493,24 @@
 .listagem-panel .filter-inline-row select.form-control-sm option {
     color: #8e88a1;
     font-style: normal;
-    font-size: .72rem;
+    font-size: .68rem;
     font-family: inherit;
     font-weight: 400;
 }
 
 .listagem-panel .btn-filtro-buscar {
-    width: 42px;
-    min-width: 42px;
-    max-width: 42px;
+    width: 34px;
+    min-width: 34px;
+    max-width: 34px;
     padding: 0;
-    box-shadow: 0 10px 18px rgba(94, 35, 99, 0.18);
+    box-shadow: 0 6px 14px rgba(94, 35, 99, 0.16);
 }
 
 .listagem-panel .btn-filtro-limpar-icon {
-    width: 42px;
-    height: 42px !important;
-    min-width: 42px;
-    max-width: 42px;
+    width: 34px;
+    height: 34px !important;
+    min-width: 34px;
+    max-width: 34px;
     padding: 0;
 }
 
@@ -509,16 +519,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    min-width: 42px;
-    max-width: 42px;
-    height: 42px !important;
+    width: 34px;
+    min-width: 34px;
+    max-width: 34px;
+    height: 34px !important;
     padding: 0 !important;
-    border-radius: 12px;
+    border-radius: 10px;
     border-color: #eadff3;
     background: linear-gradient(180deg, #fff 0%, #f8f2fd 100%);
     color: #8b5a7a;
-    box-shadow: 0 8px 16px rgba(94, 35, 99, 0.08);
+    box-shadow: 0 5px 12px rgba(94, 35, 99, 0.08);
 }
 
 .listagem-panel .btn-filtro-limpar:hover,
@@ -530,7 +540,7 @@
 
 .listagem-panel .btn-filtro-limpar i,
 .legacy-filter-row .btn-filtro-limpar i {
-    font-size: 1rem;
+    font-size: .88rem;
     line-height: 1;
 }
 
@@ -567,8 +577,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    padding: 5px 6px;
+    gap: 6px;
+    padding: 4px 6px;
 }
 
 .legacy-filter-row > [class*="col-"],
@@ -585,10 +595,10 @@
 .legacy-filter-row .form-control,
 .legacy-filter-row .form-control-sm,
 .legacy-filter-row .btn {
-    min-height: 42px !important;
-    height: 42px !important;
-    border-radius: 11px;
-    font-size: .72rem !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    border-radius: 10px;
+    font-size: .68rem !important;
     font-family: inherit !important;
     font-weight: 400 !important;
     line-height: 1.2;
@@ -605,7 +615,7 @@
 
 .legacy-filter-row .form-control::placeholder,
 .legacy-filter-row .form-control-sm::placeholder {
-    font-size: .72rem !important;
+    font-size: .68rem !important;
     font-family: inherit !important;
     font-weight: 400 !important;
     color: #8e88a1 !important;
@@ -614,24 +624,24 @@
 
 .legacy-filter-row select.form-control,
 .legacy-filter-row select.form-control-sm {
-    padding-right: 28px;
+    padding-right: 24px;
     color: #8e88a1 !important;
     background-color: #fff;
     font-style: normal;
 }
 
 .legacy-filter-row .btn-filtro-buscar {
-    width: 42px;
-    min-width: 42px;
-    max-width: 42px;
+    width: 34px;
+    min-width: 34px;
+    max-width: 34px;
     padding: 0;
 }
 
 .legacy-filter-row .btn-filtro-limpar-icon {
-    width: 42px;
-    height: 42px !important;
-    min-width: 42px;
-    max-width: 42px;
+    width: 34px;
+    height: 34px !important;
+    min-width: 34px;
+    max-width: 34px;
     padding: 0;
 }
 
@@ -658,25 +668,48 @@
 }
 
 .listagem-table-wrap thead th {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    height: 24px;
+    min-height: 24px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     background: transparent;
     border-bottom: 1px solid #d9e8f1;
     color: #fff;
     font-size: .66rem;
     font-weight: 800;
-    letter-spacing: .04em;
+    letter-spacing: .025em;
     text-transform: uppercase;
     vertical-align: middle;
 }
 
 .listagem-table-wrap tbody td,
 .listagem-table-wrap tbody th {
-    padding-top: 9px;
-    padding-bottom: 9px;
-    font-size: .82rem;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 10px;
+    line-height: 1.05;
     vertical-align: middle;
     border-top: 1px solid #f1ebf7;
+}
+
+#table-content .censo-list-table thead th,
+#table-content .tabela-altas thead th {
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 2px 6px !important;
+    font-size: .66rem !important;
+    line-height: 1.02 !important;
+    letter-spacing: .025em !important;
+}
+
+#table-content .censo-list-table tbody td,
+#table-content .censo-list-table tbody th,
+#table-content .tabela-altas tbody td,
+#table-content .tabela-altas tbody th {
+    padding: 2px 6px !important;
+    font-size: 10px !important;
+    line-height: 1.05 !important;
+    vertical-align: middle !important;
 }
 
 .listagem-table-wrap tbody tr:nth-child(even) {
@@ -690,8 +723,8 @@
 .listagem-footer-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 10px;
     padding-left: 14px;
     padding-right: 14px;
 }
@@ -701,17 +734,26 @@
 }
 
 .listagem-total {
-    min-width: 110px;
+    min-width: 90px;
     margin-left: 0;
 }
 
 .listagem-total p {
-    margin: 0 8px 25px 0;
-    font-size: .9rem;
+    margin: 0 8px 14px 0;
+    font-size: .64rem;
     font-weight: 600;
     font-family: var(--bs-font-sans-serif);
     text-align: right;
     color: #4f465f;
+}
+
+.listagem-footer-row .text-muted.small,
+.listagem-footer-row small,
+.complete-table .table-counter,
+.complete-table .table-counter p,
+.complete-table .text-muted.small {
+    font-size: .64rem !important;
+    line-height: 1.1;
 }
 
 @media (max-width: 1199.98px) {

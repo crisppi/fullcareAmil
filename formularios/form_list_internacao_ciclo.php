@@ -288,41 +288,54 @@ $urlBase = $self . '?' . $urlParams;
 <head>
     <meta charset="utf-8">
     <title>Internações - Rota do Paciente</title>
+    <link href="<?= $BASE_URL ?>css/table_style.css?v=<?= @filemtime(__DIR__ . '/../css/table_style.css') ?>" rel="stylesheet">
+    <link href="<?= $BASE_URL ?>css/listagem_padrao.css?v=<?= @filemtime(__DIR__ . '/../css/listagem_padrao.css') ?>" rel="stylesheet">
     <style>
         .filters-row {
             display: flex;
             align-items: end;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 0;
         }
 
         .filter-flex-1 {
-            flex: 1 1 180px;
+            flex: 1 1 150px;
+            min-width: 0;
         }
 
         .filter-flex-2 {
-            flex: 2 1 280px;
+            flex: 1.45 1 230px;
+            min-width: 0;
         }
 
         .filter-btn {
-            flex: 0 0 40px;
+            flex: 0 0 78px;
+            min-width: 78px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .form-label.small {
-            font-size: .66rem !important;
+        .filter-btn .btn {
+            flex: 0 0 34px;
+        }
+
+        #filtros-form .form-label {
+            display: none;
         }
 
         #filtros-form .form-control,
         #filtros-form .form-select {
-            min-height: 32px;
-            height: 32px;
-            font-size: .72rem;
-            line-height: 1.2;
+            min-height: 34px !important;
+            height: 34px !important;
+            font-size: .72rem !important;
+            line-height: 1.12;
+            border-radius: 12px;
         }
 
         #filtros-form .form-control::placeholder {
             font-size: .72rem;
-            color: #c4c4c4;
+            color: #7d768e;
         }
 
         .ciclos-wrap {
@@ -501,39 +514,41 @@ $urlBase = $self . '?' . $urlParams;
             </div>
         </div>
 
-        <form action="<?= e($actionUrl) ?>" id="filtros-form" method="GET">
-            <div class="filters-row pb-1">
+        <div class="complete-table">
+            <div class="table-filters">
+                <form action="<?= e($actionUrl) ?>" id="filtros-form" method="GET">
+                    <div class="row filters-row">
 
-                <div class="filter-flex-2">
+                <div class="form-group filter-flex-2" style="padding:2px !important;padding-left:16px !important;">
                     <label class="form-label mb-0 small text-muted">Hospital</label>
                     <input class="form-control form-control-sm w-100" type="text" name="pesquisa_nome"
                         placeholder="Nome do Hospital" value="<?= e($pesquisa_nome) ?>">
                 </div>
 
-                <div class="filter-flex-2">
+                <div class="form-group filter-flex-2" style="padding:2px !important;">
                     <label class="form-label mb-0 small text-muted">Paciente</label>
                     <input class="form-control form-control-sm w-100" type="text" name="pesquisa_pac"
                         placeholder="Nome do Paciente" value="<?= e($pesquisa_pac) ?>">
                 </div>
 
-                <div class="filter-flex-1">
+                <div class="form-group filter-flex-1" style="padding:2px !important;">
                     <label class="form-label mb-0 small text-muted">ID Internação</label>
                     <input class="form-control form-control-sm w-100" type="number" name="id_internacao"
                         placeholder="Opcional" value="<?= $id_internacao ?: '' ?>">
                 </div>
 
-                <div class="filter-flex-1">
+                <div class="form-group filter-flex-1" style="padding:2px !important;">
                     <label class="form-label mb-0 small text-muted">Registros</label>
-                    <select class="form-select form-select-sm w-100" name="limite">
+                    <select class="form-control form-control-sm w-100" name="limite">
                         <option value="10" <?= $limite == 10 ? 'selected' : '' ?>>10 por pág.</option>
                         <option value="20" <?= $limite == 20 ? 'selected' : '' ?>>20 por pág.</option>
                         <option value="50" <?= $limite == 50 ? 'selected' : '' ?>>50 por pág.</option>
                     </select>
                 </div>
 
-                <div class="filter-flex-1">
+                <div class="form-group filter-flex-1" style="padding:2px !important;">
                     <label class="form-label mb-0 small text-muted">Ordenar</label>
-                    <select class="form-select form-select-sm w-100" name="ordenar">
+                    <select class="form-control form-control-sm w-100" name="ordenar">
                         <option value="id_internacao ASC"
                             <?= $col === 'id_internacao'   && $dir === 'ASC'  ? 'selected' : '' ?>>Internação (↑)</option>
                         <option value="id_internacao DESC"
@@ -559,19 +574,24 @@ $urlBase = $self . '?' . $urlParams;
                     </select>
                 </div>
 
-                <div class="filter-btn">
+                <div class="form-group filter-btn" style="padding:2px !important;">
                     <label class="form-label mb-0 small text-muted">&nbsp;</label>
                     <button type="submit"
-                        class="btn btn-primary btn-compact d-inline-flex align-items-center justify-content-center"
-                        style="background-color:#2f6f9f;border-color:#2f6f9f;">
-                        <span class="material-icons" style="font-size:14px;line-height:1;">search</span>
+                        class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon">
+                        <span class="material-icons">search</span>
                     </button>
+                    <a href="<?= e($actionUrl) ?>"
+                        class="btn btn-light btn-sm btn-filtro-limpar btn-filtro-limpar-icon"
+                        title="Limpar filtros" aria-label="Limpar filtros">
+                        <i class="bi bi-trash3"></i>
+                    </a>
                 </div>
 
+                    </div>
+                </form>
             </div>
-        </form>
 
-        <div id="table-container" class="mt-3">
+        <div id="table-container">
             <div class="table-responsive">
                 <table class="table table-sm table-hover align-middle rota-paciente-table">
                     <thead>
@@ -599,7 +619,7 @@ $urlBase = $self . '?' . $urlParams;
                                 <tr>
                                     <td class="text-center"><b><?= $idInt ?></b></td>
                                     <td><?= e($hosp) ?></td>
-                                    <td><?= e(fullcare_mask_person_name($pac)) ?></td>
+                                    <td><?= e($pac) ?></td>
                                     <td class="text-center"><?= $dInter ? date('d/m/Y', strtotime($dInter)) : '' ?></td>
                                     <td class="text-center">
                                         <?php
@@ -681,6 +701,7 @@ $urlBase = $self . '?' . $urlParams;
                 <?php endif; ?>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- JS (usa jQuery/Bootstrap já carregados no header global) -->

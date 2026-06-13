@@ -6,7 +6,7 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
-require_once __DIR__ . '/app/bi_cid_options.php';
+require_once __DIR__ . '/../../app/bi_cid_options.php';
 
 function e($v)
 {
@@ -107,9 +107,9 @@ $totalGlosa = array_sum($series['valor_glosa']);
 $totalApresentado = array_sum($series['valor_apresentado']);
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
 <script src="diversos/chartjs/Chart.min.js"></script>
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));
 </script>

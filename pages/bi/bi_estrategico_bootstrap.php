@@ -106,11 +106,13 @@ if (!function_exists('bi_scope')) {
 if (!function_exists('bi_render_page_start')) {
     function bi_render_page_start(string $title, string $subtitle, string $baseUrl): void
     {
+        $biCssVersion = @filemtime(__DIR__ . '/../../css/bi.css') ?: '20260509-filter-icons';
+        $biStrategicCssVersion = @filemtime(__DIR__ . '/../../css/bi-estrategico.css') ?: '20260523-align2';
         ?>
-        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi.css?v=20260609-filter-uniform-soft">
-        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi-estrategico.css?v=20260523-align2">
+        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi.css?v=<?= $biCssVersion ?>">
+        <link rel="stylesheet" href="<?= $baseUrl ?>css/bi-estrategico.css?v=<?= $biStrategicCssVersion ?>">
         <script src="diversos/chartjs/Chart.min.js"></script>
-        <script src="<?= $baseUrl ?>js/bi.js?v=20260608-filter-uniform"></script>
+        <script src="<?= $baseUrl ?>js/bi.js?v=20260516-rounded-bars"></script>
         <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
         <div class="bi-wrapper bi-theme bi-strategic-page">
             <div class="bi-header">

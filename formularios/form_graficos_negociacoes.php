@@ -293,55 +293,96 @@ foreach ($typeAudAuditors as $index => $aud) {
 }
 ?>
 
+<link rel="stylesheet" href="<?= eGraf(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . filemtime(__DIR__ . '/../css/listagem_padrao.css')) ?>">
+
 <style>
+.neg-dashboard-page {
+    margin-top: 2px !important;
+    padding: 0 4px 14px !important;
+}
+
+.neg-dashboard-hero {
+    min-height: 54px;
+    margin-bottom: 8px;
+    padding: 7px 14px;
+    border-radius: 10px;
+}
+
+.neg-dashboard-hero .listagem-title {
+    font-size: 1rem;
+    line-height: 1.1;
+}
+
+.neg-dashboard-hero .listagem-subtitle {
+    margin-top: 2px;
+    color: rgba(255,255,255,.76);
+    font-size: .68rem;
+}
+
+.neg-dashboard-export {
+    min-height: 30px;
+    border-color: rgba(255, 255, 255, .44);
+    background: rgba(255, 255, 255, .18);
+    box-shadow: none;
+    color: #fff !important;
+    font-size: .66rem;
+}
+
+.neg-dashboard-export:hover,
+.neg-dashboard-export:focus {
+    background: rgba(255, 255, 255, .26);
+    border-color: rgba(255, 255, 255, .58);
+    color: #fff !important;
+}
+
 .summary-card {
-    background: linear-gradient(180deg, rgba(94,35,99,.96), rgba(57,16,61,.96));
+    background: linear-gradient(135deg, #4f245f 0%, #653471 100%);
     color:#fff;
-    border-radius:22px;
+    border-radius:10px;
     border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 18px 34px rgba(45,18,70,.18);
-    padding:18px 20px;
-    min-height:140px;
+    box-shadow:0 4px 12px rgba(45,18,70,.13);
+    padding:10px 12px;
+    min-height:82px;
 }
 .summary-card small {
     display:block;
     text-transform:uppercase;
-    letter-spacing:.08em;
+    letter-spacing:.06em;
     opacity:.72;
-    font-size:.72rem;
-    margin-bottom:8px;
+    font-size:.58rem;
+    margin-bottom:5px;
 }
 .summary-card strong {
     display:block;
-    font-size:1.65rem;
+    font-size:1.18rem;
     line-height:1.1;
-    margin-bottom:10px;
+    margin-bottom:5px;
 }
 .summary-card span {
-    font-size:.92rem;
+    font-size:.66rem;
     color:rgba(255,255,255,.82);
 }
 .chart-card {
     background:#fff;
-    border-radius:22px;
-    border:1px solid #ebe1f5;
-    box-shadow:0 12px 28px rgba(45,18,70,.08);
-    padding:16px;
-    min-height:260px;
+    border-radius:9px;
+    border:1px solid #e6edf5;
+    box-shadow:0 2px 9px rgba(34,45,60,.10);
+    padding:10px;
+    min-height:225px;
     height:100%;
 }
 .chart-card h5 {
-    font-weight:600;
+    font-weight:800;
     color:#3a184f;
-    margin-bottom:8px;
-    font-size:0.95rem;
+    margin-bottom:6px;
+    font-size:.74rem;
 }
 .table-card {
     background:#fff;
-    border-radius:22px;
-    border:1px solid #ebe1f5;
-    box-shadow:0 12px 28px rgba(45,18,70,.08);
-    padding:18px;
+    border-radius:9px;
+    border:1px solid #e6edf5;
+    box-shadow:0 2px 9px rgba(34,45,60,.10);
+    padding:10px;
     height:100%;
 }
 .table-card h5 {
@@ -371,49 +412,82 @@ foreach ($typeAudAuditors as $index => $aud) {
 }
 .filters-card {
     background:#fff;
-    border-radius:22px;
-    border:1px solid #ebe1f5;
-    box-shadow:0 12px 28px rgba(45,18,70,.08);
-    padding:18px;
+    border-radius:9px;
+    border:1px solid #e6edf5;
+    box-shadow:0 2px 9px rgba(34,45,60,.12);
+    padding:8px 10px;
 }
 .filters-grid {
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-    gap:14px;
+    grid-template-columns: .7fr .7fr 1fr 1fr 120px;
+    gap:8px;
+    align-items:end;
 }
 .filters-grid label {
     display:block;
-    font-size:.8rem;
-    font-weight:600;
+    font-size:.58rem;
+    font-weight:800;
     color:#655674;
-    margin-bottom:6px;
+    margin-bottom:4px;
     text-transform:uppercase;
     letter-spacing:.05em;
 }
 .filters-grid input,
 .filters-grid select {
     width:100%;
-    border:1px solid #ddd0ea;
-    border-radius:12px;
-    padding:10px 12px;
+    height:34px;
+    border:1px solid #dfe6ee;
+    border-radius:10px;
+    padding:0 10px;
     background:#fff;
+    color:#2e3340;
+    font-size:.72rem;
+    font-weight:700;
+}
+
+.filters-grid .btn {
+    height:34px;
+    min-height:34px;
+    border-radius:8px;
+    font-size:.72rem;
+    font-weight:800;
+    line-height:1;
+}
+
+.neg-dashboard-row {
+    --bs-gutter-x: .75rem;
+    --bs-gutter-y: .75rem;
+}
+
+@media (max-width: 1200px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-        <div>
-            <h2 class="mb-1" style="color:#5e2363;">Painel de Negociações</h2>
-            <p class="text-muted mb-0">Visão consolidada de savings, volumes, hospitais e auditores nas negociações registradas.</p>
+<div class="container-fluid form_container listagem-page neg-dashboard-page">
+    <div class="listagem-hero listagem-hero--module listagem-hero--gestao neg-dashboard-hero">
+        <div class="listagem-hero__copy">
+            <p class="listagem-kicker">Gestão</p>
+            <h1 class="listagem-title">Painel de Negociações</h1>
+            <p class="listagem-subtitle">Visão consolidada de savings, volumes, hospitais e auditores.</p>
         </div>
-        <div class="mt-3 mt-md-0">
-            <a href="<?= $BASE_URL ?>export_negociacoes_graficos.php" class="btn btn-outline-primary">
-                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar XLSX
+        <div class="listagem-hero__actions">
+            <a href="<?= $BASE_URL ?>export_negociacoes_graficos.php" class="btn listagem-btn-top neg-dashboard-export">
+                <i class="bi bi-file-earmark-spreadsheet listagem-btn-top__icon" aria-hidden="true"></i>
+                Exportar XLSX
             </a>
         </div>
     </div>
 
-    <form class="filters-card mb-4" method="get">
+    <form class="filters-card mb-3" method="get">
         <div class="filters-grid">
             <div>
                 <label for="ano">Ano</label>
@@ -450,13 +524,13 @@ foreach ($typeAudAuditors as $index => $aud) {
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="d-flex align-items-end gap-2">
+            <div>
                 <button type="submit" class="btn btn-primary w-100">Aplicar</button>
             </div>
         </div>
     </form>
 
-    <div class="row g-4">
+    <div class="row g-3 neg-dashboard-row">
         <div class="col-xl-3 col-md-6">
             <div class="summary-card">
                 <small>Total saving</small>

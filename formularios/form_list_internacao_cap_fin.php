@@ -60,8 +60,55 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
     .listagem-page { padding: 4px 4px 14px; }
     .listagem-title { font-size: .96rem; line-height: 1.05; }
     .listagem-panel { padding: 8px 8px 6px; }
-    #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
+    #table-content thead th { font-size:.66rem; font-weight:600; letter-spacing:.025em; line-height:1.02; white-space:nowrap; }
+    #table-content thead th:first-child { min-width:72px; }
     #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
+    .finalizadas-filter-row {
+        margin: 0 !important;
+        row-gap: 4px;
+    }
+    .finalizadas-filter-row > [class*="col-"],
+    .finalizadas-filter-row > .form-group {
+        display: flex;
+        align-items: center;
+        padding: 2px !important;
+    }
+    .finalizadas-filter-row > :first-child {
+        padding-left: 16px !important;
+    }
+    .finalizadas-filter-row .form-control,
+    .finalizadas-filter-row .form-control-sm,
+    .finalizadas-filter-row .btn {
+        min-height: 34px !important;
+        height: 34px !important;
+        margin: 0 !important;
+        border-radius: 10px;
+        font-size: .68rem !important;
+        line-height: 1.2;
+    }
+    .finalizadas-filter-date {
+        flex: 0 0 170px;
+        max-width: 170px;
+    }
+    .finalizadas-filter-check {
+        flex: 0 0 150px;
+        max-width: 150px;
+    }
+    .finalizadas-filter-actions {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: none;
+        gap: 8px;
+    }
+    @media (max-width: 991.98px) {
+        .finalizadas-filter-date,
+        .finalizadas-filter-check,
+        .finalizadas-filter-actions {
+            flex: 1 0 100%;
+            max-width: 100%;
+            width: 100%;
+        }
+    }
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid listagem-page" id="main-container">
@@ -104,7 +151,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                 </div>
                 <div class="form-group col-sm-2" style="padding:2px !important">
                     <input class="form-control form-control-sm" type="text"
-                        name="senha_int" placeholder="Digite a Senha" value="<?= $pesquisa_pac ?>">
+                        name="senha_int" placeholder="Digite a Senha" value="<?= $senha_int ?>">
                 </div>
                 <div class="form-group col-sm-1" style="padding:2px !important">
                     <input class="form-control form-control-sm" type="text"
@@ -137,8 +184,8 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                     </select>
                 </div>
             </div>
-            <div style="margin-top:-18px" class="row">
-                <div class="form-group col-sm-1" style="padding:2px !important;padding-left:16px !important;">
+            <div class="row finalizadas-filter-row">
+                <div class="form-group col-sm-1 finalizadas-filter-check">
                     <select class="form-control mb-3 form-control-sm"
                         id="med_check" name="med_check">
                         <option value="">Médico</option>
@@ -148,7 +195,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                         </option> -->
                     </select>
                 </div>
-                <div class="form-group col-sm-1" style="padding:2px !important">
+                <div class="form-group col-sm-1 finalizadas-filter-check">
                     <select class="form-control mb-3 form-control-sm"
                         id="enf_check" name="enf_check">
                         <option value="">Enferm</option>
@@ -158,7 +205,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                         </option> -->
                     </select>
                 </div>
-                <div class="form-group col-sm-1" style="padding:2px !important">
+                <div class="form-group col-sm-1 finalizadas-filter-check">
                     <select class="form-control mb-3 form-control-sm"
                         id="adm_check" name="adm_check">
                         <option value="">Adm </option>
@@ -168,18 +215,18 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                         </option>
                     </select>
                 </div>
-                <div class="form-group col-sm-2 mb-0" style="padding:2px !important">
+                <div class="form-group col-sm-2 mb-0 finalizadas-filter-date">
                     <input class="form-control form-control-sm" type="date"
                         name="data_intern_int" placeholder="Data Internação Min" value="<?= $data_intern_int ?>">
                 </div>
-                <div class="form-group col-sm-2 mb-0">
+                <div class="form-group col-sm-2 mb-0 finalizadas-filter-date">
                     <input class="form-control form-control-sm" type="date"
                         name="data_intern_int_max" placeholder="Data Internação Max"
                         value="<?= $data_intern_int_max ?>">
                 </div>
-                <div class="form-group col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                <div class="form-group col-sm-1 d-flex align-items-center finalizadas-filter-actions">
                     <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                        style="background-color:#5e2363;width:42px;height:32px;border-color:#5e2363"><span
+                        style="background-color:#5e2363;width:42px;border-color:#5e2363"><span
                             class="material-icons" style="margin-left:-3px;margin-top:-2px;">
                             search
                         </span></button>
@@ -315,7 +362,7 @@ if ($qtdIntItens > $limite) {
                             <?= $intern["nome_hosp"] ?>
                         </b></td>
                     <td scope="row">
-                        <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                        <?= $intern["nome_pac"] ?>
                     </td>
                     <td scope="row">
                         <?= $intern["senha_int"] ?>

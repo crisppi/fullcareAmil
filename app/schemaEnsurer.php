@@ -520,9 +520,11 @@ if (!function_exists('ensure_operational_list_indexes')) {
             ['tb_prorrogacao', 'idx_pror_internacao_periodo', ['fk_internacao_pror', 'prorrog1_ini_pror', 'prorrog1_fim_pror']],
             ['tb_gestao', 'idx_ges_internacao_evento', ['fk_internacao_ges', 'evento_adverso_ges', 'evento_encerrar_ges']],
             ['tb_alta', 'idx_alta_internacao_data', ['fk_id_int_alt', 'data_alta_alt']],
+            ['tb_alta', 'idx_alta_data_internacao', ['data_alta_alt', 'fk_id_int_alt']],
             ['tb_uti', 'idx_uti_internacao_data', ['fk_internacao_uti', 'data_internacao_uti', 'data_alta_uti']],
             ['tb_negociacao', 'idx_neg_internacao_datas', ['fk_id_int', 'data_inicio_neg', 'data_fim_neg']],
             ['tb_capeante', 'idx_cap_internacao_status', ['fk_int_capeante', 'encerrado_cap', 'data_inicial_capeante', 'data_final_capeante']],
+            ['tb_capeante', 'idx_cap_internacao_id', ['fk_int_capeante', 'id_capeante']],
         ];
 
         foreach ($indexes as [$table, $indexName, $columns]) {

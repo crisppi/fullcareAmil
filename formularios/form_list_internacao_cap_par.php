@@ -58,8 +58,38 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 <style>
     .listagem-page { padding: 4px 4px 14px; }
     .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
-    #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
+    #table-content thead th { font-size:.66rem; font-weight:600; letter-spacing:.025em; line-height:1.02; white-space:nowrap; }
     #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
+    .paradas-filter-row {
+        gap: 0 !important;
+        margin: 0 !important;
+        row-gap: 4px;
+    }
+    .paradas-filter-row + .paradas-filter-row {
+        margin-top: 6px !important;
+    }
+    .paradas-filter-row > [class*="col-"],
+    .paradas-filter-row > .form-group {
+        display: flex;
+        align-items: center;
+        padding: 2px !important;
+    }
+    .paradas-filter-row > :first-child {
+        padding-left: 16px !important;
+    }
+    .paradas-filter-row .form-control,
+    .paradas-filter-row .form-control-sm,
+    .paradas-filter-row .btn {
+        min-height: 34px !important;
+        height: 34px !important;
+        margin: 0 !important;
+        border-radius: 10px;
+        font-size: .68rem !important;
+        line-height: 1.2;
+    }
+    .paradas-filter-actions {
+        gap: 8px;
+    }
 </style>
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid listagem-page" id="main-container">
@@ -90,7 +120,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
             $pesquisa_pac = filter_input(INPUT_GET, 'pesquisa_pac');
             $ordenar = filter_input(INPUT_GET, 'ordenar');
             ?>
-            <div class="form-group row legacy-filter-row">
+            <div class="form-group row legacy-filter-row paradas-filter-row">
                 <div class="form-group col-sm-3" style="padding:2px !important;padding-left:16px !important;">
                     <input class="form-control form-control-sm" style="font-size:.8em; color:#878787" type="text"
                         name="pesquisa_nome" placeholder="Selecione o Hospital" value="<?= $pesquisa_nome ?>">
@@ -101,7 +131,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                 </div>
                 <div class="form-group col-sm-2" style="padding:2px !important">
                     <input class="form-control form-control-sm" style="font-size:.8em; color:#878787" type="text"
-                        name="senha_int" placeholder="Digite a Senha" value="<?= $pesquisa_pac ?>">
+                        name="senha_int" placeholder="Digite a Senha" value="<?= $senha_int ?>">
                 </div>
                 <div class="col-sm-1" style="padding:2px !important">
                     <select class="form-control mb-3 form-control-sm" id="limite" style="font-size:.8em; color:#878787"
@@ -130,7 +160,7 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                     </select>
                 </div>
             </div>
-            <div class="row legacy-filter-row" style="margin-top:0">
+            <div class="row legacy-filter-row paradas-filter-row">
                 <div class="form-group col-sm-1" style="padding:2px !important;padding-left:16px !important;">
                     <select class="form-control mb-3 form-control-sm" style="font-size:.8em; color:#878787"
                         id="med_check" name="med_check">
@@ -170,9 +200,9 @@ $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
                         name="data_intern_int_max" placeholder="Data Internação Max"
                         value="<?= $data_intern_int_max ?>">
                 </div>
-                <div class="form-group col-sm-1 d-flex align-items-start gap-2" style="padding:2px !important">
+                <div class="form-group col-sm-1 d-flex align-items-center paradas-filter-actions">
                     <button type="submit" class="btn btn-primary btn-filtro-buscar btn-filtro-limpar-icon"
-                        style="background-color:#5e2363;width:42px;height:32px;border-color:#5e2363"><span
+                        style="background-color:#5e2363;width:42px;border-color:#5e2363"><span
                             class="material-icons" style="margin-left:-3px;margin-top:-2px;">
                             search
                         </span></button>
@@ -301,7 +331,7 @@ if ($qtdIntItens > $limite) {
                             <?= $intern["nome_hosp"] ?>
                         </b></td>
                     <td scope="row">
-                        <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                        <?= $intern["nome_pac"] ?>
                     </td>
                     <td scope="row">
                         <?= $intern["senha_int"] ?>

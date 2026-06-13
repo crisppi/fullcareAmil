@@ -6,7 +6,7 @@ if (!isset($conn) || !($conn instanceof PDO)) {
     die("Conexao invalida.");
 }
 
-require_once __DIR__ . '/app/bi_cid_options.php';
+require_once __DIR__ . '/../../app/bi_cid_options.php';
 
 function e($v)
 {
@@ -404,8 +404,8 @@ $comparisons = [
 ];
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260608-select-arrow">
-<script src="<?= $BASE_URL ?>js/bi.js?v=20260608-filter-uniform"></script>
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-bi-layout-3">
+<script src="<?= $BASE_URL ?>js/bi.js?v=20260516-rounded-bars"></script>
 <script>document.addEventListener('DOMContentLoaded', () => document.body.classList.add('bi-theme'));</script>
 <style>
 .bi-header {

@@ -823,6 +823,7 @@ try {
     <link href="diversos/CoolAdmin-master/vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
     <!-- Main CSS-->
     <link href="diversos/CoolAdmin-master/css/theme.css" rel="stylesheet" media="all">
+    <link href="css/menu_app.css?v=<?= @filemtime(__DIR__ . '/css/menu_app.css') ?>" rel="stylesheet">
 </head>
 
 <style>
@@ -849,11 +850,11 @@ try {
     background:
         radial-gradient(circle at 12% 110%, rgba(91, 180, 216, 0.18), transparent 55%),
         linear-gradient(145deg, #f4faff 0%, #eaf4fb 100%);
-    min-height: 120px;
+    min-height: 96px;
     box-shadow: 0 8px 18px rgba(35, 102, 147, 0.10);
     border: 1px solid rgba(76, 142, 187, 0.20);
     overflow: hidden;
-    padding: 10px 0;
+    padding: 8px 0;
     transition: transform .15s ease, box-shadow .15s ease;
 }
 
@@ -904,20 +905,20 @@ try {
 
 .title-item {
     position: absolute;
-    top: 10px;
+    top: 8px;
     left: 14px;
     right: 14px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 8px;
-    min-height: 40px;
+    gap: 6px;
+    min-height: 32px;
     width: calc(100% - 28px);
     text-align: left;
     line-height: 1.2;
-    font-size: 0.92rem;
+    font-size: 0.76rem;
     color: #24384f;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .02em;
     white-space: normal;
@@ -930,38 +931,41 @@ try {
 
 .icon-item {
     position: absolute;
-    bottom: 14px;
-    left: 16px;
-    font-size: .95rem;
+    bottom: 10px;
+    left: 12px;
+    top: auto;
+    right: auto;
+    font-size: .78rem;
     color: #ffffff;
     background: linear-gradient(145deg, #2f6f9f, #5eb4d8);
     border-radius: 50%;
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 12px rgba(35, 102, 147, 0.18);
+    box-shadow: 0 4px 8px rgba(35, 102, 147, 0.18);
     opacity: .9;
 }
 
+
 .badge-item {
     position: absolute;
-    bottom: 12px;
-    right: 16px;
-    min-width: clamp(92px, 20vw, 124px);
-    max-width: calc(100% - 84px);
-    min-height: 44px;
+    bottom: 10px;
+    right: 14px;
+    min-width: clamp(76px, 16vw, 106px);
+    max-width: calc(100% - 70px);
+    min-height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 700;
     color: #29435c !important;
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 255, 0.78)) !important;
-    padding: 6px clamp(10px, 1.6vw, 14px);
+    padding: 4px clamp(8px, 1.2vw, 11px);
     border-radius: 999px;
-    font-size: clamp(1rem, 1.25vw, 1.32rem);
+    font-size: clamp(0.88rem, 1.1vw, 1.12rem);
     text-align: center;
     border: 1px solid rgba(142, 161, 199, 0.28);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
@@ -1026,7 +1030,7 @@ try {
 }
 
 .grid-container .grid-item .badge-item {
-    min-height: 46px !important;
+    min-height: 32px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1055,16 +1059,18 @@ try {
 
 .reint-mini-group {
     position: absolute;
-    bottom: 12px;
-    right: 16px;
+    bottom: 8px;
+    left: 44px;
+    right: 8px;
     display: flex;
-    gap: 6px;
+    gap: 4px;
     z-index: 2;
 }
 
 .reint-mini-btn {
-    min-width: 92px;
-    height: 42px;
+    flex: 1;
+    min-width: 0;
+    height: 30px;
     border-radius: 999px;
     border: 1px solid rgba(216, 172, 93, 0.45);
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.92), rgba(248, 249, 255, 0.78));
@@ -1072,16 +1078,17 @@ try {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0 10px;
-    font-weight: 700;
-    font-size: 0.74rem;
+    gap: 3px;
+    padding: 0 4px;
+    font-weight: 600;
+    font-size: 0.63rem;
     line-height: 1;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .reint-mini-btn b {
-    font-size: 1.1rem;
+    font-size: 0.88rem;
 }
 
 .reint-mini-btn .txt {
@@ -1114,16 +1121,18 @@ try {
 
 .longa-mini-group {
     position: absolute;
-    bottom: 12px;
-    right: 16px;
+    bottom: 8px;
+    left: 44px;
+    right: 8px;
     display: flex;
-    gap: 6px;
+    gap: 4px;
     z-index: 2;
 }
 
 .longa-mini-btn {
-    min-width: 92px;
-    height: 42px;
+    flex: 1;
+    min-width: 0;
+    height: 30px;
     border-radius: 999px;
     border: 1px solid rgba(216, 172, 93, 0.45);
     background: linear-gradient(140deg, rgba(255, 255, 255, 0.92), rgba(248, 249, 255, 0.78));
@@ -1131,16 +1140,17 @@ try {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0 10px;
-    font-weight: 700;
-    font-size: 0.74rem;
+    gap: 3px;
+    padding: 0 4px;
+    font-weight: 600;
+    font-size: 0.63rem;
     line-height: 1;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .longa-mini-btn b {
-    font-size: 1.1rem;
+    font-size: 0.88rem;
 }
 
 .select-item {
@@ -1400,9 +1410,9 @@ try {
 .menu-action-card {
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 66px;
-    padding: 10px 12px;
+    gap: 8px;
+    min-height: 52px;
+    padding: 8px 10px;
     border-radius: 14px;
     background: linear-gradient(145deg, #ffffff 0%, #edf6fc 100%);
     border: 1px solid rgba(47, 111, 159, .24);
@@ -1450,13 +1460,13 @@ try {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
     background: #eef7ff;
     color: #1f5f8f;
     flex: 0 0 auto;
-    font-size: 1rem;
+    font-size: 0.82rem;
 }
 
 .menu-action-card.primary .menu-action-icon { background: #f2e8f7; color: #5e2363; }
@@ -1473,8 +1483,8 @@ try {
 .menu-auditor-title {
     display: block;
     color: #24384f;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: .72rem;
+    font-weight: 500;
     line-height: 1.15;
 }
 
@@ -1483,10 +1493,10 @@ try {
 .menu-recent-item small,
 .menu-auditor-meta {
     display: block;
-    margin-top: 3px;
+    margin-top: 2px;
     color: #64748b;
-    font-size: .68rem;
-    font-weight: 700;
+    font-size: .64rem;
+    font-weight: 400;
     line-height: 1.2;
 }
 
@@ -1502,9 +1512,9 @@ try {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 10px;
-    min-height: 86px;
-    padding: 11px 12px;
+    gap: 8px;
+    min-height: 68px;
+    padding: 9px 10px;
     border-radius: 14px;
     background: linear-gradient(145deg, #ffffff 0%, #edf6fc 100%);
     border: 1px solid rgba(47, 111, 159, .24);
@@ -1572,15 +1582,15 @@ try {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 7px 12px;
     background: linear-gradient(90deg, #e9f5fd 0%, #f8fbff 100%);
     border-bottom: 1px solid rgba(47, 111, 159, .18);
 }
 
 .menu-panel-head strong {
     color: #24384f;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: .72rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .04em;
 }
@@ -1601,11 +1611,11 @@ try {
 .menu-auditor-item,
 .menu-recent-item {
     display: grid;
-    grid-template-columns: 34px minmax(0, 1fr) auto;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 9px;
-    min-height: 58px;
-    padding: 9px 12px;
+    gap: 7px;
+    min-height: 44px;
+    padding: 6px 10px;
     border-bottom: 1px solid #eef3f8;
     background: rgba(255, 255, 255, .76);
     color: #24384f;
@@ -1627,9 +1637,9 @@ try {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 11px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
     background: #eef7ff;
     color: #1f5f8f;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.65), 0 4px 10px rgba(35, 102, 147, .08);
@@ -2068,12 +2078,6 @@ try {
 </style>
 
 <style>
-    .header_div {
-        border-radius: 22px;
-        padding: 12px 18px;
-        margin: 4px 0 2px;
-        font-size: .88rem;
-    }
 
     .scope-badge {
         margin-bottom: 8px;
@@ -2114,9 +2118,9 @@ try {
     }
 
     .icon-item {
-        width: 28px;
-        height: 28px;
-        font-size: .82rem;
+        width: 24px;
+        height: 24px;
+        font-size: .72rem;
     }
 
     .badge-item {
@@ -2203,12 +2207,28 @@ try {
 
     #dash-visitas-atraso .table thead th,
     #dash-longa-perm .table thead th,
-    #dash-reinternacoes .table thead th {
+    #dash-reinternacoes .table thead th,
+    #forecast-ia-table thead th {
         background: #2f6f9f !important;
         background-image: none !important;
         font-size: .52rem !important;
         font-weight: 500 !important;
         letter-spacing: .04em;
+        padding: 5px 6px !important;
+    }
+
+    #forecast-ia-table {
+        font-size: .70rem !important;
+    }
+
+    #forecast-ia-table tbody td {
+        font-size: .70rem !important;
+        font-weight: 400 !important;
+        padding: 5px 6px !important;
+    }
+
+    #forecast-ia-table thead th {
+        color: #fff !important;
     }
 
     #dash-visitas-atraso .table tbody td,
@@ -2569,13 +2589,13 @@ try {
         <div class="kpi-grid-container">
             <div class="grid-item grid-item-kpi kpi-neutral">
                 <div class="title-item"><i class="bi bi-bed"></i> Total Internados</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-people-fill"></i></div>
                 <div class="badge-item badge-neutral"><?= count($dados_internacoes) ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-clock-history"></i> Longa Permanência</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-hourglass-split"></i></div>
                 <div class="kpi-helper">Dias de internação</div>
                 <div class="longa-mini-group">
                     <span class="longa-mini-btn">&gt;10d <b><?= (int)$longa_perm_10 ?></b></span>
@@ -2587,7 +2607,7 @@ try {
             <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-arrow-repeat"></i> Reinternações</div>
                 <div class="reint-helper">Tempo entre alta e nova internação</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-arrow-clockwise"></i></div>
                 <div class="reint-mini-group">
                     <span class="reint-mini-btn"><span class="txt">até 5d</span><b><?= $total_reinternacoes_5 ?? 0 ?></b></span>
                     <span class="reint-mini-btn"><span class="txt">até 10d</span><b><?= $total_reinternacoes_10 ?? 0 ?></b></span>
@@ -2597,44 +2617,44 @@ try {
 
             <div class="grid-item grid-item-kpi kpi-warning">
                 <div class="title-item"><i class="bi bi-calendar-x"></i> Visitas em Atraso</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-calendar-x-fill"></i></div>
                 <div class="badge-item badge-warning"><?= count($dados_visitas_atraso) ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-critical">
                 <div class="title-item"><i class="bi bi-heart-pulse"></i> Acima meta DRG</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-graph-up-arrow"></i></div>
                 <div class="badge-item badge-critical"><?= $drg_acima[0] ?? 0 ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-info">
                 <div class="title-item"><i class="bi bi-currency-dollar"></i> Contas em Auditoria</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-file-earmark-text"></i></div>
                 <div class="badge-item badge-info"><?= is_array($dados_capeante) ? count($dados_capeante) : 0 ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-critical">
                 <div class="title-item"><i class="bi bi-pause-circle"></i> Contas Paradas</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-pause-fill"></i></div>
                 <div class="badge-item badge-critical"><?= $contas_paradas[0] ?? 0 ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-info">
                 <div class="title-item"><i class="bi bi-percent"></i> Porcentagem em UTI</div>
                 <div class="kpi-helper">Internações UTI / total de internações</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-hospital"></i></div>
                 <div class="badge-item badge-info"><?= $perc_uti['perc'] ?? "0.00%" ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-critical">
                 <div class="title-item"><i class="bi bi-heart"></i> UTI Não Pertinente</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-heart-break"></i></div>
                 <div class="badge-item badge-critical"><?= $uti_nao_pertinente[0] ?? 0 ?></div>
             </div>
 
             <div class="grid-item grid-item-kpi kpi-critical">
                 <div class="title-item"><i class="bi bi-exclamation-triangle"></i> Eventos Adversos</div>
-                <div class="icon-item"><i class="bi bi-bar-chart-line"></i></div>
+                <div class="icon-item"><i class="bi bi-shield-exclamation"></i></div>
                 <div class="badge-item badge-critical"><?= (int)$eventos_adversos_abertos ?></div>
             </div>
         </div>
@@ -2749,13 +2769,11 @@ try {
     <div class="container-fluid">
         <div class="row m-t-25">
             <div class="col-12">
-                <div class="header_div d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-                    <div>
-                        <span>Previsão de permanência (IA)</span>
-                        <i class="bi bi-robot" style="color:white; margin-left:10px;"></i>
-                    </div>
+                <div class="header_div d-flex align-items-center justify-content-center">
+                    <span>Previsão de permanência (IA)</span>
+                    <i class="bi bi-robot" style="color:white; margin-left:10px;"></i>
                 </div>
-                <table class="table table-sm table-striped table-hover table-condensed" style="margin-top:10px;">
+                <table id="forecast-ia-table" class="table table-sm table-striped table-hover table-condensed" style="margin-top:10px;">
                     <thead style="background: #2f6f9f; background-image: none; color: #fff;">
                         <tr>
                             <th style="width:18%">Hospital</th>
@@ -2816,10 +2834,10 @@ try {
                                 }
                             }
                             ?>
-                        <tr style="font-size:15px">
+                        <tr>
                             <td>
                                 <?= htmlspecialchars($prev['nome_hosp'] ?? '', ENT_QUOTES, 'UTF-8') ?><br>
-                                <span class="<?= $statusClass ?>" style="font-size:0.75rem;">
+                                <span class="<?= $statusClass ?>" style="font-size:0.62rem; padding: 2px 6px;">
                                     <?= $statusLabel ?>
                                 </span>
                             </td>

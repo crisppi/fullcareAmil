@@ -13,7 +13,7 @@ include_once("models/pagination.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/timeout.js"></script>
-    <link rel="stylesheet" href="./css/table_style.css">
+    <link rel="stylesheet" href="./css/table_style.css?v=<?= @filemtime(__DIR__ . '/../../css/table_style.css') ?>">
 </head>
 
 <?php
