@@ -276,7 +276,7 @@ if ($qtdIntItens > $limite) {
                                 <?= $ativo_user ?>
                             </td>
 
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#5e2363"
@@ -301,6 +301,12 @@ if ($qtdIntItens > $limite) {
                                                 style="font-size: .9rem;"><i
                                                     class="bi bi-arrow-clockwise" style="font-size:1rem;margin-right:8px;color:purple;"></i>Resetar
                                                 Senha</button>
+                                        </li>
+                                        <li>
+                                            <button onclick="resetMfa('<?= $id_usuario ?>', event)" class="dropdown-item"
+                                                style="font-size: .9rem;"><i
+                                                    class="bi bi-shield-lock" style="font-size:1rem;margin-right:8px;color:#0f766e;"></i>Resetar
+                                                MFA</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -459,6 +465,39 @@ function resetSenha(id_user, evt) {
         error: function(xhr, status, error) {
             console.error("Erro:", error);
             $('#responseMessage').html('Ocorreu um erro ao processar a solicitação.');
+        }
+    });
+}
+
+function resetMfa(id_user, evt) {
+    if (evt && typeof evt.preventDefault === 'function') {
+        evt.preventDefault();
+    }
+
+    if (!id_user) {
+        $('#responseMessage').html('ID do usuário inválido.');
+        return;
+    }
+
+    if (!confirm('Resetar o MFA deste usuário? Ele precisará configurar o autenticador novamente.')) {
+        return;
+    }
+
+    $.ajax({
+        url: '<?= $BASE_URL ?>process_usuario_mfa_reset.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            id: id_user,
+            csrf: <?= json_encode($csrfToken) ?>
+        },
+        success: function(response) {
+            $('#responseMessage').html((response && response.message) ?
+                response.message : 'MFA resetado.');
+        },
+        error: function(xhr) {
+            const response = xhr.responseJSON || {};
+            $('#responseMessage').html(response.message || 'Ocorreu um erro ao resetar MFA.');
         }
     });
 }

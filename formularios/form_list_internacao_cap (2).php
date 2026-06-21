@@ -269,24 +269,24 @@ if ($qtdIntItens > $limite) {
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th scope="col" style="width:4%">Reg Int</th>
-                            <th scope="col" style="width:4%">Conta No.</th>
-                            <th scope="col" style="width:12%">Hospital</th>
-                            <th scope="col" style="width:16%">Paciente</th>
-                            <th scope="col" style="width:10%">Senha</th>
-                            <th scope="col" style="width:8%">Data internação</th>
-                            <th scope="col" style="width:4%;">Med</th>
-                            <th scope="col" style="width:4%;">Enf</th>
-                            <th scope="col" style="width:4%;">Adm</th>
-                            <th scope="col" style="width:4%;">Parcial</th>
-                            <th scope="col" style="width:3%;">Final</th>
-                            <th scope="col" style="width:3%;">Aberto</th>
-                            <th scope="col" style="width:6%;">Cap Encer</th>
-                            <th scope="col" style="width:6%;">Em Audit</th>
+                            <th scope="col" class="th-w-4">Reg Int</th>
+                            <th scope="col" class="th-w-4">Conta No.</th>
+                            <th scope="col" class="th-w-12">Hospital</th>
+                            <th scope="col" class="th-w-16">Paciente</th>
+                            <th scope="col" class="th-w-10">Senha</th>
+                            <th scope="col" class="th-w-8">Data internação</th>
+                            <th scope="col" class="th-w-4">Med</th>
+                            <th scope="col" class="th-w-4">Enf</th>
+                            <th scope="col" class="th-w-4">Adm</th>
+                            <th scope="col" class="th-w-4">Parcial</th>
+                            <th scope="col" class="th-w-3">Final</th>
+                            <th scope="col" class="th-w-3">Aberto</th>
+                            <th scope="col" class="th-w-6">Cap Encer</th>
+                            <th scope="col" class="th-w-6">Em Audit</th>
                             <?php if ($_SESSION['nivel'] > 3) : ?>
-                            <th scope="col" style="width:6%;">Usuário</th>
+                            <th scope="col" class="th-w-6">Usuário</th>
                             <?php endif; ?>
-                            <th scope="col" style="width:13%">Ações</th>
+                            <th scope="col" class="th-w-13">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -303,7 +303,7 @@ if ($qtdIntItens > $limite) {
                             <td scope="row" class="nome-coluna-table"><b>
                                     <?= $intern["nome_hosp"] ?></b></td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= $intern["nome_pac"] ?>
                             </td>
                             <td scope="row">
                                 <?= $intern["senha_int"] ?>

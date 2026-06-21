@@ -156,6 +156,16 @@ function mobileListHomeCareCases(PDO $conn, array $authUser, string $query): arr
         $params[':query_insurance'] = $like;
     }
 
+    $where .= " AND (
+        hc.id_home_care IS NOT NULL
+        OR EXISTS (
+            SELECT 1
+            FROM tb_gestao g
+            WHERE g.fk_internacao_ges = i.id_internacao
+              AND (g.home_care_ges = 's' OR g.desospitalizacao_ges = 's')
+        )
+    ) ";
+
     $sql = "
         SELECT
             i.id_internacao AS admission_id,
@@ -410,6 +420,8 @@ function mobileListAdverseEventCases(PDO $conn, array $authUser, string $query):
         $params[':query_insurance'] = $like;
         $params[':query_type'] = $like;
     }
+
+    $where .= " AND ge.id_gestao IS NOT NULL ";
 
     $sql = "
         SELECT
@@ -733,6 +745,7 @@ function mobileListAdmissionEvolutions(PDO $conn, int $admissionId): array
             v.id_visita AS id,
             v.data_visita_vis AS visited_at,
             v.rel_visita_vis AS report,
+            v.programacao_enf AS therapeutic_plan,
             v.usuario_create AS created_by,
             v.visita_no_vis AS visit_number
         FROM tb_visita v
@@ -852,10 +865,13 @@ function mobileCreateAdmissionEvolution(PDO $conn, array $authUser, array $input
 {
     $admissionId = (int)($input['admission_id'] ?? 0);
     $report = trim((string)($input['report'] ?? ''));
+    $therapeuticPlan = trim((string)($input['therapeutic_plan'] ?? ''));
+    $visitedAt = (new DateTimeImmutable('now', new DateTimeZone('America/Sao_Paulo')))->format('Y-m-d H:i:s');
 
     mobileValidateClinicalTextSecurity([
         'rel_int' => $report,
         'rel_visita_vis' => $report,
+        'programacao_enf' => $therapeuticPlan,
     ]);
 
     $lastVisitStmt = $conn->prepare("
@@ -911,21 +927,24 @@ function mobileCreateAdmissionEvolution(PDO $conn, array $authUser, array $input
             'n',
             :visit_number,
             :user_id,
-            NOW(),
-            NOW(),
+            :visited_at,
+            :launched_at,
             'n',
             'Sem exames relevantes no período',
             '',
-            '',
+            :therapeutic_plan,
             '',
             0
         )
     ");
     $insertStmt->bindValue(':admission_id', $admissionId, PDO::PARAM_INT);
     $insertStmt->bindValue(':report', $report, PDO::PARAM_STR);
+    $insertStmt->bindValue(':therapeutic_plan', $therapeuticPlan, PDO::PARAM_STR);
     $insertStmt->bindValue(':created_by', (string)($authUser['name'] ?? 'Mobile'), PDO::PARAM_STR);
     $insertStmt->bindValue(':visit_number', $nextVisitNumber, PDO::PARAM_INT);
     $insertStmt->bindValue(':user_id', (int)$authUser['id'], PDO::PARAM_INT);
+    $insertStmt->bindValue(':visited_at', $visitedAt, PDO::PARAM_STR);
+    $insertStmt->bindValue(':launched_at', $visitedAt, PDO::PARAM_STR);
     $insertStmt->execute();
 
     $id = (int)$conn->lastInsertId();
@@ -936,7 +955,7 @@ function mobileCreateAdmissionEvolution(PDO $conn, array $authUser, array $input
         }
     }
 
-    return ['id' => $id, 'report' => $report];
+    return ['id' => $id, 'report' => $report, 'therapeutic_plan' => $therapeuticPlan];
 }
 
 function mobileListDischargeTypes(): array

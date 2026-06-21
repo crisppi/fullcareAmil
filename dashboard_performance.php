@@ -1279,6 +1279,361 @@ function perfTimerClock($seconds)
     }
 </style>
 
+<style>
+    .performance-wrapper {
+        margin: 8px 0 28px !important;
+        padding: 0 14px !important;
+    }
+
+    .perf-hero {
+        background: linear-gradient(120deg, #e8f5fd 0%, #f7fbff 100%) !important;
+        border: 1px solid rgba(47, 111, 159, .22) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08) !important;
+        margin-bottom: 10px !important;
+        padding: 14px 16px !important;
+    }
+
+    .perf-hero h1 {
+        color: #21364f !important;
+        font-size: 1.28rem !important;
+        font-weight: 820 !important;
+        margin: 0 0 4px !important;
+    }
+
+    .perf-hero p {
+        color: #5b6f87 !important;
+        font-size: .78rem !important;
+        font-weight: 560 !important;
+        line-height: 1.35 !important;
+    }
+
+    .perf-filter {
+        align-items: end !important;
+        gap: 10px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .perf-filter>div {
+        min-width: 135px;
+    }
+
+    .perf-filter label {
+        color: #4f6075 !important;
+        font-size: .68rem !important;
+        font-weight: 760 !important;
+        margin-bottom: 3px !important;
+    }
+
+    .perf-filter input {
+        background: #fff !important;
+        border: 1px solid #bfd4e6 !important;
+        border-radius: 8px !important;
+        box-shadow: inset 0 1px 2px rgba(35, 102, 147, .04) !important;
+        color: #25364b !important;
+        font-size: .78rem !important;
+        min-height: 32px !important;
+        padding: 4px 8px !important;
+    }
+
+    .perf-filter button {
+        border-radius: 999px !important;
+        box-shadow: 0 6px 14px rgba(35, 102, 147, .12) !important;
+        font-size: .74rem !important;
+        min-height: 32px !important;
+        padding: 0 16px !important;
+    }
+
+    .perf-range-info {
+        color: #5f7189 !important;
+        font-size: .76rem !important;
+        margin: 0 0 10px !important;
+    }
+
+    .perf-grid {
+        gap: 10px !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        margin-bottom: 12px !important;
+    }
+
+    .perf-card {
+        background: linear-gradient(180deg, #fff 0%, #f7fbfe 100%) !important;
+        border: 1px solid rgba(47, 111, 159, .18) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 16px rgba(35, 102, 147, .08) !important;
+        padding: 11px 12px !important;
+    }
+
+    .perf-card h3 {
+        color: #5a6e86 !important;
+        font-size: .68rem !important;
+        font-weight: 760 !important;
+        letter-spacing: .07em !important;
+        margin-bottom: 5px !important;
+    }
+
+    .perf-card strong,
+    .personal-card strong {
+        color: #1f2f45 !important;
+        font-size: 1.28rem !important;
+        line-height: 1 !important;
+    }
+
+    .perf-card span,
+    .personal-card span {
+        color: #5f7189 !important;
+        font-size: .72rem !important;
+        line-height: 1.25 !important;
+        margin-top: 5px !important;
+    }
+
+    .perf-card .card-pill {
+        background: #e8f3fb !important;
+        color: #4f3f76 !important;
+        font-size: .68rem !important;
+        margin: 0 0 4px 6px !important;
+        padding: 2px 7px !important;
+    }
+
+    .perf-sections {
+        gap: 10px !important;
+        grid-template-columns: 1fr !important;
+        margin-top: 10px !important;
+    }
+
+    .perf-panel {
+        background: #fff !important;
+        border: 1px solid rgba(47, 111, 159, .18) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08) !important;
+        padding: 12px !important;
+    }
+
+    .perf-panel h2,
+    .perf-panel h2[style] {
+        color: #21364f !important;
+        font-size: .9rem !important;
+        font-weight: 800 !important;
+        gap: 7px !important;
+        margin: 0 0 10px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] {
+        gap: 9px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"]>div {
+        background: #f2f7fc !important;
+        border: 1px solid rgba(47, 111, 159, .14) !important;
+        border-left: 3px solid #2f6f9f !important;
+        border-radius: 10px !important;
+        padding: 10px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] small {
+        color: #5f7189 !important;
+        font-size: .72rem !important;
+        font-weight: 720 !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] div[style*="font-size:1.5rem"] {
+        font-size: 1.14rem !important;
+        font-weight: 820 !important;
+        margin-top: 3px !important;
+    }
+
+    .perf-panel hr {
+        border-color: #d9e6f1 !important;
+        margin: 10px 0 !important;
+    }
+
+    .perf-table {
+        border-collapse: separate !important;
+        border-radius: 8px !important;
+        border-spacing: 0 !important;
+        font-size: .76rem !important;
+        overflow: hidden !important;
+    }
+
+    .perf-table th {
+        background: #2f6f9f !important;
+        color: #fff !important;
+        font-size: .62rem !important;
+        font-weight: 820 !important;
+        letter-spacing: .05em !important;
+        padding: 7px 8px !important;
+    }
+
+    .perf-table td {
+        border-bottom: 1px solid #e1edf6 !important;
+        color: #34475d !important;
+        padding: 7px 8px !important;
+    }
+
+    .perf-table tbody tr:nth-child(even) td {
+        background: #f3f8fc !important;
+    }
+
+    .perf-table .summary-row td {
+        background: #eaf4fb !important;
+        border-top: 1px solid #c9ddeb !important;
+        font-weight: 740 !important;
+    }
+
+    .monthly-bar {
+        margin-bottom: 9px !important;
+    }
+
+    .monthly-bar span {
+        color: #31465d !important;
+        font-size: .74rem !important;
+        font-weight: 740 !important;
+    }
+
+    .monthly-bar .bar-track {
+        background: #e4eef7 !important;
+        height: 7px !important;
+        margin: 4px 0 !important;
+    }
+
+    .monthly-bar small,
+    .perf-panel p[style] {
+        color: #63758b !important;
+        font-size: .7rem !important;
+    }
+
+    .adm-card {
+        padding: 9px 0 !important;
+    }
+
+    @media (max-width: 900px) {
+        .perf-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .perf-filter>div {
+            flex: 1 1 140px;
+            min-width: 0;
+        }
+    }
+</style>
+
+<style>
+    .perf-grid {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 9px !important;
+    }
+
+    .perf-card {
+        flex: 0 1 300px !important;
+        min-height: 78px !important;
+        overflow: hidden !important;
+        padding: 9px 12px 10px 14px !important;
+        position: relative !important;
+    }
+
+    .perf-card::before {
+        border-radius: 999px;
+        content: "";
+        height: calc(100% - 18px);
+        left: 0;
+        position: absolute;
+        top: 9px;
+        width: 4px;
+    }
+
+    .perf-card:nth-child(1) {
+        background: linear-gradient(135deg, #fffaf1 0%, #fff 72%) !important;
+        border-color: rgba(166, 112, 18, .22) !important;
+    }
+
+    .perf-card:nth-child(1)::before {
+        background: #a67012;
+    }
+
+    .perf-card:nth-child(2) {
+        background: linear-gradient(135deg, #eefbf7 0%, #fff 72%) !important;
+        border-color: rgba(20, 139, 120, .2) !important;
+    }
+
+    .perf-card:nth-child(2)::before {
+        background: #148b78;
+    }
+
+    .perf-card:nth-child(3) {
+        background: linear-gradient(135deg, #eef6ff 0%, #fff 72%) !important;
+        border-color: rgba(47, 111, 159, .22) !important;
+    }
+
+    .perf-card:nth-child(3)::before {
+        background: #2f6f9f;
+    }
+
+    .perf-card h3 {
+        font-size: .63rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    .perf-card strong,
+    .personal-card strong {
+        font-size: 1.16rem !important;
+    }
+
+    .perf-card .card-pill {
+        font-size: .62rem !important;
+        line-height: 1.15 !important;
+        padding: 2px 6px !important;
+    }
+
+    .perf-card span {
+        font-size: .66rem !important;
+        margin-top: 4px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"]>div {
+        flex: 0 1 255px !important;
+        min-height: 62px !important;
+        padding: 8px 10px !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"]>div:nth-child(1) {
+        background: linear-gradient(135deg, #eef6ff, #fff) !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"]>div:nth-child(2) {
+        background: linear-gradient(135deg, #eefbf7, #fff) !important;
+        border-left-color: #148b78 !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"]>div:nth-child(3) {
+        background: linear-gradient(135deg, #fff6e8, #fff) !important;
+        border-left-color: #a67012 !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] small {
+        font-size: .66rem !important;
+    }
+
+    .perf-panel>div[style*="grid-template-columns:repeat(3"] div[style*="font-size:1.5rem"] {
+        font-size: 1.02rem !important;
+    }
+
+    @media (max-width: 900px) {
+        .perf-card,
+        .perf-panel>div[style*="grid-template-columns:repeat(3"]>div {
+            flex-basis: 100% !important;
+        }
+    }
+</style>
+
 <?php
 ?>
 

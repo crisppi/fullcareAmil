@@ -87,14 +87,13 @@
         const saveBtn = buildButton('bi-bookmark-check', 'Salvar filtros', 'Salvar filtros atuais');
         const restoreBtn = buildButton('bi-arrow-counterclockwise', 'Meus filtros', 'Voltar para meus filtros salvos');
         const columnsBtn = buildButton('bi-layout-three-columns', 'Colunas', 'Configurar colunas visíveis');
-        const priorityBtn = buildButton('bi-sort-down', 'Prioridade', 'Ordenar a página visível por prioridade');
-        const exportBtn = buildButton('bi-file-earmark-spreadsheet', 'Exportar CSV', 'Exportar tabela visível');
+        const exportBtn = buildButton('bi-file-earmark-spreadsheet', 'Exportar Excel', 'Exportar tabela visível para Excel');
 
         const columnsMenu = document.createElement('div');
         columnsMenu.className = 'fc-list-columns-menu';
         columnsMenu.hidden = true;
 
-        toolbar.append(saveBtn, restoreBtn, columnsBtn, priorityBtn, exportBtn, columnsMenu);
+        toolbar.append(saveBtn, restoreBtn, columnsBtn, exportBtn, columnsMenu);
         filters.parentElement.insertBefore(toolbar, filters.nextSibling);
         installEmptyResultHint(form, table, toolbar);
 
@@ -124,13 +123,6 @@
         });
 
         exportBtn.addEventListener('click', () => exportVisibleTable(table));
-        priorityBtn.addEventListener('click', () => {
-            if (sortVisibleRowsByPriority(table)) {
-                showToast(toolbar, 'Ordenado por prioridade', 'success');
-            } else {
-                showToast(toolbar, 'Sem sinal de prioridade', 'warning');
-            }
-        });
 
         form.addEventListener('submit', () => {
             sessionStorage.setItem(storageKey('last_filters'), JSON.stringify(serializeForm(form)));
@@ -141,30 +133,36 @@
         }
 
         installColumnControls(table, columnsMenu);
-        if (!new URLSearchParams(window.location.search).has('ordenar')) {
-            sortVisibleRowsByPriority(table);
-        }
     }
 
     function showToast(toolbar, message, type) {
-        let toast = qs('.fc-list-toast', toolbar);
-        if (!toast) {
-            toast = document.createElement('span');
-            toast.className = 'fc-list-toast';
-            toolbar.appendChild(toast);
-        }
-        toast.textContent = message;
-        toast.classList.add('is-visible');
-        window.clearTimeout(toast._timer);
-        toast._timer = window.setTimeout(() => toast.classList.remove('is-visible'), 1800);
         if (window.FullCareFeedback && typeof window.FullCareFeedback.show === 'function') {
+            const titles = {
+                success: 'Tudo certo',
+                warning: 'Atenção',
+                error: 'Erro',
+                info: 'Informação',
+            };
             window.FullCareFeedback.show({
                 type: type || 'info',
-                title: type === 'success' ? 'Tudo certo' : undefined,
+                title: titles[type || 'info'] || 'Informação',
                 message,
                 duration: 2600,
             });
+            return;
         }
+
+        let toast = qs('.fc-list-global-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'fc-list-global-toast';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.dataset.type = type || 'info';
+        toast.classList.add('is-visible');
+        window.clearTimeout(toast._timer);
+        toast._timer = window.setTimeout(() => toast.classList.remove('is-visible'), 2600);
     }
 
     function installColumnControls(table, menu) {
@@ -324,9 +322,13 @@
 
     function exportVisibleTable(table) {
         const rows = qsa('tr', table).map((tr) => {
-            return qsa('th:not(.fc-list-col-hidden), td:not(.fc-list-col-hidden)', tr)
-                .map((cell) => `"${(cell.textContent || '').replace(/\s+/g, ' ').trim().replace(/"/g, '""')}"`)
-                .join(',');
+            const cells = qsa('th:not(.fc-list-col-hidden), td:not(.fc-list-col-hidden)', tr);
+            if (!cells.length) return '';
+            return `<tr>${cells.map((cell) => {
+                const tag = cell.tagName.toLowerCase() === 'th' ? 'th' : 'td';
+                const value = (cell.textContent || '').replace(/\s+/g, ' ').trim();
+                return `<${tag}>${escapeHtml(value)}</${tag}>`;
+            }).join('')}</tr>`;
         }).filter(Boolean);
         if (!rows.length) {
             if (window.FullCareFeedback && typeof window.FullCareFeedback.warning === 'function') {
@@ -335,17 +337,31 @@
             return;
         }
 
-        const blob = new Blob(['\ufeff' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const html = `<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+table { border-collapse: collapse; }
+th, td { border: 1px solid #d9e2ec; padding: 6px 8px; mso-number-format: "\\@"; }
+th { background: #eef3f8; font-weight: 700; }
+</style>
+</head>
+<body>
+<table>${rows.join('')}</table>
+</body>
+</html>`;
+        const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `fullcare-listagem-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.download = `fullcare-listagem-${new Date().toISOString().slice(0, 10)}.xls`;
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
         if (window.FullCareFeedback && typeof window.FullCareFeedback.success === 'function') {
-            window.FullCareFeedback.success('CSV gerado com as colunas visíveis.', 'Exportação concluída');
+            window.FullCareFeedback.success('Excel gerado com as colunas visíveis.', 'Exportação concluída');
         }
     }
 
@@ -387,6 +403,71 @@
         return false;
     }
 
+    function normalizeHeaderText(value) {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[↕↑↓]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase();
+    }
+
+    function formatPersonName(value) {
+        const original = String(value || '').replace(/\s+/g, ' ').trim();
+        if (!original || /^[-—]+$/.test(original)) return original;
+
+        const particles = new Set(['da', 'das', 'de', 'do', 'dos', 'e']);
+        return original
+            .toLocaleLowerCase('pt-BR')
+            .split(' ')
+            .map((part, index) => {
+                if (!part) return part;
+                if (index > 0 && particles.has(part)) return part;
+
+                return part.replace(/(^|[-'’])(\p{L})/gu, (match, prefix, letter) => {
+                    return prefix + letter.toLocaleUpperCase('pt-BR');
+                });
+            })
+            .join(' ');
+    }
+
+    function normalizePatientNamesInTable(table) {
+        const headers = qsa('thead th', table);
+        if (!headers.length) return;
+
+        const patientColumns = headers
+            .map((th, index) => ({ index, text: normalizeHeaderText(th.textContent) }))
+            .filter((item) => item.text === 'paciente' || item.text.includes('paciente'))
+            .map((item) => item.index);
+
+        if (!patientColumns.length) return;
+
+        qsa('tbody tr', table).forEach((tr) => {
+            const cells = qsa('td', tr);
+            patientColumns.forEach((index) => {
+                const cell = cells[index];
+                if (!cell || cell.dataset.fcPatientNameNormalized === '1') return;
+
+                cell.classList.add('fc-patient-name');
+                cell.style.textTransform = 'none';
+
+                const rawText = (cell.textContent || '').trim();
+                if (!rawText || /nenhum|nao encontrado|não encontrado|sem registro/i.test(rawText)) return;
+
+                const formatted = formatPersonName(rawText);
+                if (formatted && formatted !== rawText) {
+                    cell.textContent = formatted;
+                }
+                cell.dataset.fcPatientNameNormalized = '1';
+            });
+        });
+    }
+
+    function normalizeAllPatientNames(root = document) {
+        qsa('table', root).forEach(normalizePatientNamesInTable);
+    }
+
     function applyStatusBadges(table) {
         const badgeMap = {
             ativo: 'success',
@@ -416,42 +497,6 @@
         });
     }
 
-    function rowPriorityScore(tr) {
-        const text = (tr.textContent || '').toLowerCase();
-        let score = 0;
-        if (/cr[ií]tic|evento|adverso/.test(text)) score += 100;
-        if (/atrasad|vencid/.test(text)) score += 90;
-        if (/pendente|abert[oa]|em auditoria|parad[ao]/.test(text)) score += 70;
-        if (/internad[oa]|ativ[oa]/.test(text)) score += 35;
-        if (/encerrad[oa]|finalizad[oa]|inativ[oa]/.test(text)) score -= 20;
-
-        const daysMatch = text.match(/(\d+)\s*dia/);
-        if (daysMatch) score += Math.min(60, Number(daysMatch[1] || 0));
-
-        if (qs('.fc-status-badge--danger', tr)) score += 90;
-        if (qs('.fc-status-badge--warning', tr)) score += 60;
-        if (qs('.fc-status-badge--success', tr)) score += 20;
-
-        return score;
-    }
-
-    function sortVisibleRowsByPriority(table) {
-        const tbody = qs('tbody', table);
-        if (!tbody) return false;
-        const rows = qsa('tr', tbody).filter((tr) => qsa('td', tr).length > 1);
-        if (rows.length < 2) return false;
-
-        const scored = rows.map((tr, index) => ({ tr, index, score: rowPriorityScore(tr) }));
-        if (!scored.some((item) => item.score > 0)) return false;
-
-        scored.sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.index - b.index;
-        });
-        scored.forEach((item) => tbody.appendChild(item.tr));
-        return true;
-    }
-
     function readJson(key, fallback) {
         try {
             const raw = localStorage.getItem(key);
@@ -473,9 +518,11 @@
     function init() {
         const form = getMainForm();
         const table = getMainTable();
+        normalizeAllPatientNames();
         if (!form || !table) return;
 
         installToolbar(form, table);
+        normalizePatientNamesInTable(table);
         applyStatusBadges(table);
     }
 
@@ -484,4 +531,18 @@
     } else {
         init();
     }
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (!(node instanceof Element)) return;
+                if (node.matches && node.matches('table')) {
+                    normalizePatientNamesInTable(node);
+                    return;
+                }
+                normalizeAllPatientNames(node);
+            });
+        });
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
 })();

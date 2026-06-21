@@ -600,7 +600,7 @@ $urlBase = $self . '?' . $urlParams;
                             <th class="th-tight">Hospital</th>
                             <th class="th-tight">Paciente</th>
                             <th class="th-tight text-center">Data Inter.</th>
-                            <th style="width:50%" class="text-center">Ciclo de Acomodação (ordem, dias e período)</th>
+                            <th class="text-center th-w-50">Ciclo de Acomodação (ordem, dias e período)</th>
                             <th class="text-center th-tight">Total Dias</th>
                         </tr>
                     </thead>

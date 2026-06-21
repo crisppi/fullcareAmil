@@ -4,6 +4,7 @@
     border-collapse: separate;
     border-spacing: 0;
     /* overflow: hidden; */
+    border-radius: 0 !important;
 }
 
 .table th,
@@ -13,8 +14,20 @@
     text-transform: uppercase;
 }
 
+.table td.fc-patient-name,
+.table td.fc-patient-name * {
+    text-transform: none !important;
+}
+
+.table td.fc-sentence-case,
+.table td.fc-sentence-case * {
+    text-transform: none !important;
+}
+
 .table td .dropdown-menu .dropdown-item,
 .table td .dropdown-menu .btn-default,
+.table td.fc-list-action,
+.table td.fc-list-action *,
 .table td .fc-list-action,
 .table td .fc-list-action *,
 .table td .action,
@@ -44,13 +57,87 @@
 
 .table thead th {
     text-align: center;
-    height: 24px;
-    min-height: 24px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    font-size: .66rem;
-    line-height: 1.02;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 2px 6px !important;
+    font-size: .66rem !important;
+    font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif);
+    font-weight: 600 !important;
+    line-height: 1.02 !important;
+    letter-spacing: .025em !important;
+    text-transform: uppercase !important;
     background: transparent;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    border-radius: 0 !important;
+}
+
+.table.table-sm > :not(caption) > * > th,
+.table.table-condensed > :not(caption) > * > th {
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 2px 6px !important;
+    font-size: .66rem !important;
+    font-weight: 600 !important;
+    line-height: 1.02 !important;
+    letter-spacing: .025em !important;
+    border-radius: 0 !important;
+    vertical-align: middle !important;
+}
+
+.table thead,
+.table thead tr {
+    border-radius: 0 !important;
+}
+
+.table thead th a,
+.table thead th span,
+.table thead th .th-sortable {
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: inherit !important;
+}
+
+.table thead th .th-sortable {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    width: 100%;
+    white-space: nowrap !important;
+}
+
+.table thead th .sort-icons {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 1px !important;
+    margin-left: 2px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+.table thead th .sort-icons a {
+    color: rgba(255, 255, 255, .82) !important;
+    font-family: inherit !important;
+    font-size: .58rem !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    margin-left: 0 !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+}
+
+.table thead th .sort-icons a.active,
+.table thead th .sort-icons a:hover,
+.table thead th .sort-icons a:focus {
+    color: #ffd966 !important;
+    opacity: 1 !important;
 }
 
 .table thead {
@@ -59,6 +146,22 @@
     font-weight: 600;
     letter-spacing: 0.025em;
     transform: translateZ(0);
+}
+
+.table thead tr {
+    height: 24px !important;
+}
+
+.table thead th label,
+.table thead th input,
+.table thead th .form-check,
+.table thead th .form-check-label {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: inherit !important;
 }
 
 .complete-table .table,
@@ -76,6 +179,7 @@
     min-height: 24px !important;
     padding: 2px 6px !important;
     font-size: .66rem !important;
+    font-weight: 600 !important;
     line-height: 1.02 !important;
     vertical-align: middle !important;
 }
@@ -117,6 +221,274 @@
     text-transform: uppercase;
 }
 
+.rah-sort-link {
+    color: inherit !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    width: 100%;
+    white-space: nowrap !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: inherit !important;
+}
+
+.rah-sort-link:hover,
+.rah-sort-link:focus {
+    color: inherit;
+    text-decoration: none;
+    opacity: .9;
+}
+
+.table thead th .rah-sort-icon {
+    font-size: .58rem !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    opacity: .9 !important;
+    text-transform: none !important;
+}
+
+.cap-rah-dropdown .dropdown-item,
+.cap-rah-dropdown .dropdown-item span {
+    text-transform: none !important;
+    font-weight: 400 !important;
+}
+
+.capeante-rah-preview-head {
+    background: #dfe9ff;
+    color: #1f2a44;
+}
+
+.table thead th.th-w-2 {
+    width: 2%;
+}
+
+.table thead th.th-w-25 {
+    width: 2.5%;
+}
+
+.table thead th.th-w-3 {
+    width: 3%;
+}
+
+.table thead th.th-w-4 {
+    width: 4%;
+}
+
+.table thead th.th-w-5 {
+    width: 5%;
+}
+
+.table thead th.th-w-6 {
+    width: 6%;
+}
+
+.table thead th.th-w-7 {
+    width: 7%;
+}
+
+.table thead th.th-w-8 {
+    width: 8%;
+}
+
+.table thead th.th-w-10 {
+    width: 10%;
+}
+
+.table thead th.th-w-11 {
+    width: 11%;
+}
+
+.table thead th.th-w-12 {
+    width: 12%;
+}
+
+.table thead th.th-w-13 {
+    width: 13%;
+}
+
+.table thead th.th-w-14 {
+    width: 14%;
+}
+
+.table thead th.th-w-15 {
+    width: 15%;
+}
+
+.table thead th.th-w-16 {
+    width: 16%;
+}
+
+.table thead th.th-w-18 {
+    width: 18%;
+}
+
+.table thead th.th-w-22 {
+    width: 22%;
+}
+
+.table thead th.th-w-23 {
+    width: 23%;
+}
+
+.table thead th.th-w-24 {
+    width: 24%;
+}
+
+.table thead th.th-w-32 {
+    width: 32%;
+}
+
+.table thead th.th-w-40 {
+    width: 40%;
+}
+
+.table thead th.th-w-44 {
+    width: 44%;
+}
+
+.table thead th.th-w-50 {
+    width: 50%;
+}
+
+.table thead th.th-px-70 {
+    width: 70px;
+}
+
+.table thead th.th-px-80 {
+    width: 80px;
+}
+
+.table thead th.th-px-90 {
+    width: 90px;
+}
+
+.table thead th.th-px-120 {
+    width: 120px;
+}
+
+.table thead th.th-px-140 {
+    width: 140px;
+}
+
+.table thead th.th-px-180 {
+    width: 180px;
+}
+
+.table thead th.th-min-50 {
+    min-width: 50px;
+}
+
+.table thead th.th-min-60 {
+    min-width: 60px;
+}
+
+.table thead th.th-min-70 {
+    min-width: 70px;
+}
+
+.table thead th.th-min-80 {
+    min-width: 80px;
+}
+
+.table thead th.th-min-90 {
+    min-width: 90px;
+}
+
+.table thead th.th-min-95 {
+    min-width: 95px;
+}
+
+.table thead th.th-min-100 {
+    min-width: 100px;
+}
+
+.table thead th.th-min-120 {
+    min-width: 120px;
+}
+
+.table thead th.th-min-140 {
+    min-width: 140px;
+}
+
+.table thead th.th-min-150 {
+    min-width: 150px;
+}
+
+.table thead th.th-min-160 {
+    min-width: 160px;
+}
+
+.table thead th.th-min-180 {
+    min-width: 180px;
+}
+
+.table thead th.th-min-220 {
+    min-width: 220px;
+}
+
+.table thead th.th-min-240 {
+    min-width: 240px;
+}
+
+.table thead th.th-min-320 {
+    min-width: 320px;
+}
+
+.rah-list-table--final th:nth-child(1),
+.rah-list-table--standard th:nth-child(1) {
+    width: 4%;
+}
+
+.rah-list-table--final th:nth-child(2),
+.rah-list-table--standard th:nth-child(2) {
+    width: 6%;
+}
+
+.rah-list-table--final th:nth-child(3),
+.rah-list-table--standard th:nth-child(3) {
+    width: 12%;
+}
+
+.rah-list-table--final th:nth-child(4),
+.rah-list-table--standard th:nth-child(4) {
+    width: 16%;
+}
+
+.rah-list-table--final th:nth-child(5),
+.rah-list-table--standard th:nth-child(5) {
+    width: 10%;
+}
+
+.rah-list-table--final th:nth-child(6),
+.rah-list-table--standard th:nth-child(6),
+.rah-list-table--final th:nth-child(7),
+.rah-list-table--standard th:nth-child(7),
+.rah-list-table--final th:nth-child(8),
+.rah-list-table--standard th:nth-child(8) {
+    width: 8%;
+}
+
+.rah-list-table--final th:nth-child(9),
+.rah-list-table--standard th:nth-child(9),
+.rah-list-table--standard th:nth-child(10) {
+    width: 6%;
+}
+
+.rah-list-table--final th:nth-child(10) {
+    width: 15%;
+}
+
+.rah-list-table--standard th:nth-child(11) {
+    width: 13%;
+}
+
 .table thead th.js-sortable-header {
     position: relative;
     cursor: pointer;
@@ -142,19 +514,27 @@
 
 .table thead th .rah-sort-link {
     color: inherit !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    width: 100%;
     font-size: inherit !important;
     font-weight: inherit !important;
-    line-height: 1.1;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    text-transform: inherit !important;
     text-decoration: none !important;
+    white-space: nowrap !important;
 }
 
 .table thead th .rah-sort-icon {
-    font-weight: 400;
-    opacity: .72;
+    font-size: .58rem !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    opacity: .9 !important;
+    text-transform: none !important;
 }
 
 .pagination .page-link {
@@ -165,34 +545,57 @@
     align-items: center;
     justify-content: center;
     font-size: .72rem;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1;
 }
 
-.pagination .page-link .fa-solid::before {
+.pagination .page-item.active .page-link {
+    font-weight: 600;
+}
+
+.pagination .page-link .fa-solid::before,
+.pagination .page-link .fas::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-family: var(--app-font-family, "Inter", Arial, Helvetica, sans-serif) !important;
-    font-weight: 700;
+    font-weight: 400;
     font-size: .76rem;
     line-height: 1;
 }
 
-.pagination .page-link .fa-solid.fa-angles-left::before {
-    content: "<<";
+.pagination .page-link i,
+.pagination .page-link .fa-solid,
+.pagination .page-link .fas {
+    font-weight: 400 !important;
 }
 
-.pagination .page-link .fa-solid.fa-angle-left::before {
-    content: "<";
+.pagination .page-link .fa-solid.fa-angles-left::before,
+.pagination .page-link .fa-solid.fa-angle-double-left::before,
+.pagination .page-link .fas.fa-angles-left::before,
+.pagination .page-link .fas.fa-angle-double-left::before {
+    content: "«";
 }
 
-.pagination .page-link .fa-solid.fa-angle-right::before {
-    content: ">";
+.pagination .page-link .fa-solid.fa-angle-left::before,
+.pagination .page-link .fa-solid.fa-chevron-left::before,
+.pagination .page-link .fas.fa-angle-left::before,
+.pagination .page-link .fas.fa-chevron-left::before {
+    content: "‹";
 }
 
-.pagination .page-link .fa-solid.fa-angles-right::before {
-    content: ">>";
+.pagination .page-link .fa-solid.fa-angle-right::before,
+.pagination .page-link .fa-solid.fa-chevron-right::before,
+.pagination .page-link .fas.fa-angle-right::before,
+.pagination .page-link .fas.fa-chevron-right::before {
+    content: "›";
+}
+
+.pagination .page-link .fa-solid.fa-angles-right::before,
+.pagination .page-link .fa-solid.fa-angle-double-right::before,
+.pagination .page-link .fas.fa-angles-right::before,
+.pagination .page-link .fas.fa-angle-double-right::before {
+    content: "»";
 }
 
 
@@ -318,9 +721,8 @@
     min-height: 0;
 }
 
-.table tbody td.action .btn,
-.table tbody td .action .btn,
-.table tbody td .fc-list-action {
+.table tbody td.action > .dropdown > .dropdown-toggle,
+.table tbody td .action > .dropdown > .dropdown-toggle {
     min-width: 26px !important;
     width: 26px !important;
     min-height: 24px !important;
@@ -332,9 +734,8 @@
     line-height: 1 !important;
 }
 
-.table tbody td.action .btn i,
-.table tbody td .action .btn i,
-.table tbody td .fc-list-action i {
+.table tbody td.action > .dropdown > .dropdown-toggle i,
+.table tbody td .action > .dropdown > .dropdown-toggle i {
     font-size: .9rem !important;
     line-height: 1 !important;
 }

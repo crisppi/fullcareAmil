@@ -3,9 +3,12 @@
 include_once("globals.php");
 require_once(__DIR__ . "/utils/flow_logger.php");
 require_once(__DIR__ . "/utils/audit_logger.php");
+require_once(__DIR__ . '/app/auth_session.php');
+require_once(__DIR__ . '/app/mfa.php');
 require_once(__DIR__ . '/app/schemaEnsurer.php');
 
 ensure_user_login_security_columns($conn);
+ensure_user_mfa_schema($conn);
 
 if (!function_exists('fullcare_post_login_target')) {
     function fullcare_post_login_target(string $baseUrl, array $user): string
@@ -57,17 +60,13 @@ $failLogin = static function (string $mensagem, string $attemptNotice = '') use 
 
     // Limpa dados de sessão de autenticação para não permitir entrada parcial.
     unset(
-        $_SESSION['id_usuario'],
-        $_SESSION['foto_usuario'],
-        $_SESSION['email_user'],
-        $_SESSION['senha_user'],
-        $_SESSION['login_user'],
-        $_SESSION['usuario_user'],
-        $_SESSION['ativo'],
-        $_SESSION['nivel'],
-        $_SESSION['cargo'],
-        $_SESSION['fk_seguradora_user']
+        $_SESSION['mfa_pending_user_id'],
+        $_SESSION['mfa_pending_issued_at'],
+        $_SESSION['mfa_pending_attempts'],
+        $_SESSION['mfa_pending_email'],
+        $_SESSION['mfa_pending_token']
     );
+    fullcare_login_session_clear();
 
     header('Location: ' . $redirectLogin);
     exit;
@@ -107,7 +106,12 @@ try {
             nivel_user,
             cargo_user,
             foto_usuario,
-            fk_seguradora_user
+            fk_seguradora_user,
+            mfa_enabled,
+            mfa_secret,
+            mfa_confirmed_at,
+            mfa_last_used_step,
+            mfa_recovery_generated_at
             {$securitySelect}
         FROM tb_user
     ";
@@ -267,21 +271,20 @@ if ($hasLoginSecurityColumns && ((int)($user['login_fail_count'] ?? 0) > 0 || !e
 
 session_regenerate_id(true);
 
-$_SESSION['id_usuario'] = (int)($user['id_usuario'] ?? 0);
-$_SESSION['foto_usuario'] = (string)($user['foto_usuario'] ?? '');
-$_SESSION['email_user'] = (string)($user['email_user'] ?? '');
-$_SESSION['senha_user'] = '';
-$_SESSION['login_user'] = (string)($user['email_user'] ?? '');
-$_SESSION['usuario_user'] = (string)($user['usuario_user'] ?? '');
-$_SESSION['ativo'] = (string)($user['ativo_user'] ?? '');
-$_SESSION['nivel'] = (int)($user['nivel_user'] ?? 99);
-$_SESSION['cargo'] = (string)($user['cargo_user'] ?? '');
-$_SESSION['fk_seguradora_user'] = isset($user['fk_seguradora_user'])
-    ? (int)$user['fk_seguradora_user']
-    : null;
-unset($_SESSION['login_error']);
-unset($_SESSION['login_attempts_notice']);
-$_SESSION['msg'] = '';
+if (fullcare_mfa_user_enabled($user)) {
+    $_SESSION['mfa_pending_user_id'] = (int)($user['id_usuario'] ?? 0);
+    $_SESSION['mfa_pending_issued_at'] = time();
+    $_SESSION['mfa_pending_attempts'] = 0;
+    $_SESSION['mfa_pending_email'] = (string)($user['email_user'] ?? '');
+    $_SESSION['mfa_pending_token'] = bin2hex(random_bytes(32));
+    unset($_SESSION['login_error'], $_SESSION['login_attempts_notice']);
+    fullcare_login_session_clear();
+
+    header('Location: ' . $BASE_URL . 'mfa_verify.php');
+    exit;
+}
+
+fullcare_login_session_start($user);
 
 if (function_exists('flowLogStart') && function_exists('flowLog')) {
     $loginCtx = flowLogStart('auth_login', [

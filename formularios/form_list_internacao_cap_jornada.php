@@ -480,28 +480,8 @@ th.th-acoes {
     color: #444;
 }
 
-.th-sortable {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.th-sortable .sort-icons a {
-    text-decoration: none;
-    font-size: 0.85rem;
-    color: #6c757d;
-    margin-left: 2px;
-    opacity: 0.9;
-    font-weight: 700;
-}
-
-.th-sortable .sort-icons a.active {
-    color: #5e2363;
-    opacity: 1;
-    font-weight: bold;
-}
 </style>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <style>
 .jornada-page {
     padding: 4px 4px 14px;
@@ -547,14 +527,6 @@ th.th-acoes {
     flex-direction: row !important;
     align-items: flex-end !important;
     gap: 8px;
-}
-#table-container .table thead th {
-    font-size: .66rem !important;
-    font-weight: 600 !important;
-    letter-spacing: .025em !important;
-    line-height: 1.02 !important;
-    white-space: nowrap;
-    vertical-align: middle !important;
 }
 #table-container .table tbody td,
 #table-container .table tbody th {
@@ -605,26 +577,6 @@ th.th-acoes {
     min-width: 13px !important;
     margin: 0 !important;
 }
-#table-container .th-sortable {
-    gap: 4px;
-}
-#table-container .th-sortable .sort-icons {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-}
-#table-container .th-sortable .sort-icons a {
-    color: rgba(255, 255, 255, .62) !important;
-    font-size: .76rem !important;
-    line-height: 1 !important;
-    margin-left: 0 !important;
-}
-#table-container .th-sortable .sort-icons a.active,
-#table-container .th-sortable .sort-icons a:hover,
-#table-container .th-sortable .sort-icons a:focus {
-    color: #ffffff !important;
-    opacity: 1 !important;
-}
 #table-container .th-acoes {
     min-width: 220px;
 }
@@ -638,9 +590,13 @@ th.th-acoes {
 }
 #table-container .acoes-head .label,
 #table-container .acoes-head .form-check-label {
-    color: #ffffff !important;
-    font-size: .6rem;
-    line-height: 1;
+    color: inherit !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    text-transform: inherit !important;
 }
 #table-container .acoes-head .form-check {
     display: inline-flex;
@@ -799,7 +755,7 @@ th.th-acoes {
                                 </span>
                             </div>
                         </th>
-                        <th style="width:40%">Jornada da Conta</th>
+                        <th class="th-w-40">Jornada da Conta</th>
                         <th class="text-center th-acoes">
                             <div class="acoes-head">
                                 <span class="label">Ações para faturar</span>

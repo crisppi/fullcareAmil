@@ -64,6 +64,46 @@ function mobileParseToken(string $token): ?array
     return $decoded;
 }
 
+function mobileGenerateMfaChallengeToken(array $user): string
+{
+    $payload = [
+        'purpose' => 'mfa',
+        'uid' => (int)($user['id_usuario'] ?? 0),
+        'email' => (string)($user['email_user'] ?? ''),
+        'nonce' => bin2hex(random_bytes(12)),
+        'exp' => time() + (10 * 60),
+    ];
+
+    $encodedPayload = mobileBase64UrlEncode(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    $signature = hash_hmac('sha256', 'mfa.' . $encodedPayload, mobileApiSecret());
+
+    return $encodedPayload . '.' . $signature;
+}
+
+function mobileParseMfaChallengeToken(string $token): ?array
+{
+    $parts = explode('.', trim($token), 2);
+    if (count($parts) !== 2) {
+        return null;
+    }
+
+    [$encodedPayload, $signature] = $parts;
+    $expected = hash_hmac('sha256', 'mfa.' . $encodedPayload, mobileApiSecret());
+    if (!hash_equals($expected, $signature)) {
+        return null;
+    }
+
+    $decoded = json_decode(mobileBase64UrlDecode($encodedPayload), true);
+    if (!is_array($decoded)
+        || ($decoded['purpose'] ?? '') !== 'mfa'
+        || (int)($decoded['uid'] ?? 0) <= 0
+        || (int)($decoded['exp'] ?? 0) < time()) {
+        return null;
+    }
+
+    return $decoded;
+}
+
 function mobileAuthorizationToken(): string
 {
     $header = (string)($_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? $_SERVER['HTTP_X_AUTH_TOKEN'] ?? '');
@@ -97,6 +137,12 @@ function mobileLoginAttemptFile(string $email): string
 {
     $key = hash('sha256', strtolower(trim($email)) . '|' . mobileClientKey());
     return sys_get_temp_dir() . '/fullcare_mobile_login_' . $key . '.json';
+}
+
+function mobileMfaAttemptFile(int $userId): string
+{
+    $key = hash('sha256', (string)$userId . '|' . mobileClientKey());
+    return sys_get_temp_dir() . '/fullcare_mobile_mfa_' . $key . '.json';
 }
 
 function mobileReadLoginAttempts(string $email): array
@@ -149,6 +195,75 @@ function mobileClearFailedLogins(string $email): void
     }
 }
 
+function mobileReadMfaAttempts(int $userId): array
+{
+    $file = mobileMfaAttemptFile($userId);
+    if (!is_file($file)) {
+        return [];
+    }
+
+    $decoded = json_decode((string)file_get_contents($file), true);
+    return is_array($decoded) ? $decoded : [];
+}
+
+function mobileWriteMfaAttempts(int $userId, array $attempts): void
+{
+    file_put_contents(mobileMfaAttemptFile($userId), json_encode(array_values($attempts)));
+}
+
+function mobileAssertMfaAllowed(int $userId): void
+{
+    $windowSeconds = 10 * 60;
+    $now = time();
+    $attempts = array_values(array_filter(
+        mobileReadMfaAttempts($userId),
+        static fn ($timestamp): bool => is_numeric($timestamp) && ((int)$timestamp) > ($now - $windowSeconds)
+    ));
+
+    if (count($attempts) >= 6) {
+        mobileJsonResponse([
+            'success' => false,
+            'message' => 'Muitas tentativas de MFA. Faça login novamente.',
+        ], 429);
+    }
+
+    mobileWriteMfaAttempts($userId, $attempts);
+}
+
+function mobileRegisterFailedMfa(int $userId): void
+{
+    $attempts = mobileReadMfaAttempts($userId);
+    $attempts[] = time();
+    mobileWriteMfaAttempts($userId, $attempts);
+}
+
+function mobileClearFailedMfa(int $userId): void
+{
+    $file = mobileMfaAttemptFile($userId);
+    if (is_file($file)) {
+        @unlink($file);
+    }
+}
+
+function mobileUserPayload(array $user, string $token = ''): array
+{
+    $payload = [
+        'id' => (int)$user['id_usuario'],
+        'name' => (string)$user['usuario_user'],
+        'email' => (string)$user['email_user'],
+        'role_level' => (int)($user['nivel_user'] ?? 99),
+        'role_name' => (string)($user['cargo_user'] ?? ''),
+        'seguradora_id' => isset($user['fk_seguradora_user']) ? (int)$user['fk_seguradora_user'] : null,
+        'photo' => (string)($user['foto_usuario'] ?? ''),
+    ];
+
+    if ($token !== '') {
+        $payload['token'] = $token;
+    }
+
+    return $payload;
+}
+
 function mobileFindUserByEmail(PDO $conn, string $email): ?array
 {
     $sql = "
@@ -162,7 +277,12 @@ function mobileFindUserByEmail(PDO $conn, string $email): ?array
             nivel_user,
             cargo_user,
             foto_usuario,
-            fk_seguradora_user
+            fk_seguradora_user,
+            mfa_enabled,
+            mfa_secret,
+            mfa_confirmed_at,
+            mfa_last_used_step,
+            mfa_recovery_generated_at
         FROM tb_user
         WHERE email_user = :email
         LIMIT 1
@@ -187,7 +307,12 @@ function mobileFindUserById(PDO $conn, int $userId): ?array
             nivel_user,
             cargo_user,
             foto_usuario,
-            fk_seguradora_user
+            fk_seguradora_user,
+            mfa_enabled,
+            mfa_secret,
+            mfa_confirmed_at,
+            mfa_last_used_step,
+            mfa_recovery_generated_at
         FROM tb_user
         WHERE id_usuario = :id
         LIMIT 1
@@ -223,20 +348,57 @@ function mobileHandleLogin(PDO $conn, array $input): void
 
     mobileClearFailedLogins($email);
 
+    if (function_exists('fullcare_mfa_user_enabled') && fullcare_mfa_user_enabled($user)) {
+        mobileJsonResponse([
+            'success' => true,
+            'data' => [
+                'mfa_required' => true,
+                'challenge_token' => mobileGenerateMfaChallengeToken($user),
+                'message' => 'Informe o código do autenticador.',
+            ],
+        ]);
+    }
+
     $token = mobileGenerateToken($user);
     mobileJsonResponse([
         'success' => true,
         'data' => [
             'token' => $token,
-            'user' => [
-                'id' => (int)$user['id_usuario'],
-                'name' => (string)$user['usuario_user'],
-                'email' => (string)$user['email_user'],
-                'role_level' => (int)($user['nivel_user'] ?? 99),
-                'role_name' => (string)($user['cargo_user'] ?? ''),
-                'seguradora_id' => isset($user['fk_seguradora_user']) ? (int)$user['fk_seguradora_user'] : null,
-                'photo' => (string)($user['foto_usuario'] ?? ''),
-            ],
+            'user' => mobileUserPayload($user),
+        ],
+    ]);
+}
+
+function mobileHandleMfaVerify(PDO $conn, array $input): void
+{
+    $challengeToken = trim((string)($input['challenge_token'] ?? ''));
+    $code = (string)($input['code'] ?? '');
+    $challenge = mobileParseMfaChallengeToken($challengeToken);
+    if ($challenge === null) {
+        mobileJsonResponse(['success' => false, 'message' => 'Verificação MFA expirada. Faça login novamente.'], 401);
+    }
+
+    $userId = (int)($challenge['uid'] ?? 0);
+    mobileAssertMfaAllowed($userId);
+
+    $user = mobileFindUserById($conn, $userId);
+    if ($user === null || ($user['ativo_user'] ?? 'n') !== 's' || !fullcare_mfa_user_enabled($user)) {
+        mobileRegisterFailedMfa($userId);
+        mobileJsonResponse(['success' => false, 'message' => 'Usuário não autorizado.'], 401);
+    }
+
+    if (!fullcare_mfa_verify_code_for_user($conn, $user, $code, true)) {
+        mobileRegisterFailedMfa($userId);
+        mobileJsonResponse(['success' => false, 'message' => 'Código MFA inválido.'], 401);
+    }
+
+    mobileClearFailedMfa($userId);
+    $token = mobileGenerateToken($user);
+    mobileJsonResponse([
+        'success' => true,
+        'data' => [
+            'token' => $token,
+            'user' => mobileUserPayload($user),
         ],
     ]);
 }
@@ -258,13 +420,5 @@ function mobileRequireAuth(PDO $conn): array
         mobileJsonResponse(['success' => false, 'message' => 'Usuario nao autorizado.'], 401);
     }
 
-    return [
-        'id' => (int)$user['id_usuario'],
-        'name' => (string)$user['usuario_user'],
-        'email' => (string)$user['email_user'],
-        'role_level' => (int)($user['nivel_user'] ?? 99),
-        'role_name' => (string)($user['cargo_user'] ?? ''),
-        'seguradora_id' => isset($user['fk_seguradora_user']) ? (int)$user['fk_seguradora_user'] : null,
-        'photo' => (string)($user['foto_usuario'] ?? ''),
-    ];
+    return mobileUserPayload($user);
 }

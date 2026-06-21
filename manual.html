@@ -201,6 +201,7 @@
     .hero-sys-link{color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:999px;transition:background .2s,color .2s;font-size:.82rem}
     .hero-sys-link:hover{background:rgba(0,0,0,.15)}
 </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
 </head>
 
 <body>
@@ -208,9 +209,9 @@
         <div class="hero-layout">
             <div class="hero-logo-wrap"><img src="img/LogoFullCare.png" alt="FullCare" class="hero-logo"></div>
             <div class="hero-body">
-                <div class="pill">Manual Operacional • v0.3</div>
+                <div class="pill">Manual Operacional • v0.4</div>
                 <h1>FullCare</h1>
-                <p>Página inicial do manual. Cada módulo possui um guia próprio. Use os atalhos abaixo para abrir o conteúdo detalhado.</p>
+                <p>Página inicial do manual. Use os atalhos abaixo para abrir os fluxos principais do sistema, da central de trabalho aos módulos de auditoria, contas, BI e inteligência operacional.</p>
             </div>
             <a class="hero-sys-link" href="dashboard">← Voltar ao sistema</a>
         </div>
@@ -224,6 +225,11 @@
                     <span>Geral</span>
                     <strong>Senhas, acessos e bloqueios</strong>
                     <p>Primeiro login, reset pela diretoria, tentativas incorretas e logs.</p>
+                </a>
+                <a class="link-card" href="manual_operacao.html">
+                    <span>Operação</span>
+                    <strong>Central de trabalho</strong>
+                    <p>Meu trabalho hoje, fila do auditor, recentes e meus hospitais.</p>
                 </a>
                 <a class="link-card" href="manual_usuarios.html">
                     <span>Cadastros</span>
@@ -253,7 +259,12 @@
                 <a class="link-card" href="manual_internacao.html">
                     <span>Produção</span>
                     <strong>Internação</strong>
-                    <p>Datas, parciais, visitas, prorrogações e alertas.</p>
+                    <p>Lista, detalhe, resumo, visitas, prorrogações, TUSS e alta.</p>
+                </a>
+                <a class="link-card" href="manual_visitas.html">
+                    <span>Produção</span>
+                    <strong>Visitas e faturamento</strong>
+                    <p>Nova visita, lista, filtros, período, PDFs e faturamento mensal.</p>
                 </a>
                 <a class="link-card" href="manual_tuss.html">
                     <span>Produção</span>
@@ -265,40 +276,30 @@
                     <strong>Negociações</strong>
                     <p>Acordos, descontos e aprovações.</p>
                 </a>
-                <a class="link-card" href="#faturamento">
+                <a class="link-card" href="manual_contas.html">
                     <span>Financeiro</span>
-                    <strong>Faturamento</strong>
-                    <p>Fluxo mensal de visitas e contas, filtros por quinzena e exportações.</p>
+                    <strong>Contas / RAH</strong>
+                    <p>Workflow de auditoria, contas paradas, finalização, PDFs e jornada.</p>
                 </a>
                 <a class="link-card" href="manual_eventos.html">
                     <span>Qualidade</span>
                     <strong>Eventos adversos</strong>
                     <p>Registro de intercorrências e integrações.</p>
                 </a>
-                <a class="link-card" href="#contas-ciclo">
-                    <span>Financeiro</span>
-                    <strong>Contas / RAH</strong>
-                    <p>Workflow de auditoria, PDFs e travas.</p>
+                <a class="link-card" href="manual_cuidado_continuado.html">
+                    <span>Cuidado Continuado</span>
+                    <strong>Home Care e longa permanência</strong>
+                    <p>Crônicos, preventiva, home care, permanência e desospitalização.</p>
                 </a>
-                <a class="link-card" href="#visitas">
-                    <span>Produção</span>
-                    <strong>Visitas</strong>
-                    <p>Lista única, contexto Faturamento e filtros inteligentes.</p>
-                </a>
-                <a class="link-card" href="#listas-operacionais">
-                    <span>Operação</span>
-                    <strong>Listas &amp; Rota</strong>
-                    <p>Gráficos de negociações, internações sem senha e rota consolidada.</p>
-                </a>
-                <a class="link-card" href="#bi-inteligencia">
+                <a class="link-card" href="manual_bi_inteligencia.html">
                     <span>Indicadores</span>
                     <strong>BI &amp; Inteligência Operacional</strong>
-                    <p>Dashboards, navegação e URLs amigáveis para relatórios.</p>
+                    <p>Dashboards, URLs amigáveis, assistentes, previsões e painéis.</p>
                 </a>
-                <a class="link-card" href="#menu-principal">
-                    <span>Navegação</span>
-                    <strong>Menu principal</strong>
-                    <p>Acesso ao painel mensal e ao formulário de customização em PDF.</p>
+                <a class="link-card" href="manual_mobile.html">
+                    <span>Aplicativo</span>
+                    <strong>App FullCare</strong>
+                    <p>Censo, auditoria, visita, ditado, programação terapêutica e privacidade.</p>
                 </a>
             </div>
         </section>

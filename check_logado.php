@@ -8,7 +8,7 @@ if (!function_exists('fullcare_login_index_url')) {
     function fullcare_login_index_url(): string
     {
         $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
-        if (preg_match('#^/(FullCare|FullConex(?:Aud)?)(/|$)#i', $script, $m)) {
+        if (preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $script, $m)) {
             return '/' . trim($m[1], '/') . '/index.php';
         }
         return '/index.php';
@@ -17,7 +17,8 @@ if (!function_exists('fullcare_login_index_url')) {
 
 require_once(__DIR__ . "/app/security/bi_access.php");
 require_once(__DIR__ . "/app/security/inteligencia_access.php");
-require_once(__DIR__ . "/utils/privacy.php");
+require_once(__DIR__ . "/app/schemaEnsurer.php");
+require_once(__DIR__ . "/app/mfa.php");
 
 if (empty($_SESSION['email_user']) && empty($_SESSION['id_usuario'])) {
     header('Location: ' . fullcare_login_index_url(), true, 303);
@@ -34,6 +35,74 @@ if (!$ativoOk) {
     exit;
 } else {
 };
+
+if (!function_exists('fullcare_mfa_config_url')) {
+    function fullcare_mfa_config_url(): string
+    {
+        $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+        if (preg_match('#^/(fullcareAmil|FullCare|FullConex(?:Aud)?)(/|$)#i', $script, $m)) {
+            return '/' . trim($m[1], '/') . '/mfa_configuracao.php';
+        }
+        return '/mfa_configuracao.php';
+    }
+}
+
+if (!function_exists('fullcare_require_mfa_setup')) {
+    function fullcare_require_mfa_setup(PDO $conn): void
+    {
+        $scriptBase = strtolower(basename((string)($_SERVER['SCRIPT_NAME'] ?? '')));
+        $allowed = [
+            'mfa_configuracao.php',
+            'process_mfa_configuracao.php',
+            'process_mfa_verify.php',
+            'destroi.php',
+            'logout.php',
+            'nova_senha.php',
+            'process_recuperar_senha.php',
+            'process_redefinir_senha.php',
+        ];
+
+        if (in_array($scriptBase, $allowed, true)) {
+            return;
+        }
+        if ($scriptBase === 'process_usuario.php' && strtolower((string)($_POST['type'] ?? '')) === 'update-senha') {
+            return;
+        }
+
+        $userId = (int)($_SESSION['id_usuario'] ?? 0);
+        if ($userId <= 0) {
+            return;
+        }
+
+        ensure_user_mfa_schema($conn);
+        $user = fullcare_mfa_fetch_user($conn, $userId);
+        if (is_array($user) && fullcare_mfa_user_enabled($user)) {
+            return;
+        }
+
+        $accept = strtolower($_SERVER['HTTP_ACCEPT'] ?? '');
+        $isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower((string)$_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+            || strpos($accept, 'application/json') !== false
+            || strpos(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/json') !== false;
+
+        if ($isAjax) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'status' => 'mfa_required',
+                'message' => 'Configure o MFA para continuar.',
+                'redirect' => fullcare_mfa_config_url(),
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        header('Location: ' . fullcare_mfa_config_url(), true, 303);
+        exit;
+    }
+}
+
+require_once(__DIR__ . "/db.php");
+fullcare_require_mfa_setup($conn);
 
 if (function_exists('fullcare_enforce_bi_access')) {
     fullcare_enforce_bi_access();

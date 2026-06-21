@@ -54,11 +54,10 @@ $data_intern_int = filter_input(INPUT_GET, 'data_intern_int') ?: null;
 $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 
 ?>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <style>
     .listagem-page { padding: 4px 4px 14px; }
     .complete-table { padding: 8px 8px 6px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
-    #table-content thead th { font-size:.66rem; font-weight:600; letter-spacing:.025em; line-height:1.02; white-space:nowrap; }
     #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
     .paradas-filter-row {
         gap: 0 !important;
@@ -304,14 +303,14 @@ if ($qtdIntItens > $limite) {
         <table class="table table-sm table-striped  table-hover table-condensed">
             <thead>
                 <tr>
-                    <th scope="col" style="width:4%">Reg</th>
-                    <th scope="col" style="width:6%">Conta No.</th>
-                    <th scope="col" style="width:23%">Hospital</th>
-                    <th scope="col" style="width:23%">Paciente</th>
-                    <th scope="col" style="width:13%">Senha</th>
-                    <th scope="col" style="width:12%">Data internação</th>
-                    <th scope="col" style="width:14%">Motivo</th>
-                    <th scope="col" style="width:13%">Ações</th>
+                    <th scope="col" class="th-w-4">Reg</th>
+                    <th scope="col" class="th-w-6">Conta No.</th>
+                    <th scope="col" class="th-w-23">Hospital</th>
+                    <th scope="col" class="th-w-23">Paciente</th>
+                    <th scope="col" class="th-w-13">Senha</th>
+                    <th scope="col" class="th-w-12">Data internação</th>
+                    <th scope="col" class="th-w-14">Motivo</th>
+                    <th scope="col" class="th-w-13">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -343,7 +342,7 @@ if ($qtdIntItens > $limite) {
                     <td scope="row">
                         <?= $intern["parada_motivo_cap"] ?>
                     </td>
-                    <td class="action">
+                    <td class="fc-list-action">
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown" role="button"
                                 data-bs-toggle="dropdown" style="color:#5e2363" aria-expanded="false">
@@ -353,7 +352,7 @@ if ($qtdIntItens > $limite) {
                                 <li>
                                     <button class="dropdown-item"
                                         onclick="edit('<?= $BASE_URL ?>contas/ver/<?= $intern['id_capeante'] ?>')">
-                                        <i style="color:green; margin-right:10px" class="fas fa-eye check-icon"></i> Ver
+                                        <i class="bi bi-eye text-success"></i> Ver
                                         Detalhes
                                     </button>
                                 </li>

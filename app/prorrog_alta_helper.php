@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/text_formatters.php";
 
 if (!function_exists('fullcare_prorrog_alta_has_hora_column')) {
     function fullcare_prorrog_alta_has_hora_column(PDO $conn): bool
@@ -36,7 +37,7 @@ if (!function_exists('fullcare_prorrog_alta_payload_from_post')) {
             return null;
         }
 
-        $tipoAlta = trim((string)($source['prorrog_tipo_alta_alt'] ?? ''));
+        $tipoAlta = fc_sentence_case($source['prorrog_tipo_alta_alt'] ?? '');
         if ($tipoAlta === '') {
             return null;
         }

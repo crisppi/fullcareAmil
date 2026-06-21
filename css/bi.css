@@ -9,10 +9,13 @@
   --bi-text: #eaf6ff;
   --bi-muted: rgba(234, 246, 255, 0.76);
   --bi-shadow: 0 12px 26px rgba(7, 34, 54, 0.24);
-  --bi-selected: #ffd78a;
-  --bi-selected-bg: rgba(255, 220, 120, 0.2);
-  --bi-selected-shadow: 0 0 0 2px rgba(255, 220, 120, 0.25);
+  --bi-selected: #d8eefc;
+  --bi-selected-bg: rgba(16, 61, 92, 0.42);
+  --bi-selected-shadow: 0 0 0 2px rgba(231, 244, 252, 0.16);
   --bi-title-offset: 48px;
+  --bi-chart-height: 220px;
+  --bi-chart-compact-height: 190px;
+  --bi-chart-large-height: 260px;
 }
 
 body.bi-theme,
@@ -224,14 +227,27 @@ body.bi-theme,
 
 .bi-theme input[type="date"],
 .bi-panel.bi-filters input[type="date"] {
-  background-color: var(--bi-panel-strong) !important;
+  background-color: rgba(16, 61, 92, 0.42) !important;
   color: var(--bi-text) !important;
   color-scheme: dark;
   -webkit-appearance: none;
   appearance: none;
-  border-color: var(--bi-border) !important;
+  border-color: rgba(231, 244, 252, 0.62) !important;
   box-shadow: none !important;
   -webkit-text-fill-color: var(--bi-text);
+}
+
+.bi-filter.is-selected input[type="date"],
+.bi-filter input[type="date"][data-selected="1"],
+.bi-panel.bi-filters input[type="date"]:focus,
+.bi-panel.bi-filters input[type="date"]:focus-visible {
+  background-color: rgba(16, 61, 92, 0.42) !important;
+  border-color: rgba(231, 244, 252, 0.62) !important;
+  box-shadow: none !important;
+}
+
+.bi-filter:has(input[type="date"]).is-selected label {
+  color: var(--bi-muted) !important;
 }
 
 .bi-theme input[type="date"]::-webkit-datetime-edit,
@@ -1044,31 +1060,31 @@ button.bi-filter-pill.active {
 }
 
 .bi-chart {
-  min-height: 142px;
-  height: 142px;
+  min-height: var(--bi-chart-height);
+  height: var(--bi-chart-height);
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
 .bi-chart.compact {
-  min-height: 120px;
-  height: 120px;
+  min-height: var(--bi-chart-compact-height);
+  height: var(--bi-chart-compact-height);
 }
 
 .bi-chart.ie-chart-sm {
-  min-height: 190px;
-  height: 190px;
+  min-height: var(--bi-chart-compact-height);
+  height: var(--bi-chart-compact-height);
 }
 
 .bi-chart.ie-chart-md {
-  min-height: 210px;
-  height: 210px;
+  min-height: var(--bi-chart-height);
+  height: var(--bi-chart-height);
 }
 
 .bi-chart.ie-chart-lg {
-  min-height: 230px;
-  height: 230px;
+  min-height: var(--bi-chart-large-height);
+  height: var(--bi-chart-large-height);
 }
 
 .bi-chart canvas {
@@ -1546,6 +1562,189 @@ table.bi-table::after,
   }
 }
 
+.bi-evolucao-page .bi-header {
+  margin-bottom: 8px;
+}
+
+.bi-evolucao-page .bi-header > div:first-child > div {
+  font-size: 0.82rem !important;
+  margin-top: 3px;
+}
+
+.bi-evolucao-page .bi-panel.bi-filters.bi-filters-wrap {
+  grid-template-columns: minmax(110px, 0.8fr) minmax(180px, 1fr) minmax(105px, 0.75fr) minmax(105px, 0.75fr) minmax(210px, 1.15fr) auto;
+  gap: 6px;
+  padding: 7px 8px;
+}
+
+.bi-evolucao-page .bi-panel.bi-filters.bi-filters-wrap .bi-filter,
+.bi-evolucao-page .bi-panel.bi-filters.bi-filters-wrap .bi-filter[style] {
+  min-width: 0 !important;
+}
+
+.bi-evolucao-page .bi-filter select,
+.bi-evolucao-page .bi-filter input {
+  min-height: 30px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+}
+
+.bi-evolucao-page .bi-filter.is-selected select,
+.bi-evolucao-page .bi-filter.is-selected input,
+.bi-evolucao-page .bi-filter select[data-selected="1"],
+.bi-evolucao-page .bi-filter input[data-selected="1"] {
+  background: rgba(16, 61, 92, 0.42) !important;
+}
+
+.bi-evolucao-page .bi-actions {
+  display: inline-flex;
+  gap: 6px;
+  align-items: end;
+  justify-content: flex-end;
+}
+
+.bi-evolucao-page .bi-actions .bi-btn {
+  min-height: 32px;
+  padding: 0 12px;
+}
+
+.bi-evolucao-page .bi-evolution-summary {
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.bi-evolucao-page .bi-evolution-stat {
+  min-height: 58px;
+  gap: 9px;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+
+.bi-evolucao-page .bi-evolution-stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  font-size: 0.92rem;
+}
+
+.bi-evolucao-page .bi-evolution-stat small {
+  margin-bottom: 2px;
+  font-size: 0.56rem;
+  letter-spacing: 0.09em;
+}
+
+.bi-evolucao-page .bi-evolution-stat strong {
+  font-size: clamp(1.05rem, 1.45vw, 1.45rem);
+}
+
+.bi-evolucao-page .bi-evolution-panel-head {
+  padding: 10px 14px;
+}
+
+.bi-evolucao-page .bi-evolution-panel-head h3 {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.9rem;
+}
+
+.bi-evolucao-page .bi-evolution-panel-head p {
+  margin-top: 3px;
+  font-size: 0.76rem;
+}
+
+.bi-evolucao-page .bi-evolution-list {
+  gap: 10px;
+  padding: 10px;
+}
+
+.bi-evolucao-page .bi-evolution-card {
+  border-radius: 10px;
+}
+
+.bi-evolucao-page .bi-evolution-card-head {
+  gap: 10px;
+  padding: 11px 14px 10px;
+}
+
+.bi-evolucao-page .bi-evolution-eyebrow {
+  margin-bottom: 4px;
+  font-size: 0.56rem;
+}
+
+.bi-evolucao-page .bi-evolution-patient-title strong {
+  font-size: 0.9rem;
+}
+
+.bi-evolucao-page .bi-evolution-count {
+  min-width: 64px;
+  padding: 5px 9px;
+  font-size: 0.66rem;
+}
+
+.bi-evolucao-page .bi-evolution-meta {
+  gap: 6px;
+  padding: 9px 13px;
+}
+
+.bi-evolucao-page .bi-evolution-meta span {
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 0.68rem;
+}
+
+.bi-evolucao-page .bi-evolution-visits {
+  gap: 8px;
+  padding: 0 13px 13px;
+}
+
+.bi-evolucao-page .bi-evolution-visit {
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  border-radius: 9px;
+}
+
+.bi-evolucao-page .bi-evolution-visit-date {
+  gap: 6px;
+  font-size: 0.78rem;
+}
+
+.bi-evolucao-page .bi-evolution-field-grid {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.bi-evolucao-page .bi-evolution-field {
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.bi-evolucao-page .bi-evolution-field small {
+  margin-bottom: 5px;
+  font-size: 0.56rem;
+  letter-spacing: 0.09em;
+}
+
+.bi-evolucao-page .bi-evolution-field p {
+  font-size: 0.76rem;
+  line-height: 1.38;
+}
+
+@media (max-width: 1180px) {
+  .bi-evolucao-page .bi-panel.bi-filters.bi-filters-wrap {
+    grid-template-columns: repeat(3, minmax(130px, 1fr));
+  }
+
+  .bi-evolucao-page .bi-actions {
+    justify-content: flex-start;
+  }
+}
+
 .bi-nav-title {
   text-align: center;
   text-transform: uppercase;
@@ -1742,13 +1941,15 @@ table.bi-table::after,
 .bi-theme .bi-panel h5 {
   display: flex;
   align-items: center;
-  min-height: 34px;
-  margin: -12px -14px 12px;
-  padding: 8px 14px;
-  border-radius: 12px 12px 0 0;
+  min-height: 36px;
+  margin: -8px -10px 12px;
+  padding: 8px 12px;
+  border-radius: 9px 9px 0 0;
   color: #f8fbff;
   background: linear-gradient(90deg, rgba(24, 73, 109, 0.86), rgba(35, 91, 132, 0.62));
   border-bottom: 1px solid rgba(218, 239, 255, 0.34);
+  font-size: 0.92rem;
+  font-weight: 700;
   text-shadow: 0 1px 0 rgba(6, 25, 45, 0.22);
 }
 
@@ -2520,5 +2721,100 @@ table.bi-table::after,
 
   .bi-perfil-sinistro-filters .bi-actions .bi-btn {
     flex: 1 1 auto;
+  }
+}
+
+.bi-theme .bi-evolucao-page .bi-evolution-panel-head h3 {
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.9rem;
+}
+
+.bi-visita-inicial-page .bi-header {
+  margin-bottom: 8px;
+}
+
+.bi-visita-inicial-page .bi-header > div:first-child > div {
+  font-size: 0.82rem !important;
+  margin-top: 3px;
+}
+
+.bi-visita-inicial-page .bi-panel.bi-filters.bi-filters-wrap {
+  grid-template-columns: minmax(110px, 0.8fr) minmax(180px, 1fr) minmax(105px, 0.75fr) minmax(105px, 0.75fr) minmax(210px, 1.15fr) auto;
+  gap: 6px;
+  padding: 7px 8px;
+}
+
+.bi-visita-inicial-page .bi-panel.bi-filters.bi-filters-wrap .bi-filter,
+.bi-visita-inicial-page .bi-panel.bi-filters.bi-filters-wrap .bi-filter[style] {
+  min-width: 0 !important;
+}
+
+.bi-visita-inicial-page .bi-filter select,
+.bi-visita-inicial-page .bi-filter input {
+  min-height: 30px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+  background: rgba(16, 61, 92, 0.42) !important;
+}
+
+.bi-visita-inicial-page .bi-actions {
+  display: inline-flex;
+  gap: 6px;
+  align-items: end;
+  justify-content: flex-end;
+}
+
+.bi-visita-inicial-page .bi-actions .bi-btn {
+  min-height: 32px;
+  padding: 0 12px;
+}
+
+.bi-visita-inicial-page .bi-panel {
+  margin-top: 8px;
+}
+
+.bi-visita-inicial-page .bi-kpis.kpi-grid-4 {
+  gap: 8px;
+}
+
+.bi-visita-inicial-page .bi-kpi.kpi-compact {
+  max-width: none;
+  min-height: 54px;
+  padding: 7px 8px;
+  text-align: left;
+}
+
+.bi-visita-inicial-page .bi-kpi small {
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+}
+
+.bi-visita-inicial-page .bi-kpi strong {
+  font-size: 0.72rem;
+  line-height: 1.24;
+  overflow-wrap: anywhere;
+}
+
+.bi-visita-inicial-page .bi-panel > h3 {
+  font-size: 0.86rem;
+}
+
+.bi-visita-inicial-page .bi-panel > div:not(.bi-kpis):not(.bi-empty) {
+  font-size: 0.78rem;
+  line-height: 1.38;
+}
+
+@media (max-width: 1180px) {
+  .bi-visita-inicial-page .bi-panel.bi-filters.bi-filters-wrap {
+    grid-template-columns: repeat(3, minmax(130px, 1fr));
+  }
+
+  .bi-visita-inicial-page .bi-actions {
+    justify-content: flex-start;
   }
 }

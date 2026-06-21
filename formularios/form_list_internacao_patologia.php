@@ -216,23 +216,23 @@ $internacao = new internacaoDAO($conn, $BASE_URL);
                 <table class="table table-sm table-striped  table-hover table-condensed">
                     <thead>
                         <tr>
-                            <th scope="col" style="width:2.5%;">Id</th>
-                            <th scope="col" style="width:3%;">Internado</th>
-                            <th scope="col" style="width:10%">Hospital</th>
-                            <th scope="col" style="width:12%">Paciente</th>
-                            <th scope="col" style="width:4%">Senha</th>
-                            <th scope="col" style="width:4%">Data internação</th>
-                            <th scope="col" style="width:7%">Patologia</th>
-                            <th scope="col" style="width:4%">Dias Internação</th>
-                            <th scope="col" style="width:4%">Meta DRG</th>
-                            <th scope="col" style="width:4%">&Delta; dias</th>
-                            <th scope="col" style="width:5%;">
+                            <th scope="col" class="th-w-25">Id</th>
+                            <th scope="col" class="th-w-3">Internado</th>
+                            <th scope="col" class="th-w-10">Hospital</th>
+                            <th scope="col" class="th-w-12">Paciente</th>
+                            <th scope="col" class="th-w-4">Senha</th>
+                            <th scope="col" class="th-w-4">Data internação</th>
+                            <th scope="col" class="th-w-7">Patologia</th>
+                            <th scope="col" class="th-w-4">Dias Internação</th>
+                            <th scope="col" class="th-w-4">Meta DRG</th>
+                            <th scope="col" class="th-w-4">&Delta; dias</th>
+                            <th scope="col" class="th-w-5">
                                 Preditivo <i data-bs-toggle="tooltip" data-bs-placement="top"
                                     title="Este campo mostra o valor preditivo da internação, baseado na patologia, antecedentes e faixa etária de internações do banco de dados, gerando uma média de internação de paciente com mesmas características."
                                     class="bi bi-eye" style="font-size: 1.2em; margin-left: 5px;"></i>
                             </th>
 
-                            <th scope="col" style="width:5%">Ações</th>
+                            <th scope="col" class="th-w-5">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -258,7 +258,7 @@ $internacao = new internacaoDAO($conn, $BASE_URL);
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= $intern["nome_pac"] ?>
                             </td>
                             <td scope="row">
                                 <?= $intern["senha_int"] ?>
@@ -325,7 +325,7 @@ $internacao = new internacaoDAO($conn, $BASE_URL);
                                     ?>
                             </td>
 
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#5e2363"
@@ -336,8 +336,7 @@ $internacao = new internacaoDAO($conn, $BASE_URL);
                                         <li>
                                             <button class="btn btn-default"
                                                 onclick="edit('<?= $BASE_URL ?>show_internacao_patologia.php?id_internacao=<?= $intern['id_internacao'] ?>')"
-                                                style="font-size: .9rem;"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>
+                                                style="font-size: .9rem;"><i class="bi bi-eye text-success"></i>
                                                 Ver</button>
                                         </li>
                                         <li>

@@ -55,63 +55,9 @@ $data_intern_int = filter_input(INPUT_GET, 'data_intern_int') ?: null;
 $data_intern_int_max = filter_input(INPUT_GET, 'data_intern_int_max') ?: null;
 
 ?>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
-<style>
-    .listagem-page { padding: 4px 4px 14px; }
-    .listagem-title { font-size: .96rem; line-height: 1.05; }
-    .listagem-panel { padding: 8px 8px 6px; }
-    #table-content thead th { font-size:.66rem; font-weight:600; letter-spacing:.025em; line-height:1.02; white-space:nowrap; }
-    #table-content thead th:first-child { min-width:72px; }
-    #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
-    .finalizadas-filter-row {
-        margin: 0 !important;
-        row-gap: 4px;
-    }
-    .finalizadas-filter-row > [class*="col-"],
-    .finalizadas-filter-row > .form-group {
-        display: flex;
-        align-items: center;
-        padding: 2px !important;
-    }
-    .finalizadas-filter-row > :first-child {
-        padding-left: 16px !important;
-    }
-    .finalizadas-filter-row .form-control,
-    .finalizadas-filter-row .form-control-sm,
-    .finalizadas-filter-row .btn {
-        min-height: 34px !important;
-        height: 34px !important;
-        margin: 0 !important;
-        border-radius: 10px;
-        font-size: .68rem !important;
-        line-height: 1.2;
-    }
-    .finalizadas-filter-date {
-        flex: 0 0 170px;
-        max-width: 170px;
-    }
-    .finalizadas-filter-check {
-        flex: 0 0 150px;
-        max-width: 150px;
-    }
-    .finalizadas-filter-actions {
-        flex: 0 0 auto;
-        width: auto;
-        max-width: none;
-        gap: 8px;
-    }
-    @media (max-width: 991.98px) {
-        .finalizadas-filter-date,
-        .finalizadas-filter-check,
-        .finalizadas-filter-actions {
-            flex: 1 0 100%;
-            max-width: 100%;
-            width: 100%;
-        }
-    }
-</style>
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <!-- FORMULARIO DE PESQUISAS -->
-<div class="container-fluid listagem-page" id="main-container">
+<div class="container-fluid listagem-page finalizadas-list-page" id="main-container">
     <div class="listagem-hero listagem-hero--module listagem-hero--contas">
         <div class="listagem-hero__copy">
             <div class="listagem-kicker">Capeantes</div>
@@ -334,15 +280,15 @@ if ($qtdIntItens > $limite) {
         <table class="table table-sm table-striped  table-hover table-condensed">
             <thead>
                 <tr>
-                    <th scope="col" style="width:4%">ID Conta</th>
-                    <th scope="col" style="width:6%">Conta No.</th>
-                    <th scope="col" style="width:23%">Hospital</th>
-                    <th scope="col" style="width:23%">Paciente</th>
-                    <th scope="col" style="width:23%">Senha</th>
-                    <th scope="col" style="width:12%">Data internação</th>
-                    <th scope="col" style="width:4%">Final</th>
-                    <th scope="col" style="width:4%">EA</th>
-                    <th scope="col" style="width:13%">Ações</th>
+                    <th scope="col" class="th-w-4">ID Conta</th>
+                    <th scope="col" class="th-w-6">Conta No.</th>
+                    <th scope="col" class="th-w-23">Hospital</th>
+                    <th scope="col" class="th-w-23">Paciente</th>
+                    <th scope="col" class="th-w-23">Senha</th>
+                    <th scope="col" class="th-w-12">Data internação</th>
+                    <th scope="col" class="th-w-4">Final</th>
+                    <th scope="col" class="th-w-4">EA</th>
+                    <th scope="col" class="th-w-13">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -384,7 +330,7 @@ if ($qtdIntItens > $limite) {
                             title="Conta com evento adverso"></span>
                         <?php } ?>
                     </td>
-                    <td class="action">
+                    <td class="fc-list-action">
                         <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown" role="button"
                                 data-bs-toggle="dropdown" style="color:#5e2363" aria-expanded="false">
@@ -394,7 +340,7 @@ if ($qtdIntItens > $limite) {
                                 <li>
                                     <button class="dropdown-item"
                                         onclick="edit('<?= $BASE_URL ?>contas/ver/<?= $intern['id_capeante'] ?>')">
-                                        <i style="color:green; margin-right:10px" class="fas fa-eye check-icon"></i> Ver
+                                        <i style="color:green; margin-right:10px" class="bi bi-eye"></i> Ver
                                         Detalhes
                                     </button>
                                 </li>

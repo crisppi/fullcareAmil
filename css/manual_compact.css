@@ -1,0 +1,302 @@
+/* Compact visual standard for FullCare manual pages. */
+:root {
+    --manual-bg: #f3f7fb;
+    --manual-ink: #21364f;
+    --manual-muted: #5f7189;
+    --manual-line: rgba(47, 111, 159, .20);
+    --manual-panel: #ffffff;
+    --manual-panel-soft: #eef6fc;
+    --manual-purple: #5e2363;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    background: var(--manual-bg) !important;
+    color: var(--manual-ink) !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+}
+
+header,
+.hero {
+    min-height: 0 !important;
+    padding: 16px 3vw 18px !important;
+    background: linear-gradient(120deg, #2f6fa3 0%, #5e2363 100%) !important;
+    box-shadow: 0 8px 20px rgba(35, 102, 147, .14) !important;
+}
+
+.hero::after {
+    display: none !important;
+}
+
+.hero-layout {
+    width: min(1380px, 96vw) !important;
+    margin: 0 auto !important;
+    gap: 14px !important;
+    align-items: center !important;
+}
+
+.hero-logo-wrap {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.hero-logo {
+    height: 28px !important;
+    max-width: 128px !important;
+    object-fit: contain !important;
+    filter: none !important;
+}
+
+.hero-body {
+    flex: 1 1 auto !important;
+    min-width: 260px !important;
+}
+
+.pill {
+    min-height: 22px !important;
+    padding: 3px 9px !important;
+    margin: 0 0 6px !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, .18) !important;
+    color: #fff !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: .07em !important;
+}
+
+header h1,
+.hero h1 {
+    margin: 0 !important;
+    color: #fff !important;
+    font-size: 22px !important;
+    line-height: 1.05 !important;
+    letter-spacing: 0 !important;
+    font-weight: 900 !important;
+}
+
+header p,
+.hero p {
+    margin: 6px 0 0 !important;
+    max-width: 760px !important;
+    color: rgba(255, 255, 255, .88) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+}
+
+a.voltar,
+.hero-sys-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 26px !important;
+    padding: 0 10px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, .36) !important;
+    color: #fff !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+header p a.voltar,
+.hero p a.voltar {
+    margin-top: 6px !important;
+}
+
+main {
+    width: min(1380px, 96vw) !important;
+    margin: 14px auto 34px !important;
+    padding-top: 0 !important;
+}
+
+section,
+.section {
+    margin: 0 0 14px !important;
+}
+
+h2 {
+    margin: 0 0 10px !important;
+    color: var(--manual-ink) !important;
+    font-size: 17px !important;
+    line-height: 1.15 !important;
+    font-weight: 900 !important;
+    letter-spacing: 0 !important;
+}
+
+h2::after {
+    bottom: -5px !important;
+    width: 52px !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, #5e2363, #47b6dd) !important;
+}
+
+h3 {
+    margin: 0 0 8px !important;
+    color: var(--manual-ink) !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    font-weight: 750 !important;
+}
+
+.links-grid,
+.cards-grid,
+.grid,
+.two-col,
+.cards {
+    gap: 10px !important;
+}
+
+.links-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+}
+
+.cards-grid,
+.grid,
+.two-col,
+.cards {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+}
+
+.card,
+.link-card,
+article.card,
+.user-patient-card {
+    min-height: 0 !important;
+    padding: 11px 12px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(47, 111, 159, .18) !important;
+    background: linear-gradient(180deg, #fff 0%, #f7fbfe 100%) !important;
+    box-shadow: 0 8px 16px rgba(35, 102, 147, .10) !important;
+    color: var(--manual-ink) !important;
+    font-size: 12px !important;
+}
+
+.link-card {
+    gap: 5px !important;
+    text-decoration: none !important;
+    transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease !important;
+}
+
+.link-card:hover,
+.card-link:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 12px 20px rgba(35, 102, 147, .14) !important;
+    border-color: rgba(47, 111, 159, .34) !important;
+}
+
+.link-card span {
+    color: #6f4d92 !important;
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    font-weight: 760 !important;
+    letter-spacing: .08em !important;
+}
+
+.link-card strong {
+    color: var(--manual-ink) !important;
+    font-size: 13px !important;
+    line-height: 1.18 !important;
+    font-weight: 760 !important;
+}
+
+.link-card p,
+.card p,
+article.card p {
+    margin: 0 !important;
+    color: var(--manual-muted) !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    font-weight: 500 !important;
+}
+
+ul,
+ol {
+    margin: 0 !important;
+    padding-left: 16px !important;
+}
+
+li,
+ul.list li,
+.flow-step,
+td,
+th {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+}
+
+.card strong,
+article.card strong {
+    font-weight: 650 !important;
+}
+
+ul.list li {
+    padding: 4px 0 !important;
+}
+
+.flow-step {
+    gap: 8px !important;
+    padding: 5px 0 !important;
+}
+
+table {
+    font-size: 11px !important;
+}
+
+th,
+td {
+    padding: 7px 8px !important;
+}
+
+th {
+    background: #e8f2fa !important;
+    color: #30445d !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+}
+
+footer {
+    padding: 14px 0 22px !important;
+    color: var(--manual-muted) !important;
+    font-size: 10px !important;
+}
+
+@media (max-width: 760px) {
+    header,
+    .hero {
+        padding: 14px 16px 16px !important;
+    }
+
+    .hero-layout {
+        width: 100% !important;
+        align-items: flex-start !important;
+    }
+
+    .hero-logo {
+        height: 24px !important;
+        max-width: 112px !important;
+    }
+
+    header h1,
+    .hero h1 {
+        font-size: 20px !important;
+    }
+
+    main {
+        width: calc(100vw - 24px) !important;
+        margin-top: 12px !important;
+    }
+
+    .links-grid,
+    .cards-grid,
+    .grid,
+    .two-col,
+    .cards {
+        grid-template-columns: 1fr !important;
+    }
+}

@@ -1687,21 +1687,12 @@ if (!empty($sessionIdUsuario)) {
                             </a>
                         </div>
                         <div class="account-dropdown js-dropdown">
-
-                            <!-- <div class="account-dropdown__body">
+                            <div class="account-dropdown__body">
                                 <div class="account-dropdown__item">
-                                    <a href="#">
-                                        <i class="zmdi zmdi-account"></i>Account</a>
+                                    <a href="<?= $BASE_URL ?>mfa_configuracao.php">
+                                        <i class="zmdi zmdi-shield-security"></i>Segurança e MFA</a>
                                 </div>
-                                <div class="account-dropdown__item">
-                                    <a href="#">
-                                        <i class="zmdi zmdi-settings"></i>Setting</a>
-                                </div>
-                                <div class="account-dropdown__item">
-                                    <a href="#">
-                                        <i class="zmdi zmdi-money-box"></i>Billing</a>
-                                </div>
-                            </div> -->
+                            </div>
                             <div class="account-dropdown__footer">
                                 <a href="<?= $BASE_URL ?>destroi.php">
                                     <i class="zmdi zmdi-power"></i>Sair</a>

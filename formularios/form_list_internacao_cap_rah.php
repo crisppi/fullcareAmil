@@ -46,6 +46,25 @@
         }
     }
 
+    if (!function_exists('formatPatientNameRah')) {
+        function formatPatientNameRah($value): string
+        {
+            $name = trim(preg_replace('/\s+/', ' ', (string)$value));
+            if ($name === '') {
+                return '—';
+            }
+
+            $lower = function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+            $title = function_exists('mb_convert_case')
+                ? mb_convert_case($lower, MB_CASE_TITLE, 'UTF-8')
+                : ucwords($lower);
+
+            return preg_replace_callback('/\b(De|Da|Do|Das|Dos|E)\b/u', function ($match) {
+                return function_exists('mb_strtolower') ? mb_strtolower($match[1], 'UTF-8') : strtolower($match[1]);
+            }, $title);
+        }
+    }
+
     $rahListContext = $RAH_LIST_CONTEXT ?? 'auditar';
     $rahFormAction  = $RAH_FORM_ACTION ?? 'list_internacao_cap_rah.php';
     $isFinalContext = ($rahListContext === 'finalizadas');
@@ -312,9 +331,9 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
         }
     }
     ?>
-    <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
     <!-- FORMULARIO DE PESQUISAS -->
-    <div class="container-fluid form_container listagem-page" id='main-container'>
+    <div class="container-fluid form_container listagem-page rah-list-page" id='main-container'>
 
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
@@ -335,122 +354,6 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
             </div>
         </div>
 
-        <style>
-        .listagem-page { padding: 2px 4px 14px; }
-        .listagem-hero--module { margin-bottom: 7px; }
-        .complete-table { padding: 2px 8px 2px; border-radius:16px; border:1px solid #eee8f6; background:#fff; box-shadow:0 10px 28px -22px rgba(89,46,131,.28); }
-        .table-filters { padding-top: 0; padding-bottom: 0; }
-        .form-group.row { margin-top: 0 !important; margin-bottom: 2px !important; row-gap: 2px; }
-        .form-group.row > [class*="col-"], .form-group.row > .form-group { padding:1px 2px !important; }
-        .form-group.row > :first-child { padding-left:8px !important; }
-        .form-group.row .form-control, .form-group.row .btn { min-height:30px; height:30px; font-size:.72rem; line-height:1.2; border-radius:10px; margin-top:0 !important; margin-bottom:0 !important; padding-top:0; padding-bottom:0; }
-        .form-group.row .form-control::placeholder { font-size:.72rem; color:#c4c4c4; }
-        .form-group.row .material-icons { font-size:16px; line-height:1; margin:0; }
-        #table-content thead th { padding:7px 10px; font-size:.54rem; letter-spacing:.08em; }
-        #table-content tbody td, #table-content tbody th { padding:6px 10px; font-size:.7rem; vertical-align:middle; }
-        .rah-filter-secondary {
-            margin-top: 0 !important;
-            margin-bottom: 1px !important;
-        }
-        .rah-filter-actions {
-            flex: 0 0 auto;
-            width: auto;
-        }
-        .filter-date-col {
-            flex: 0 0 150px;
-            width: 150px;
-            max-width: 150px;
-        }
-        .rah-action-cell {
-            min-width: 230px;
-            text-align: center;
-            text-transform: none !important;
-            white-space: nowrap;
-        }
-        .rah-action-cell--compact {
-            min-width: 170px;
-        }
-        .rah-action-cell .btn,
-        .rah-action-cell button,
-        .rah-action-cell a {
-            text-transform: none !important;
-        }
-        .rah-action-stack {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: nowrap;
-            gap: 10px;
-        }
-        .rah-inline-actions {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .rah-inline-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: .68rem;
-            font-weight: 700;
-            line-height: 1;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        .rah-inline-link i {
-            font-size: .82rem;
-            line-height: 1;
-        }
-        .rah-inline-link--start {
-            color: #194eff;
-        }
-        .rah-inline-link--audit {
-            color: #db5a0f;
-        }
-        .rah-inline-link--partial {
-            color: #2f9e44;
-        }
-        .rah-inline-link:hover,
-        .rah-inline-link:focus {
-            opacity: .9;
-            text-decoration: none;
-        }
-        .cap-rah-contas-btn {
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
-            min-height: 30px !important;
-            height: 30px !important;
-            width: auto !important;
-            min-width: 76px !important;
-            padding: 0 8px !important;
-            font-size: .68rem !important;
-            font-weight: 500;
-            line-height: 1;
-            border-radius: 9px;
-            white-space: nowrap;
-        }
-        .cap-rah-contas-btn i {
-            font-size: .82rem;
-        }
-        @media (max-width: 991.98px) {
-            .filter-date-col {
-                flex: 1 0 100%;
-                width: 100%;
-                max-width: 100%;
-            }
-            .rah-filter-actions {
-                width: 100%;
-            }
-            .rah-action-cell,
-            .rah-action-cell--compact {
-                min-width: 220px;
-            }
-        }
-        </style>
         <div class="complete-table">
 
             <div id="navbarToggleExternalContent" class="table-filters">
@@ -612,80 +515,52 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                 </form>
             </div>
 
-            <style>
-            .cap-rah-dropdown .dropdown-item,
-            .cap-rah-dropdown .dropdown-item span {
-                text-transform: none !important;
-                font-weight: 400 !important;
-            }
-
-            .rah-sort-link {
-                color: inherit;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-            }
-
-            .rah-sort-link:hover,
-            .rah-sort-link:focus {
-                color: inherit;
-                text-decoration: none;
-                opacity: .9;
-            }
-
-            .rah-sort-icon {
-                font-size: .85em;
-                opacity: .95;
-            }
-            </style>
-
             <div>
                 <div id="table-content">
                     <?php if ($isFinalContext || $isSenhasContext): ?>
-                    <table class="table table-sm table-striped  table-hover table-condensed">
+                    <table class="table table-sm table-striped table-hover table-condensed rah-list-table rah-list-table--final">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:4%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('id_internacao'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('id_internacao'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Reg Int</span><span class="rah-sort-icon"><?= $rahSortIcon('id_internacao') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:6%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('id_capeante'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('id_capeante'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Capeante</span><span class="rah-sort-icon"><?= $rahSortIcon('id_capeante') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:12%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('nome_hosp'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('nome_hosp'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Hospital</span><span class="rah-sort-icon"><?= $rahSortIcon('nome_hosp') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:16%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('nome_pac'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('nome_pac'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Paciente</span><span class="rah-sort-icon"><?= $rahSortIcon('nome_pac') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:10%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('senha_int'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('senha_int'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Senha</span><span class="rah-sort-icon"><?= $rahSortIcon('senha_int') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:8%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('data_intern_int'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('data_intern_int'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Data internação</span><span class="rah-sort-icon"><?= $rahSortIcon('data_intern_int') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:8%">Data fechamento</th>
-                                <th scope="col" style="width:8%">Data digitação</th>
-                                <th scope="col" style="width:6%;">Cap Encer</th>
-                                <th scope="col" style="width:15%;">Ações</th>
+                                <th scope="col">Data fechamento</th>
+                                <th scope="col">Data digitação</th>
+                                <th scope="col">Cap Encer</th>
+                                <th scope="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -699,7 +574,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                                <td scope="row"><?= $intern["nome_pac"] ?></td>
+                                <td scope="row" class="fc-patient-name"><?= htmlspecialchars(formatPatientNameRah($intern["nome_pac"] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                                 <td scope="row"><?= $intern["senha_int"] ?></td>
                                 <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                                 <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>
@@ -787,52 +662,52 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                         </tbody>
                     </table>
                     <?php else: ?>
-                    <table class="table table-sm table-striped  table-hover table-condensed">
+                    <table class="table table-sm table-striped table-hover table-condensed rah-list-table rah-list-table--standard">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:4%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('id_internacao'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('id_internacao'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Reg Int</span><span class="rah-sort-icon"><?= $rahSortIcon('id_internacao') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:6%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('id_capeante'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('id_capeante'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Capeante</span><span class="rah-sort-icon"><?= $rahSortIcon('id_capeante') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:12%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('nome_hosp'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('nome_hosp'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Hospital</span><span class="rah-sort-icon"><?= $rahSortIcon('nome_hosp') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:16%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('nome_pac'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('nome_pac'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Paciente</span><span class="rah-sort-icon"><?= $rahSortIcon('nome_pac') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:10%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('senha_int'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('senha_int'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Senha</span><span class="rah-sort-icon"><?= $rahSortIcon('senha_int') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:8%">
+                                <th scope="col">
                                     <a class="rah-sort-link" href="<?= htmlspecialchars($rahBuildSortUrl('data_intern_int'), ENT_QUOTES, 'UTF-8') ?>"
                                         onclick="return paginateRah('<?= htmlspecialchars($rahBuildSortUrl('data_intern_int'), ENT_QUOTES, 'UTF-8') ?>');">
                                         <span>Data internação</span><span class="rah-sort-icon"><?= $rahSortIcon('data_intern_int') ?></span>
                                     </a>
                                 </th>
-                                <th scope="col" style="width:8%;">Data fechamento</th>
-                                <th scope="col" style="width:8%;">Data digitação</th>
-                                <th scope="col" style="width:6%;">Cap Encer</th>
+                                <th scope="col">Data fechamento</th>
+                                <th scope="col">Data digitação</th>
+                                <th scope="col">Cap Encer</th>
                                 <?php if (!$isSenhasContext): ?>
-                                <th scope="col" style="width:6%;">Parcial</th>
+                                <th scope="col">Parcial</th>
                                 <?php endif; ?>
-                                <th scope="col" style="width:13%">Ações</th>
+                                <th scope="col">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -846,7 +721,7 @@ $idcapeante          = filter_input(INPUT_GET, 'idcapeante') ?: NULL;
                                     <?php endif; ?>
                                 </td>
                             <td scope="row" class="nome-coluna-table"><b><?= $intern["nome_hosp"] ?></b></td>
-                            <td scope="row"><?= $intern["nome_pac"] ?></td>
+                            <td scope="row" class="fc-patient-name"><?= htmlspecialchars(formatPatientNameRah($intern["nome_pac"] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
                             <td scope="row"><?= $intern["senha_int"] ?></td>
                             <td scope="row"><?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?></td>
                             <td scope="row"><?= formatDateBrSafe($intern["data_fech_capeante"] ?? null) ?></td>

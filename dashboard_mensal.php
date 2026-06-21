@@ -310,6 +310,7 @@ body {
         font-size: 1.14rem;
     }
 </style>
+<link href="<?= $BASE_URL ?>css/operational_reports.css?v=<?= @filemtime(__DIR__ . '/css/operational_reports.css') ?>" rel="stylesheet">
 <div class="container-fluid py-4 monthly-dashboard">
     <div class="monthly-header d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4">
         <div>
@@ -451,6 +452,7 @@ new Chart(ctxInt, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
             tooltip: {
@@ -482,6 +484,7 @@ new Chart(ctxMP, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             y: {
                 beginAtZero: true,
@@ -526,6 +529,7 @@ new Chart(ctxCustos, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: {
             mode: 'index',
             intersect: false
@@ -563,6 +567,7 @@ new Chart(ctxHosp, {
     options: {
         indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: { beginAtZero: true, grid: { color: '#f0f0f0' } },
             y: { grid: { display: false } }

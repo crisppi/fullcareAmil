@@ -74,6 +74,39 @@ class AuditorActionService
             || self::isAuditorProfile((string)($session['cargo'] ?? ''), $nivel);
     }
 
+    private static function formatPersonName(?string $value): string
+    {
+        $name = trim((string)$value);
+        if ($name === '') {
+            return 'Paciente não informado';
+        }
+
+        $lowerName = function_exists('mb_strtolower')
+            ? mb_strtolower($name, 'UTF-8')
+            : strtolower($name);
+        $particles = ['da', 'de', 'di', 'do', 'du', 'das', 'dos', 'e'];
+
+        $formatPart = static function (string $part) use ($particles): string {
+            if ($part === '') {
+                return $part;
+            }
+            if (in_array($part, $particles, true)) {
+                return $part;
+            }
+            if (function_exists('mb_substr') && function_exists('mb_strtoupper') && function_exists('mb_strlen')) {
+                return mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($part, 1, mb_strlen($part, 'UTF-8'), 'UTF-8');
+            }
+            return strtoupper(substr($part, 0, 1)) . substr($part, 1);
+        };
+
+        $words = preg_split('/\s+/', $lowerName) ?: [];
+        $formatted = array_map(static function (string $word) use ($formatPart): string {
+            return implode('-', array_map($formatPart, explode('-', $word)));
+        }, $words);
+
+        return trim(implode(' ', $formatted));
+    }
+
     public function dashboardSummary(array $session, int $limit = 10): array
     {
         $counts = [
@@ -452,7 +485,7 @@ class AuditorActionService
             'type' => $type,
             'id_internacao' => $idInternacao,
             'id_paciente' => $idPaciente,
-            'paciente' => (string)($row['nome_pac'] ?? 'Paciente não informado'),
+            'paciente' => self::formatPersonName($row['nome_pac'] ?? null),
             'hospital' => (string)($row['nome_hosp'] ?? 'Hospital não informado'),
             'senha' => (string)($row['senha_int'] ?? ''),
             'dias' => (int)($row['dias'] ?? 0),

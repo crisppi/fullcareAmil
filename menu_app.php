@@ -47,6 +47,38 @@ $normCargoAccess = static function ($txt): string {
     $txt = $ascii !== false ? $ascii : $txt;
     return preg_replace('/[^a-z]/', '', $txt);
 };
+
+if (!function_exists('menuFormatPersonName')) {
+    function menuFormatPersonName(?string $value): string
+    {
+        $name = trim((string)$value);
+        if ($name === '') {
+            return 'Paciente';
+        }
+
+        $lowerName = function_exists('mb_strtolower')
+            ? mb_strtolower($name, 'UTF-8')
+            : strtolower($name);
+        $particles = ['da', 'de', 'di', 'do', 'du', 'das', 'dos', 'e'];
+
+        $formatPart = static function (string $part) use ($particles): string {
+            if ($part === '' || in_array($part, $particles, true)) {
+                return $part;
+            }
+            if (function_exists('mb_substr') && function_exists('mb_strtoupper') && function_exists('mb_strlen')) {
+                return mb_strtoupper(mb_substr($part, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($part, 1, mb_strlen($part, 'UTF-8'), 'UTF-8');
+            }
+            return strtoupper(substr($part, 0, 1)) . substr($part, 1);
+        };
+
+        $words = preg_split('/\s+/', $lowerName) ?: [];
+        $formatted = array_map(static function (string $word) use ($formatPart): string {
+            return implode('-', array_map($formatPart, explode('-', $word)));
+        }, $words);
+
+        return trim(implode(' ', $formatted));
+    }
+}
 $isSeguradoraRole = (strpos($normCargoAccess($_SESSION['cargo'] ?? ''), 'seguradora') !== false);
 $seguradoraUserId = (int)($_SESSION['fk_seguradora_user'] ?? 0);
 if ($isSeguradoraRole && $seguradoraUserId <= 0) {
@@ -1342,19 +1374,20 @@ try {
     min-height: 58px;
     padding: 8px 10px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, .17);
-    border: 1px solid rgba(255, 255, 255, .22);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18);
+    background: rgba(30, 82, 126, .34);
+    border: 1px solid rgba(255, 255, 255, .58);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), 0 8px 18px rgba(20, 63, 99, .16);
 }
 
 .menu-workspace-summary-item small {
     display: block;
-    color: rgba(255,255,255,.78);
+    color: #fff;
     font-size: .62rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .04em;
     line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(24, 61, 92, .28);
 }
 
 .menu-workspace-summary-item strong {
@@ -1364,6 +1397,7 @@ try {
     font-size: 1.15rem;
     font-weight: 900;
     line-height: 1;
+    text-shadow: 0 1px 2px rgba(24, 61, 92, .28);
 }
 
 .menu-workspace-pill {
@@ -1571,9 +1605,9 @@ try {
 
 .menu-panel {
     border-radius: 16px;
-    border: 1px solid rgba(47, 111, 159, .22);
-    background: linear-gradient(180deg, #ffffff 0%, #f4f9fd 100%);
-    box-shadow: 0 10px 22px rgba(35, 102, 147, .12);
+    border: 1px solid rgba(47, 111, 159, .34);
+    background: linear-gradient(180deg, #ffffff 0%, #eef7fd 100%);
+    box-shadow: 0 14px 28px rgba(35, 102, 147, .18);
     overflow: hidden;
 }
 
@@ -1582,15 +1616,15 @@ try {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 7px 12px;
-    background: linear-gradient(90deg, #e9f5fd 0%, #f8fbff 100%);
-    border-bottom: 1px solid rgba(47, 111, 159, .18);
+    padding: 8px 12px;
+    background: linear-gradient(90deg, #dff0fb 0%, #f1f8fd 100%);
+    border-bottom: 1px solid rgba(47, 111, 159, .30);
 }
 
 .menu-panel-head strong {
-    color: #24384f;
-    font-size: .72rem;
-    font-weight: 600;
+    color: #1f344d;
+    font-size: .74rem;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .04em;
 }
@@ -1614,17 +1648,17 @@ try {
     grid-template-columns: 30px minmax(0, 1fr) auto;
     align-items: center;
     gap: 7px;
-    min-height: 44px;
-    padding: 6px 10px;
-    border-bottom: 1px solid #eef3f8;
-    background: rgba(255, 255, 255, .76);
+    min-height: 46px;
+    padding: 7px 10px;
+    border-bottom: 1px solid #dbe9f4;
+    background: #ffffff;
     color: #24384f;
     transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
 }
 
 .menu-auditor-item:nth-child(even),
 .menu-recent-item:nth-child(even) {
-    background: rgba(239, 247, 252, .72);
+    background: #eaf4fb;
 }
 
 .menu-auditor-item:last-child,
@@ -1640,9 +1674,10 @@ try {
     width: 26px;
     height: 26px;
     border-radius: 8px;
-    background: #eef7ff;
+    background: #e2f1fb;
     color: #1f5f8f;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.65), 0 4px 10px rgba(35, 102, 147, .08);
+    border: 1px solid rgba(47, 111, 159, .18);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.85), 0 5px 12px rgba(35, 102, 147, .13);
 }
 
 .menu-auditor-icon.danger { background: #fbdde5; color: #9f1f3b; }
@@ -1658,6 +1693,19 @@ try {
     font-size: .68rem;
     font-weight: 900;
     white-space: nowrap;
+}
+
+.menu-auditor-item .menu-auditor-title,
+.menu-recent-item strong {
+    color: #21364f;
+    font-size: .76rem;
+    font-weight: 800;
+}
+
+.menu-auditor-item .menu-auditor-meta,
+.menu-recent-item small {
+    color: #526985;
+    font-weight: 600;
 }
 
 .menu-empty {
@@ -1790,15 +1838,16 @@ try {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 12px 8px;
-    background: rgba(255, 255, 255, 0.36);
-    border-bottom: 1px solid rgba(76, 111, 151, 0.12);
+    padding: 11px 12px 9px;
+    background: linear-gradient(90deg, #dcecf8 0%, #edf6fc 100%);
+    border-bottom: 1px solid rgba(76, 111, 151, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .70);
 }
 
 .hospital-opportunity-head strong {
     display: block;
-    color: #24384f;
-    font-size: .76rem;
+    color: #1f344d;
+    font-size: .78rem;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -1807,9 +1856,9 @@ try {
 .hospital-opportunity-head small {
     display: block;
     margin-top: 2px;
-    color: #64748b;
-    font-size: .64rem;
-    font-weight: 700;
+    color: #526985;
+    font-size: .66rem;
+    font-weight: 800;
 }
 
 .hospital-opportunity-grid {
@@ -2390,7 +2439,7 @@ try {
                                 <a class="menu-recent-item" href="<?= htmlspecialchars($BASE_URL . 'internacoes/visualizar/' . (int)$recent['id_internacao'], ENT_QUOTES, 'UTF-8') ?>">
                                     <span class="menu-recent-icon"><i class="bi bi-hospital"></i></span>
                                     <span>
-                                        <strong><?= htmlspecialchars((string)($recent['nome_pac'] ?? 'Paciente'), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <strong><?= htmlspecialchars(menuFormatPersonName($recent['nome_pac'] ?? null), ENT_QUOTES, 'UTF-8') ?></strong>
                                         <small>Internação #<?= (int)$recent['id_internacao'] ?> · <?= htmlspecialchars($recentDate, ENT_QUOTES, 'UTF-8') ?></small>
                                     </span>
                                     <span class="menu-auditor-action">Abrir <i class="bi bi-arrow-right-short"></i></span>
@@ -2400,7 +2449,7 @@ try {
                                 <a class="menu-recent-item" href="<?= htmlspecialchars($BASE_URL . 'pacientes/hub/' . (int)$recent['id_paciente'], ENT_QUOTES, 'UTF-8') ?>">
                                     <span class="menu-recent-icon"><i class="bi bi-person-vcard"></i></span>
                                     <span>
-                                        <strong><?= htmlspecialchars((string)($recent['nome_pac'] ?? 'Paciente'), ENT_QUOTES, 'UTF-8') ?></strong>
+                                        <strong><?= htmlspecialchars(menuFormatPersonName($recent['nome_pac'] ?? null), ENT_QUOTES, 'UTF-8') ?></strong>
                                         <small>
                                             Paciente
                                             <?php if (!empty($recent['matricula_pac'])): ?>
@@ -2686,7 +2735,7 @@ try {
                 </div>
                 <div id="dash-reinternacoes" class="dash-table-scroll">
                     <table class="table table-sm table-striped table-hover table-condensed dash-sortable" style="margin-top:10px;">
-                        <thead style="background: #2f6f9f; background-image: none; color: #fff;">
+                        <thead>
                             <tr>
                                 <th scope="col" class="th-sortable" data-sort-type="number">Id Int
                                     <span class="sort-icons">
@@ -2774,15 +2823,15 @@ try {
                     <i class="bi bi-robot" style="color:white; margin-left:10px;"></i>
                 </div>
                 <table id="forecast-ia-table" class="table table-sm table-striped table-hover table-condensed" style="margin-top:10px;">
-                    <thead style="background: #2f6f9f; background-image: none; color: #fff;">
+                    <thead>
                         <tr>
-                            <th style="width:18%">Hospital</th>
-                            <th style="width:22%">Paciente</th>
-                            <th style="width:12%">Dias atuais</th>
-                            <th style="width:14%">Previsto (dias)</th>
-                            <th style="width:14%">Alta estimada</th>
-                            <th style="width:12%">Intervalo</th>
-                            <th style="width:8%">Conf.</th>
+                            <th class="th-w-18">Hospital</th>
+                            <th class="th-w-22">Paciente</th>
+                            <th class="th-w-12">Dias atuais</th>
+                            <th class="th-w-14">Previsto (dias)</th>
+                            <th class="th-w-14">Alta estimada</th>
+                            <th class="th-w-12">Intervalo</th>
+                            <th class="th-w-8">Conf.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -3258,29 +3307,43 @@ canvas {
 }
 
 .th-sortable {
-    white-space: nowrap;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    width: 100%;
+    white-space: nowrap !important;
+}
+
+#dash-visitas-atraso .table thead th.th-sortable,
+#dash-longa-perm .table thead th.th-sortable,
+#dash-reinternacoes .table thead th.th-sortable {
+    display: table-cell !important;
 }
 
 .th-sortable .sort-icons {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    margin-left: 6px;
-    vertical-align: middle;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 1px !important;
+    margin-left: 2px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
 }
 
 .th-sortable .sort-icons a {
-    text-decoration: none;
-    font-size: 0.75rem;
-    color: #ffffff;
-    margin-left: 2px;
-    opacity: 0.7;
+    text-decoration: none !important;
+    font-size: .58rem !important;
+    color: rgba(255, 255, 255, .82) !important;
+    margin-left: 0 !important;
+    opacity: 1 !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
 }
 
 .th-sortable .sort-icons a.active {
     color: #ffd966;
     opacity: 1;
-    font-weight: bold;
+    font-weight: 600;
 }
 </style>
 

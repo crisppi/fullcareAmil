@@ -186,11 +186,6 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
         padding: 4px 10px;
         font-size: .68rem;
     }
-    #table-content thead th {
-        padding: 7px 10px;
-        font-size: .54rem;
-        letter-spacing: .08em;
-    }
     #table-content tbody td,
     #table-content tbody th {
         padding: 6px 10px;
@@ -517,7 +512,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                                     <?= $intern["nome_hosp"] ?>
                                 </td>
                                 <td scope="row">
-                                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                    <?= $intern["nome_pac"] ?>
                                 </td>
                                 <td scope="row">
                                     <?= $intern["senha_int"] ?>
@@ -577,7 +572,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                                         }; ?>
                                 </td>
 
-                                <td class="action">
+                                <td class="fc-list-action">
                                     <div class="dropdown">
                                         <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                             role="button" data-bs-toggle="dropdown" style="color:#5e2363"
@@ -586,9 +581,7 @@ $ordenar = filter_input(INPUT_GET, 'ordenar') ? filter_input(INPUT_GET, 'ordenar
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                             <button class="btn btn-default"
-                                                onclick="edit('<?= $BASE_URL ?>show_gestao.php?id_gestao=<?= $intern['id_gestao'] ?>')"><i
-                                                    class="fas fa-eye"
-                                                    style="color: rgb(27,156, 55);"></i>
+                                                onclick="edit('<?= $BASE_URL ?>show_gestao.php?id_gestao=<?= $intern['id_gestao'] ?>')"><i class="bi bi-eye text-success"></i>
                                                 Ver</button>
                                         </ul>
                                     </div>

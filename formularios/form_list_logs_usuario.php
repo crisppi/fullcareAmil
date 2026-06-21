@@ -470,16 +470,102 @@ $acessosRows = array_slice($acessosRows, 0, 30);
         }
     }
 </style>
+<link href="<?= $BASE_URL ?>css/operational_reports.css?v=<?= @filemtime(__DIR__ . '/../css/operational_reports.css') ?>" rel="stylesheet">
+<style>
+    .logs-report-page {
+        padding: 10px 12px 24px !important;
+    }
 
-<div class="container-fluid form_container" style="margin-top:15px;">
+    .logs-report-page .fc-module-header {
+        margin-bottom: 8px !important;
+        padding: 9px 14px !important;
+        border-radius: 10px !important;
+    }
+
+    .logs-report-page .logs-source-strip {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        margin-bottom: 10px !important;
+        border: 1px solid rgba(94, 180, 216, .35) !important;
+        background: linear-gradient(135deg, #eef9fc 0%, #f8fbff 100%) !important;
+        color: #53657b;
+        box-shadow: inset 4px 0 0 #58abc6;
+    }
+
+    .logs-report-page .complete-table.logs-shell {
+        padding: 10px 12px 12px !important;
+        border-radius: 12px !important;
+        border-color: rgba(76, 142, 187, .18) !important;
+        box-shadow: 0 8px 18px rgba(44, 84, 114, .06) !important;
+    }
+
+    .logs-report-page .fc-list-filters {
+        margin-bottom: 10px;
+        padding: 8px !important;
+        border: 1px solid rgba(76, 142, 187, .13);
+        border-radius: 10px;
+        background: #f8fbff;
+    }
+
+    .logs-report-page .fc-list-filters-line {
+        align-items: center;
+        gap: 7px !important;
+    }
+
+    .logs-report-page .logs-summary-grid {
+        padding: 0 !important;
+        margin: 0 0 11px !important;
+        gap: 8px !important;
+    }
+
+    .logs-report-page .logs-summary-card {
+        min-height: 48px !important;
+        padding: 8px 11px !important;
+        background: linear-gradient(180deg, #ffffff 0%, #f5fbff 100%) !important;
+        box-shadow: 0 4px 12px rgba(43, 93, 130, .05) !important;
+    }
+
+    .logs-report-page .logs-section-title {
+        margin: 10px 0 6px !important;
+        color: #24384f !important;
+        font-size: .76rem !important;
+    }
+
+    .logs-report-page .table-responsive {
+        border: 1px solid rgba(76, 142, 187, .12);
+        border-radius: 10px !important;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .logs-report-page .table thead th {
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
+    }
+
+    .logs-report-page .table tbody td {
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+
+    .logs-report-page .table tbody tr:nth-child(even) > * {
+        --bs-table-bg: #f3f9fd !important;
+        background: #f3f9fd !important;
+    }
+</style>
+
+<div class="container-fluid form_container operational-report-page logs-report-page" style="margin-top:15px;">
     <div class="fc-module-header fc-module-header--gestao">
         <div class="fc-module-header__copy">
             <p class="fc-module-header__kicker">Gestão</p>
             <h1 class="fc-module-header__title">Logs por Usuário</h1>
+            <p class="fc-module-header__subtitle">Acessos, navegação e registros operacionais por usuário.</p>
         </div>
     </div>
 
-    <div class="alert alert-info py-2 mb-3">
+    <div class="alert alert-info py-2 mb-3 logs-source-strip">
         <?php if ($logSource === 'database'): ?>
         <strong>Origem:</strong> <code>tb_flow_operacional_log</code>
         <span class="ms-2">Retenção automática: <?= (int)FLOW_LOG_DB_RETENTION_DAYS ?> dias</span>
@@ -494,7 +580,7 @@ $acessosRows = array_slice($acessosRows, 0, 30);
         <?php endif; ?>
     </div>
 
-    <div class="complete-table">
+    <div class="complete-table logs-shell">
         <div class="table-filters fc-list-filters">
             <form method="GET" class="fc-list-filters-line">
                 <div class="fc-filter-item w-select">
@@ -610,7 +696,7 @@ $acessosRows = array_slice($acessosRows, 0, 30);
             </table>
         </div>
 
-        <h6 class="mb-2">Últimos acessos (login e navegação)</h6>
+        <h6 class="logs-section-title">Últimos acessos (login e navegação)</h6>
         <div class="table-responsive mb-3">
             <table class="table table-sm table-striped table-hover table-condensed">
                 <thead>
@@ -648,7 +734,7 @@ $acessosRows = array_slice($acessosRows, 0, 30);
             </table>
         </div>
 
-        <h6 class="mb-2">Últimos registros (máx. <?= (int)$limit ?>)</h6>
+        <h6 class="logs-section-title">Últimos registros (máx. <?= (int)$limit ?>)</h6>
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover table-condensed">
                 <thead>

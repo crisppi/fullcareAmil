@@ -298,19 +298,150 @@ include_once("templates/header.php");
         }
     }
     </style>
+    <link href="<?= $BASE_URL ?>css/operational_reports.css?v=<?= @filemtime(__DIR__ . '/css/operational_reports.css') ?>" rel="stylesheet">
+    <style>
+        .automation-report-page {
+            padding: 10px 14px 24px !important;
+        }
 
-<main class="container-fluid mt-5 pt-4">
-        <div class="automation-title-card">
-            <div class="automation-title-row">
-                <h1>Auditoria Médica Inteligente</h1>
+        .automation-report-page .automation-hero {
+            margin-bottom: 10px !important;
+            padding: 9px 14px !important;
+            border-radius: 10px !important;
+        }
+
+        .automation-report-page .automation-hero .automation-info-button {
+            width: 30px;
+            min-width: 30px;
+            height: 30px;
+            border-color: rgba(255, 255, 255, .42);
+            background: rgba(255, 255, 255, .92);
+            color: #2f6f9f;
+        }
+
+        .automation-report-page .automation-info-text {
+            margin: 8px 0 0;
+            padding: 8px 10px;
+            border: 1px solid rgba(76, 142, 187, .16);
+            border-radius: 9px;
+            background: #f8fbff;
+            color: #596a7d;
+            font-size: .72rem;
+        }
+
+        .automation-report-page .automation-panel {
+            display: grid !important;
+            grid-template-columns: minmax(360px, 1.6fr) minmax(240px, .8fr) minmax(300px, .95fr);
+            align-items: end;
+            gap: 10px !important;
+            margin-bottom: 10px !important;
+            padding: 12px !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(76, 142, 187, .16) !important;
+            background: #fff !important;
+            box-shadow: 0 8px 18px rgba(44, 84, 114, .06) !important;
+        }
+
+        .automation-report-page .automation-panel > [class*="col-"] {
+            width: auto;
+            max-width: none;
+            padding: 0;
+        }
+
+        .automation-report-page .automation-search-wrap {
+            gap: 4px;
+        }
+
+        .automation-report-page .form-label {
+            margin-bottom: 4px;
+            color: #2f6f9f;
+            font-size: .72rem !important;
+            font-weight: 800;
+        }
+
+        .automation-report-page .form-control {
+            min-height: 32px !important;
+            height: 32px !important;
+            border-color: rgba(76, 142, 187, .2);
+            background: #fbfdff;
+        }
+
+        .automation-report-page .automation-search-hint {
+            min-height: 14px;
+            color: #7b6b84;
+            font-size: .66rem;
+        }
+
+        .automation-report-page .automation-action-buttons {
+            grid-template-columns: minmax(130px, 1fr) 86px !important;
+            gap: 7px !important;
+        }
+
+        .automation-report-page .automation-empty-state {
+            display: grid;
+            place-items: center;
+            min-height: 240px;
+            border: 1px dashed rgba(76, 142, 187, .24);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
+            color: #64748b;
+            font-size: .82rem;
+            text-align: center;
+        }
+
+        .automation-report-page .automation-context-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .automation-report-page .automation-context-card {
+            min-height: 58px !important;
+            padding: 8px 10px !important;
+            border-radius: 10px !important;
+            box-shadow: 0 5px 14px rgba(44, 84, 114, .05) !important;
+        }
+
+        .automation-report-page .automation-card {
+            padding: 12px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 18px rgba(44, 84, 114, .06) !important;
+        }
+
+        @media (max-width: 1199px) {
+            .automation-report-page .automation-panel {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .automation-report-page .automation-panel > :first-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .automation-report-page .automation-panel,
+            .automation-report-page .automation-context-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+<main class="container-fluid mt-5 pt-4 operational-report-page automation-report-page">
+        <div class="fc-module-header fc-module-header--inteligencia automation-hero">
+            <div class="fc-module-header__copy">
+                <p class="fc-module-header__kicker">Inteligência Operacional</p>
+                <h1 class="fc-module-header__title">Auditoria Médica Inteligente</h1>
+                <p class="fc-module-header__subtitle">Gere textos assistenciais a partir do contexto da internação selecionada.</p>
+            </div>
+            <div class="fc-module-header__actions">
                 <button type="button" class="automation-info-button" id="automation_info_button"
                     aria-expanded="false" aria-controls="automation_info_text" title="Como usar">i</button>
             </div>
-            <p class="automation-info-text d-none" id="automation_info_text">
+        </div>
+        <p class="automation-info-text d-none" id="automation_info_text">
                 Pesquise uma internação e escolha o tipo de análise para gerar um texto com IA baseado nos dados
                 registrados do paciente, visitas, UTI, negociação, antecedentes e prorrogações.
-            </p>
-        </div>
+        </p>
 
         <?php if ($listError): ?>
         <div class="alert alert-warning"><?= ta_e($listError) ?></div>
@@ -408,11 +539,18 @@ include_once("templates/header.php");
                 <textarea id="ai-text" readonly><?= ta_e($generated['ai_text'] ?? '') ?></textarea>
             </div>
         </section>
+        <?php else: ?>
+        <section class="automation-empty-state">
+            <div>
+                <strong>Selecione uma internação para gerar a análise.</strong>
+                <div class="mt-1">O resultado aparecerá aqui, com contexto do paciente e texto para copiar.</div>
+            </div>
+        </section>
         <?php endif; ?>
     </main>
 
 <script>
-document.title = 'Assistente de Auditoria Médica com IA | FullCare';
+document.title = 'Assistente de Auditoria Médica com IA | FullCare Amil';
 
 (function initAutomationInfo() {
     const button = document.getElementById('automation_info_button');

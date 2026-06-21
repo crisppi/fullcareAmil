@@ -199,7 +199,7 @@
                                     <?= $cidade_hosp ?>
                                 </td>
 
-                                <td class="action">
+                                <td class="fc-list-action">
                                     <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
                                         <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/hospital_usuarios.php?id_hospital=' . (int) $id_hospital, ENT_QUOTES, 'UTF-8') ?>"
                                             class="btn btn-sm btn-outline-secondary"

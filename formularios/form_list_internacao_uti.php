@@ -101,7 +101,7 @@ $sortField = trim((string)listaUtiGetParam('sort_field', ''));
 $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
 
 ?>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <style>
     .listagem-page {
         padding: 4px 4px 14px;
@@ -165,36 +165,6 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
         flex: 0 0 32px;
     }
 
-    .th-sortable {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .th-sortable .sort-icons a {
-        text-decoration: none;
-        font-size: 0.72rem;
-        color: #ffffff;
-        margin-left: 1px;
-        opacity: 0.9;
-        font-weight: 700;
-    }
-
-    .th-sortable .sort-icons a.active {
-        color: #ffd966;
-        opacity: 1;
-        font-weight: 700;
-    }
-
-    #table-content thead th {
-        background: transparent !important;
-        color: #ffffff !important;
-        border-bottom: 1px solid rgba(47, 111, 159, .35) !important;
-        padding: 7px 10px;
-        font-size: .54rem;
-        letter-spacing: .08em;
-    }
-
     #table-content thead {
         background: #2f6f9f !important;
     }
@@ -239,10 +209,11 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
 
 <!-- FORMULARIO DE PESQUISAS -->
 <div class="container-fluid form_container listagem-page" id='main-container'>
-    <div class="listagem-hero">
-        <div class="listagem-hero__copy">
-            <div class="listagem-kicker">UTI</div>
-            <h1 class="listagem-title">Internações em UTI</h1>
+    <div class="fc-module-header fc-module-header--internacoes uti-list-header">
+        <div class="fc-module-header__copy">
+            <p class="fc-module-header__kicker">UTI</p>
+            <h1 class="fc-module-header__title">Internações em UTI</h1>
+            <p class="fc-module-header__subtitle">Acompanhe pacientes com passagem ou permanência em UTI, status de internação e datas principais.</p>
         </div>
     </div>
     <div class="complete-table listagem-panel">
@@ -431,11 +402,11 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                         <tr>
                             <?php
                             $sortableHeaders = [
-                                'id_internacao'   => ['label' => 'Id-Int',   'style' => 'width:4%'],
-                                'nome_hosp'       => ['label' => 'Hospital', 'style' => 'width:15%'],
-                                'nome_pac'        => ['label' => 'Paciente', 'style' => 'width:15%'],
-                                'data_intern_int' => ['label' => 'Data internação', 'style' => 'width:8%'],
-                                'data_internacao_uti' => ['label' => 'Data internação UTI', 'style' => 'width:8%'],
+                                'id_internacao'   => ['label' => 'Id-Int', 'class' => 'th-w-4'],
+                                'nome_hosp'       => ['label' => 'Hospital', 'class' => 'th-w-15'],
+                                'nome_pac'        => ['label' => 'Paciente', 'class' => 'th-w-15'],
+                                'data_intern_int' => ['label' => 'Data internação', 'class' => 'th-w-8'],
+                                'data_internacao_uti' => ['label' => 'Data internação UTI', 'class' => 'th-w-8'],
                             ];
                             foreach ($sortableHeaders as $key => $meta):
                                 $ascActive = ($sortField === $key && $sortDir === 'asc');
@@ -443,7 +414,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                                 $ascUrl = buildInternacaoUtiPaginationUrl($paginationBaseParams, ['sort_field' => $key, 'sort_dir' => 'asc', 'pag' => 1]);
                                 $descUrl = buildInternacaoUtiPaginationUrl($paginationBaseParams, ['sort_field' => $key, 'sort_dir' => 'desc', 'pag' => 1]);
                             ?>
-                            <th scope="col" style="<?= $meta['style'] ?>" class="text-center">
+                            <th scope="col" class="text-center <?= htmlspecialchars($meta['class'], ENT_QUOTES, 'UTF-8') ?>">
                                 <div class="th-sortable justify-content-center">
                                     <span><?= htmlspecialchars($meta['label'], ENT_QUOTES, 'UTF-8') ?></span>
                                     <span class="sort-icons">
@@ -455,8 +426,8 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                                 </div>
                             </th>
                             <?php endforeach; ?>
-                            <th scope="col" width="4%">Internado</th>
-                            <th scope="col" width="4%">Ações</th>
+                            <th scope="col" class="th-w-4">Internado</th>
+                            <th scope="col" class="th-w-4">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -472,7 +443,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= $intern["nome_pac"] ?>
                             </td>
                             <td scope="row">
                                 <?= date('d/m/Y', strtotime($intern["data_intern_int"])) ?>
@@ -483,7 +454,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                             <td scope="row" class="nome-coluna-table">
                                 <?= $intern["internado_int"] == "s" ? "Sim" : "Não" ?>
                             </td>
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#2f6f9f"
@@ -493,9 +464,7 @@ $sortDir = strtolower((string)listaUtiGetParam('sort_dir', 'desc'));
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
                                             <button class="btn btn-default"
-                                                onclick="edit('<?= rtrim($BASE_URL, '/') ?>/internacoes/visualizar/<?= (int)$intern['id_internacao'] ?>')"><i
-                                                    class="fas fa-eye"
-                                                    style="color: rgb(27,156, 55);"></i>Ver</button>
+                                                onclick="edit('<?= rtrim($BASE_URL, '/') ?>/internacoes/visualizar/<?= (int)$intern['id_internacao'] ?>')"><i class="bi bi-eye text-success"></i>Ver</button>
                                         </li>
                                         <li>
                                             <form class="d-inline-block delete-form" action="edit_alta_uti.php"

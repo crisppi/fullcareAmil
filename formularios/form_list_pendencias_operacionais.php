@@ -522,14 +522,14 @@ function pendenciasUrl(array $params): string
             <table class="table table-sm table-striped table-hover table-condensed">
                 <thead>
                     <tr>
-                        <th style="min-width:160px;">Pendência</th>
-                        <th style="min-width:70px;">Id-Int</th>
-                        <th style="min-width:180px;">Hospital</th>
-                        <th style="min-width:180px;">Paciente</th>
-                        <th style="min-width:140px;">Seguradora</th>
-                        <th style="min-width:95px;">Data Int</th>
-                        <th style="min-width:320px;">Detalhe</th>
-                        <th style="min-width:120px;">Ação</th>
+                        <th class="th-min-160">Pendência</th>
+                        <th class="th-min-70">Id-Int</th>
+                        <th class="th-min-180">Hospital</th>
+                        <th class="th-min-180">Paciente</th>
+                        <th class="th-min-140">Seguradora</th>
+                        <th class="th-min-95">Data Int</th>
+                        <th class="th-min-320">Detalhe</th>
+                        <th class="th-min-120">Ação</th>
                     </tr>
                 </thead>
                 <tbody>

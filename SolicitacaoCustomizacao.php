@@ -50,6 +50,32 @@ $isDiretoria = in_array($norm($_SESSION['cargo'] ?? ''), ['diretoria', 'diretor'
         margin: 0 0 6px !important;
     }
 
+    #main-container.internacao-page .internacao-page__content {
+        padding-bottom: 10px;
+    }
+
+    #customizacao-form .internacao-card {
+        margin-bottom: 8px !important;
+        border-color: rgba(47, 111, 159, .20) !important;
+        background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%) !important;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08) !important;
+    }
+
+    #customizacao-form .internacao-card__header {
+        padding: 8px 10px 7px !important;
+        border-bottom-color: rgba(47, 111, 159, .14) !important;
+        background: linear-gradient(90deg, #f2f8fd 0%, #fbfdff 100%) !important;
+    }
+
+    #customizacao-form .internacao-card__body {
+        padding: 10px !important;
+    }
+
+    #customizacao-form .row {
+        --bs-gutter-x: .75rem;
+        --bs-gutter-y: .55rem;
+    }
+
     #main-container.internacao-page .hero-actions {
         display: flex;
         gap: 8px;
@@ -79,34 +105,70 @@ $isDiretoria = in_array($norm($_SESSION['cargo'] ?? ''), ['diretoria', 'diretor'
 
     #customizacao-form .form-control,
     #customizacao-form .form-select {
-        min-height: 42px;
+        min-height: 34px;
         border-radius: 8px;
+        border: 1px solid #cbd9e8;
+        background-color: #fff;
+        color: #25364b;
+        box-shadow: inset 0 1px 2px rgba(35, 102, 147, .05), 0 1px 0 rgba(255, 255, 255, .75);
+        font-size: .82rem;
+        font-weight: 500;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
+    #customizacao-form .form-control:focus,
+    #customizacao-form .form-select:focus {
+        border-color: #4b8fc0;
+        box-shadow: 0 0 0 .15rem rgba(47, 111, 159, .16);
+        background-color: #fff;
     }
 
     #customizacao-form textarea.form-control {
-        min-height: 120px;
+        min-height: 86px;
         border-radius: 8px;
     }
 
+    #customizacao-form .form-label {
+        margin-bottom: 4px;
+        color: #4c5f76;
+        font-size: .74rem;
+        font-weight: 800;
+    }
+
     .customizacao-pill {
-        border: 1px solid #e1d5ef;
-        border-radius: 999px;
-        padding: 10px 14px;
+        border: 1px solid #cfddeb;
+        border-radius: 10px;
+        padding: 7px 10px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        background: #faf7fd;
-        min-height: 48px;
+        gap: 8px;
+        background: #ffffff;
+        min-height: 34px;
+        color: #30445d;
+        box-shadow: 0 2px 7px rgba(35, 102, 147, .06);
     }
 
     .customizacao-pill input {
         margin-top: 0;
         flex: 0 0 auto;
+        border-color: #b9c8d8;
+    }
+
+    .customizacao-pill:has(input:checked) {
+        border-color: #4b8fc0;
+        background: #eaf6ff;
+        color: #1f5f8f;
+    }
+
+    .customizacao-pill .form-check-label {
+        font-size: .8rem;
+        font-weight: 700;
     }
 
     .customizacao-subtitle {
         font-size: 0.8rem;
-        color: #7a8497;
+        color: #4c5f76;
     }
 </style>
 
@@ -315,9 +377,9 @@ $isDiretoria = in_array($norm($_SESSION['cargo'] ?? ''), ['diretoria', 'diretor'
             <div class="internacao-card__body">
         <div class="alert alert-info d-flex justify-content-between align-items-center mb-0">
             <div>
-                <strong>Precisa de apoio?</strong> Fale com o time FullCare no chat interno.
+                <strong>Precisa de apoio?</strong> Fale com o time FullCare Amil no chat interno.
             </div>
-            <a class="btn btn-sm btn-primary" href="<?= $BASE_URL ?>show_chat.php">Abrir chat FullCare</a>
+            <a class="btn btn-sm btn-primary" href="<?= $BASE_URL ?>show_chat.php">Abrir chat FullCare Amil</a>
         </div>
             </div>
         </div>

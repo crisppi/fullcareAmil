@@ -25,6 +25,7 @@
     .hero-sys-link{color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:999px;transition:background .2s,color .2s}
     .hero-sys-link:hover{background:rgba(0,0,0,.15)}
 </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
 </head>
 <body>
 <header>
@@ -33,7 +34,7 @@
         <div class="hero-body">
             <div class="pill">Manual • Contas / RAH</div>
             <h1>Contas / RAH</h1>
-            <p>Fluxo completo das contas para auditar, senhas finalizadas, PDFs e travas.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+            <p>Fluxo completo das contas para auditar, contas paradas, senhas finalizadas, PDFs, jornada e travas operacionais.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
         </div>
         <a class="hero-sys-link" href="dashboard">← Voltar ao sistema</a>
     </div>
@@ -45,17 +46,17 @@
             <article class="card">
                 <h3>Filtros e visualização</h3>
                 <ul>
-                    <li>Filtros por hospital, auditor, status e período.</li>
-                    <li>Listagem agrupa por capeante e mostra parciais alinhadas.</li>
-                    <li>Botões "Parcial" e "Visualizar" abrem modal com histórico completo.</li>
+                    <li>Acesse por <strong>Contas &gt; Contas para Auditar</strong> ou pela fila do auditor.</li>
+                    <li>Filtros por hospital, auditor, status e período ajudam a isolar a carteira de trabalho.</li>
+                    <li>A listagem agrupa por capeante e preserva vínculo com internação e paciente.</li>
                 </ul>
             </article>
             <article class="card">
                 <h3>Workflow</h3>
                 <ul>
-                    <li><strong>Analisar</strong> – lançar glosas, descontos e comentários.</li>
-                    <li><strong>Parar conta</strong> – registra motivo e exibe badge "Conta parada".</li>
-                    <li><strong>Encerrar</strong> – move para Senhas finalizadas e bloqueia edição.</li>
+                    <li><strong>Auditar conta</strong> – abrir a conta para lançar glosas, descontos e comentários.</li>
+                    <li><strong>Parar conta</strong> – registra motivo e envia o caso para acompanhamento de contas paradas.</li>
+                    <li><strong>Encerrar</strong> – finaliza a senha e bloqueia edição operacional.</li>
                 </ul>
             </article>
         </div>
@@ -66,7 +67,7 @@
         <div class="grid">
             <article class="card">
                 <ul>
-                    <li>Ao finalizar, registro migra para Senhas finalizadas (consulta apenas).</li>
+                    <li>Ao finalizar, registro migra para Senhas finalizadas ou Contas finalizadas, conforme o fluxo.</li>
                     <li>Campo "Desconto Absoluto" aplica desconto uma única vez (tela + PDF).</li>
                     <li>Resumo de negociações aprovadas e eventos relevantes aparece no RAH.</li>
                 </ul>
@@ -75,7 +76,7 @@
                 <h3>PDF / Exportações</h3>
                 <ul>
                     <li>PDF mostra colunas Cobrado, Glosado, Após auditoria, Desconto e Valor Total.</li>
-                    <li>Export CSV/Excel disponível nas listas e no dashboard.</li>
+                    <li>Exportações devem respeitar filtros aplicados antes de gerar arquivo.</li>
                     <li>Carimbo "Auditado por" traz médico, enfermagem e administrativo.</li>
                 </ul>
             </article>
@@ -108,15 +109,15 @@
         <h2>Travas e integrações</h2>
         <article class="card">
             <ul>
-                <li>Somente auditores designados podem alterar valores.</li>
-                <li>Ícone de mensagens foi removido do header até estabilização do chat.</li>
-                <li>Paginação respeita limite de 10 linhas por página agrupando por capeante.</li>
-                <li>Dashboard mensal usa filtros por hospital e seguradora para MP e custo.</li>
+                <li>Somente usuários com permissão devem alterar valores, glosas ou encerramento.</li>
+                <li>Contas paradas aparecem na Central de Trabalho para retomada diária.</li>
+                <li>A fila do auditor pode apontar diretamente para <strong>Auditar conta</strong>.</li>
+                <li>A jornada de contas ajuda a acompanhar etapas e gargalos.</li>
                 <li>Todos os ajustes ficam registrados no log.</li>
             </ul>
         </article>
     </section>
 </main>
-<footer>Manual Contas • versão 0.2</footer>
+<footer>Manual Contas • versão 0.4</footer>
 </body>
 </html>

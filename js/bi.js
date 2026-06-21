@@ -32,6 +32,31 @@ if (typeof Chart !== 'undefined') {
     return 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + alpha + ')';
   };
 
+  const biColorToRgb = function (color) {
+    const value = String(color || '').trim();
+    if (value.charAt(0) === '#') {
+      return biHexToRgb(value);
+    }
+
+    const match = value.match(/rgba?\(([^)]+)\)/i);
+    if (match) {
+      const parts = match[1].split(',').map(function (part) {
+        return Number(String(part).trim());
+      });
+      if (parts.length >= 3 && parts.every(function (part, index) {
+        return index > 2 || Number.isFinite(part);
+      })) {
+        return [parts[0], parts[1], parts[2]];
+      }
+    }
+
+    return [141, 208, 255];
+  };
+
+  const biRgbString = function (rgb, alpha) {
+    return 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', ' + alpha + ')';
+  };
+
   const biMetricColor = function (context, index) {
     const text = String(context || '').toLowerCase();
     if (/(glosa|recurso|contest)/i.test(text)) return biChartPalette.glosa;
@@ -59,6 +84,30 @@ if (typeof Chart !== 'undefined') {
     gradient.addColorStop(0, biRgba(color, 0.98));
     gradient.addColorStop(0.58, biRgba(color, 0.78));
     gradient.addColorStop(1, biRgba(color, 0.58));
+    return gradient;
+  };
+
+  const biPieGradient = function (chart, model, color) {
+    const ctx = chart && chart.ctx;
+    const radius = Number(model && model.outerRadius ? model.outerRadius : 0);
+    if (!ctx || !radius) {
+      return color;
+    }
+
+    const rgb = biColorToRgb(color);
+    const gradient = ctx.createLinearGradient(
+      model.x - radius * 0.72,
+      model.y - radius * 0.72,
+      model.x + radius * 0.72,
+      model.y + radius * 0.72
+    );
+    gradient.addColorStop(0, biRgbString(rgb.map(function (part) {
+      return Math.min(255, Math.round(part * 1.08 + 8));
+    }), 1));
+    gradient.addColorStop(0.58, biRgbString(rgb, 0.96));
+    gradient.addColorStop(1, biRgbString(rgb.map(function (part) {
+      return Math.max(0, Math.round(part * 0.82));
+    }), 0.98));
     return gradient;
   };
 
@@ -172,6 +221,128 @@ if (typeof Chart !== 'undefined') {
     });
   };
 
+  const biStylePieDatasets = function (chart) {
+    const type = chart && chart.config && chart.config.type;
+    if (!['pie', 'doughnut'].includes(type) || (chart.options && chart.options.biPieTheme === false)) {
+      return;
+    }
+
+    (chart.data.datasets || []).forEach(function (dataset, datasetIndex) {
+      const meta = chart.getDatasetMeta(datasetIndex);
+      const separator = chart.options && chart.options.biPieSeparator;
+      dataset.borderWidth = separator ? 0.75 : 0;
+      dataset.borderColor = separator ? 'rgba(234, 247, 253, 0.18)' : 'rgba(0,0,0,0)';
+      dataset.hoverBorderWidth = separator ? 0.75 : 0;
+      dataset.hoverBorderColor = separator ? 'rgba(234, 247, 253, 0.26)' : 'rgba(0,0,0,0)';
+      dataset.hoverOffset = dataset.hoverOffset || 3;
+
+      if (!meta || !meta.data) {
+        return;
+      }
+
+      meta.data.forEach(function (arc, index) {
+        if (!arc || !arc._model) {
+          return;
+        }
+        const colors = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor : [dataset.backgroundColor];
+        const color = colors[index % colors.length] || biChartPalette.sequence[index % biChartPalette.sequence.length];
+        arc._model.backgroundColor = chart.options && chart.options.biPieGradient === false
+          ? color
+          : biPieGradient(chart, arc._model, color);
+        arc._model.borderWidth = separator ? 0.75 : 0;
+        arc._model.borderColor = separator ? 'rgba(234, 247, 253, 0.18)' : 'rgba(0,0,0,0)';
+        arc._model.hoverBackgroundColor = biRgbString(biColorToRgb(color), 1);
+        arc._model.hoverBorderWidth = separator ? 0.75 : 0;
+      });
+    });
+  };
+
+  const biDrawPieDepth = function (chart) {
+    const type = chart && chart.config && chart.config.type;
+    if (!['pie', 'doughnut'].includes(type) || (chart.options && chart.options.biPieDepth === false)) {
+      return;
+    }
+
+    const ctx = chart.ctx;
+    ctx.save();
+    (chart.data.datasets || []).forEach(function (dataset, datasetIndex) {
+      const meta = chart.getDatasetMeta(datasetIndex);
+      if (!meta || meta.hidden || !meta.data) {
+        return;
+      }
+
+      meta.data.forEach(function (arc, index) {
+        const model = arc && arc._model;
+        const value = Number((dataset.data || [])[index] || 0);
+        if (!model || arc.hidden || value === 0) {
+          return;
+        }
+
+        const colors = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor : [dataset.backgroundColor];
+        const rgb = biColorToRgb(colors[index % colors.length]);
+        const depth = Math.max(3, Math.min(6, Number(model.outerRadius || 0) * 0.055));
+        ctx.beginPath();
+        ctx.moveTo(model.x, model.y + depth);
+        ctx.arc(model.x, model.y + depth, model.outerRadius, model.startAngle, model.endAngle);
+        if (model.innerRadius) {
+          ctx.arc(model.x, model.y + depth, model.innerRadius, model.endAngle, model.startAngle, true);
+        } else {
+          ctx.lineTo(model.x, model.y + depth);
+        }
+        ctx.closePath();
+        ctx.fillStyle = biRgbString(rgb.map(function (part) {
+          return Math.max(0, Math.round(part * 0.56));
+        }), 0.54);
+        ctx.fill();
+      });
+    });
+    ctx.restore();
+  };
+
+  const biDrawPieBaseShadow = function (chart) {
+    const type = chart && chart.config && chart.config.type;
+    if (!['pie', 'doughnut'].includes(type) || (chart.options && chart.options.biPieShadow === false)) {
+      return;
+    }
+
+    const meta = chart.getDatasetMeta && chart.getDatasetMeta(0);
+    const arcs = meta && meta.data ? meta.data : [];
+    const arc = arcs.find(function (item) {
+      return item && item._model && !item.hidden;
+    });
+
+    if (!arc) {
+      return;
+    }
+
+    const model = arc._model;
+    const radius = Number(model.outerRadius || 0);
+    if (!radius) {
+      return;
+    }
+
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.fillStyle = 'rgba(4, 18, 34, 0.20)';
+    ctx.shadowColor = 'rgba(4, 18, 34, 0.38)';
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetY = 8;
+
+    if (typeof ctx.ellipse === 'function') {
+      ctx.beginPath();
+      ctx.ellipse(model.x, model.y + radius * 0.08, radius * 0.98, radius * 0.90, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.translate(model.x, model.y + radius * 0.08);
+      ctx.scale(1, 0.90);
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.98, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  };
+
   const biApplyScaleTheme = function (chart) {
     const options = chart && chart.options ? chart.options : {};
     if (options.biGridTheme === false || !options.scales) {
@@ -239,8 +410,8 @@ if (typeof Chart !== 'undefined') {
     Chart.defaults.global.elements.rectangle.borderSkipped = 'bottom';
   }
   if (Chart.defaults.global && Chart.defaults.global.elements && Chart.defaults.global.elements.arc) {
-    Chart.defaults.global.elements.arc.borderColor = 'rgba(7, 36, 64, 0.55)';
-    Chart.defaults.global.elements.arc.borderWidth = 1.5;
+    Chart.defaults.global.elements.arc.borderColor = 'rgba(0,0,0,0)';
+    Chart.defaults.global.elements.arc.borderWidth = 0;
   }
 
   window.biFormatChartValue = function (value, chart, dataset) {
@@ -279,6 +450,8 @@ if (typeof Chart !== 'undefined') {
     Chart.plugins.register({
       beforeDatasetsDraw: function (chart) {
         biStyleBars(chart);
+        biStylePieDatasets(chart);
+        biDrawPieBaseShadow(chart);
       },
       beforeInit: function (chart) {
         biApplyScaleTheme(chart);
@@ -288,6 +461,9 @@ if (typeof Chart !== 'undefined') {
       },
       beforeDatasetDraw: function (chart) {
         const type = chart.config && chart.config.type;
+        if (['pie', 'doughnut'].includes(type) && !(chart.options && chart.options.biPieShadow === false)) {
+          return;
+        }
         if (!['bar', 'horizontalBar'].includes(type) || (chart.options && chart.options.biBarTheme === false)) {
           return;
         }
@@ -299,6 +475,9 @@ if (typeof Chart !== 'undefined') {
       },
       afterDatasetDraw: function (chart) {
         const type = chart.config && chart.config.type;
+        if (['pie', 'doughnut'].includes(type) && !(chart.options && chart.options.biPieShadow === false)) {
+          return;
+        }
         if (!['bar', 'horizontalBar'].includes(type) || (chart.options && chart.options.biBarTheme === false)) {
           return;
         }
@@ -418,7 +597,16 @@ window.biChartScales = function () {
   };
 };
 
-window.biLegendWhite = { labels: { fontColor: '#eaf6ff' } };
+window.biLegendWhite = {
+  position: 'right',
+  fullWidth: false,
+  labels: {
+    fontColor: '#eaf6ff',
+    boxWidth: 14,
+    padding: 8,
+    usePointStyle: true
+  }
+};
 
 window.biMoneyTick = function (value) {
   const num = Number(value || 0);
@@ -451,9 +639,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const applyDateStyles = (root) => {
     root.querySelectorAll('input[type="date"]').forEach((input) => {
-      input.style.setProperty('background-color', 'var(--bi-panel-strong)', 'important');
+      input.style.setProperty('background-color', 'rgba(16, 61, 92, 0.42)', 'important');
       input.style.setProperty('color', '#eaf6ff', 'important');
-      input.style.setProperty('border-color', 'rgba(255,255,255,0.35)', 'important');
+      input.style.setProperty('border-color', 'rgba(231, 244, 252, 0.62)', 'important');
+      input.style.setProperty('box-shadow', 'none', 'important');
       input.style.setProperty('-webkit-text-fill-color', '#eaf6ff', 'important');
     });
   };
@@ -467,23 +656,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!control) {
         return;
       }
+      const isDateInput = control.matches('input[type="date"]');
       const label = filter.querySelector('label');
       const value = (control.value || '').trim();
-      const isSelected = value !== '';
+      const isSelected = !isDateInput && value !== '';
       filter.classList.toggle('is-selected', isSelected);
       if (isSelected) {
         control.setAttribute('data-selected', '1');
-        control.style.setProperty('border-color', 'rgba(255, 220, 120, 0.95)', 'important');
-        control.style.setProperty('background-color', 'rgba(255, 220, 120, 0.2)', 'important');
-        control.style.setProperty('box-shadow', '0 0 0 2px rgba(255, 220, 120, 0.25)', 'important');
+        control.style.setProperty('border-color', 'rgba(231, 244, 252, 0.62)', 'important');
+        control.style.setProperty('background-color', 'rgba(16, 61, 92, 0.42)', 'important');
+        control.style.setProperty('box-shadow', '0 0 0 2px rgba(231, 244, 252, 0.16)', 'important');
         if (label) {
-          label.style.setProperty('color', '#ffe2a6', 'important');
+          label.style.setProperty('color', 'rgba(226, 238, 249, 0.84)', 'important');
         }
       } else {
         control.removeAttribute('data-selected');
         control.style.removeProperty('border-color');
         control.style.removeProperty('background-color');
         control.style.removeProperty('box-shadow');
+        if (isDateInput) {
+          control.style.setProperty('border-color', 'rgba(231, 244, 252, 0.62)', 'important');
+          control.style.setProperty('background-color', 'rgba(16, 61, 92, 0.42)', 'important');
+          control.style.setProperty('box-shadow', 'none', 'important');
+        }
         if (label) {
           label.style.removeProperty('color');
         }

@@ -235,7 +235,7 @@ $user = $_SESSION['id_usuario'];
                                 <?= $intern["nome_hosp"] ?>
                             </td>
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                                <?= $intern["nome_pac"] ?>
                             </td>
                             <td scope="row">
                                 <?php
@@ -255,12 +255,12 @@ $user = $_SESSION['id_usuario'];
                             </td>
 
                             <td scope="row">
-                                <?= fullcare_mask_person_name_e($intern["titular_censo"] ?? "") ?>
+                                <?= $intern["titular_censo"] ?>
                             </td>
                             <td scope="row">
                                 <?= $intern["senha_censo"] ?>
                             </td>
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#5e2363"
@@ -269,19 +269,16 @@ $user = $_SESSION['id_usuario'];
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
                                         <li>
-                                            <button class="btn btn-default" style="font-size: .9rem;"
+                                            <button class="btn btn-default"
                                                 onclick="openModal('<?= $BASE_URL ?>show_censo_adm.php?id_censo=<?= $intern['id_censo'] ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>Ver</button>
+                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye text-success"></i>Ver</button>
                                         </li>
                                         <li>
                                             <form class="d-inline-block delete-form" action="process_censo_int.php"
                                                 method="get">
                                                 <input type="hidden" name="type" value="create">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
-                                                <button class="btn btn-default" style="font-size: .9rem;"><i
-                                                        style="font-size: 1rem;margin-right:5px; color: rgb(67, 125, 525);"
-                                                        class="bi bi-door-open"></i>Internar</button>
+                                                <button class="btn btn-default"><i class="bi bi-hospital text-primary"></i>Internar</button>
                                             </form>
                                         </li>
                                         <li>
@@ -290,9 +287,7 @@ $user = $_SESSION['id_usuario'];
                                                 <input type="hidden" name="type" value="delete">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
                                                 <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                                                <button class="btn btn-default" style="font-size: .9rem;"><i
-                                                        style="font-size: 1rem;margin-right:5px; color: red;"
-                                                        class="bi bi-x-circle-fill"></i>Deletar</button>
+                                                <button class="btn btn-default"><i class="bi bi-trash3 text-danger"></i>Deletar</button>
                                             </form>
                                         </li>
                                     </ul>

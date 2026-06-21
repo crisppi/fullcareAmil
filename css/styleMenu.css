@@ -150,7 +150,7 @@ li {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
 .navbar .dropdown-menu .dropdown-item i,
@@ -161,8 +161,10 @@ li {
 }
 
 .navbar .dropdown-menu .dropdown-item i {
-    width: 1.1rem;
+    width: 0.88rem;
     justify-content: center;
+    margin-right: 0 !important;
+    font-size: 0.82rem !important;
 }
 
 .navbar .dropdown-menu .bi-dropdown-featured {
@@ -182,11 +184,11 @@ li {
     color: #111827;
     font-family: "Inter", Arial, Helvetica, sans-serif !important;
     border-radius: 10px;
-    margin: 1px 6px;
-    padding: 7px 12px;
+    margin: 1px 4px;
+    padding: 5px 8px;
     font-weight: 400;
-    font-size: 0.80rem;
-    line-height: 1.28;
+    font-size: 0.68rem;
+    line-height: 1.22;
     letter-spacing: 0;
     text-rendering: auto;
     -webkit-font-smoothing: subpixel-antialiased;
@@ -267,7 +269,7 @@ select,
     color: #111827;
     font-family: "Inter", Arial, Helvetica, sans-serif !important;
     font-weight: 400;
-    font-size: 0.82rem !important;
+    font-size: 0.72rem !important;
     letter-spacing: 0;
     text-rendering: auto;
     -webkit-font-smoothing: subpixel-antialiased;
@@ -280,8 +282,8 @@ select,
 }
 
 .bootstrap-select .dropdown-menu .dropdown-item {
-    font-size: 0.80rem;
-    line-height: 1.28;
+    font-size: 0.70rem;
+    line-height: 1.22;
 }
 
 .bi-dropdown.bi-mega .bi-mega-list {

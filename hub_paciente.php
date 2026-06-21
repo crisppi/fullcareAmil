@@ -390,19 +390,18 @@ if ($isAuditorPacienteHub) {
 ?>
 <!-- Você já tem Bootstrap do header.php. Aqui só estrutura da página -->
 
-<div class="container-fluid py-3">
+<div class="container-fluid py-2 hub-page">
   <div id="hubPaciente" data-id="<?= $p['id_paciente'] ?>"></div>
 
   <!-- Cabeçalho do paciente -->
-  <div class="card shadow-sm mb-3" style="border-radius:14px;">
-    <div class="card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
-      <div class="d-flex gap-3 align-items-center">
-        <div
-          style="width:64px;height:64px;border-radius:50%;background:#ecd5f9;display:flex;align-items:center;justify-content:center;font-weight:700;color:#5e2363">
+  <div class="card shadow-sm mb-2 hub-patient-card" style="border-radius:14px;">
+    <div class="card-body d-flex flex-wrap gap-2 align-items-center justify-content-between">
+      <div class="d-flex gap-2 align-items-center">
+        <div class="hub-patient-avatar">
           <?= $ini ?: 'PA' ?>
         </div>
         <div>
-          <h4 class="mb-1"><?= htmlspecialchars($nome_str ?: '—') ?></h4>
+          <h5 class="mb-1"><?= htmlspecialchars($nome_str ?: '—') ?></h5>
           <div class="d-flex flex-wrap gap-2 text-secondary small">
             <span><i class="bi bi-person-badge me-1"></i>Matrícula:
               <?= htmlspecialchars($mat_full ?: '—') ?></span>
@@ -437,8 +436,8 @@ if ($isAuditorPacienteHub) {
         $badgePalette = $riskColor[$effectiveLevel];
         $badgeInfo = $complexMap[$effectiveLevel];
       ?>
-            <div class="mt-2">
-              <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:600;background:<?= $badgePalette['bg'] ?>;color:<?= $badgePalette['text'] ?>;border:1px solid <?= $badgePalette['border'] ?>;">
+            <div class="mt-1">
+              <span class="hub-risk-badge" style="background:<?= $badgePalette['bg'] ?>;color:<?= $badgePalette['text'] ?>;border:1px solid <?= $badgePalette['border'] ?>;">
                 <i class="bi bi-lightning-fill"></i>
                 <?= $badgeInfo['label'] ?> — <?= $badgeInfo['prioridade'] ?>
               </span>
@@ -461,11 +460,11 @@ $complexInfo = $complexMap[$effectiveLevel];
 ?>
 
 <?php if ($showClinicalGroups): ?>
-<div class="row g-2 mb-2">
+<div class="row g-1 mb-1 hub-clinical-row">
   <div class="col-12 col-lg-7">
     <div class="card shadow-sm h-100 hub-compact-card hub-compact-card--primary" style="border-radius:16px;color:<?= $palette['text'] ?>;">
       <div class="card-body d-flex flex-column h-100 hub-compact-primary-body">
-        <div class="row g-2 flex-grow-1 align-items-start">
+        <div class="row g-1 flex-grow-1 align-items-start">
           <div class="col-12 col-md-6 hub-compact-left">
             <div class="d-flex justify-content-between align-items-start mb-1">
               <small class="text-uppercase fw-semibold" style="letter-spacing:.08em;color:<?= $palette['text'] ?>;">Indicador de readmissão</small>
@@ -560,7 +559,7 @@ $complexInfo = $complexMap[$effectiveLevel];
     }
   };
 ?>
-<div class="row g-2 mb-2 auditor-hub-row">
+<div class="row g-1 mb-1 auditor-hub-row">
   <div class="col-12 col-xl-5">
     <div class="card shadow-sm h-100 auditor-hub-card">
       <div class="card-body">
@@ -630,9 +629,9 @@ $complexInfo = $complexMap[$effectiveLevel];
 <?php endif; ?>
 
   <!-- Abas -->
-  <div class="card shadow-sm" style="border-radius:14px;">
+  <div class="card shadow-sm hub-history-card" style="border-radius:14px;">
     <div class="card-body">
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
         <ul class="nav nav-pills mb-0" role="tablist">
 
           <li class="nav-item">
@@ -826,21 +825,108 @@ $complexInfo = $complexMap[$effectiveLevel];
     --brand-050: #f9f3fc;
   }
 
+  body {
+    background: #f5f8fc;
+  }
+
+  .hub-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 10px 16px 78px !important;
+  }
+
+  .hub-page .row {
+    --bs-gutter-x: .45rem;
+    --bs-gutter-y: .45rem;
+  }
+
+  .hub-page .card {
+    border-radius: 10px !important;
+  }
+
+  .hub-page .card.shadow-sm {
+    box-shadow: 0 4px 12px rgba(23, 40, 70, .07) !important;
+  }
+
+  .hub-patient-card {
+    position: relative;
+    border: 1px solid rgba(94, 35, 99, .12);
+    overflow: hidden;
+  }
+
+  .hub-patient-card::before {
+    content: "";
+    display: block;
+    width: 6px;
+    align-self: stretch;
+    background: linear-gradient(180deg, var(--brand), #2f6f9f);
+    position: absolute;
+    inset: 0 auto 0 0;
+  }
+
+  .hub-patient-card .card-body {
+    min-height: 0 !important;
+    padding: 9px 14px 9px 18px !important;
+  }
+
+  .hub-patient-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ecd5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #5e2363;
+    flex: 0 0 38px;
+    font-size: .78rem;
+  }
+
+  .hub-patient-card h5 {
+    font-size: .9rem;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .hub-patient-card .small {
+    font-size: .66rem !important;
+    line-height: 1.18;
+  }
+
+  .hub-risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: .62rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .hub-clinical-row .card,
+  .auditor-hub-row .card,
+  .hub-history-card {
+    min-height: 0 !important;
+  }
+
   .auditor-hub-card {
-    border-radius: 16px;
+    border-radius: 10px;
     border: 1px solid rgba(47, 111, 159, .26);
     background: linear-gradient(180deg, #ffffff 0%, #f4faff 100%);
-    box-shadow: 0 10px 24px rgba(35, 102, 147, .12) !important;
+    box-shadow: 0 4px 12px rgba(35, 102, 147, .09) !important;
     overflow: hidden;
   }
 
   .auditor-hub-card .card-body {
-    padding: 12px;
+    padding: 7px !important;
   }
 
   .auditor-hub-card .card-body > .d-flex:first-child {
-    margin: -12px -12px 10px;
-    padding: 10px 12px;
+    margin: -7px -7px 6px;
+    padding: 6px 8px;
     background: linear-gradient(90deg, rgba(47, 111, 159, .18), rgba(94, 35, 99, .10));
     color: #24384f;
     border-bottom: 1px solid rgba(47, 111, 159, .20);
@@ -851,9 +937,9 @@ $complexInfo = $complexMap[$effectiveLevel];
     content: "";
     position: absolute;
     left: 0;
-    top: 9px;
-    bottom: 9px;
-    width: 4px;
+    top: 7px;
+    bottom: 7px;
+    width: 3px;
     border-radius: 0 999px 999px 0;
     background: linear-gradient(180deg, #2f6f9f, #5e2363);
   }
@@ -861,6 +947,15 @@ $complexInfo = $complexMap[$effectiveLevel];
   .auditor-hub-card .card-body > .d-flex:first-child small,
   .auditor-hub-card .card-body > .d-flex:first-child h6 {
     color: #24384f !important;
+  }
+
+  .auditor-hub-card h6 {
+    font-size: .72rem !important;
+  }
+
+  .auditor-hub-card .badge {
+    font-size: .62rem;
+    padding: 2px 6px;
   }
 
   .auditor-hub-card .card-body > .d-flex:first-child .badge {
@@ -872,23 +967,23 @@ $complexInfo = $complexMap[$effectiveLevel];
   .auditor-hub-kpis {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 7px;
-    margin-bottom: 8px;
+    gap: 5px;
+    margin-bottom: 5px;
   }
 
   .auditor-hub-kpis > div {
-    min-height: 54px;
+    min-height: 36px;
     border: 1px solid rgba(47, 111, 159, .22);
     background: #ffffff;
-    border-radius: 11px;
-    padding: 7px 8px;
-    box-shadow: 0 5px 12px rgba(35, 102, 147, .065);
+    border-radius: 8px;
+    padding: 4px 6px;
+    box-shadow: none;
   }
 
   .auditor-hub-kpis small {
     display: block;
     color: #6b7280;
-    font-size: .58rem;
+    font-size: .48rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -898,14 +993,14 @@ $complexInfo = $complexMap[$effectiveLevel];
   .auditor-hub-kpis strong {
     display: block;
     color: #16324f;
-    font-size: 1rem;
+    font-size: .82rem;
     line-height: 1.15;
   }
 
   .auditor-hub-pending,
   .auditor-hub-timeline {
     display: grid;
-    gap: 6px;
+    gap: 5px;
   }
 
   .auditor-hub-task,
@@ -913,9 +1008,9 @@ $complexInfo = $complexMap[$effectiveLevel];
     color: #1d2940;
     text-decoration: none;
     border: 1px solid rgba(47, 111, 159, .18);
-    border-radius: 11px;
+    border-radius: 8px;
     background: #ffffff;
-    box-shadow: 0 5px 12px rgba(35, 102, 147, .06);
+    box-shadow: none;
   }
 
   .auditor-hub-task:hover,
@@ -927,19 +1022,19 @@ $complexInfo = $complexMap[$effectiveLevel];
 
   .auditor-hub-task {
     display: grid;
-    grid-template-columns: 30px minmax(0, 1fr) 18px;
-    gap: 8px;
+    grid-template-columns: 24px minmax(0, 1fr) 14px;
+    gap: 6px;
     align-items: center;
-    padding: 8px 9px;
+    padding: 5px 7px;
   }
 
   .auditor-hub-task__icon {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 9px;
+    border-radius: 7px;
     background: #eff7ff;
     color: #2f6f9f;
   }
@@ -952,7 +1047,7 @@ $complexInfo = $complexMap[$effectiveLevel];
   .auditor-hub-task strong,
   .auditor-hub-event strong {
     display: block;
-    font-size: .74rem;
+    font-size: .64rem;
     line-height: 1.2;
   }
 
@@ -960,21 +1055,21 @@ $complexInfo = $complexMap[$effectiveLevel];
   .auditor-hub-event small {
     display: block;
     color: #6b7280;
-    font-size: .64rem;
-    line-height: 1.25;
+    font-size: .56rem;
+    line-height: 1.15;
   }
 
   .auditor-hub-event {
     display: grid;
-    grid-template-columns: 72px minmax(0, 1fr) 18px;
-    gap: 8px;
+    grid-template-columns: 58px minmax(0, 1fr) 14px;
+    gap: 6px;
     align-items: center;
-    padding: 8px 10px;
+    padding: 5px 7px;
   }
 
   .auditor-hub-event__date {
     color: #1f5f8f;
-    font-size: .68rem;
+    font-size: .58rem;
     font-weight: 800;
   }
 
@@ -1033,11 +1128,11 @@ $complexInfo = $complexMap[$effectiveLevel];
   }
 
   .hub-compact-card .card-body {
-    padding: 8px 8px 4px;
+    padding: 9px 10px 8px;
   }
 
   .hub-compact-card--primary .card-body {
-    padding: 10px 10px 2px;
+    padding: 10px 11px 8px;
   }
 
   .hub-compact-primary-body {
@@ -1057,7 +1152,7 @@ $complexInfo = $complexMap[$effectiveLevel];
   }
 
   .hub-compact-card .hub-compact-big {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1;
   }
@@ -1068,8 +1163,8 @@ $complexInfo = $complexMap[$effectiveLevel];
   }
 
   .hub-compact-card .small {
-    font-size: .6rem;
-    line-height: 1.1;
+    font-size: .68rem;
+    line-height: 1.18;
   }
 
   .hub-compact-card ul {
@@ -1142,14 +1237,14 @@ $complexInfo = $complexMap[$effectiveLevel];
   }
 
   .hub-compact-badge-bottom {
-    margin-top: auto;
+    margin-top: .35rem;
     display: flex;
     justify-content: center;
-    padding-top: .2rem;
+    padding-top: 0;
   }
 
   .hub-compact-right {
-    padding-top: 26px;
+    padding-top: 10px;
   }
 
   .hub-compact-card--primary .hub-compact-recos {
@@ -1494,11 +1589,232 @@ $complexInfo = $complexMap[$effectiveLevel];
     font-weight: 600;
   }
 
-  /* Apenas no card do paciente */
-  .card-body .small {
-    font-size: 0.95rem !important;
-    color: #444 !important;
-    font-weight: 400;
+  .hub-page .card-body .small {
+    color: #4b5563;
+  }
+
+  /* Layout compacto de operação, alinhado ao detalhe da internação */
+  .hub-page {
+    padding: 8px 0 76px !important;
+    font-size: 13px;
+  }
+
+  .hub-page > .card,
+  .hub-page > .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .hub-patient-card {
+    margin-bottom: 6px !important;
+    border-color: #e2e8f0 !important;
+    border-radius: 8px !important;
+  }
+
+  .hub-patient-card .card-body {
+    padding: 8px 18px !important;
+  }
+
+  .hub-patient-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    flex-basis: 34px !important;
+    font-size: .72rem !important;
+  }
+
+  .hub-patient-card h5 {
+    font-size: .84rem !important;
+    margin-bottom: 1px !important;
+  }
+
+  .hub-patient-card .small {
+    font-size: .61rem !important;
+    gap: 6px !important;
+  }
+
+  .hub-risk-badge {
+    font-size: .56rem !important;
+    padding: 2px 6px !important;
+    margin-top: 1px;
+  }
+
+  .hub-clinical-row {
+    margin-bottom: 6px !important;
+  }
+
+  .hub-compact-card {
+    border-width: 1px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 7px rgba(15, 23, 42, .05) !important;
+  }
+
+  .hub-compact-card .card-body,
+  .hub-compact-card--primary .card-body {
+    padding: 7px 12px !important;
+  }
+
+  .hub-compact-card small.text-uppercase {
+    font-size: .6rem !important;
+    letter-spacing: .12em !important;
+  }
+
+  .hub-compact-card .hub-compact-big {
+    font-size: .9rem !important;
+  }
+
+  .hub-compact-card .small {
+    font-size: .58rem !important;
+    line-height: 1.12 !important;
+  }
+
+  .hub-compact-card .hub-compact-metric {
+    font-size: .66rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .hub-compact-card .row {
+    --bs-gutter-x: .4rem;
+    --bs-gutter-y: .15rem;
+  }
+
+  .hub-compact-badge-bottom {
+    display: none !important;
+  }
+
+  .hub-compact-recos {
+    line-height: 1.12 !important;
+  }
+
+  .auditor-hub-row {
+    margin-bottom: 7px !important;
+  }
+
+  .auditor-hub-card {
+    border-radius: 8px !important;
+    background: #fff !important;
+    box-shadow: 0 2px 7px rgba(15, 23, 42, .05) !important;
+  }
+
+  .auditor-hub-card .card-body {
+    padding: 8px 10px !important;
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child {
+    background: transparent !important;
+    border-bottom: 0 !important;
+    margin: 0 0 5px !important;
+    padding: 0 !important;
+  }
+
+  .auditor-hub-card .card-body > .d-flex:first-child::before {
+    display: none;
+  }
+
+  .auditor-hub-card small.text-uppercase {
+    font-size: .58rem !important;
+    color: #334155 !important;
+  }
+
+  .auditor-hub-card h6 {
+    font-size: .68rem !important;
+    color: #1f2937 !important;
+  }
+
+  .auditor-hub-kpis {
+    gap: 4px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .auditor-hub-kpis > div {
+    min-height: 31px !important;
+    border-radius: 6px !important;
+    padding: 3px 6px !important;
+  }
+
+  .auditor-hub-kpis small {
+    font-size: .43rem !important;
+  }
+
+  .auditor-hub-kpis strong {
+    font-size: .74rem !important;
+  }
+
+  .auditor-hub-task,
+  .auditor-hub-event {
+    border-radius: 6px !important;
+    padding: 4px 7px !important;
+  }
+
+  .auditor-hub-task {
+    grid-template-columns: 22px minmax(0, 1fr) 12px !important;
+  }
+
+  .auditor-hub-task__icon {
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 6px !important;
+    font-size: .68rem !important;
+  }
+
+  .auditor-hub-task strong,
+  .auditor-hub-event strong {
+    font-size: .58rem !important;
+  }
+
+  .auditor-hub-task small,
+  .auditor-hub-event small {
+    font-size: .5rem !important;
+  }
+
+  .auditor-hub-event {
+    grid-template-columns: 52px minmax(0, 1fr) 12px !important;
+  }
+
+  .auditor-hub-event__date {
+    font-size: .52rem !important;
+  }
+
+  .hub-history-card {
+    border-radius: 8px !important;
+  }
+
+  .hub-history-card > .card-body {
+    padding: 10px 18px !important;
+  }
+
+  .hub-page .nav-pills .nav-link {
+    padding: 5px 12px !important;
+    font-size: .72rem !important;
+    line-height: 1.15 !important;
+    border-radius: 7px !important;
+    font-weight: 700;
+  }
+
+  .hub-page .btn-sm,
+  .hub-page .input-group-sm > .form-control,
+  .hub-page .input-group-sm > .input-group-text {
+    padding: 4px 8px !important;
+    font-size: .68rem !important;
+    min-height: 28px !important;
+    line-height: 1.15 !important;
+  }
+
+  .hub-int-filter {
+    max-width: 210px !important;
+  }
+
+  .hub-page h6 {
+    font-size: .72rem !important;
+  }
+
+  .hub-page .table thead th {
+    font-size: .62rem !important;
+    padding: 5px 8px !important;
+  }
+
+  .hub-page .table td {
+    font-size: .62rem !important;
+    padding: 5px 8px !important;
   }
 </style>
 

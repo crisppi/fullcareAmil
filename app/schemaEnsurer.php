@@ -383,6 +383,74 @@ if (!function_exists('ensure_user_login_security_columns')) {
     }
 }
 
+if (!function_exists('ensure_user_mfa_schema')) {
+    function ensure_user_mfa_schema(PDO $conn): void
+    {
+        static $checked = false;
+        if ($checked) {
+            return;
+        }
+        $checked = true;
+
+        $columns = [
+            'mfa_enabled' => "ALTER TABLE tb_user ADD COLUMN mfa_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER login_last_fail_at",
+            'mfa_secret' => "ALTER TABLE tb_user ADD COLUMN mfa_secret TEXT NULL AFTER mfa_enabled",
+            'mfa_confirmed_at' => "ALTER TABLE tb_user ADD COLUMN mfa_confirmed_at DATETIME NULL DEFAULT NULL AFTER mfa_secret",
+            'mfa_last_used_step' => "ALTER TABLE tb_user ADD COLUMN mfa_last_used_step BIGINT NULL DEFAULT NULL AFTER mfa_confirmed_at",
+            'mfa_recovery_generated_at' => "ALTER TABLE tb_user ADD COLUMN mfa_recovery_generated_at DATETIME NULL DEFAULT NULL AFTER mfa_last_used_step",
+        ];
+
+        foreach ($columns as $column => $ddl) {
+            try {
+                $stmt = $conn->prepare("
+                    SELECT COUNT(*)
+                      FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'tb_user'
+                       AND COLUMN_NAME = :column
+                ");
+                $stmt->bindValue(':column', $column, PDO::PARAM_STR);
+                $stmt->execute();
+                if ((int)$stmt->fetchColumn() > 0) {
+                    continue;
+                }
+                $conn->exec($ddl);
+            } catch (Throwable $e) {
+                error_log('[SCHEMA][tb_user:mfa:' . $column . '] ' . $e->getMessage());
+            }
+        }
+
+        try {
+            $stmt = $conn->prepare("
+                SELECT COUNT(*)
+                  FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME = 'tb_user_mfa_recovery_code'
+            ");
+            $stmt->execute();
+            if ((int)$stmt->fetchColumn() === 0) {
+                $conn->exec("
+                    CREATE TABLE tb_user_mfa_recovery_code (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        user_id INT NOT NULL,
+                        code_hash CHAR(64) NOT NULL,
+                        used_at DATETIME NULL DEFAULT NULL,
+                        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        KEY idx_mfa_recovery_user (user_id),
+                        KEY idx_mfa_recovery_used_at (used_at),
+                        UNIQUE KEY uq_mfa_recovery_code_hash (code_hash),
+                        CONSTRAINT fk_mfa_recovery_user
+                            FOREIGN KEY (user_id) REFERENCES tb_user(id_usuario)
+                            ON DELETE CASCADE
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+                ");
+            }
+        } catch (Throwable $e) {
+            error_log('[SCHEMA][tb_user_mfa_recovery_code] ' . $e->getMessage());
+        }
+    }
+}
+
 if (!function_exists('schema_table_exists')) {
     function schema_table_exists(PDO $conn, string $table): bool
     {

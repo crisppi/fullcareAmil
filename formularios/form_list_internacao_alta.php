@@ -25,6 +25,7 @@ include_once("models/alta.php");
 include_once("dao/altaDao.php");
 
 include_once("models/pagination.php");
+require_once __DIR__ . "/../app/text_formatters.php";
 
 if (!function_exists('listaAltaGetParam')) {
     function listaAltaGetParam(string $longKey, $default = null)
@@ -363,11 +364,6 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
         text-decoration: none;
     }
 
-    .tabela-altas .btn-outline-primary {
-        min-height: 24px;
-        padding: 2px 7px;
-        font-size: .64rem;
-    }
 </style>
 
 <div class="container-fluid form_container listagem-page" id="main-container">
@@ -474,15 +470,15 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                 <table class="table table-sm table-striped table-hover table-condensed tabela-altas">
                     <thead>
                         <tr>
-                            <th scope="col" width="3%">Id-Int</th>
-                            <th scope="col" width="3%">UTI</th>
-                            <th scope="col" width="14%">Hospital</th>
-                            <th scope="col" width="14%">Paciente</th>
-                            <th scope="col" width="7%">Tipo Alta</th>
-                            <th scope="col" width="8%">Data Alta</th>
-                            <th scope="col" width="6%">Ações</th>
+                            <th scope="col" class="th-w-3">Id-Int</th>
+                            <th scope="col" class="th-w-3">UTI</th>
+                            <th scope="col" class="th-w-14">Hospital</th>
+                            <th scope="col" class="th-w-14">Paciente</th>
+                            <th scope="col" class="th-w-7">Tipo Alta</th>
+                            <th scope="col" class="th-w-8">Data Alta</th>
+                            <th scope="col" class="th-w-6">Ações</th>
                             <?php if (!$somenteListaAltas): ?>
-                            <th scope="col" width="4%">Remover</th>
+                            <th scope="col" class="th-w-4">Remover</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -501,18 +497,34 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                                 <td scope="row">
                                     <?= htmlspecialchars((string)$intern["nome_pac"]) ?>
                                 </td>
-                                <td scope="row">
-                                    <?= htmlspecialchars((string)$intern["tipo_alta_alt"]) ?>
+                                <td scope="row" class="fc-sentence-case">
+                                    <?= htmlspecialchars(fc_sentence_case($intern["tipo_alta_alt"] ?? '')) ?>
                                 </td>
                                 <td scope="row">
                                     <?= htmlspecialchars(date('d/m/Y', strtotime((string)$intern["data_alta_alt"]))) ?>
                                 </td>
-                                <td scope="row">
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/internacoes/visualizar/' . (int)$intern["fk_id_int_alt"], ENT_QUOTES, 'UTF-8') ?>"
-                                       title="Visualizar internação">
-                                        <i class="fa-solid fa-eye me-1"></i> Ver
-                                    </a>
+                                <td class="fc-list-action">
+                                    <div class="dropdown">
+                                        <button class="btn btn-default dropdown-toggle"
+                                            id="acoesAltaDropdown<?= (int)$intern['id_alta'] ?>"
+                                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-stack"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="acoesAltaDropdown<?= (int)$intern['id_alta'] ?>">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/internacoes/visualizar/' . (int)$intern["fk_id_int_alt"], ENT_QUOTES, 'UTF-8') ?>">
+                                                    <i class="bi bi-eye text-success"></i> Ver
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item js-reverter-alta"
+                                                    data-id="<?= (int)$intern['id_alta'] ?>">
+                                                    <i class="bi bi-arrow-counterclockwise text-danger"></i> Reverter alta
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                                 <?php if (!$somenteListaAltas): ?>
                                 <td>
@@ -599,7 +611,6 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
     </div>
 </div>
 
-<?php if (!$somenteListaAltas): ?>
 <div class="modal fade" id="modalReverterAlta" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:1rem;">
@@ -616,7 +627,7 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
             </div>
         </div>
     </div>
-<?php endif; ?>
+</div>
 
 <!-- Modal: Mensagem (info/erro) -->
 <div class="modal fade" id="modalMsg" tabindex="-1" aria-hidden="true">
@@ -931,9 +942,23 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                 loadAltaList(href, null);
             });
 
-        if (!SOMENTE_LISTA_ALTAS) {
-            let idsSelecionados = [];
+        let idsSelecionados = [];
 
+        $(document)
+            .off('click.alta', '.js-reverter-alta')
+            .on('click.alta', '.js-reverter-alta', function(e) {
+                e.preventDefault();
+                var idAlta = String($(this).data('id') || '');
+                if (!idAlta) {
+                    showMsg('Falha', 'Alta não identificada para reversão.');
+                    return;
+                }
+                idsSelecionados = [idAlta];
+                $('#qtdAltasSel').text(1);
+                new bootstrap.Modal(document.getElementById('modalReverterAlta')).show();
+            });
+
+        if (!SOMENTE_LISTA_ALTAS) {
             $(document)
                 .off('click.alta', '#btnRemoveAltas')
                 .on('click.alta', '#btnRemoveAltas', function(e) {
@@ -948,38 +973,43 @@ $buildListaAltaLink = function($pagina, $bloco) use ($paginationParams, $BASE_UR
                     $('#qtdAltasSel').text(idsSelecionados.length);
                     new bootstrap.Modal(document.getElementById('modalReverterAlta')).show();
                 });
-
-            $(document)
-                .off('click.alta', '#btnConfirmReverter')
-                .on('click.alta', '#btnConfirmReverter', function() {
-                    var $btn = $(this);
-                    $btn.prop('disabled', true);
-
-                    $.ajax({
-                        url: 'alta_reverter.php',
-                        type: 'POST',
-                        data: {
-                            ids: idsSelecionados
-                        },
-                        success: function(resp) {
-                            const j = (typeof resp === 'string') ? JSON.parse(resp) : resp;
-                            if (j && j.ok) {
-                                bootstrap.Modal.getInstance(document.getElementById('modalReverterAlta'))
-                                    .hide();
-                                location.reload();
-                            } else {
-                                showMsg('Falha', (j && j.msg) ? j.msg : 'Falha ao reverter.');
-                            }
-                        },
-                        error: function() {
-                            showMsg('Erro de comunicação', 'Não foi possível contatar o servidor.');
-                        },
-                        complete: function() {
-                            $btn.prop('disabled', false);
-                        }
-                    });
-                });
         }
+
+        $(document)
+            .off('click.alta', '#btnConfirmReverter')
+            .on('click.alta', '#btnConfirmReverter', function() {
+                if (!idsSelecionados.length) {
+                    showMsg('Seleção necessária', 'Selecione pelo menos uma alta para reverter.');
+                    return;
+                }
+                var $btn = $(this);
+                $btn.prop('disabled', true);
+
+                $.ajax({
+                    url: 'alta_reverter.php',
+                    type: 'POST',
+                    data: {
+                        ids: idsSelecionados
+                    },
+                    success: function(resp) {
+                        const j = (typeof resp === 'string') ? JSON.parse(resp) : resp;
+                        if (j && j.ok) {
+                            const modalEl = document.getElementById('modalReverterAlta');
+                            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                            modal.hide();
+                            location.reload();
+                        } else {
+                            showMsg('Falha', (j && j.msg) ? j.msg : 'Falha ao reverter.');
+                        }
+                    },
+                    error: function() {
+                        showMsg('Erro de comunicação', 'Não foi possível contatar o servidor.');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
 
     })(jQuery);
 </script>

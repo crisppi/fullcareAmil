@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual | Central de trabalho</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f8f6fb;color:#2d1740;line-height:1.5}
+    header{background:linear-gradient(135deg,#6b3d7d,#422257);color:#fff;padding:48px 5vw 80px}
+    header p{max-width:800px;color:rgba(255,255,255,.9)}
+    main{width:min(1120px,92vw);margin:-30px auto 60px;padding-top:32px}
+    h2{font-size:25px;margin:30px 0 14px;position:relative}
+    h2::after{content:"";position:absolute;left:0;bottom:-6px;width:60px;height:3px;border-radius:99px;background:linear-gradient(90deg,#8a5ab0,#5ad1f0)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+    .card{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(90,43,120,.1);box-shadow:0 14px 28px rgba(57,23,92,.12);font-size:.88rem}
+    ul{margin:0;padding-left:18px}
+    .pill{display:inline-flex;gap:8px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;text-transform:uppercase;font-size:13px;letter-spacing:.08em;margin-bottom:20px}
+    a.voltar,.hero-sys-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 12px;border-radius:999px;font-weight:700}
+    .hero-layout{display:flex;align-items:center;gap:24px;margin-bottom:20px;flex-wrap:wrap}
+    .hero-logo{height:46px;max-width:200px}.hero-body{flex:1 1 280px}
+    table{width:100%;border-collapse:collapse;font-size:.86rem}th,td{text-align:left;padding:10px;border-bottom:1px solid rgba(90,43,120,.1)}th{background:#f5f0fb;text-transform:uppercase;font-size:.72rem}
+    footer{text-align:center;color:#6f6b78;padding:30px}
+    </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
+</head>
+<body>
+<header>
+    <div class="hero-layout">
+        <img src="img/LogoFullCare.png" alt="FullCare" class="hero-logo">
+        <div class="hero-body">
+            <div class="pill">Manual • Operação</div>
+            <h1>Central de trabalho</h1>
+            <p>Página inicial operacional do FullCare. Reúne atalhos, prioridades do auditor, registros recentes e visão dos hospitais sob responsabilidade da equipe.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+        </div>
+        <a class="hero-sys-link" href="central-trabalho">Abrir central</a>
+    </div>
+</header>
+<main>
+    <section>
+        <h2>Estrutura da tela</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Meu trabalho hoje</h3>
+                <ul>
+                    <li><strong>Visitas em atraso</strong>: registros vencidos que precisam de lançamento ou revisão.</li>
+                    <li><strong>Contas paradas</strong>: contas travadas por pendência ou motivo operacional.</li>
+                    <li><strong>Eventos adversos</strong>: eventos abertos que exigem acompanhamento.</li>
+                    <li><strong>Longa permanência</strong>: pacientes acima do limiar operacional exibido na tela.</li>
+                    <li><strong>Reinternações</strong>: casos identificados até 30 dias da alta.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Ações rápidas</h3>
+                <ul>
+                    <li><strong>Nova internação</strong>: inicia cadastro vinculado ao paciente e hospital.</li>
+                    <li><strong>Internações</strong>: abre a lista principal de internações.</li>
+                    <li><strong>Pacientes</strong>: pesquisa e acesso ao hub do paciente.</li>
+                    <li><strong>Contas</strong>: leva para Contas para Auditar.</li>
+                    <li><strong>Pendências</strong>: abre a fila operacional consolidada.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Fila do auditor</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>O que entra na fila</h3>
+                <ul>
+                    <li>Visitas vencidas sem lançamento atualizado.</li>
+                    <li>Eventos adversos críticos ainda abertos.</li>
+                    <li>Contas pendentes ou paradas em auditoria.</li>
+                    <li>Negociações sem conclusão.</li>
+                    <li>Longa permanência calculada pelos dias de internação.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Como usar</h3>
+                <ul>
+                    <li>O item mostra paciente, tipo de pendência, dias e hospital quando disponível.</li>
+                    <li>O botão de ação leva direto para o ponto de resolução: visita, conta, internação, negociação ou hub.</li>
+                    <li>Use <strong>Ver painel</strong> para abrir o Painel Operacional 360 com fila ampliada e alertas.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Recentes e hospitais</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Recentes</h3>
+                <ul>
+                    <li>Exibe as internações e pacientes alterados mais recentemente dentro do escopo do usuário.</li>
+                    <li><strong>Abrir</strong> leva para a internação; <strong>Hub</strong> leva para o hub do paciente.</li>
+                    <li>Os nomes são exibidos em formato de leitura, com iniciais maiúsculas.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Meus hospitais</h3>
+                <ul>
+                    <li>Mostra hospitais com internações ativas e indicadores de negociação, saving e glosa.</li>
+                    <li>O nível <strong>Alto</strong>, <strong>Médio</strong> ou <strong>Baixo</strong> indica atenção operacional.</li>
+                    <li>Use o bloco para priorizar contatos com hospitais com maior volume ou maior oportunidade.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Painel Operacional 360</h2>
+        <article class="card">
+            <table>
+                <thead><tr><th>Área</th><th>Função</th><th>Uso recomendado</th></tr></thead>
+                <tbody>
+                    <tr><td>KPIs superiores</td><td>Resumo de contas, visitas, negociações e eventos.</td><td>Checagem rápida no início do dia.</td></tr>
+                    <tr><td>Fila do auditor</td><td>Prioridades ordenadas por criticidade e tempo.</td><td>Resolver ações em sequência de impacto.</td></tr>
+                    <tr><td>Alertas do auditor</td><td>Sinais que pedem atenção imediata.</td><td>Monitorar riscos abertos.</td></tr>
+                    <tr><td>Mini KPIs</td><td>Visitas, eventos, contas e negociações.</td><td>Acompanhar volume sem abrir cada lista.</td></tr>
+                </tbody>
+            </table>
+        </article>
+    </section>
+</main>
+<footer>Manual Operação • versão 0.4</footer>
+</body>
+</html>

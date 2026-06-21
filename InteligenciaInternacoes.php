@@ -275,6 +275,224 @@ $hospitais = $chatService->listHospitals($ctx);
 }
 </style>
 
+<style>
+.intern-chat-page {
+    padding: 14px 16px 30px !important;
+}
+
+.intern-chat-shell {
+    grid-template-columns: 270px minmax(0, 1fr) 300px !important;
+    gap: 10px !important;
+}
+
+.intern-chat-panel {
+    border: 1px solid rgba(47, 111, 159, .16) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 18px rgba(35, 102, 147, .08) !important;
+}
+
+.intern-chat-filters {
+    background:
+        linear-gradient(165deg, rgba(47, 111, 159, .98) 0%, rgba(35, 82, 124, .98) 52%, rgba(32, 139, 122, .96) 100%) !important;
+    border-color: rgba(31, 76, 110, .22) !important;
+    box-shadow: 0 12px 24px rgba(31, 76, 110, .16) !important;
+    color: #fff !important;
+    padding: 12px !important;
+}
+
+.intern-chat-results h2 {
+    color: #21364f !important;
+    font-size: .72rem !important;
+    font-weight: 820 !important;
+    letter-spacing: .06em !important;
+    margin: 0 0 10px !important;
+}
+
+.intern-chat-filters h2 {
+    color: #fff !important;
+    font-size: .72rem !important;
+    font-weight: 820 !important;
+    letter-spacing: .06em !important;
+    margin: 0 0 10px !important;
+}
+
+.intern-chat-field {
+    margin-bottom: 9px !important;
+}
+
+.intern-chat-field label {
+    color: #5a6e86 !important;
+    font-size: .64rem !important;
+    font-weight: 760 !important;
+    margin-bottom: 4px !important;
+}
+
+.intern-chat-filters .intern-chat-field label {
+    color: rgba(255, 255, 255, .82) !important;
+}
+
+.intern-chat-field select {
+    background: #f8fbfe !important;
+    border: 1px solid #bfd4e6 !important;
+    border-radius: 8px !important;
+    box-shadow: inset 0 1px 2px rgba(35, 102, 147, .04) !important;
+    color: #25364b !important;
+    font-size: .74rem !important;
+    height: 33px !important;
+    padding: 0 9px !important;
+}
+
+.intern-chat-filters .intern-chat-field select {
+    background: rgba(255, 255, 255, .96) !important;
+    border-color: rgba(255, 255, 255, .32) !important;
+    box-shadow: 0 7px 14px rgba(18, 48, 78, .14) !important;
+    color: #223247 !important;
+}
+
+.intern-chat-suggestions {
+    gap: 7px !important;
+    margin-top: 12px !important;
+}
+
+.intern-chat-suggestion {
+    background: rgba(255, 255, 255, .14) !important;
+    border: 1px solid rgba(255, 255, 255, .18) !important;
+    border-left: 4px solid rgba(255, 255, 255, .72) !important;
+    border-radius: 9px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14) !important;
+    color: #fff !important;
+    font-size: .72rem !important;
+    font-weight: 740 !important;
+    line-height: 1.18 !important;
+    padding: 8px 9px !important;
+}
+
+.intern-chat-suggestion:hover {
+    background: rgba(255, 255, 255, .24) !important;
+    transform: translateY(-1px);
+}
+
+.intern-chat-suggestion:nth-child(4n + 1) { border-left-color: #8fd6ff !important; }
+.intern-chat-suggestion:nth-child(4n + 2) { border-left-color: #b7f0cf !important; }
+.intern-chat-suggestion:nth-child(4n + 3) { border-left-color: #ffd36e !important; }
+.intern-chat-suggestion:nth-child(4n + 4) { border-left-color: #ff9aa6 !important; }
+
+.intern-chat-main {
+    min-height: calc(100vh - 235px) !important;
+}
+
+.intern-chat-messages {
+    background:
+        linear-gradient(180deg, rgba(247, 251, 254, .96), rgba(242, 247, 252, .96)),
+        radial-gradient(circle at 20% 0%, rgba(94, 180, 216, .10), transparent 28%) !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 14px !important;
+}
+
+.intern-chat-entry {
+    margin-bottom: 10px !important;
+    width: min(82%, 760px) !important;
+}
+
+.intern-chat-meta {
+    font-size: .62rem !important;
+    margin-bottom: 4px !important;
+}
+
+.intern-chat-message {
+    border-radius: 10px !important;
+    font-size: .82rem !important;
+    line-height: 1.38 !important;
+    padding: 10px 12px !important;
+}
+
+.intern-chat-message.assistant {
+    border-color: #c7deea !important;
+    border-left-width: 3px !important;
+    box-shadow: 0 8px 16px rgba(31, 76, 110, .08) !important;
+}
+
+.intern-chat-composer {
+    border-radius: 0 0 12px 12px !important;
+    gap: 8px !important;
+    padding: 9px !important;
+}
+
+.intern-chat-composer textarea {
+    border-color: #bfd4e6 !important;
+    border-radius: 9px !important;
+    font-size: .78rem !important;
+    min-height: 38px !important;
+    padding: 9px 10px !important;
+}
+
+.intern-chat-send,
+.intern-chat-clear {
+    border-radius: 9px !important;
+    font-size: .9rem !important;
+    height: 38px !important;
+    width: 42px !important;
+}
+
+.intern-chat-send {
+    background: linear-gradient(135deg, #2f6f9f, #55b4d4) !important;
+    box-shadow: 0 7px 15px rgba(35, 102, 147, .16) !important;
+}
+
+.intern-chat-results {
+    background: #fff !important;
+    max-height: calc(100vh - 235px) !important;
+    padding: 12px !important;
+}
+
+.intern-chat-empty {
+    background: #f8fbfe;
+    border: 1px dashed #c9ddeb;
+    border-radius: 10px;
+    color: #63758b !important;
+    font-size: .74rem !important;
+    line-height: 1.35;
+    padding: 12px;
+}
+
+.intern-chat-result {
+    border-color: #d7e6f1 !important;
+    border-radius: 10px !important;
+    margin-bottom: 8px !important;
+    padding: 9px !important;
+}
+
+.intern-chat-result strong {
+    font-size: .76rem !important;
+}
+
+.intern-chat-result small {
+    font-size: .68rem !important;
+}
+
+@media (max-width: 1200px) {
+    .intern-chat-shell {
+        grid-template-columns: 250px minmax(0, 1fr) !important;
+    }
+}
+
+@media (max-width: 820px) {
+    .intern-chat-page {
+        padding: 10px 12px 28px !important;
+    }
+
+    .intern-chat-shell {
+        grid-template-columns: 1fr !important;
+    }
+
+    .intern-chat-main,
+    .intern-chat-results {
+        min-height: auto !important;
+        max-height: none !important;
+    }
+}
+</style>
+
 <div class="intern-chat-page">
     <div class="fc-module-header fc-module-header--inteligencia">
         <div class="fc-module-header__copy">

@@ -164,7 +164,7 @@ $totalcasos = ceil($qtdIntItens / 5);
                                 <?= $antecedente_ant ?>
                             </td>
 
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#5e2363"

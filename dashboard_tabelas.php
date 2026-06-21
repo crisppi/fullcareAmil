@@ -285,39 +285,39 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 <div id="dash-visitas-atraso-content">
     <div class="dash-table-scroll">
     <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
-        <thead style="background: #2f6f9f; background-image: none;">
+        <thead>
             <tr>
-                <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
+                <th scope="col" class="th-sortable th-w-5" data-sort-type="number">Id Int
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:15%" class="th-sortable" data-sort-type="text">Hospital
+                <th scope="col" class="th-sortable th-w-15" data-sort-type="text">Hospital
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:11%" class="th-sortable" data-sort-type="text">Seguradora
+                <th scope="col" class="th-sortable th-w-11" data-sort-type="text">Seguradora
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:32%" class="th-sortable" data-sort-type="text">Paciente
+                <th scope="col" class="th-sortable th-w-32" data-sort-type="text">Paciente
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:13%" class="th-sortable" data-sort-type="date">Ultima Visita
+                <th scope="col" class="th-sortable th-w-13" data-sort-type="date">Ultima Visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="number">Dias última visita
+                <th scope="col" class="th-sortable th-w-16" data-sort-type="number">Dias última visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
@@ -367,7 +367,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                         <i class="bi bi-box-arrow-in-right"
                             style="margin-right:6px; font-size:1em;"></i>
                     </a>
-                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                    <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </td>
                 <td scope="row"><?= $formattedDate ?></td>
                 <td scope="row" class="<?= $classeDiasVisita ?>">
@@ -391,45 +391,45 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
 <div id="dash-longa-perm-content">
     <div class="dash-table-scroll">
     <table class="table table-sm table-striped table-hover table-condensed dash-sortable">
-        <thead style="background: #2f6f9f; background-image: none;">
+        <thead>
             <tr>
-                <th scope="col" style="width:5%" class="th-sortable" data-sort-type="number">Id Int
+                <th scope="col" class="th-sortable th-w-5" data-sort-type="number">Id Int
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:15%" class="th-sortable" data-sort-type="text">Hospital
+                <th scope="col" class="th-sortable th-w-15" data-sort-type="text">Hospital
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:11%" class="th-sortable" data-sort-type="text">Seguradora
+                <th scope="col" class="th-sortable th-w-11" data-sort-type="text">Seguradora
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:24%" class="th-sortable" data-sort-type="text">Paciente
+                <th scope="col" class="th-sortable th-w-24" data-sort-type="text">Paciente
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="date">Data Internação
+                <th scope="col" class="th-sortable th-w-16" data-sort-type="date">Data Internação
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:13%" class="th-sortable" data-sort-type="date">Última visita
+                <th scope="col" class="th-sortable th-w-13" data-sort-type="date">Última visita
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc">▼</a>
                     </span>
                 </th>
-                <th scope="col" style="width:16%" class="th-sortable" data-sort-type="number">Dias Internacao
+                <th scope="col" class="th-sortable th-w-16" data-sort-type="number">Dias Internacao
                     <span class="sort-icons">
                         <a href="#" data-dir="asc">▲</a>
                         <a href="#" data-dir="desc" class="active">▼</a>
@@ -476,7 +476,7 @@ $longa_perm_list = array_slice($longa_perm_list, 0, 50);
                         <i class="bi bi-box-arrow-right"
                             style="color:green; margin-right:6px; font-size:1em;"></i>
                     </a>
-                    <?= fullcare_mask_person_name_e($intern["nome_pac"] ?? "") ?>
+                    <?= htmlspecialchars($intern["nome_pac"] ?? '', ENT_QUOTES, 'UTF-8') ?>
                 </td>
                 <td scope="row"><?= $formattedDate ?></td>
                 <td scope="row"><?= $ultimaVisitaData ?? '—' ?></td>

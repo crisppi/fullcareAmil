@@ -216,7 +216,7 @@ if ($qtdIntItens > $limite) {
                                             <span class="hospital-user-chip">Nível <?= htmlspecialchars((string)$nivel_user, ENT_QUOTES, 'UTF-8') ?></span>
                                         </div>
 
-                                        <div class="hospital-user-card__actions action">
+                                        <div class="hospital-user-card__actions fc-list-action">
                                             <a href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/usuarios/editar/' . (int) $fk_usuario_hosp, ENT_QUOTES, 'UTF-8') ?>"
                                                 class="btn btn-sm btn-outline-secondary"
                                                 title="Editar usuário"

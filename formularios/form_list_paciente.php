@@ -391,7 +391,7 @@
                                     <?= $id_paciente ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table">
-                                    <?= fullcare_mask_person_name_e($nome_pac ?? "") ?>
+                                    <?= $nome_pac ?>
                                 </td>
                                 <td scope="row" class="nome-coluna-table">
                                     <?= $matricula_pac ?>
@@ -407,7 +407,7 @@
                                     <?= $cidade_pac ?>
                                 </td>
 
-                                <td class="action">
+                                <td class="fc-list-action">
                                     <div class="dropdown">
                                         <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                             role="button" data-bs-toggle="dropdown" style="color:#5e2363"

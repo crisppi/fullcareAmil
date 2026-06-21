@@ -143,7 +143,7 @@
                     <td class="action">
                         <!-- <a href="cad_imagem.php"><i name="type" value="create" style="color:green; margin-right:10px" class="bi bi-plus-square-fill edit-icon"></i></a> -->
                         <a href="<?= $BASE_URL ?>show_imagem.php?id_imagem=<?= $id_imagem ?>"><i
-                                style="color:green; margin-right:10px" class="fas fa-eye check-icon"></i></a>
+                                class="bi bi-eye text-success"></i></a>
 
                         <a href="<?= $BASE_URL ?>edit_imagem.php?id_imagem=<?= $id_imagem ?>"><i style="color:blue"
                                 name="type" value="edite" class="aparecer-acoes far fa-edit edit-icon"></i></a>

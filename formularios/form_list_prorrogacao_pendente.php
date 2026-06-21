@@ -419,16 +419,16 @@ $baseParams = [
             <table class="table table-sm table-striped table-hover table-condensed">
                 <thead>
                     <tr>
-                        <th scope="col" style="min-width: 60px;">Id-Int</th>
-                        <th scope="col" style="min-width: 150px;">Hospital</th>
-                        <th scope="col" style="min-width: 150px;">Paciente</th>
-                        <th scope="col" style="min-width: 150px;">Seguradora</th>
-                        <th scope="col" style="min-width: 100px;">Data Int</th>
-                        <th scope="col" style="min-width: 80px;">Senha</th>
-                        <th scope="col" style="min-width: 80px;">Dias Int</th>
-                        <th scope="col" style="min-width: 90px;">Últ Visita</th>
-                        <th scope="col" style="min-width: 240px;">Períodos em aberto para prorrogar</th>
-                        <th scope="col" style="min-width: 80px;">Ações</th>
+                        <th scope="col" class="th-min-60">Id-Int</th>
+                        <th scope="col" class="th-min-150">Hospital</th>
+                        <th scope="col" class="th-min-150">Paciente</th>
+                        <th scope="col" class="th-min-150">Seguradora</th>
+                        <th scope="col" class="th-min-100">Data Int</th>
+                        <th scope="col" class="th-min-80">Senha</th>
+                        <th scope="col" class="th-min-80">Dias Int</th>
+                        <th scope="col" class="th-min-90">Últ Visita</th>
+                        <th scope="col" class="th-min-240">Períodos em aberto para prorrogar</th>
+                        <th scope="col" class="th-min-80">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -441,7 +441,7 @@ $baseParams = [
                     <tr style="font-size:13px;">
                         <td><?= (int)$row['id_internacao'] ?></td>
                         <td style="font-weight:bolder;"><?= e($row['nome_hosp']) ?></td>
-                        <td><?= e(fullcare_mask_person_name($row['nome_pac'] ?? "")) ?></td>
+                        <td><?= e($row['nome_pac']) ?></td>
                         <td><?= e($row['seguradora_seg']) ?></td>
                         <td><?= !empty($row['data_intern_int']) ? e(date('d/m/Y', strtotime($row['data_intern_int']))) : '--' ?></td>
                         <td style="font-weight:bolder;"><?= e($row['senha_int']) ?></td>
@@ -459,8 +459,7 @@ $baseParams = [
                                         <button class="btn btn-default"
                                             onclick="window.location.href='<?= e(rtrim($BASE_URL, '/')) ?>/internacoes/visualizar/<?= (int)$row['id_internacao'] ?>'"
                                             style="font-size: .9rem;">
-                                            <i class="fas fa-eye"
-                                                style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>
+                                            <i class="bi bi-eye text-success"></i>
                                             Visualização
                                         </button>
                                     </li>

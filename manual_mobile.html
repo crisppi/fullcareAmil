@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual | App FullCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f8f6fb;color:#2d1740;line-height:1.5}
+    header{background:linear-gradient(135deg,#6b3d7d,#422257);color:#fff;padding:48px 5vw 80px}
+    header p{max-width:760px;color:rgba(255,255,255,.9)}
+    main{width:min(1100px,92vw);margin:-30px auto 60px;padding-top:32px}
+    h2{font-size:25px;margin:30px 0 14px;position:relative}
+    h2::after{content:"";position:absolute;left:0;bottom:-6px;width:60px;height:3px;border-radius:99px;background:linear-gradient(90deg,#8a5ab0,#5ad1f0)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+    .card{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(90,43,120,.1);box-shadow:0 14px 28px rgba(57,23,92,.12);font-size:.88rem}
+    ul{margin:0;padding-left:18px}.pill{display:inline-flex;gap:8px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;text-transform:uppercase;font-size:13px;letter-spacing:.08em;margin-bottom:20px}
+    a.voltar,.hero-sys-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 12px;border-radius:999px;font-weight:700}
+    .hero-layout{display:flex;align-items:center;gap:24px;margin-bottom:20px;flex-wrap:wrap}.hero-logo{height:46px;max-width:200px}.hero-body{flex:1 1 280px}
+    footer{text-align:center;color:#6f6b78;padding:30px}
+    </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
+</head>
+<body>
+<header>
+    <div class="hero-layout">
+        <img src="img/LogoFullCare.png" alt="FullCare" class="hero-logo">
+        <div class="hero-body">
+            <div class="pill">Manual • Aplicativo</div>
+            <h1>App FullCare</h1>
+            <p>Aplicativo de apoio à auditoria em campo. O app não substitui o sistema web; ele agiliza censo, consulta de internações e lançamento de visitas.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+        </div>
+        <a class="hero-sys-link" href="manual.html">Voltar ao manual</a>
+    </div>
+</header>
+<main>
+    <section>
+        <h2>Rotinas principais</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Censo de internações</h3>
+                <ul>
+                    <li>Lista pacientes internados e prestadores disponíveis para auditoria.</li>
+                    <li>Use a pesquisa para localizar beneficiário, prestador ou convênio.</li>
+                    <li>A contagem deve refletir a mesma base operacional do sistema web.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Auditoria e visita</h3>
+                <ul>
+                    <li>Abre a internação e prioriza o lançamento de visita.</li>
+                    <li>Subitens como TUSS, prorrogação, alta, home care e evento adverso aparecem conforme o contexto.</li>
+                    <li>Longa permanência é calculada por dias de internação, não por botão de lançamento isolado.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Lançamento de visita</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Campos</h3>
+                <ul>
+                    <li><strong>Visita / Relatório</strong>: evolução principal da visita.</li>
+                    <li><strong>Programação terapêutica</strong>: planejamento vinculado à visita, quando aplicável.</li>
+                    <li>O histórico mostra visitas anteriores para consulta rápida.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Ditado</h3>
+                <ul>
+                    <li>O microfone no campo aciona o ditado nativo do aparelho.</li>
+                    <li>Revise o texto convertido antes de salvar.</li>
+                    <li>O horário salvo deve respeitar o fuso operacional do sistema.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Privacidade</h2>
+        <article class="card">
+            <ul>
+                <li>A tela de login exige ciência da política de privacidade para acesso.</li>
+                <li>Use somente em dispositivo autorizado e protegido por senha/biometria.</li>
+                <li>Não armazene dados sensíveis fora do app ou do sistema FullCare.</li>
+            </ul>
+        </article>
+    </section>
+</main>
+<footer>Manual App FullCare • versão 0.4</footer>
+</body>
+</html>

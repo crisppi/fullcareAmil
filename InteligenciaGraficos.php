@@ -266,6 +266,202 @@ $hospitais = $chartService->listHospitals($ctx);
 }
 </style>
 
+<style>
+.ai-chart-page {
+    padding: 14px 16px 30px !important;
+}
+
+.ai-chart-page .fc-module-header {
+    margin-bottom: 10px !important;
+}
+
+.ai-chart-shell {
+    grid-template-columns: 270px minmax(0, 1fr) !important;
+    gap: 10px !important;
+}
+
+.ai-chart-panel {
+    border: 1px solid rgba(47, 111, 159, .16) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 18px rgba(35, 102, 147, .08) !important;
+}
+
+.ai-chart-sidebar {
+    box-shadow: 0 12px 24px rgba(31, 76, 110, .16) !important;
+    padding: 12px !important;
+}
+
+.ai-chart-sidebar h2,
+.ai-chart-table h2,
+.ai-chart-insight h2 {
+    font-size: .72rem !important;
+    font-weight: 820 !important;
+    letter-spacing: .06em !important;
+    margin: 0 0 10px !important;
+}
+
+.ai-chart-field {
+    margin-bottom: 9px !important;
+}
+
+.ai-chart-field label {
+    font-size: .64rem !important;
+    font-weight: 760 !important;
+    margin-bottom: 4px !important;
+}
+
+.ai-chart-field select {
+    border-radius: 8px !important;
+    font-size: .74rem !important;
+    height: 33px !important;
+    padding: 0 9px !important;
+}
+
+.ai-chart-sidebar .ai-chart-field select {
+    box-shadow: 0 7px 14px rgba(18, 48, 78, .14) !important;
+}
+
+.ai-chart-suggestions {
+    gap: 7px !important;
+    margin-top: 12px !important;
+}
+
+.ai-chart-suggestion {
+    border-radius: 9px !important;
+    font-size: .72rem !important;
+    font-weight: 740 !important;
+    line-height: 1.18 !important;
+    padding: 8px 9px !important;
+}
+
+.ai-chart-prompt {
+    gap: 8px !important;
+    grid-template-columns: minmax(0, 1fr) 42px 42px !important;
+    padding: 9px !important;
+}
+
+.ai-chart-prompt textarea {
+    border-color: #bfd4e6 !important;
+    border-radius: 9px !important;
+    font-size: .78rem !important;
+    min-height: 40px !important;
+    padding: 9px 10px !important;
+}
+
+.ai-chart-submit,
+.ai-chart-clear {
+    border-radius: 9px !important;
+    font-size: .9rem !important;
+    min-height: 40px !important;
+}
+
+.ai-chart-submit {
+    background: linear-gradient(135deg, #2f6f9f, #55b4d4) !important;
+    box-shadow: 0 7px 15px rgba(35, 102, 147, .16) !important;
+}
+
+.ai-chart-stage {
+    padding: 12px !important;
+}
+
+.ai-chart-stage-head {
+    margin-bottom: 9px !important;
+}
+
+.ai-chart-stage-title {
+    color: #21364f !important;
+    font-size: .94rem !important;
+    font-weight: 820 !important;
+}
+
+.ai-chart-stage-meta {
+    color: #63758b !important;
+    font-size: .72rem !important;
+    font-weight: 720 !important;
+}
+
+.ai-chart-canvas-wrap {
+    background: linear-gradient(180deg, #fff 0%, #f7fbfe 100%) !important;
+    border-color: #d7e6f1 !important;
+    border-radius: 10px !important;
+    height: 315px !important;
+    padding: 10px !important;
+}
+
+.ai-chart-empty {
+    background:
+        linear-gradient(180deg, rgba(247, 251, 254, .86), rgba(255, 255, 255, .92)),
+        radial-gradient(circle at 50% 0%, rgba(94, 180, 216, .10), transparent 30%) !important;
+    border: 1px dashed #c9ddeb !important;
+    border-radius: 10px !important;
+    color: #63758b !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    font-size: .8rem !important;
+    min-height: 315px !important;
+    padding: 20px !important;
+}
+
+.ai-chart-help-example {
+    background: #fff;
+    border: 1px solid #c9ddeb;
+    border-left: 4px solid #2f6f9f;
+    border-radius: 10px;
+    color: #25364b;
+    font-size: .76rem;
+    font-weight: 740;
+    padding: 8px 10px;
+}
+
+.ai-chart-help-example:hover {
+    background: #eef7fc;
+}
+
+.ai-chart-insight,
+.ai-chart-table {
+    margin-top: 10px !important;
+    padding: 12px !important;
+}
+
+.ai-chart-insight-meta {
+    font-size: .62rem !important;
+    margin-bottom: 5px !important;
+}
+
+.ai-chart-insight-text {
+    border-left-width: 3px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 16px rgba(31, 76, 110, .08) !important;
+    font-size: .78rem !important;
+    line-height: 1.38 !important;
+    padding: 10px 12px !important;
+}
+
+.ai-chart-table table {
+    font-size: .76rem !important;
+}
+
+.ai-chart-table th {
+    font-size: .62rem !important;
+    font-weight: 820 !important;
+    padding: 7px 8px !important;
+}
+
+.ai-chart-table td {
+    padding: 7px 8px !important;
+}
+
+@media (max-width: 980px) {
+    .ai-chart-shell {
+        grid-template-columns: 1fr !important;
+    }
+
+    .ai-chart-prompt {
+        grid-template-columns: minmax(0, 1fr) 42px 42px !important;
+    }
+}
+</style>
+
 <div class="ai-chart-page">
     <div class="fc-module-header fc-module-header--inteligencia">
         <div class="fc-module-header__copy">
@@ -282,35 +478,7 @@ $hospitais = $chartService->listHospitals($ctx);
 
     <div class="ai-chart-shell">
         <aside class="ai-chart-panel ai-chart-sidebar">
-            <h2>Filtros</h2>
-            <div class="ai-chart-field">
-                <label for="chartHospital">Hospital</label>
-                <select id="chartHospital">
-                    <option value="">Todos os hospitais</option>
-                    <?php foreach ($hospitais as $h): ?>
-                        <option value="<?= (int)$h['id_hospital'] ?>"><?= htmlspecialchars((string)$h['nome_hosp'], ENT_QUOTES, 'UTF-8') ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="ai-chart-field">
-                <label for="chartStatus">Status</label>
-                <select id="chartStatus">
-                    <option value="internados">Internados</option>
-                    <option value="todos">Todos</option>
-                    <option value="alta">Com alta</option>
-                </select>
-            </div>
-            <div class="ai-chart-field">
-                <label for="chartDays">Período</label>
-                <select id="chartDays">
-                    <option value="30">Últimos 30 dias</option>
-                    <option value="90">Últimos 90 dias</option>
-                    <option value="180" selected>Últimos 180 dias</option>
-                    <option value="365">Últimos 12 meses</option>
-                    <option value="730">Últimos 24 meses</option>
-                </select>
-            </div>
-
+            <h2>Exemplos</h2>
             <div class="ai-chart-suggestions">
                 <button type="button" class="ai-chart-suggestion" data-question="Crie um gráfico de saving por hospital">Saving por hospital</button>
                 <button type="button" class="ai-chart-suggestion" data-question="Mostre saving por auditor">Saving por auditor</button>
@@ -382,9 +550,9 @@ $hospitais = $chartService->listHospitals($ctx);
 
     function filters() {
         return {
-            hospital_id: document.getElementById('chartHospital').value,
-            status: document.getElementById('chartStatus').value,
-            days: document.getElementById('chartDays').value
+            hospital_id: '',
+            status: 'todos',
+            days: 180
         };
     }
 
@@ -594,6 +762,43 @@ $hospitais = $chartService->listHospitals($ctx);
         input.focus();
     }
 
+    function renderAssistantResponse(payload) {
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+        title.textContent = payload.title || 'Resposta da IA';
+        meta.textContent = payload.mode === 'clarify' ? 'Mais detalhes necessários' : 'Ajuda';
+        wrap.style.display = 'none';
+        empty.style.display = 'flex';
+        const examples = Array.isArray(payload.examples) ? payload.examples : [];
+        if (examples.length) {
+            empty.innerHTML = examples.map(function(example) {
+                return '<button type="button" class="ai-chart-help-example" data-question="' + escapeHtml(example) + '">' + escapeHtml(example) + '</button>';
+            }).join('');
+        } else {
+            empty.textContent = 'Sem gráfico para exibir nesta resposta.';
+        }
+        insight.textContent = payload.insight || 'Pergunte por um indicador e um agrupamento para gerar um gráfico.';
+        touchInsightTime();
+        if (examples.length) {
+            table.innerHTML = '<table><thead><tr><th>Exemplo</th><th>Uso</th><th>Resultado</th></tr></thead><tbody>' +
+                examples.map(function(example) {
+                    return '<tr><td>' + escapeHtml(example) + '</td><td>Pergunta pronta</td><td>Gera gráfico quando clicado</td></tr>';
+                }).join('') +
+                '</tbody></table>';
+        } else {
+            table.textContent = 'Nenhum dado carregado.';
+        }
+        document.querySelectorAll('.ai-chart-help-example').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const question = btn.getAttribute('data-question') || btn.textContent;
+                input.value = question;
+                generate(question);
+            });
+        });
+    }
+
     async function generate(question) {
         title.textContent = 'Gerando gráfico...';
         meta.textContent = 'Consultando dados';
@@ -614,6 +819,10 @@ $hospitais = $chartService->listHospitals($ctx);
             const data = await response.json();
             if (!response.ok || !data.success) {
                 throw new Error(data.error || 'Não foi possível gerar o gráfico.');
+            }
+            if (data.mode === 'help' || data.mode === 'clarify') {
+                renderAssistantResponse(data);
+                return;
             }
             renderChart(data);
         } catch (err) {

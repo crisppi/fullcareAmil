@@ -30,6 +30,7 @@
     .hero-sys-link{color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:999px;transition:background .2s,color .2s}
     .hero-sys-link:hover{background:rgba(0,0,0,.15)}
 </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
 </head>
 <body>
 <header>
@@ -38,7 +39,7 @@
         <div class="hero-body">
             <div class="pill">Manual • Internação</div>
             <h1>Internação</h1>
-            <p>Processo central conectando paciente, hospital, visitas, prorrogações, TUSS, negociações e contas.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+            <p>Processo central conectando paciente, hospital, visitas, prorrogações, TUSS, negociações, alta e contas.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
         </div>
         <a class="hero-sys-link" href="dashboard">← Voltar ao sistema</a>
     </div>
@@ -50,21 +51,21 @@
             <article class="card">
                 <h3>Etapas</h3>
                 <ol style="padding-left:18px;margin:0">
-                    <li>Selecione paciente pelo hub ou lista.</li>
-                    <li>Informe hospital, acomodação e status (internado, alta, prorrogado).</li>
-                    <li>Datas inicial/final: cada novo capeante assume data final anterior + 1.</li>
-                    <li>Associe auditores (médico, enfermagem, administrativo).</li>
-                    <li>Salvar gera número do capeante/parcial automaticamente.</li>
+                    <li>Selecione paciente pelo hub, busca global ou lista de internações.</li>
+                    <li>Informe hospital, data de internação, acomodação, senha e dados clínicos disponíveis.</li>
+                    <li>Após salvar, o detalhe da internação concentra resumo, status, visitas, prorrogações, TUSS, negociações e alta.</li>
+                    <li>Use a lista de internações para localizar casos por paciente, hospital, status e período.</li>
                 </ol>
             </article>
             <article class="card">
                 <h3>Abas disponíveis</h3>
                 <ul>
-                    <li><strong>Resumo</strong> – período, equipe, status da senha.</li>
-                    <li><strong>Visitas</strong> – linha do tempo com modal "Últimas visitas".</li>
-                    <li><strong>Prorrogações</strong> – solicitações/aprovações.</li>
-                    <li><strong>TUSS</strong> – procedimentos vinculados.</li>
-                    <li><strong>Negociações</strong> – acordos e descontos.</li>
+                    <li><strong>Resumo</strong> – dados da internação, status, dias internado e pendências.</li>
+                    <li><strong>Visitas</strong> – histórico, relatório, PDF por período e últimas visitas.</li>
+                    <li><strong>Prorrogações</strong> – solicitações, aprovações, datas e pendências.</li>
+                    <li><strong>TUSS</strong> – procedimentos e itens vinculados à internação.</li>
+                    <li><strong>Negociações</strong> – acordos, descontos e histórico financeiro.</li>
+                    <li><strong>Alta</strong> – registro ou reversão conforme permissão e status.</li>
                 </ul>
             </article>
         </div>
@@ -98,17 +99,17 @@
             <article class="card">
                 <h3>Layout</h3>
                 <ul>
-                    <li>Linha do tempo horizontal com marcador por visita.</li>
-                    <li>Relatório ocupa quase toda a largura; cabeçalho mostra data, acomodação e profissional.</li>
-                    <li>Botão "Últimas visitas" abre modal quase tela cheia, com scroll e ordenação descrescente.</li>
+                    <li>A aba de visitas mostra período selecionado, tabela de visitas e relatório da visita ativa.</li>
+                    <li>Botões de ação menores permitem gerar PDF do período e consultar últimas visitas.</li>
+                    <li>O relatório da visita aparece abaixo da lista, com modo foco quando necessário.</li>
                 </ul>
             </article>
             <article class="card">
                 <h3>Regras</h3>
                 <ul>
-                    <li>Máximo de 5 visitas recentes destacadas; demais via modal.</li>
-                    <li>Visitas atrasadas aparecem no dashboard e na aba com ícone de atenção.</li>
-                    <li>Link "Mostrar últimas visitas" abre modal com histórico completo (quase tela inteira).</li>
+                    <li>Visitas atrasadas alimentam a Central de Trabalho e a Fila do Auditor.</li>
+                    <li>O período selecionado controla quais visitas aparecem e quais entram no PDF.</li>
+                    <li>Use <strong>Nova Visita</strong> no detalhe ou na fila para manter o histórico atualizado.</li>
                 </ul>
             </article>
         </div>
@@ -120,14 +121,14 @@
             <article class="card">
                 <h3>Pelo histórico</h3>
                 <ul>
-                    <li>Na lista de internações, botão "PDF – Internação" gera arquivo com todas as visitas registradas.</li>
-                    <li>Ideal para auditorias completas ou envio para seguradora.</li>
+                    <li>Na aba de visitas, o PDF por período gera relatório das visitas filtradas.</li>
+                    <li>Ideal para auditorias, envio para seguradora e revisão de evolução por janela.</li>
                 </ul>
             </article>
             <article class="card">
                 <h3>Dentro da visita</h3>
                 <ul>
-                    <li>Na visualização da visita, botão "PDF" gera relatório apenas daquela evolução.</li>
+                    <li>Na linha da visita, o botão PDF gera relatório apenas daquele registro.</li>
                     <li>Usado quando hospital pede cópia isolada da visita (sem histórico completo).</li>
                 </ul>
             </article>
@@ -158,13 +159,13 @@
                     </tr>
                     <tr>
                         <td>Longa permanência</td>
-                        <td>Dashboard destaca paciente e envia e-mail da régua.</td>
-                        <td>Registrar justificativa em Observações.</td>
+                        <td>Central de Trabalho e Painel Operacional destacam o paciente por dias internado.</td>
+                        <td>Revisar visita, prorrogação, alta, home care e pendências assistenciais.</td>
                     </tr>
                     <tr>
                         <td>Visita sem relatório</td>
-                        <td>Ícone de alerta na timeline e na lista de visitas.</td>
-                        <td>Registrar evolução ou cancelar visita.</td>
+                        <td>Fila do auditor e Central de Trabalho indicam visita em atraso.</td>
+                        <td>Registrar visita, revisar data ou justificar ausência.</td>
                     </tr>
                 </tbody>
             </table>
@@ -193,6 +194,6 @@
         </div>
     </section>
 </main>
-<footer>Manual Internação • versão 0.2</footer>
+<footer>Manual Internação • versão 0.4</footer>
 </body>
 </html>

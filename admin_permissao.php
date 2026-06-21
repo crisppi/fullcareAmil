@@ -76,163 +76,282 @@ $isDiretoriaRole = static function ($cargoTxt): bool {
 include_once __DIR__ . '/templates/header.php';
 ?>
 <style>
-/* ====== Layout geral da tabela ====== */
-.table-perms {
-    border-top: 2px solid #5e2363;
-    border-collapse: separate;
-}
+    .admin-perms-page {
+        max-width: 100% !important;
+        padding: 14px 16px 32px !important;
+    }
 
-.table-perms th,
-.table-perms td {
-    vertical-align: middle;
-    padding: .85rem .9rem;
-}
+    .perms-hero {
+        align-items: center;
+        background: linear-gradient(120deg, #e8f5fd 0%, #f7fbff 72%);
+        border: 1px solid rgba(47, 111, 159, .22);
+        border-radius: 12px;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08);
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 14px 16px;
+    }
 
-.table-perms tbody tr:hover td {
-    background: #faf7ff;
-}
+    .perms-hero h3 {
+        color: #21364f;
+        font-size: 1.25rem;
+        font-weight: 820;
+        line-height: 1.1;
+        margin: 0 0 4px;
+    }
 
-/* ====== Cabeçalho no padrão do sistema ====== */
-.table-perms thead tr {
-    background: #5e2363 !important;
-}
+    .perms-hero p {
+        color: #5b6f87;
+        font-size: .78rem;
+        font-weight: 560;
+        line-height: 1.35;
+        margin: 0;
+    }
 
-.table-perms thead th {
-    color: #fff !important;
-    border-color: #5e2363 !important;
-    font-weight: 600;
-    vertical-align: middle;
-}
+    .perms-hero .perms-count {
+        background: #fff;
+        border: 1px solid rgba(47, 111, 159, .18);
+        border-radius: 999px;
+        color: #2f6f9f;
+        font-size: .72rem;
+        font-weight: 760;
+        padding: 6px 10px;
+        white-space: nowrap;
+    }
 
-/* ====== Badge de data ====== */
-.badge-updated {
-    font-size: .72rem;
-    font-weight: 600;
-    letter-spacing: .2px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-}
+    .perms-toolbar {
+        align-items: center;
+        background: #fff;
+        border: 1px solid rgba(47, 111, 159, .16);
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(35, 102, 147, .07);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 10px;
+        padding: 9px 10px;
+    }
 
-/* ====== Largura total ====== */
-.container-fluid {
-    max-width: 100% !important;
-}
+    .perms-toolbar .btn {
+        align-items: center;
+        border-radius: 9px;
+        display: inline-flex;
+        font-size: .72rem;
+        font-weight: 720;
+        min-height: 31px;
+        padding: 5px 10px;
+    }
 
-/* ====== Checkboxes refinados ====== */
-.table-perms td.text-center {
-    white-space: nowrap;
-}
+    .perms-toolbar .btn-primary {
+        background: linear-gradient(135deg, #2f6f9f, #55b4d4);
+        border: 0;
+        box-shadow: 0 6px 14px rgba(35, 102, 147, .16);
+    }
 
-.perm-wrapper {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: .15rem;
-    border-radius: .5rem;
-    transition: background-color .15s ease;
-}
+    .perms-toolbar .btn-outline-secondary {
+        background: #f8fbfe;
+        border-color: #c9ddeb;
+        color: #40556d;
+    }
 
-td.text-center .perm-wrapper:hover {
-    background-color: #f5f3ff;
-}
+    .perms-toolbar .btn-outline-danger {
+        background: #fff7f7;
+        border-color: #ffc9c9;
+        color: #d24141;
+    }
 
-/* hover suave */
+    .perms-table-card {
+        background: #fff;
+        border: 1px solid rgba(47, 111, 159, .16);
+        border-radius: 12px;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08);
+        overflow: auto;
+    }
 
-/* Ícone estilizado (appearance none) */
-.perm-checkbox {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #cbd5e1;
-    border-radius: 6px;
-    background: #fff;
-    display: inline-grid;
-    place-content: center;
-    cursor: pointer;
-    vertical-align: middle;
-    transition: border-color .15s ease, box-shadow .15s ease, transform .05s ease;
-}
+    .table-perms {
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+        min-width: 1180px;
+    }
 
-/* “tick” (check) */
-.perm-checkbox::before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    transform: scale(0);
-    transition: transform .12s ease-in-out;
-    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 18%, 80% 0, 43% 62%);
-    background: currentColor;
-    /* herda a cor setada por ação */
-}
+    .perms-table-card .table.table-perms > :not(caption) > * > * {
+        border-color: #e1edf6 !important;
+        padding: .58rem .62rem !important;
+        vertical-align: middle;
+    }
 
-/* Marcado */
-.perm-checkbox:checked {
-    border-color: currentColor;
-}
+    .table-perms tbody tr {
+        height: 34px;
+    }
 
-.perm-checkbox:checked::before {
-    transform: scale(1);
-}
+    .table-perms tbody tr:hover td {
+        background: #eef7fc !important;
+    }
 
-/* Hover/focus */
-.perm-checkbox:hover {
-    box-shadow: 0 0 0 4px rgba(94, 35, 99, .10);
-}
+    .table-perms thead th {
+        background: #2f6f9f !important;
+        border-color: #2f6f9f !important;
+        color: #fff !important;
+        font-size: .64rem;
+        font-weight: 820;
+        letter-spacing: .045em;
+        position: sticky;
+        text-transform: uppercase;
+        top: 0;
+        vertical-align: middle;
+        z-index: 2;
+    }
 
-.perm-checkbox:active {
-    transform: scale(.98);
-}
+    .table-perms tbody td {
+        color: #34475d;
+        font-size: .74rem;
+        font-weight: 560;
+        line-height: 1.28;
+    }
 
-.perm-checkbox:focus-visible {
-    outline: 2px solid #5e2363;
-    outline-offset: 2px;
-    border-radius: 4px;
-}
+    .table-perms tbody tr:nth-child(odd) td {
+        background: #fff;
+    }
 
-/* Cores por ação (suaves e consistentes) */
-.perm-checkbox[data-field="create"] {
-    color: #22c55e;
-}
+    .table-perms tbody tr:nth-child(even) td {
+        background: #f3f8fc;
+    }
 
-/* verde */
-.perm-checkbox[data-field="edit"] {
-    color: #f59e0b;
-}
+    .table-perms td:nth-child(2) {
+        color: #22364e;
+        font-weight: 740;
+    }
 
-/* laranja */
-.perm-checkbox[data-field="delete"] { color: #ef4444; }
-.perm-checkbox[data-field="view"] { color: #2563eb; }
-.perm-checkbox[data-field="discharge"] { color: #0ea5a3; }
-.perm-checkbox[data-field="close_management"] { color: #9333ea; }
-.perm-checkbox[data-field="generate_pdf"] { color: #0284c7; }
+    .table-perms td:nth-child(3) {
+        color: #63758b;
+        font-size: .7rem;
+        text-transform: lowercase;
+    }
 
-/* Linha alterada (feedback sutil) */
-tr.table-warning td {
-    background: #fff8e7;
-}
+    .badge-updated {
+        background: #f4f8fc;
+        border: 1px solid #d9e6f1;
+        border-radius: 7px;
+        color: #34475d !important;
+        font-size: .66rem;
+        font-weight: 680;
+        letter-spacing: .1px;
+        padding: 3px 7px;
+    }
+
+    .table-perms td.text-center {
+        white-space: nowrap;
+    }
+
+    .perm-wrapper {
+        align-items: center;
+        border-radius: .45rem;
+        display: inline-flex;
+        justify-content: center;
+        padding: .08rem;
+        transition: background-color .15s ease;
+    }
+
+    td.text-center .perm-wrapper:hover {
+        background-color: #eef7fc;
+    }
+
+    .perm-checkbox {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #fff;
+        border: 2px solid #cbd8e6;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-grid;
+        height: 17px;
+        place-content: center;
+        transition: border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+        vertical-align: middle;
+        width: 17px;
+    }
+
+    .perm-checkbox::before {
+        background: currentColor;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 18%, 80% 0, 43% 62%);
+        content: "";
+        height: 9px;
+        transform: scale(0);
+        transition: transform .12s ease-in-out;
+        width: 9px;
+    }
+
+    .perm-checkbox:checked {
+        border-color: currentColor;
+    }
+
+    .perm-checkbox:checked::before {
+        transform: scale(1);
+    }
+
+    .perm-checkbox:hover {
+        box-shadow: 0 0 0 3px rgba(47, 111, 159, .12);
+    }
+
+    .perm-checkbox:active {
+        transform: scale(.98);
+    }
+
+    .perm-checkbox:focus-visible {
+        border-radius: 4px;
+        outline: 2px solid #2f6f9f;
+        outline-offset: 2px;
+    }
+
+    .perm-checkbox[data-field="view"] { color: #2563eb; }
+    .perm-checkbox[data-field="create"] { color: #22c55e; }
+    .perm-checkbox[data-field="edit"] { color: #f59e0b; }
+    .perm-checkbox[data-field="delete"] { color: #ef4444; }
+    .perm-checkbox[data-field="discharge"] { color: #0ea5a3; }
+    .perm-checkbox[data-field="close_management"] { color: #9333ea; }
+    .perm-checkbox[data-field="generate_pdf"] { color: #0284c7; }
+
+    tr.table-warning td {
+        background: #fff6df !important;
+    }
+
+    @media (max-width: 900px) {
+        .admin-perms-page {
+            padding: 10px 12px 28px !important;
+        }
+
+        .perms-hero {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
 </style>
 
-<div class="container-fluid mt-3 px-4">
-    <h3 class="mb-3">Permissões por Usuário</h3>
-    <p class="text-muted mb-3">Matriz por ação: <strong>Visualizar</strong>, <strong>Criar</strong>,
-        <strong>Editar</strong>, <strong>Deletar</strong>, <strong>Dar Alta</strong>,
-        <strong>Fechar Gestão</strong> e <strong>Gerar PDF</strong>.
-    </p>
+<div class="container-fluid admin-perms-page">
+    <section class="perms-hero">
+        <div>
+            <h3>Permissões por usuário</h3>
+            <p>Matriz por ação para visualizar, criar, editar, deletar, dar alta, fechar gestão e gerar PDF.</p>
+        </div>
+        <span class="perms-count"><?= count($rows) ?> usuário<?= count($rows) === 1 ? '' : 's' ?></span>
+    </section>
 
-    <div class="mb-2 d-flex gap-2 flex-wrap">
-        <button id="btnSaveAll" class="btn btn-primary">Salvar alterações</button>
-        <button id="btnSelectAllView" class="btn btn-outline-secondary btn-sm">Marcar Visualizar (todos)</button>
-        <button id="btnSelectAllCreate" class="btn btn-outline-secondary btn-sm">Marcar Criar (todos)</button>
-        <button id="btnSelectAllEdit" class="btn btn-outline-secondary btn-sm">Marcar Editar (todos)</button>
-        <button id="btnSelectAllDelete" class="btn btn-outline-secondary btn-sm">Marcar Deletar (todos)</button>
-        <button id="btnSelectAllDischarge" class="btn btn-outline-secondary btn-sm">Marcar Dar Alta (todos)</button>
-        <button id="btnSelectAllCloseMgmt" class="btn btn-outline-secondary btn-sm">Marcar Fechar Gestão (todos)</button>
-        <button id="btnSelectAllPdf" class="btn btn-outline-secondary btn-sm">Marcar Gerar PDF (todos)</button>
-        <button id="btnClearAll" class="btn btn-outline-danger btn-sm">Limpar todos</button>
+    <div class="perms-toolbar">
+        <button id="btnSaveAll" class="btn btn-primary">Salvar</button>
+        <button id="btnSelectAllView" class="btn btn-outline-secondary btn-sm">Visualizar todos</button>
+        <button id="btnSelectAllCreate" class="btn btn-outline-secondary btn-sm">Criar todos</button>
+        <button id="btnSelectAllEdit" class="btn btn-outline-secondary btn-sm">Editar todos</button>
+        <button id="btnSelectAllDelete" class="btn btn-outline-secondary btn-sm">Deletar todos</button>
+        <button id="btnSelectAllDischarge" class="btn btn-outline-secondary btn-sm">Dar alta todos</button>
+        <button id="btnSelectAllCloseMgmt" class="btn btn-outline-secondary btn-sm">Fechar gestão todos</button>
+        <button id="btnSelectAllPdf" class="btn btn-outline-secondary btn-sm">Gerar PDF todos</button>
+        <button id="btnClearAll" class="btn btn-outline-danger btn-sm">Limpar</button>
     </div>
 
-    <div class="table-responsive">
+    <div class="perms-table-card table-responsive">
         <table class="table table-striped table-perms">
             <thead>
                 <tr>

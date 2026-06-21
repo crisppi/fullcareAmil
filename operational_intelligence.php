@@ -149,18 +149,292 @@ include_once("templates/header.php");
         color: #198754;
         font-weight: 600;
     }
+
+    .operational-report-page {
+        margin-top: 12px !important;
+        padding: 0 14px 30px !important;
+        color: #27364a;
+    }
+
+    .operational-report-page .row {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 12px;
+    }
+
+    .operational-report-page .alert-info {
+        background: linear-gradient(120deg, #e8f5fd 0%, #f7fbff 74%);
+        border: 1px solid rgba(47, 111, 159, .22);
+        border-radius: 12px;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08);
+        color: #5b6f87;
+        font-size: .78rem;
+        font-weight: 560;
+        line-height: 1.35;
+        margin-bottom: 10px;
+        padding: 12px 14px;
+    }
+
+    .operational-report-page .alert-info strong {
+        color: #21364f;
+        font-size: .86rem;
+        font-weight: 820;
+    }
+
+    .operational-report-page .insight-card {
+        background: linear-gradient(180deg, #fff 0%, #fbfdff 100%);
+        border: 1px solid rgba(47, 111, 159, .16);
+        border-radius: 12px;
+        box-shadow: 0 8px 18px rgba(35, 102, 147, .08);
+        margin-bottom: 10px;
+        padding: 12px 14px;
+    }
+
+    .operational-report-page .insight-card h4 {
+        color: #21364f;
+        font-size: .88rem;
+        font-weight: 820;
+        letter-spacing: 0;
+        margin: 0 0 7px;
+    }
+
+    .operational-report-page .text-muted {
+        color: #63758b !important;
+    }
+
+    .operational-report-page p {
+        font-size: .8rem;
+        line-height: 1.35;
+    }
+
+    .operational-report-page small,
+    .operational-report-page .small {
+        font-size: .7rem !important;
+    }
+
+    .operational-report-page .display-5 {
+        color: #1f2f45;
+        font-size: 1.45rem;
+        font-weight: 780;
+        line-height: 1;
+    }
+
+    .operational-report-page .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        color: #34475d;
+        font-size: .74rem;
+        margin-bottom: 8px;
+        overflow: hidden;
+    }
+
+    .operational-report-page .table thead th {
+        background: #2f6f9f;
+        border: 0;
+        color: #fff;
+        font-size: .62rem;
+        font-weight: 820;
+        letter-spacing: .04em;
+        padding: 7px 8px;
+        text-transform: uppercase;
+    }
+
+    .operational-report-page .table tbody td {
+        border-bottom: 1px solid #e1edf6;
+        padding: 7px 8px;
+        vertical-align: middle;
+    }
+
+    .operational-report-page .table tbody tr:nth-child(even) td {
+        background: #f3f8fc;
+    }
+
+    .operational-report-page .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .operational-report-page .form-label {
+        color: #5a6e86 !important;
+        font-size: .68rem !important;
+        font-weight: 760;
+        margin-bottom: 4px;
+    }
+
+    .operational-report-page .form-select,
+    .operational-report-page .form-control {
+        background-color: #fff;
+        border: 1px solid #bfd4e6;
+        border-radius: 8px;
+        color: #25364b;
+        font-size: .76rem;
+        min-height: 34px;
+        padding: 5px 9px;
+    }
+
+    .operational-report-page .btn {
+        border-radius: 9px;
+        font-size: .74rem;
+        font-weight: 720;
+        min-height: 34px;
+        padding: 6px 11px;
+    }
+
+    .operational-report-page .btn-primary {
+        background: linear-gradient(135deg, #2f6f9f, #55b4d4);
+        border: 0;
+        box-shadow: 0 7px 15px rgba(35, 102, 147, .16);
+    }
+
+    .operational-report-page .border.rounded {
+        background: #f8fbfe;
+        border-color: #d7e6f1 !important;
+        border-radius: 10px !important;
+    }
+
+    .operational-report-page ul {
+        color: #34475d;
+        font-size: .78rem;
+        line-height: 1.5;
+        padding-left: 1rem;
+    }
+
+    @media (max-width: 900px) {
+        .operational-report-page {
+            padding: 0 12px 28px !important;
+        }
+    }
+    </style>
+    <link href="<?= $BASE_URL ?>css/operational_reports.css?v=<?= @filemtime(__DIR__ . '/css/operational_reports.css') ?>" rel="stylesheet">
+    <style>
+    .operational-report-page {
+        margin-top: 8px !important;
+        padding: 0 14px 28px !important;
+    }
+
+    .operational-report-page .fc-module-header {
+        margin-bottom: 10px !important;
+    }
+
+    .operational-report-page .op-explain {
+        align-items: center;
+        background: #fff !important;
+        border: 1px solid rgba(47, 111, 159, .16) !important;
+        border-left: 4px solid #2f6f9f !important;
+        border-radius: 10px !important;
+        box-shadow: 0 7px 16px rgba(35, 102, 147, .07) !important;
+        color: #5b6f87 !important;
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px !important;
+        padding: 8px 11px !important;
+    }
+
+    .operational-report-page .op-explain strong {
+        color: #21364f !important;
+        font-size: .78rem !important;
+        font-weight: 820 !important;
+        white-space: nowrap;
+    }
+
+    .operational-report-page .op-explain span {
+        font-size: .72rem !important;
+        line-height: 1.25 !important;
+    }
+
+    .operational-report-page .row {
+        --bs-gutter-x: 10px !important;
+        --bs-gutter-y: 10px !important;
+    }
+
+    .operational-report-page .insight-card {
+        border: 1px solid rgba(47, 111, 159, .16) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 7px 16px rgba(35, 102, 147, .07) !important;
+        margin: 0 0 10px !important;
+        padding: 10px 12px !important;
+    }
+
+    .operational-report-page .insight-card h4 {
+        color: #21364f !important;
+        font-size: .82rem !important;
+        font-weight: 820 !important;
+        margin-bottom: 5px !important;
+    }
+
+    .operational-report-page .insight-card p {
+        font-size: .74rem !important;
+        line-height: 1.25 !important;
+        margin-bottom: 7px !important;
+    }
+
+    .operational-report-page .display-5 {
+        color: #1f2f45 !important;
+        font-size: 1.35rem !important;
+        font-weight: 820 !important;
+    }
+
+    .operational-report-page .forecast-table th,
+    .operational-report-page .table thead th {
+        background: #2f6f9f !important;
+        color: #fff !important;
+        font-size: .6rem !important;
+        padding: 6px 8px !important;
+    }
+
+    .operational-report-page .forecast-table td,
+    .operational-report-page .table tbody td {
+        font-size: .68rem !important;
+        padding: 6px 8px !important;
+    }
+
+    .operational-report-page .form-select,
+    .operational-report-page .form-control {
+        border: 1px solid #bfd4e6 !important;
+        border-radius: 8px !important;
+        font-size: .72rem !important;
+        height: 32px !important;
+        min-height: 32px !important;
+    }
+
+    .operational-report-page .btn {
+        border-radius: 8px !important;
+        font-size: .72rem !important;
+        height: 32px !important;
+        min-height: 32px !important;
+    }
+
+    .operational-report-page .btn-primary {
+        background: linear-gradient(135deg, #2f6f9f, #55b4d4) !important;
+        border: 0 !important;
+    }
+
+    .operational-report-page small,
+    .operational-report-page .small,
+    .operational-report-page .text-muted {
+        font-size: .68rem !important;
+        line-height: 1.22 !important;
+    }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid mt-5 pt-4">
+    <div class="container-fluid mt-5 pt-4 operational-report-page">
+        <div class="fc-module-header fc-module-header--inteligencia">
+            <div class="fc-module-header__copy">
+                <p class="fc-module-header__kicker">Inteligência Operacional</p>
+                <h1 class="fc-module-header__title">Previsões operacionais</h1>
+                <p class="fc-module-header__subtitle">Demanda, anomalias, conversão e volume previsto com base nos dados operacionais do FullCare Amil.</p>
+            </div>
+        </div>
+
         <div class="row mb-4">
             <div class="col-12">
-                <div class="alert alert-info">
-                    <strong>Como funciona:</strong> este painel calcula previsões de demanda com base nas últimas
+                <div class="alert alert-info op-explain">
+                    <strong>Como funciona</strong>
+                    <span>Este painel calcula previsões de demanda com base nas últimas
                     internações, procura por anomalias diárias e estima a probabilidade de conversão das negociações dos
-                    últimos 90 dias. Todos os cálculos são executados dentro do FullCare, sem integrar ferramentas
-                    externas, e podem ser atualizados a qualquer momento ao recarregar a página.
+                    últimos 90 dias. Todos os cálculos são executados dentro do FullCare Amil, sem integrar ferramentas
+                    externas, e podem ser atualizados ao recarregar a página.</span>
                 </div>
             </div>
         </div>

@@ -222,7 +222,7 @@ if (!is_array($prioridades)) {
 }
 ?>
 
-<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260509-filter-icons">
+<link rel="stylesheet" href="<?= $BASE_URL ?>css/bi.css?v=20260614-select-bg-compact">
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . filemtime(__DIR__ . '/css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 
 <style>

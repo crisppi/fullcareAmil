@@ -28,6 +28,7 @@
     .hero-sys-link{color:#fff;text-decoration:none;font-weight:600;border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:999px;transition:background .2s,color .2s}
     .hero-sys-link:hover{background:rgba(0,0,0,.15)}
 </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
 </head>
 <body>
 <header>
@@ -36,7 +37,7 @@
         <div class="hero-body">
             <div class="pill">Manual • Pacientes</div>
             <h1>Pacientes</h1>
-            <p>Cadastro mestre do sistema. A partir dele nascem internações, visitas, eventos adversos e contas. Aqui você encontra fluxos, campos monitorados, alertas e integrações.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+            <p>Cadastro mestre do sistema. A partir dele nascem internações, visitas, eventos adversos, contas e análises do hub do paciente.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
         </div>
         <a class="hero-sys-link" href="dashboard">← Voltar ao sistema</a>
     </div>
@@ -50,8 +51,9 @@
                 <h3>Listar e localizar</h3>
                 <ul>
                     <li>Pesquisa na lista com filtros por nome, CPF, seguradora e status.</li>
-                    <li>Busca global (campo no header) abre modal com atalhos para o hub.</li>
-                    <li>Hub mostra histórico completo, últimas internações e botões para ações rápidas.</li>
+                    <li>Busca global no header permite localizar por nome, matrícula ou contexto selecionado.</li>
+                    <li>O resultado abre o hub do paciente ou a internação, conforme o tipo encontrado.</li>
+                    <li>O hub concentra perfil, indicadores, pendências, timeline e histórico assistencial.</li>
                 </ul>
             </article>
             <article class="card">
@@ -150,6 +152,7 @@
                 <ul>
                     <li>Máscara inteligente para CPF, telefone e CEP.</li>
                     <li>Ao abrir nova internação via hub, dados do paciente já vêm preenchidos.</li>
+                    <li>O hub calcula indicadores clínicos e operacionais a partir das internações do paciente.</li>
                     <li>Logs registram toda alteração com usuário e horário.</li>
                 </ul>
             </article>
@@ -157,8 +160,8 @@
                 <h3>Integrações</h3>
                 <ul>
                     <li>Busca por matrícula consulta API da seguradora (quando disponível).</li>
-                    <li>Lista de pacientes pode ser exportada em CSV para BI.</li>
-                    <li>Cronograma de visitas usa data de nascimento para faixas etárias.</li>
+                    <li>Eventos recentes, visitas, prorrogações e contas alimentam a linha do tempo operacional.</li>
+                    <li>O escopo do usuário define quais pacientes e internações aparecem.</li>
                 </ul>
             </article>
         </div>
@@ -178,9 +181,11 @@
             <article class="card">
                 <h3>Hub do paciente</h3>
                 <ul>
-                    <li>Mostra últimas internações, visitas programadas e alertas.</li>
-                    <li>Possui botões para criar internação, visita ou evento adverso.</li>
-                    <li>Histórico mostra auditor responsável e status de cada capeante.</li>
+                    <li>O cabeçalho mostra identificação, matrícula, nascimento, sexo, seguradora e status de risco.</li>
+                    <li>Indicadores clínicos destacam total de internações, média de permanência, longa permanência, eventos e última internação.</li>
+                    <li><strong>Pendências do auditor</strong> lista próximas ações do paciente, como longa permanência ou visita atrasada.</li>
+                    <li><strong>Linha do tempo operacional</strong> mostra eventos recentes e evita abrir várias telas para entender o caso.</li>
+                    <li>Abas de internações e contas permitem consultar histórico e abrir registros específicos.</li>
                 </ul>
             </article>
             <article class="card">
@@ -188,12 +193,12 @@
                 <ul>
                     <li>Anexos aceitam múltiplos formatos. Use padrão <code>tipo-data</code> no nome.</li>
                     <li>Flag "Documento obrigatório" mantém alerta até upload.</li>
-                    <li>Eventos adversos e negociações iniciadas pelo hub já preenchem paciente e internação.</li>
+                    <li>Eventos adversos, negociações e contas iniciadas pelo hub devem preservar o vínculo com paciente e internação.</li>
                 </ul>
             </article>
         </div>
     </section>
 </main>
-<footer>Manual Pacientes • versão 0.2</footer>
+<footer>Manual Pacientes • versão 0.4</footer>
 </body>
 </html>

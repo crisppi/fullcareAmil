@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual | Visitas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f8f6fb;color:#2d1740;line-height:1.5}
+    header{background:linear-gradient(135deg,#6b3d7d,#422257);color:#fff;padding:48px 5vw 80px}
+    header p{max-width:760px;color:rgba(255,255,255,.9)}
+    main{width:min(1100px,92vw);margin:-30px auto 60px;padding-top:32px}
+    h2{font-size:25px;margin:30px 0 14px;position:relative}
+    h2::after{content:"";position:absolute;left:0;bottom:-6px;width:60px;height:3px;border-radius:99px;background:linear-gradient(90deg,#8a5ab0,#5ad1f0)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+    .card{background:#fff;border-radius:16px;padding:18px;border:1px solid rgba(90,43,120,.1);box-shadow:0 14px 28px rgba(57,23,92,.12);font-size:.88rem}
+    ul{margin:0;padding-left:18px}.pill{display:inline-flex;gap:8px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;text-transform:uppercase;font-size:13px;letter-spacing:.08em;margin-bottom:20px}
+    a.voltar,.hero-sys-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:6px 12px;border-radius:999px;font-weight:700}
+    .hero-layout{display:flex;align-items:center;gap:24px;margin-bottom:20px;flex-wrap:wrap}.hero-logo{height:46px;max-width:200px}.hero-body{flex:1 1 280px}
+    footer{text-align:center;color:#6f6b78;padding:30px}
+    </style>
+    <link rel="stylesheet" href="css/manual_compact.css?v=20260620">
+</head>
+<body>
+<header>
+    <div class="hero-layout">
+        <img src="img/LogoFullCare.png" alt="FullCare" class="hero-logo">
+        <div class="hero-body">
+            <div class="pill">Manual • Visitas</div>
+            <h1>Visitas e faturamento</h1>
+            <p>Registro clínico-operacional das visitas, com lista filtrável, geração de PDFs e contexto de faturamento mensal.<br><a class="voltar" href="manual.html">← Voltar para o índice</a></p>
+        </div>
+        <a class="hero-sys-link" href="visitas/lista">Abrir visitas</a>
+    </div>
+</header>
+<main>
+    <section>
+        <h2>Nova visita</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Cadastro</h3>
+                <ul>
+                    <li>Acesse por <strong>Visitas &gt; Nova Visita</strong>, pela internação ou pela fila do auditor.</li>
+                    <li>Quando aberta pela internação, paciente, hospital e internação já vêm preenchidos.</li>
+                    <li>Informe data da visita, auditor, relatório/evolução e demais campos assistenciais obrigatórios.</li>
+                    <li>Revise a data antes de salvar, pois ela alimenta histórico, PDF e faturamento.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Boas práticas</h3>
+                <ul>
+                    <li>Registre a visita no mesmo dia sempre que possível.</li>
+                    <li>Use linguagem objetiva no relatório: condição atual, conduta, pendências e programação.</li>
+                    <li>Se houver programação terapêutica, mantenha texto separado para facilitar leitura posterior.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Lista de visitas</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Filtros</h3>
+                <ul>
+                    <li>Pesquisa por paciente, hospital, auditor e intervalo de datas.</li>
+                    <li>O limite de resultados ajuda a equilibrar performance e volume de consulta.</li>
+                    <li>Use filtros antes de exportar ou gerar PDFs em lote.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Histórico e PDF</h3>
+                <ul>
+                    <li>O botão de PDF da visita gera relatório individual.</li>
+                    <li>Na tela da internação, o período selecionado permite PDF do conjunto de visitas.</li>
+                    <li>O botão <strong>Últimas visitas</strong> consulta o histórico mais recente da internação.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Faturamento mensal</h2>
+        <div class="grid">
+            <article class="card">
+                <h3>Contexto de faturamento</h3>
+                <ul>
+                    <li>Acesse por <strong>Visitas &gt; Faturamento Mensal</strong>.</li>
+                    <li>Filtros por hospital, período e status de faturamento definem a base de trabalho.</li>
+                    <li>Visitas já faturadas ficam protegidas contra marcação duplicada.</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Exportação</h3>
+                <ul>
+                    <li>A exportação respeita os filtros e as colunas visíveis.</li>
+                    <li>Use o período correto antes de enviar dados para financeiro ou BI.</li>
+                    <li>Após faturar em lote, aguarde a atualização da tela antes de nova seleção.</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+</main>
+<footer>Manual Visitas • versão 0.4</footer>
+</body>
+</html>

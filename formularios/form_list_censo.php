@@ -96,6 +96,7 @@ $censoDao = new censoDAO($conn, $BASE_URL);
 $censo = new censoDAO($conn, $BASE_URL);
 $where = $order = $obLimite = null;
 $user = $_SESSION['id_usuario'];
+$censoIaUrl = rtrim($BASE_URL, '/') . '/censo/importar-ia';
 
 ?>
 <link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
@@ -125,10 +126,16 @@ $user = $_SESSION['id_usuario'];
             <h1 class="listagem-title">Listagem de censo</h1>
         </div>
         <div class="listagem-hero__actions">
+            <a class="btn listagem-btn-top listagem-btn-top--green" href="<?= htmlspecialchars($censoIaUrl, ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-file-earmark-arrow-up"></i>Importar IA</a>
             <a class="btn listagem-btn-top listagem-btn-top--blue" href="censo/novo"><i class="bi bi-plus-lg"></i>Novo lançamento</a>
             <a onclick="sendIdListToPHP()" id="submitInter" class="btn listagem-btn-top listagem-btn-top--purple"><i class="bi bi-door-open"></i>Internar selecionados</a>
         </div>
     </div>
+    <?php if (isset($_GET['importados_ia']) && (int)$_GET['importados_ia'] > 0) { ?>
+        <div class="alert alert-success mt-3" role="alert">
+            <?= (int)$_GET['importados_ia'] ?> censo(s) importado(s) com IA e lançado(s) na lista.
+        </div>
+    <?php } ?>
     <div class="complete-table">
         <div id="navbarToggleExternalContent" class="table-filters">
             <div class="row">
@@ -357,7 +364,7 @@ $user = $_SESSION['id_usuario'];
                             <td scope="row">
                                 <?= $intern["senha_censo"] ?>
                             </td>
-                            <td class="action">
+                            <td class="fc-list-action">
                                 <div class="dropdown">
                                     <button class="btn btn-default dropdown-toggle" id="navbarScrollingDropdown"
                                         role="button" data-bs-toggle="dropdown" style="color:#5e2363"
@@ -368,17 +375,14 @@ $user = $_SESSION['id_usuario'];
                                         <li>
                                             <button class="btn btn-default"
                                                 onclick="openModal('<?= $BASE_URL ?>show_censo_adm.php?id_censo=<?= $intern['id_censo'] ?>')"
-                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="fas fa-eye"
-                                                    style="color: rgb(27,156, 55);"></i>Ver</button>
+                                                data-bs-toggle="modal" data-bs-target="#myModal"><i class="bi bi-eye text-success"></i>Ver</button>
                                         </li>
                                         <li>
                                             <form class="d-inline-block delete-form" action="process_censo_int.php"
                                                 method="get">
                                                 <input type="hidden" name="type" value="create">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
-                                                <button class="btn btn-default"><i
-                                                        style="color: rgb(67, 125, 525);"
-                                                        class="bi bi-door-open"></i>Internar</button>
+                                                <button class="btn btn-default"><i class="bi bi-hospital text-primary"></i>Internar</button>
                                             </form>
                                         </li>
                                         <li>
@@ -387,9 +391,7 @@ $user = $_SESSION['id_usuario'];
                                                 <input type="hidden" name="type" value="delete">
                                                 <input type="hidden" name="id_censo" value="<?= $intern["id_censo"] ?>">
                                                 <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                                                <button class="btn btn-default"><i
-                                                        style="color: red;"
-                                                        class="bi bi-x-circle-fill"></i>Deletar</button>
+                                                <button class="btn btn-default"><i class="bi bi-trash3 text-danger"></i>Deletar</button>
                                             </form>
                                         </li>
                                     </ul>

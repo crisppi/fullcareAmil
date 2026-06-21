@@ -26,7 +26,7 @@ include_once("dao/hospitalUserDao.php");
 
 include_once("models/pagination.php");
 ?>
-<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css', ENT_QUOTES, 'UTF-8') ?>">
+<link rel="stylesheet" href="<?= htmlspecialchars(rtrim($BASE_URL, '/') . '/css/listagem_padrao.css?v=' . @filemtime(__DIR__ . '/../css/listagem_padrao.css'), ENT_QUOTES, 'UTF-8') ?>">
 <?php
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -306,27 +306,6 @@ try {
 .export-pill.inactive i {
     color: #2f6f9f;
 }
-
-.th-sortable {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.th-sortable .sort-icons a {
-    text-decoration: none;
-    font-size: 0.72rem;
-    color: #ffffff;
-    margin-left: 2px;
-    opacity: 0.7;
-}
-
-.th-sortable .sort-icons a.active {
-    color: #ffd966;
-    opacity: 1;
-    font-weight: bold;
-}
-
 
 .export-pill-toolbar {
     display: flex;
@@ -644,8 +623,8 @@ try {
 
 #table-content {
     margin-top: 8px !important;
-    border-radius: 14px;
-    overflow: hidden;
+    border-radius: 0;
+    overflow: visible;
     border: 1px solid #d7e8f3;
     background: #fff;
 }
@@ -656,19 +635,6 @@ try {
 
 #table-content thead {
     background: #2f6f9f;
-}
-
-#table-content thead th {
-    padding-top: 7px;
-    padding-bottom: 7px;
-    background: transparent !important;
-    border-bottom: none;
-    color: #fff;
-    font-size: .54rem;
-    font-weight: 800;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    vertical-align: middle;
 }
 
 #table-content tbody td {
@@ -1171,11 +1137,11 @@ if (typeof jQuery !== 'undefined') {
                         <tr>
                             <?php
                             $sortableHeaders = [
-                                'id_internacao'   => ['label' => 'Id-Int',   'style' => 'min-width: 50px;'],
-                                'nome_hosp'       => ['label' => 'Hospital', 'style' => 'min-width: 150px;'],
-                                'nome_pac'        => ['label' => 'Paciente', 'style' => 'min-width: 150px;'],
-                                'seguradora_seg'  => ['label' => 'Seguradora', 'style' => 'min-width: 150px;'],
-                                'data_intern_int' => ['label' => 'Data Int', 'style' => 'min-width: 100px;'],
+                                'id_internacao'   => ['label' => 'Id-Int', 'class' => 'th-min-50'],
+                                'nome_hosp'       => ['label' => 'Hospital', 'class' => 'th-min-150'],
+                                'nome_pac'        => ['label' => 'Paciente', 'class' => 'th-min-150'],
+                                'seguradora_seg'  => ['label' => 'Seguradora', 'class' => 'th-min-150'],
+                                'data_intern_int' => ['label' => 'Data Int', 'class' => 'th-min-100'],
                             ];
                             foreach ($sortableHeaders as $key => $meta):
                                 $ascActive = ($sortField === $key && $sortDir === 'asc');
@@ -1183,7 +1149,7 @@ if (typeof jQuery !== 'undefined') {
                                 $ascUrl = buildInternacaoPaginationUrl($paginationBaseParams, ['sort_field' => $key, 'sort_dir' => 'asc', 'pag' => 1]);
                                 $descUrl = buildInternacaoPaginationUrl($paginationBaseParams, ['sort_field' => $key, 'sort_dir' => 'desc', 'pag' => 1]);
                             ?>
-                            <th scope="col" style="<?= $meta['style'] ?>" class="text-center">
+                            <th scope="col" class="text-center <?= htmlspecialchars($meta['class'], ENT_QUOTES, 'UTF-8') ?>">
                                 <div class="th-sortable justify-content-center">
                                     <span><?= htmlspecialchars($meta['label'], ENT_QUOTES, 'UTF-8') ?></span>
                                     <span class="sort-icons">
@@ -1195,15 +1161,15 @@ if (typeof jQuery !== 'undefined') {
                                 </div>
                             </th>
                             <?php endforeach; ?>
-                            <th scope="col" style="min-width: 80px;">Senha</th>
-                            <th scope="col" style="min-width: 80px;">Dias Int</th>
-                            <th scope="col" style="min-width: 80px;">Últ Visita</th>
-                            <th scope="col" style="min-width: 80px;">Visita Med</th>
-                            <th scope="col" style="min-width: 80px;">Visita Enf</th>
-                            <th scope="col" style="min-width: 80px;">Nº Visita</th>
-                            <th scope="col" style="min-width: 80px;">Gestão</th>
-                            <th scope="col" style="min-width: 80px;">UTI</th>
-                            <th scope="col" style="min-width: 80px;">Ações</th>
+                            <th scope="col" class="th-min-80">Senha</th>
+                            <th scope="col" class="th-min-80">Dias Int</th>
+                            <th scope="col" class="th-min-80">Últ Visita</th>
+                            <th scope="col" class="th-min-80">Visita Med</th>
+                            <th scope="col" class="th-min-80">Visita Enf</th>
+                            <th scope="col" class="th-min-80">Nº Visita</th>
+                            <th scope="col" class="th-min-80">Gestão</th>
+                            <th scope="col" class="th-min-80">UTI</th>
+                            <th scope="col" class="th-min-80">Ações</th>
                         </tr>
                     </thead>
 
@@ -1337,8 +1303,7 @@ if (typeof jQuery !== 'undefined') {
                                             <button class="btn btn-default"
                                                 onclick="edit('<?= rtrim($BASE_URL, '/') ?>/internacoes/visualizar/<?= (int)$intern['id_internacao'] ?>')"
                                                 style="font-size: 1rem;">
-                                                <i class="fas fa-eye"
-                                                    style="font-size: 1rem;margin-right:5px; color: rgb(27,156, 55);"></i>
+                                                <i class="bi bi-eye text-success"></i>
                                                 Visualização
                                             </button>
                                         </li>

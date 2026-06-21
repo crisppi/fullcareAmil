@@ -62,9 +62,10 @@ if ($saving_min !== '' && is_numeric($saving_min)) {
 $where = implode(' AND ', $condicoes);
 
 $totalItens = $negociacaoDao->countNegociacoesDetalhes($where, $whereParams);
+$totalPages = max(1, (int)ceil($totalItens / max(1, $limite)));
+$pagAtual = min(max(1, $pagAtual), $totalPages);
 $paginationObj = new pagination($totalItens, $pagAtual, $limite);
 $listaNegociacoes = $negociacaoDao->selectNegociacoesDetalhes($where, $orderOptions[$ordenar], $paginationObj->getLimit(), $whereParams);
-$totalPages = max(1, (int)ceil($totalItens / $limite));
 
 $paginationParams = [
     'pesquisa_hosp' => $pesquisa_hosp,
@@ -85,6 +86,11 @@ $buildLink = function ($pagina) use ($paginationParams, $BASE_URL) {
     $query = http_build_query($params);
     return $path . ($query ? '?' . $query : '');
 };
+
+$paginationWindowSize = 5;
+$paginationBlock = (int)floor(($pagAtual - 1) / $paginationWindowSize);
+$firstPageInWindow = ($paginationBlock * $paginationWindowSize) + 1;
+$lastPageInWindow = min($totalPages, $firstPageInWindow + $paginationWindowSize - 1);
 
 $exportUrl = $BASE_URL . 'exportar_excel_negociacoes.php?' . http_build_query($paginationParams);
 
@@ -204,6 +210,16 @@ sort($tiposDisponiveis);
         white-space: nowrap;
     }
 
+    .negociacoes-table thead th {
+        font-size: .52rem !important;
+        padding: 5px 7px !important;
+    }
+
+    .negociacoes-table tbody td {
+        font-size: .62rem !important;
+        padding: 5px 7px !important;
+    }
+
     .negociacoes-table .col-paciente {
         min-width: 190px;
         white-space: normal;
@@ -314,8 +330,7 @@ sort($tiposDisponiveis);
                             <th>Hospital</th>
                             <th>Paciente</th>
                             <th>Tipo</th>
-                            <th>Troca de</th>
-                            <th>Troca para</th>
+                            <th>Troca</th>
                             <th>Qtd.</th>
                             <th>Saving</th>
                             <th>Data início</th>
@@ -326,9 +341,15 @@ sort($tiposDisponiveis);
                     <tbody>
                         <?php if (!$listaNegociacoes): ?>
                         <tr>
-                            <td colspan="13" class="text-center text-muted py-4">Nenhuma negociação encontrada.</td>
+                            <td colspan="12" class="text-center text-muted py-4">Nenhuma negociação encontrada.</td>
                         </tr>
-                        <?php else: foreach ($listaNegociacoes as $neg): ?>
+                        <?php else: foreach ($listaNegociacoes as $neg):
+                            $trocaDe = trim((string)($neg['troca_de'] ?? ''));
+                            $trocaPara = trim((string)($neg['troca_para'] ?? ''));
+                            $trocaLabel = ($trocaDe !== '' && $trocaPara !== '')
+                                ? $trocaDe . ' - ' . $trocaPara
+                                : ($trocaDe ?: ($trocaPara ?: '-'));
+                        ?>
                         <tr>
                             <td><?= (int)($neg['fk_id_int'] ?? 0) ?></td>
                             <td><?= htmlspecialchars($neg['senha_int'] ?? '-') ?></td>
@@ -336,8 +357,7 @@ sort($tiposDisponiveis);
                             <td><?= htmlspecialchars($neg['nome_hosp'] ?? '-') ?></td>
                             <td class="col-paciente"><?= htmlspecialchars($neg['nome_pac'] ?? '-') ?></td>
                             <td><?= htmlspecialchars($neg['tipo_negociacao'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($neg['troca_de'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($neg['troca_para'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($trocaLabel, ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars((string)($neg['qtd'] ?? '0')) ?></td>
                             <td>R$ <?= number_format((float)($neg['saving'] ?? 0), 2, ',', '.') ?></td>
                             <td><?= $neg['data_inicio_neg'] ? date('d/m/Y', strtotime($neg['data_inicio_neg'])) : '—' ?></td>
@@ -352,13 +372,39 @@ sort($tiposDisponiveis);
             <div class="listagem-footer-row">
                 <div class="listagem-pagination-slot">
                     <?php if ($totalPages > 1): ?>
-                    <nav>
+                    <nav aria-label="Paginação">
                         <ul class="pagination mb-0">
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <?php if ($firstPageInWindow > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= htmlspecialchars($buildLink(1), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= htmlspecialchars($buildLink(max(1, $pagAtual - 1)), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+
+                            <?php for ($i = $firstPageInWindow; $i <= $lastPageInWindow; $i++): ?>
                             <li class="page-item <?= $i == $pagAtual ? 'active' : '' ?>">
-                                <a class="page-link" href="<?= $buildLink($i) ?>"><?= $i ?></a>
+                                <a class="page-link" href="<?= htmlspecialchars($buildLink($i), ENT_QUOTES, 'UTF-8') ?>"><?= $i ?></a>
                             </li>
                             <?php endfor; ?>
+
+                            <?php if ($lastPageInWindow < $totalPages): ?>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= htmlspecialchars($buildLink(min($totalPages, $pagAtual + 1)), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="<?= htmlspecialchars($buildLink($totalPages), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </a>
+                            </li>
+                            <?php endif; ?>
                         </ul>
                     </nav>
                     <?php endif; ?>
